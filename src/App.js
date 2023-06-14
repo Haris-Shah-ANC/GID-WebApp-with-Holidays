@@ -1,25 +1,37 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
+import { StateProvider } from './state/Store';
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
+import AuthLayout from './layouts/auth/AuthLayout';
+import MainLayout from "./layouts/main/MainLayout";
+import LandingLayout from "./layouts/landing/LandingLayout";
 
-function App() {
+import {
+  Route,
+  Routes,
+  Navigate,
+  BrowserRouter,
+} from "react-router-dom";
+
+const App = () => {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    <BrowserRouter>
+      <StateProvider>
+        {/* <CustomLoader /> */}
+        <ToastContainer />
+        <Routes>
+          <Route path={"/auth/*"} element={<AuthLayout />} />
+          <Route path={"/*"} element={<MainLayout />} />
+
+          {/* <Route path={"/landing"} element={<LandingLayout />} /> */}
+
+          {/* need to hide when landing page is there */}
+          <Route path="/" element={<Navigate replace to="/auth/login" />} />
+
+        </Routes>
+      </StateProvider>
+    </BrowserRouter>
+  )
 }
 
-export default App;
+export default App
