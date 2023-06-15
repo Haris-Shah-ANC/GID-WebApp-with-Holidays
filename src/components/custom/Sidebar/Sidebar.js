@@ -9,11 +9,10 @@ import {
   create_new_work_space,
  } from '../../../utils/Constant';
 
-const Sidebar = ({ navigationUrl = [] }) => {
+const Sidebar = ({ navigationUrl = [],isSidebarOpen,setIsSidebarOpen }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
   const handleSidebarToggle = () => { setIsSidebarOpen(!isSidebarOpen) };
 
   const [activeItem, setActiveItem] = React.useState(routesName.dashboard.activeRoute);
@@ -100,7 +99,6 @@ const Sidebar = ({ navigationUrl = [] }) => {
         </button>
       </div>
     </div>
-
 
 
   )

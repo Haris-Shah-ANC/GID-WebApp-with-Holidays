@@ -92,7 +92,7 @@ const Timeline = () => {
       <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-3">
         {gridData.map((dataItem, index) => {
           return (
-            <div key={index}>
+            <div key={index} className=''>
               <div className="bg-vimeo-regular h-10 text-center font-semibold px-4 py-2 text-white">
                 <i className={`fa-solid ${dataItem.icon} mr-2`}></i>{dataItem.title}
               </div>
@@ -110,7 +110,7 @@ const Timeline = () => {
                             task: item.task,
                             module_id: null,
                             work_id: work_id,
-                            status: item.status,
+                            status: item.status, 
                             task_id: item.task_id,
                             project_id: item.project_id,
                             dead_line: moment(item.dead_line).format("YYYY-MM-DD HH:mm"),
@@ -209,6 +209,8 @@ const TimelineCard = (props) => {
 
   let my_task = user_id === employee_id;
 
+  const maxLength = 50;
+  const truncatedTask = task.length > maxLength ? task.slice(0, maxLength) + "....." : task;
   return (
     <React.Fragment>
       <Card className={`h-full ${my_task ? 'border-left-success' : 'border-left-blue'}`}>

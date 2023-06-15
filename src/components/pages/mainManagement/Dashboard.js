@@ -159,7 +159,7 @@ const DashboardCard = (props) => {
                         </div>
                     </div>
 
-                    <div className="w-1/2 mt-3 mb-4 text-blueGray-500">{task}</div>
+                    <div className=" mt-3 mb-4 text-blueGray-500">{task}</div>
 
                     <div className="mt-auto flex flex-wrap">
                         <div className=''>

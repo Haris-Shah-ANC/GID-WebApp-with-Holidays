@@ -34,16 +34,20 @@ function MainLayout() {
   const handleDrawerClick = () => {
     setIsDrawerOpen(!isDrawerOpen);
   };
+
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
   return (
     <React.Fragment>
       <div className="bg-gray-200 flex h-screen w-full fixed">
         <div className='overflow-y-auto overflow-x-hidden min-h-screen hidden sm:block md:block lg:block xl:block'>
-          <Sidebar navigationUrl={sidebarMenu} />
+          <Sidebar navigationUrl={sidebarMenu} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen}/>
         </div>
         {isDrawerOpen && (<Drawer navigationUrl={sidebarMenu} isDrawerOpen={isDrawerOpen} handleDrawerClick={handleDrawerClick} />)}
         <div className="flex-grow">
           <Navbar handleDrawerClick={handleDrawerClick} />
-          <div className='p-4 overflow-y-auto w-full' style={{ height: 'calc(100vh - 80px)' }}>
+
+          <div className="p-4 overflow-y-auto w-full" style={{ height: 'calc(100vh - 80px)', maxWidth: isSidebarOpen ? 'calc(100vw - 240px)' : 'calc(100vw - 56px)'}}>
+          {/* <div className={`p-4 overflow-y-auto w-full sm:max-w-none md:${isSidebarOpen ?'max-w-[calc(100vw-240px)]':'max-w-[calc(100vw-56px)]'}`} style={{height: 'calc(100vh - 80px)'}}> */}
             <Routes>
               {
                 mainRoutes.map((route, index) =>

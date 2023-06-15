@@ -71,7 +71,7 @@ const AssignTask = () => {
         { fields: 'Created' },
     ]
     return (
-        <div> 
+        <div>
             <div className='grid sm:grid-cols-1 md:grid-cols-2 gap-3'>
                 <div></div>
                 <div>
@@ -103,13 +103,11 @@ const CustomTable = (props) => {
         <>
             <div className="px-6 py-4 border-0">
                 <div className="flex flex-wrap items-center">
-                    <div className="w-1/2 items-center">
-                        <h3 className="font-bold text-lg text-blueGray-700">
-                            Assigned Tasks
-                        </h3>
+                    <div className="w-full md:w-1/2 items-center">
+                        <h3 className="font-bold text-lg text-blueGray-700">Assigned Tasks</h3>
                     </div>
-                    <div className="flex w-1/2 text-right items-center justify-end">
-                        <div className='w-72'>
+                    <div className="w-full md:w-1/2 text-right items-center justify-end">
+                        <div className="w-full md:w-72">
                             <Input
                                 type="text"
                                 id="employee_name"
@@ -117,64 +115,68 @@ const CustomTable = (props) => {
                                 value={searchTerm}
                                 placeholder="Enter Employee Name"
                                 rightIcon={'fa-solid fa-magnifying-glass'}
-                                onChange={(e) => { setSearchTerm(e.target.value) }}
+                                onChange={(e) => {
+                                    setSearchTerm(e.target.value);
+                                }}
                             />
                         </div>
                     </div>
                 </div>
             </div>
-            <div className="px-6 py-4 block w-full object-cover">
-                    <table className="items-center w-full bg-transparent border-collapse">
-                        <thead>
-                            <tr>
-                                {headers.map((item, index) => {
-                                    return (
-                                        <th
-                                            key={index}
-                                            className="px-6 py-3 text-xs font-bold text-left bg-blueGray-100 text-blueGray-500 border-blueGray-200"
-                                        >
-                                            {item.fields}
-                                        </th>
-                                    );
-                                })}
-                            </tr>
-                        </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
-                            {getFilteredTask(columns, searchTerm).map((item, index) => {
+            <div className="px-6 py-4 block w-full overflow-x-auto">
+                <table className="items-center w-full bg-transparent border-collapse">
+                    <thead>
+                        <tr>
+                            {headers.map((item, index) => {
                                 return (
-                                    <tr key={index}>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-base">{index + 1}</div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-base">{item.employee_name}</div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-base">{item.project_name}</div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-base">{item.task}</div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className={task_status_color(item.status)}>
-                                                {item.status}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-base">
-                                                {moment(item.dead_line).format(DateFormatCard)}
-                                            </div>
-                                        </td>
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="text-base">{getTimeAgo(item.created_at)}</div>
-                                        </td>
-                                    </tr>
+                                    <th
+                                        key={index}
+                                        className="px-6 py-3 text-xs font-bold text-left bg-blueGray-100 text-blueGray-500 border-blueGray-200"
+                                    >
+                                        {item.fields}
+                                    </th>
                                 );
                             })}
-                        </tbody>
-                    </table>
+                        </tr>
+                    </thead>
+                    <tbody className="bg-white divide-y divide-gray-200">
+                        {getFilteredTask(columns, searchTerm).map((item, index) => {
+                            return (
+                                <tr key={index}>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="text-base">{index + 1}</div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="text-base">{item.employee_name}</div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="text-base">{item.project_name}</div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="text-base">{item.task}</div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className={task_status_color(item.status)}>
+                                            {item.status}
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="text-base">
+                                            {moment(item.dead_line).format(DateFormatCard)}
+                                        </div>
+                                    </td>
+                                    <td className="px-6 py-4 whitespace-nowrap">
+                                        <div className="text-base">{getTimeAgo(item.created_at)}</div>
+                                    </td>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
             </div>
         </>
+
+
     )
 }
 
@@ -284,36 +286,35 @@ const AssignedTask = () => {
     return (
         <div className="w-full mb-10 border-0 rounded-lg shadow-lg flex flex-col bg-white outline-none focus:outline-none">
             {/* header */}
-            <form className='p-6 pt-0'>
+            <form className="p-6 pt-0">
                 <div className="text-center items-center p-5 border-b border-solid border-slate-200 rounded-t text-black">
                     <h3 className="text-2xl font-semibold">{'Assign Task'}</h3>
                 </div>
 
                 {/* body */}
                 <div className="relative p-6 flex-auto">
-
                     <div className="my-1">
-                        <CustomLabel label={`Select  Employee`} />
-                        <Dropdown options={employeeResults} optionLabel={'employee_name'} value={selectedUser ? selectedUser : { employee_name: 'All Users' }} setValue={(value) => setFormData((previous) => ({ ...previous, employee_id: value ? value.id : null }))} />
+                        <CustomLabel label={`Select Employee`} />
+                        <Dropdown options={employeeResults} optionLabel="employee_name" value={selectedUser ? selectedUser : { employee_name: 'All Users' }} setValue={(value) => setFormData((previous) => ({ ...previous, employee_id: value ? value.id : null }))} />
                     </div>
 
                     <div className="my-4">
-                        <CustomLabel label={`Select  Project`} />
-                        <Dropdown placeholder={true} options={projectsResults} optionLabel={'project_name'} value={selectedProject ? selectedProject : { project_name: 'Select project' }} setValue={(value) => setFormData((previous) => ({ ...previous, project_id: value ? value.project_id : null }))} />
+                        <CustomLabel label={`Select Project`} />
+                        <Dropdown placeholder={true} options={projectsResults} optionLabel="project_name" value={selectedProject ? selectedProject : { project_name: 'Select project' }} setValue={(value) => setFormData((previous) => ({ ...previous, project_id: value ? value.project_id : null }))} />
                     </div>
-                    {
-                        !formData.task_id &&
+
+                    {!formData.task_id && (
                         <div className="my-4">
                             <CustomLabel label={`Select Module`} />
-                            <Dropdown placeholder={true} options={moduleResults} optionLabel={'module_name'} value={selectedModule ? selectedModule : { module_name: 'Select project' }} setValue={(value) => setFormData((previous) => ({ ...previous, module_id: value ? value.module_id : null }))} />
+                            <Dropdown placeholder={true} options={moduleResults} optionLabel="module_name" value={selectedModule ? selectedModule : { module_name: 'Select project' }} setValue={(value) => setFormData((previous) => ({ ...previous, module_id: value ? value.module_id : null }))} />
                         </div>
-                    }
+                    )}
 
                     <div className="my-4">
                         <CustomLabel label={`Description`} />
                         <Input
-                            type='textarea'
-                            id='description'
+                            type="textarea"
+                            id="description"
                             className="h-20"
                             placeholder="Add the task description"
                             value={formData.task ? formData.task : ''}
@@ -331,7 +332,6 @@ const AssignedTask = () => {
                             onChange={(e) => setFormData((previous) => ({ ...previous, dead_line: e.target.value }))}
                         />
                     </div>
-
                 </div>
 
                 {/* footer */}
@@ -345,8 +345,6 @@ const AssignedTask = () => {
                     </button>
                 </div>
             </form>
-
-
         </div>
     )
 }
