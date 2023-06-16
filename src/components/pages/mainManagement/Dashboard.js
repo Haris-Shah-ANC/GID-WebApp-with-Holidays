@@ -23,6 +23,7 @@ import {
     getLoginDetails,
     getWorkspaceInfo,
 } from '../../../config/cookiesInfo';
+import classNames from 'classnames';
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -33,6 +34,8 @@ const Dashboard = () => {
     const [tasksResults, setTasksResults] = React.useState([]);
     const [employeeResults, setEmployeeResults] = React.useState([]);
     const [projectsResults, setProjectsResults] = React.useState([]);
+    const [taskCategoryIndex, setTaskCategoryIndex] = React.useState(0)
+    const btnLableList = [{ title: "In Progress", count: 23 }, { title: "Pending", count: 16 }, { title: "Completed", count: 32 }]
     const [filters, setFilters] = React.useState({
         project_id: null,
         employee_id: user_id,
@@ -98,6 +101,13 @@ const Dashboard = () => {
         });
     };
 
+    const getBtnStyle = (index) => {
+        if (index === taskCategoryIndex) {
+            return "border-b-4 border-[#2e53e2] rounded"
+        }
+        return ""
+    }
+
     return (
         <React.Fragment>
             <Filter
@@ -106,6 +116,41 @@ const Dashboard = () => {
                 employeeResults={employeeResults}
                 projectsResults={projectsResults}
             />
+            
+            <div className="bg-white rounded-xl pt-4 flex justify-between ">
+                <div className='flex-row flex'>
+                    {btnLableList.map((item, index) => {
+                        { console.log("BTN ", item) }
+                        return (
+                            <div className={`flex flex-row px-0.5 mx-5 pb-3 items-center ${getBtnStyle(index)}`} >
+                                <button className={classNames("text-lg font-medium hover:opacity-75  outline-none focus:outline-none", {
+                                    "text-[#b7c1cc]": index!==taskCategoryIndex,
+                                    "text-[#2e53e2]":index===taskCategoryIndex})} onClick={() => setTaskCategoryIndex(index)}>
+                                    {item.title}
+                                </button>
+                                <p className={classNames("px-1 text-xs mx-2 text-white rounded", {
+                                    "bg-[#2e53e2]":index===taskCategoryIndex,
+                                    "bg-[#b7c1cc]":index!==taskCategoryIndex})}>{item.count}</p>
+                            </div>
+                        )
+                    })}
+
+                </div>
+                <div className='flex items-center mr-5'>
+                    <button className='flex items-center border border-[#dddddf] rounded-lg mb-3 py-2 px-3 mr-6 hover:opacity-75 outline-none focus:outline-none'>
+                        <i className="fa-solid fa-sliders mr-2 text-[#75787b]"></i>
+                        <p className='text-[#75787b] font-medium'>Filter & Sort</p>
+                    </button>
+                    <button className='flex  items-center py-2 px-3 mb-3 border border-[#dddddf] rounded-lg hover:opacity-75 outline-none focus:outline-none'>
+                        <i className="fa-solid fa-plus mr-2 text-[#75787b]" ></i>
+                        <p className='text-[#75787b] font-medium'>Add New</p>
+                    </button>
+
+
+
+                </div>
+            </div>
+
             <div className=" mt-6 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {getFilteredTask(tasksResults, filters).map((item, index) => {
                     return (
