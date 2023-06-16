@@ -53,7 +53,7 @@ const Sidebar = ({ navigationUrl = [], isSidebarOpen, setIsSidebarOpen, sidebarS
             </span>
           </button>
         </div>
-        <nav className="h-full overflow-y-auto overflow-x-hidden">
+        <nav className=" overflow-y-auto overflow-x-hidden">
           <ul className="flex flex-col">
             <li
               title={isSidebarOpen ? '' : "Add Task"}
