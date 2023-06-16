@@ -1,8 +1,6 @@
 import React from "react";
-import { imagesList } from "../../utils/Constant";
 import { routesName } from "../../config/routesName";
 import Navbar from "../../components/custom/Navbar/Navbar";
-import Drawer from "../../components/custom/Drawer/Drawer";
 import { mainRoutes, sidebarMenu } from "../../config/routes";
 import Sidebar from "../../components/custom/Sidebar/Sidebar";
 
@@ -29,25 +27,26 @@ function MainLayout() {
     return children;
   };
 
-  const [isDrawerOpen, setIsDrawerOpen] = React.useState(false);
 
-  const handleDrawerClick = () => {
-    setIsDrawerOpen(!isDrawerOpen);
-  };
 
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
+  const [sidebarShow, setSidebarShow] = React.useState("-translate-x-full");
+  
+  const handleDrawerClick = () => {
+    if (sidebarShow === "") {
+      setSidebarShow("-translate-x-full");
+    } else {
+      setSidebarShow("");
+    }
+  };
   return (
     <React.Fragment>
-      <div className="bg-gray-200 flex h-screen w-full fixed">
-        <div className='overflow-y-auto overflow-x-hidden min-h-screen hidden sm:block md:block lg:block xl:block'>
-          <Sidebar navigationUrl={sidebarMenu} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen}/>
-        </div>
-        {isDrawerOpen && (<Drawer navigationUrl={sidebarMenu} isDrawerOpen={isDrawerOpen} handleDrawerClick={handleDrawerClick} />)}
-        <div className="flex-grow">
+      <div className="w-full min-h-screen bg-gray-200">
+          <Sidebar navigationUrl={sidebarMenu} sidebarShow={sidebarShow} setSidebarShow={setSidebarShow} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} handleDrawerClick={handleDrawerClick}/>
+        <div className={`relative md:ml-64`}>
           <Navbar handleDrawerClick={handleDrawerClick} />
 
-          <div className="p-4 overflow-y-auto w-full" style={{ height: 'calc(100vh - 80px)', maxWidth: isSidebarOpen ? 'calc(100vw - 240px)' : 'calc(100vw - 56px)'}}>
-          {/* <div className={`p-4 overflow-y-auto w-full sm:max-w-none md:${isSidebarOpen ?'max-w-[calc(100vw-240px)]':'max-w-[calc(100vw-56px)]'}`} style={{height: 'calc(100vh - 80px)'}}> */}
+          <div className="p-4 overflow-y-auto w-full">
             <Routes>
               {
                 mainRoutes.map((route, index) =>

@@ -3,17 +3,15 @@ import ModelComponent from '../Model/ModelComponent';
 import { routesName } from '../../../config/routesName';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
-import { 
+import {
   add_task,
   imagesList,
   create_new_work_space,
- } from '../../../utils/Constant';
+} from '../../../utils/Constant';
 
-const Sidebar = ({ navigationUrl = [],isSidebarOpen,setIsSidebarOpen }) => {
+const Sidebar = ({ navigationUrl = [], isSidebarOpen, setIsSidebarOpen, sidebarShow, setSidebarShow, handleDrawerClick }) => {
   const navigate = useNavigate();
   const location = useLocation();
-
-  const handleSidebarToggle = () => { setIsSidebarOpen(!isSidebarOpen) };
 
   const [activeItem, setActiveItem] = React.useState(routesName.dashboard.activeRoute);
 
@@ -29,26 +27,33 @@ const Sidebar = ({ navigationUrl = [],isSidebarOpen,setIsSidebarOpen }) => {
   }, [location.pathname])
 
   const [showModal, setShowModal] = React.useState(false);
-
   return (
-    <div className={`bg-blue-500 text-white min-h-screen w-${isSidebarOpen ? '60' : 'auto'} flex flex-col`}>
+    <div className={`bg-blue-500 text-white block  top-0 bottom-0 w-${isSidebarOpen ? '64' : 'auto'} shadow-xl left-0 fixed flex-row flex-nowrap md:z-10 z-9999 transition-all duration-300 ease-in-out transform md:translate-x-0 ${sidebarShow}`}>
       <ModelComponent showModal={showModal} setShowModal={setShowModal} />
+
       <div className="flex-grow">
-        <div className="flex items-center border-l p-2">
-          <img
-            src={imagesList.appLogo.src}
-            alt={imagesList.appLogo.alt}
-            className={`${isSidebarOpen ? 'w-20 h-20' : 'w-14 h-16'} rounded-full`}
-          />
-          <div
-            className={`flex flex-col ${isSidebarOpen ? '' : 'sm:hidden'} ${isSidebarOpen ? '' : 'hidden'
-              }`}
-          >
-            <span className="ml-2 text-xl font-bold">GET IT</span>
-            <span className="ml-2 text-xl font-bold">DONE</span>
+        <div className="flex items-center justify-between border-b border-gray-400">
+          <div className='flex items-center'>
+            <img
+              src={imagesList.appLogo.src}
+              alt={imagesList.appLogo.alt}
+              className="w-20 h-20 rounded-full mr-4"
+            />
+            <div className="flex flex-col">
+              <span className="text-xl font-bold">GET IT</span>
+              <span className="text-xl font-bold">DONE</span>
+            </div>
           </div>
+          <button
+            className="p-2 text-white md:hidden outline-none focus:outline-none"
+            onClick={handleDrawerClick}
+          >
+            <span className='border-gray-400 px-4 py-2 rounded-full'>
+              <i className="fa-solid fa-xmark text-3xl"></i>
+            </span>
+          </button>
         </div>
-        <nav className="">
+        <nav className="h-full overflow-y-auto overflow-x-hidden">
           <ul className="flex flex-col">
             <li
               title={isSidebarOpen ? '' : "Add Task"}
@@ -85,18 +90,6 @@ const Sidebar = ({ navigationUrl = [],isSidebarOpen,setIsSidebarOpen }) => {
             })}
           </ul>
         </nav>
-      </div>
-      <div className="flex justify-center items-center focus:outline-none">
-        <button
-          className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-full focus:outline-none"
-          onClick={handleSidebarToggle}
-        >
-          {isSidebarOpen ? (
-            <i className="fa-solid fa-chevron-left"></i>
-          ) : (
-            <i className="fa-solid fa-chevron-right"></i>
-          )}
-        </button>
       </div>
     </div>
 
