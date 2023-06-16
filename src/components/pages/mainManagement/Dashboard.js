@@ -106,10 +106,10 @@ const Dashboard = () => {
                 employeeResults={employeeResults}
                 projectsResults={projectsResults}
             />
-            <div className=" mt-6 grid sm:grid-cols-1 md:grid-cols-2 gap-3">
+            <div className=" mt-6 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {getFilteredTask(tasksResults, filters).map((item, index) => {
                     return (
-                        <div className="" key={index}>
+                        <div className="h-full w-full" key={index}>
                             <DashboardCard {...item} />
                         </div>
                     )
@@ -147,7 +147,41 @@ const DashboardCard = (props) => {
 
     return (
         <React.Fragment>
-            <Card className={`h-full ${my_task ? 'border-left-success' : 'border-left-blue'}`}>
+            <div className='bg-white flex flex-col p-5 rounded-lg h-full border-borderColor-0 shadow-md'>
+                <div className='flex '>
+                    <span className="text-xs font-semibold font-quicksand inline-block py-1 px-2 rounded-xl text-lightBlue-600 bg-lightBlue-200 last:mr-0 mr-1">
+                    Web design
+                    </span>
+                </div>
+                
+                <div className='my-2 h-12 justify-center align-middle font-quicksand font-medium flex flex-col'>
+                    <p className='text-5 text-blueGray-800 font-sans line-clamp-2'>{task}</p>
+                </div>
+                <div className='flex p-2 bg-projectDivBGColor rounded-lg flex-wrap'>
+                    <img className='w-8 h-8' src='https://cdn.dribbble.com/users/12666113/avatars/small/3583dee8fd1428a784bd3c31f6ca20d1.png?1659505800' alt=''></img>
+                    <div className='flex flex-col ml-3'>
+                        <p className='text-5 text-black text-sm font-quicksand font-normal'>{project_name}</p>
+                        <a className='text-5 text-black font-quicksand font-light text-xs' href="https://gid.artdexandcognoscis.com/">{"https://gid.artdexandcognoscis.com/"}</a>
+                    </div>
+                </div>
+
+                <div className="flex flex-wrap mt-4">
+                    <div className='mr-auto'>
+                        <span className="text-xs font-quicksand font-semibold inline-block py-1 px-2 rounded-full text-blueGray-600 bg-blueGray-200 last:mr-0 mr-1">
+                            Assigned By:<i className="fa-solid fa-user mr-1 ml-1"></i>{assignee === employee_name ? "Self" : assignee}
+                        </span>
+                    </div>
+
+                    <div className='ml-auto'>
+                        <span className={`text-xs font-quicksand font-semibold inline-block py-1 px-2 rounded-full font-quicksand ${expiredCheck(dead_line) ? 'text-red-400' : 'text-green-400'} last:mr-0 mr-1`}>
+                            <i className="fa-solid fa-clock mr-1"></i> {moment(dead_line).format(DateFormatCard)}
+                        </span>
+                    </div>
+
+                </div>
+                
+            </div>
+            {/* <Card className={`h-full ${my_task ? 'border-left-success' : 'border-left-blue'}`}>
                 <div className='p-3 '>
                     <div className="flex flex-wrap relative">
                         <div className="w-1/2 flex items-center">
@@ -183,7 +217,7 @@ const DashboardCard = (props) => {
                     <StatusComponent {...props} my_task={my_task} />
 
                 </div>
-            </Card>
+            </Card> */}
         </React.Fragment>
 
     )

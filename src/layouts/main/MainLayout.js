@@ -38,7 +38,7 @@ function MainLayout() {
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
   return (
     <React.Fragment>
-      <div className="bg-gray-200 flex h-screen w-full fixed">
+      <div className="bg-screenBackgroundColor flex h-screen w-full fixed">
         <div className='overflow-y-auto overflow-x-hidden min-h-screen hidden sm:block md:block lg:block xl:block'>
           <Sidebar navigationUrl={sidebarMenu} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen}/>
         </div>
