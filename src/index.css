@@ -4,6 +4,8 @@
 
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=Quicksand:wght@300;400;500;600;700&display=swap');
+
 .border-left-success {
     border-left: 4px solid #4ADE80;
     border-radius: 4px;

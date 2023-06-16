@@ -48,6 +48,9 @@ export const theme = {
   colors: {
     ...colors,
     transparent: "transparent",
+    screenBackgroundColor: "#F7F7F7",
+    projectDivBGColor: "#F8F9FD",
+    borderColor: "#030303",
     current: "current",
     facebook: {
       regular: "#3b5999",
@@ -131,6 +134,9 @@ export const theme = {
     },
     letterSpacing: {
       875: "0.875rem",
+    },
+    fontFamily:{
+      'quicksand': "Quicksand"
     },
     fontSize: {
       10: "10rem",

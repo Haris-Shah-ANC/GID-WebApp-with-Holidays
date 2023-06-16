@@ -41,7 +41,7 @@ function MainLayout() {
   };
   return (
     <React.Fragment>
-      <div className="w-full min-h-screen bg-gray-200">
+      <div className="w-full min-h-screen bg-screenBackgroundColor">
           <Sidebar navigationUrl={sidebarMenu} sidebarShow={sidebarShow} setSidebarShow={setSidebarShow} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} handleDrawerClick={handleDrawerClick}/>
         <div className={`relative md:ml-64`}>
           <Navbar handleDrawerClick={handleDrawerClick} />
