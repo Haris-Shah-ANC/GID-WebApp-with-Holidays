@@ -46,9 +46,9 @@ const Registration = () => {
                             />
                         </div>
                         <div className="text-center mt-5">
-                            <Button fullWidth={true} color="facebook" onClick={() => notifySuccessMessage('clicked')} >
+                            <CustomButton fullWidth={true} color="facebook" onClick={() => notifySuccessMessage('clicked')} >
                                 Reset Password
-                            </Button>
+                            </CustomButton>
                         </div>
                     </form>
                 </div>
