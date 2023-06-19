@@ -30,7 +30,7 @@ import {
 const CreateNewTask = (props) => {
     const { setShowModal, data } = props;
     const { work_id } = getWorkspaceInfo();
-
+    console.log("CREATE NEW TASK", JSON.stringify(data, 0, 2))
     const navigate = useNavigate();
     const dispatch = Actions.getDispatch(React.useContext);
 
@@ -41,6 +41,7 @@ const CreateNewTask = (props) => {
         module_id: data ? data.module_id : null,
         dead_line: data ? data.dead_line : null,
         project_id: data ? data.project_id : null,
+        on_hold_reason: data? data.on_hold_reason: null,
         status: data ? data.status : 'In-Progress',
     }
     const [formData, setFormData] = React.useState({ ...initial_data })
@@ -118,99 +119,156 @@ const CreateNewTask = (props) => {
     };
 
     return (
-        <div className="w-full border-0 rounded-lg shadow-lg relative flex flex-col bg-white outline-none focus:outline-none">
-            {/* header */}
-            <div className="flex items-center justify-between p-5 border-b border-solid border-slate-200 rounded-t text-black">
-                <h3 className="text-2xl font-semibold">{formData.task_id ? 'Update Task' : 'Add Task'}</h3>
-                <button
-                    className="text-lg w-10 h-10 ml-auto rounded-full focus:outline-none hover:bg-gray-200 flex justify-center items-center"
-                    onClick={() => setShowModal(false)}
-                >
-                    <i className="fa-solid fa-times"></i>
-                </button>
-            </div>
-            <form>
-                {/* body */}
-                <div className="relative p-6 flex-auto">
-                    <div className="my-1">
-                        <CustomLabel label={`Select  Project`} />
-                        <Dropdown disabled={formData.task_id ? true : false} placeholder={true} options={projectsResults} optionLabel={'project_name'} value={selectedProject ? selectedProject : { project_name: 'Select project' }} setValue={(value) => setFormData((previous) => ({ ...previous, project_id: value ? value.project_id : null }))} />
-                    </div>
-                    {
-                        !formData.task_id &&
-                        <div className="my-4">
-                            <CustomLabel label={`Select Module`} />
-                            <Dropdown placeholder={true} options={moduleResults} optionLabel={'module_name'} value={selectedModule ? selectedModule : { module_name: 'Select project' }} setValue={(value) => setFormData((previous) => ({ ...previous, module_id: value ? value.module_id : null }))} />
-                        </div>
-                    }
-
-                    <div className="my-4">
-                        <CustomLabel label={`Description`} />
-                        <Input
-                            type='textarea'
-                            id='description'
-                            className="h-20"
-                            placeholder="Add the task description"
-                            value={formData.task ? formData.task : ''}
-                            onChange={(e) => setFormData((previous) => ({ ...previous, task: e.target.value }))}
-                        />
-                    </div>
-                    <div className="my-4 flex justify-between items-center">
-                        <div className="flex items-center cursor-pointer">
-                            <Checkbox
-                                value="In-Progress"
-                                checked={formData.status === 'In-Progress'}
-                                onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
-                            />
-                            <CustomLabel className={`ml-2`} label={'In Progress'} />
-                        </div>
-                        <div className="flex items-center cursor-pointer">
-                            <Checkbox
-                                value="Pending"
-                                checked={formData.status === 'Pending'}
-                                onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
-                            />
-                            <CustomLabel className={`ml-2`} label={'Pending'} />
-                        </div>
-                        {
-                            formData.task_id &&
-                            <div className="flex items-center cursor-pointer">
-                                <Checkbox
-                                    value="Completed"
-                                    checked={formData.status === 'Completed'}
-                                    onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
-                                />
-                                <CustomLabel className={`ml-2`} label={'Completed'} />
-                            </div>
-                        }
-                    </div>
-
-                    <div className="my-4">
-                        <CustomLabel className={`ml-2`} label={<span><i className="fa-solid fa-calendar-days text-base mr-1"></i>Deadline</span>} />
-                        <Input
-                            id="datetime"
-                            name="datetime"
-                            type="datetime-local"
-                            value={formData.dead_line ? formData.dead_line : ''}
-                            onChange={(e) => setFormData((previous) => ({ ...previous, dead_line: e.target.value }))}
-                        />
-                    </div>
-
-                </div>
-
-                {/* footer */}
-                <div className="p-6 border-t border-solid border-slate-200 rounded-b">
+        <div className="relative my-6 md:w-2/4">
+            <div className="w-full border-0 rounded-lg shadow-lg relative flex flex-col bg-white outline-none focus:outline-none">
+                {/* header */}
+                <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
+                    <h3 className="text-lg font-quicksand font-bold text-center w-full">{formData.task_id ? 'Update Task' : 'Add Task'}</h3>
                     <button
-                        type="button"
-                        onClick={handleSaveChanges}
-                        className="bg-blue-500 text-white active:bg-blue-600 font-bold text-sm w-full py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150"
-                    >
-                        Save Changes
+                        className="text-lg w-10 h-10 ml-auto rounded-full focus:outline-none hover:bg-gray-200 flex justify-center items-center"
+                        onClick={() => setShowModal(false)}>
+                        <i className="fa-solid fa-times"></i>
                     </button>
                 </div>
-            </form>
+                <form>
+
+                    <div className="relative px-5 pt-2 flex-auto">
+                        <div className="my-1 flex flex-col">
+                            <CustomLabel label={`Select  Project`} className={'font-quicksand font-semibold text-sm mb-1'}/>
+                            <Dropdown disabled={formData.task_id ? true : false} placeholder={true} options={projectsResults} optionLabel={'project_name'} value={selectedProject ? selectedProject : { project_name: 'Select project' }} setValue={(value) => setFormData((previous) => ({ ...previous, project_id: value ? value.project_id : null }))} />
+                        </div>
+                        {
+                            !formData.task_id &&
+                            <div className="my-4 flex flex-col">
+                                <CustomLabel label={`Select Module`} className={'font-quicksand font-semibold text-sm mb-1'}/>
+                                <Dropdown placeholder={true} options={moduleResults} optionLabel={'module_name'} value={selectedModule ? selectedModule : { module_name: 'Select project' }} setValue={(value) => setFormData((previous) => ({ ...previous, module_id: value ? value.module_id : null }))} />
+                            </div>
+                        }
+
+                        <div className="mt-4 flex flex-col">
+                            <CustomLabel label={`Description`} className={'font-quicksand font-semibold text-sm mb-1'} />
+                            <Input
+                                type='textarea'
+                                id='description'
+                                className="h-20"
+                                placeholder="Add the task description"
+                                value={formData.task ? formData.task : ''}
+                                onChange={(e) => setFormData((previous) => ({ ...previous, task: e.target.value }))}
+                            />
+                        </div>
+                        <CustomLabel label={`Status`} className={'font-quicksand font-semibold text-sm mb-1'} />
+                        <div className='grid grid-cols-1 space-y-2 md:grid-cols-2 font-quicksand font-semibold text-sm'>
+                            <div className="flex items-center cursor-pointer ">
+                                <Checkbox
+                                    value="In-Progress"
+                                    checked={formData.status === 'In-Progress'}
+                                    onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
+                                />
+                                <CustomLabel className={`ml-2`} label={'In Progress'} />
+                            </div>
+                            <div className="flex items-center cursor-pointer">
+                                <Checkbox
+                                    value="Pending"
+                                    checked={formData.status === 'Pending'}
+                                    onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
+                                />
+                                <CustomLabel className={`ml-2`} label={'Pending'} />
+                            </div>
+
+                            {
+                                formData.task_id &&
+                                <div className="flex items-center cursor-pointer">
+                                    <Checkbox
+                                        value="Completed"
+                                        checked={formData.status === 'Completed'}
+                                        onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
+                                    />
+                                    <CustomLabel className={`ml-2`} label={'Completed'} />
+                                </div>
+                            }
+
+                            {formData.status.toLowerCase != "on hold" && <div className="flex items-center cursor-pointer">
+                                <Checkbox
+                                    value="On Hold"
+                                    checked={formData.status === 'On Hold'}
+                                    onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
+                                />
+                                <CustomLabel className={`ml-2`} label={'On Hold'} />
+                            </div>}
+                        </div>
+
+                        { formData.status === "On Hold" &&
+                            <div className="my-4 flex flex-col">
+                            <CustomLabel label={`Reason`} className={'font-quicksand font-semibold text-sm mb-1'} />
+                            <Input
+                                type='textarea'
+                                id='on_hold_reason'
+                                className="h-20"
+                                placeholder="Add the task on hold reason"
+                                value={formData.on_hold_reason ? formData.on_hold_reason : ''}
+                                onChange={(e) => setFormData((previous) => ({ ...previous, on_hold_reason: e.target.value }))}
+                            />
+                        </div>
+                        }
 
 
+                        {/* <div className="mb-4 mt-2 flex justify-between items-center">
+                            <div className="flex items-center cursor-pointer">
+                                <Checkbox
+                                    value="In-Progress"
+                                    checked={formData.status === 'In-Progress'}
+                                    onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
+                                />
+                                <CustomLabel className={`ml-2`} label={'In Progress'} />
+                            </div>
+                            <div className="flex items-center cursor-pointer">
+                                <Checkbox
+                                    value="Pending"
+                                    checked={formData.status === 'Pending'}
+                                    onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
+                                />
+                                <CustomLabel className={`ml-2`} label={'Pending'} />
+                            </div>
+                            {
+                                formData.task_id &&
+                                <div className="flex items-center cursor-pointer">
+                                    <Checkbox
+                                        value="Completed"
+                                        checked={formData.status === 'Completed'}
+                                        onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
+                                    />
+                                    <CustomLabel className={`ml-2`} label={'Completed'} />
+                                </div>
+                            }
+                        </div> */}
+
+                        <div className="my-4 flex flex-col">
+                            <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={<span><i className="fa-solid fa-calendar-days text-base mb-1 mr-1"></i>Deadline</span>} />
+                            <Input
+                                id="datetime"
+                                name="datetime"
+                                type="datetime-local"
+                                value={formData.dead_line ? formData.dead_line : ''}
+                                onChange={(e) => setFormData((previous) => ({ ...previous, dead_line: e.target.value }))}
+                            />
+                        </div>
+
+                    </div>
+
+                    
+                    <div className="p-6 border-solid border-slate-200 rounded-b">
+                        <button
+                            type="button"
+                            onClick={handleSaveChanges}
+                            className="bg-blue-500 text-white active:bg-blue-600 font-bold text-sm w-full py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150"
+                        >
+                            Save Changes
+                        </button>
+                    </div>
+                </form>
+
+
+            </div>
         </div>
     )
 }

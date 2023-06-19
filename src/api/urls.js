@@ -55,6 +55,10 @@ export const timeline_task = (work_id,employee_id,status_in) => {
     return HOST + APP_NAME +  `/timeline_task/?workspace_id=${work_id}&employee_id=${employee_id}&status_in=${status_in}`
 }
 
+export const getTaskListUrl=()=>{
+    return HOST + APP_NAME + `/multifilter_task/`
+}
+
 
 
 

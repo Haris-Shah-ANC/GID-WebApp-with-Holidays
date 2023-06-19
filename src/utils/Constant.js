@@ -2,6 +2,7 @@
 export const imagesList = {
     appLogo: { src: require('../assets/image/logo.png'), alt: 'logo.png' },
     profile: { src: require('../assets/image/undraw_profile.png'), alt: 'undraw_profile.png' },
+    employee_default_img: {src: require('../assets/image/profile.png')}
 
 }
 
