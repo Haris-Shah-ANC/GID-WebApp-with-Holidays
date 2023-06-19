@@ -28,20 +28,20 @@ const Sidebar = ({ navigationUrl = [], isSidebarOpen, setIsSidebarOpen, sidebarS
 
   const [showModal, setShowModal] = React.useState(false);
   return (
-    <div className={`bg-blue-500 text-white block  top-0 bottom-0 w-${isSidebarOpen ? '64' : 'auto'} shadow-xl left-0 fixed flex-row flex-nowrap md:z-10 z-9999 transition-all duration-300 ease-in-out transform md:translate-x-0 ${sidebarShow}`}>
+    <div className={`bg-white text-white block  top-0 bottom-0 w-${isSidebarOpen ? '64' : 'auto'} shadow-xl left-0 fixed flex-row flex-nowrap md:z-10 z-9999 transition-all duration-300 ease-in-out transform md:translate-x-0 ${sidebarShow}`}>
       <ModelComponent showModal={showModal} setShowModal={setShowModal} />
 
       <div className="flex-grow">
-        <div className="flex items-center justify-between border-b border-gray-400">
-          <div className='flex items-center'>
+        <div className="flex items-center justify-between border-gray-400">
+          <div className='flex items-center  w-full'>
             <img
               src={imagesList.appLogo.src}
               alt={imagesList.appLogo.alt}
-              className="w-20 h-20 rounded-full mr-4"
+              className="w-20 my-4 rounded-full mr-4 bg-cover"
             />
             <div className="flex flex-col">
-              <span className="text-xl font-bold">GET IT</span>
-              <span className="text-xl font-bold">DONE</span>
+              <span className="text-xl font-bold font-quicksand text-blue-500">GET IT</span>
+              <span className="text-xl font-bold font-quicksand text-blue-500">DONE</span>
             </div>
           </div>
           <button
@@ -57,7 +57,7 @@ const Sidebar = ({ navigationUrl = [], isSidebarOpen, setIsSidebarOpen, sidebarS
           <ul className="flex flex-col">
             <li
               title={isSidebarOpen ? '' : "Add Task"}
-              className={` ${isSidebarOpen ? '' : 'justify-center'} bg-vimeo-regular font-semibold p-4 border-b border-gray-400 flex items-center hover:bg-vimeo-active cursor-pointer`}
+              className={` ${isSidebarOpen ? '' : 'justify-center'} m-1 rounded-md font-quicksand font-bold bg-blue-500 p-4 border-gray-400 flex items-center hover:bg-vimeo-active cursor-pointer`}
               onClick={() => { setShowModal(add_task) }}
             >
               <i className={`fa-solid fa-plus mr-2`}></i>
@@ -72,12 +72,12 @@ const Sidebar = ({ navigationUrl = [], isSidebarOpen, setIsSidebarOpen, sidebarS
                   ) : (
                     <li
                       title={isSidebarOpen ? '' : item.name}
-                      className={` ${isSidebarOpen ? '' : 'justify-center'} ${activeItem === item.active ? 'bg-blue-700 font-semibold' : ''} p-4 border-b border-gray-400 flex items-center hover:bg-blue-600 cursor-pointer`}
+                      className={` ${isSidebarOpen ? '' : 'justify-center'} ${activeItem === item.active ? 'bg-blue-600 font-bold text-white' : ''} m-1 text-gray-500 text-sm font-quicksand font-semibold px-4 py-5 border-gray-400 flex items-center rounded-md hover:${activeItem === item.active ? 'bg-blue-600': 'bg-blue-400'} cursor-pointer hover:text-white`}
                       onClick={() => { setActiveItem(item.active); navigate(item.path) }}
                     >
                       <Link
                         to={item.path}
-                        className="text-white cursor-pointer"
+                        className="cursor-pointer"
                         onClick={() => navigate(item.path)}
                       >
                         <i className={`${item.icon} mr-2`}></i>
@@ -122,9 +122,9 @@ const ChildItemComponent = (props) => {
       <li
         onClick={() => onClickedHandler()}
         title={isSidebarOpen ? '' : item.name}
-        className={` ${isSidebarOpen ? '' : 'justify-center'} ${activeItem === item.active ? 'bg-blue-700 font-semibold' : ''} p-4 border-b border-gray-400 flex items-center hover:bg-blue-600`}
+        className={` ${isSidebarOpen ? '' : 'justify-center'} ${activeItem === item.active ? 'bg-blue-600 font-bold text-white' : ''} m-1 text-sm text-gray-500 font-quicksand font-semibold p-4 border-gray-400 flex items-center rounded-md hover:${activeItem === item.active ? 'bg-blue-500': 'bg-blue-400'} hover:text-white`}
       >
-        <span className="text-white cursor-pointer">
+        <span className="cursor-pointer">
           <i className={`${item.icon} mr-2`}></i>
           <span className={`${isSidebarOpen ? '' : 'hidden'}`}>{item.name}</span>
         </span>
@@ -137,17 +137,17 @@ const ChildItemComponent = (props) => {
           <ul className='p-2 bg-white shadow-lg rounded-md flex flex-col text-black'>
             {childItem === 'work_space' &&
               <React.Fragment>
-                <li className='p-2 text-gray-500'>Select Workspace:</li>
-                <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md'>ANC</li>
-                <li onClick={() => { setShowModal(create_new_work_space) }} className='p-2 text-sm cursor-pointer hover:bg-gray-200 rounded-md'><div className=" flex items-center"><i className="fa-solid fa-plus mr-1 font-semibold"></i>Create New Workspace</div></li>
+                <li className='p-2 text-gray-500 font-quicksand font-semibold text-sm'>Select Workspace:</li>
+                <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-semibold text-sm'>ANC</li>
+                <li onClick={() => { setShowModal(create_new_work_space) }} className='p-2 text-sm cursor-pointer hover:bg-gray-200 rounded-md font-medium'><div className=" flex items-center"><i className="fa-solid fa-plus mr-1 font-semibold"></i>Create New Workspace</div></li>
               </React.Fragment>
             }
 
             {childItem === 'meeting' &&
               <React.Fragment>
-                <li className='p-2 text-gray-500'>Select Meeting:</li>
-                <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md'>Daily Standup</li>
-                <li className='p-2 text-sm cursor-pointer hover:bg-gray-200 rounded-md'><div className=" flex items-center"><i className="fa-solid fa-plus mr-1 font-semibold"></i>Add New Meeting</div></li>
+                <li className='p-2 text-gray-500 font-quicksand font-semibold text-sm'>Select Meeting:</li>
+                <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm'>Daily Standup</li>
+                <li className='p-2 text-sm cursor-pointer hover:bg-gray-200 rounded-md'><div className=" flex items-center"><i className="fa-solid fa-plus mr-1 font-semibold font-quicksand text-sm"></i>Add New Meeting</div></li>
               </React.Fragment>
             }
           </ul>

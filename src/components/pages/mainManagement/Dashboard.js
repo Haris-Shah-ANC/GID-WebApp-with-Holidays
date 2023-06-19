@@ -27,6 +27,7 @@ import {
 } from '../../../config/cookiesInfo';
 import classNames from 'classnames';
 import PopUpMenu from '../../custom/popups/PopUpMenu';
+import Checkbox from '../../custom/Elements/Checkbox';
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -171,7 +172,7 @@ const Dashboard = () => {
                         { console.log("BTN ", item) }
                         return (
                             <div className={`flex flex-row px-0.5 mx-5 pb-3 items-center ${getBtnStyle(index)}`} >
-                                <button className={classNames("flex font-quicksand font-bold flex-row items-center text-md hover:opacity-75  outline-none focus:outline-none", {
+                                <button className={classNames("flex font-quicksand font-bold flex-row items-center text-sm hover:opacity-75  outline-none focus:outline-none", {
                                     "text-[#b7c1cc]": index!==taskCategoryIndex,
                                     "text-[#2e53e2]":index===taskCategoryIndex})} onClick={() => onCategoryBtnClick(index)}>
                                     {item.title}
@@ -187,11 +188,11 @@ const Dashboard = () => {
                 <div className='flex items-center mr-5'>
                     <button className='flex items-center border border-[#dddddf] rounded-lg mb-3 py-2 px-3 mr-6 hover:opacity-75 outline-none focus:outline-none'>
                         <i className="fa-solid fa-sliders mr-2 text-[#75787b]"></i>
-                        <p className='text-[#75787b] font-medium'>Filter & Sort</p>
+                        <p className='text-[#75787b] font-semibold font-quicksand text-sm'>Filter & Sort</p>
                     </button>
                     <button className='flex  items-center py-2 px-3 mb-3 border border-[#dddddf] rounded-lg hover:opacity-75 outline-none focus:outline-none'>
                         <i className="fa-solid fa-plus mr-2 text-[#75787b]" ></i>
-                        <p className='text-[#75787b] font-medium'>Add New</p>
+                        <p className='text-[#75787b] font-semibold font-quicksand text-sm'>Add New</p>
                     </button>
 
 
@@ -237,6 +238,7 @@ const DashboardCard = (props) => {
     const [popoverShow, setPopoverShow] = React.useState(false);
     const btnRef = React.createRef();
     const popoverRef = React.createRef();
+    const [openOnHoldReason, showOnHoldReason] = useState(false)
     const { assignee, dead_line, employee_name, project_name, employee_id, task, created_at, onEditClick } = props;
 
     let my_task = user_id === employee_id;
@@ -253,17 +255,107 @@ const DashboardCard = (props) => {
 
     return (
         <React.Fragment>
-            <div className='bg-white flex flex-col p-5 rounded-lg h-full border-borderColor-0 shadow-md' >
+            <div className='bg-white flex flex-col px-5 py-2 rounded-lg h-full border-borderColor-0 shadow-md' >
                 
                 
-                <div className='flex justify-between'>
-                    <span className="text-xs font-semibold font-quicksand inline-block py-1 px-2 rounded-xl text-lightBlue-600 bg-lightBlue-200 last:mr-0 mr-1">
-                    {project_name}</span>
-                    {/* <i class="fa-solid fa-ellipsis fa-lg" style={{color: "#b4bcc2"}} onClick={() => {popoverShow ? closePopover() : openPopover();}} ref={btnRef}></i> */}
-                    <span className="text-xs font-semibold font-quicksand inline-block py-1 px-2 last:mr-0 mr-1">
-                    {"Module Name"}</span>
-                </div>
-                <div onClick={() => {onEditClick(props)}}>
+                    <div className='flex flex-col'>
+                        <div className='max-h-12 align-top font-quicksand font-medium flex'>
+                            { props.status != "Completed" && <input
+                                type="checkbox"
+                                className="form-checkbox appearance-none ml-1 w-4 h-4 self-center mr-2 ease-linear transition-all duration-150 border border-blueGray-300 rounded focus:border-blueGray-300"
+                                />}
+                            <p className='text-5 text-blueGray-800 font-sans line-clamp-2'>{task}</p>
+                        </div>
+                        <span className="text-xs font-quicksand font-normal inline-block pb-1 text-blueGray-600 last:mr-0 mr-1">
+                                    {"This is sample task description "}
+                        </span>
+                    </div>
+                    
+                    <div onClick={() => {onEditClick(props)}}>
+                        <div className='flex justify-between my-3'>
+                            <span className="text-xs font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-md text-lightBlue-600 bg-lightBlue-200 last:mr-0 mr-1">
+                            {project_name}</span>
+                            <span className="text-xs font-semibold font-quicksand inline-block py-1">
+                            {"Module Name"}</span>
+                        </div>
+
+                        <div className="flex flex-wrap my-2">
+                            <div className='mr-auto'>
+                                <span className={`text-xs font-quicksand font-semibold inline-block py-1 px-0 rounded-full ${expiredCheck(dead_line) ? 'text-red-400' : 'text-green-400'} last:mr-0 mr-1`}>
+                                    <i className="fa-solid fa-clock mr-1"></i> {moment(dead_line).format(DateFormatCard)}
+                                </span>
+                            </div>
+
+                            <div className='ml-auto'>
+                                <span className="text-gray-500 ml-auto mt-1 text-xs font-quicksand font-semibold">{getTimeAgo(created_at)}</span>
+                            </div>
+                        </div>
+
+                    </div>
+                    
+                    <div className='flex flex-wrap justify-between items-center'>
+                    <span className="text-xs font-quicksand font-normal inline-block py-1 text-blueGray-600 last:mr-0 mr-1 self-center">
+                                    Assigned By: {assignee === employee_name ? <span className='font-quicksand font-semibold'>Self</span> : <span className='font-quicksand font-semibold'>{assignee}</span>}
+                        </span>
+                        { props.status === "On Hold" && 
+                            <div className={`rounded-2xl bg-white pt-0 text-xs font-bold leading-none flex flex-col flex-wrap`}>
+                                <span className={`text-yellow-400`} onClick={() => {showOnHoldReason(!openOnHoldReason)}}>{props.status}</span>
+                            </div>
+                        }
+                    {/* {props.status === "On Hold" && <StatusComponent {...props} my_task={my_task} />} */}
+                    </div>
+
+                    { openOnHoldReason && 
+                        <div className='border px-1 rounded-sm'>
+                            <span className={`text-gray-500 text-xs font-quicksand font-medium my-2`}>{props.on_hold_reason}</span>
+                        </div>
+                    }
+
+                    <div className='flex rounded-lg flex-wrap mt-2 items-center'>
+                        <img className='w-6 h-6 rounded-full' src={imagesList.employee_default_img.src} alt=''></img>
+                        <div className='flex flex-col ml-3'>
+                            <p className='text-5 text-black text-xs font-quicksand font-semibold'>{employee_name}</p>
+                        </div>
+                    </div>
+            
+
+
+                {/* <div onClick={() => {onEditClick(props)}}>
+                    <div className='flex rounded-lg flex-wrap my-2 items-center'>
+                        <img className='w-12 h-12 rounded-full' src={imagesList.employee_default_img.src} alt=''></img>
+                        <div className='flex flex-col ml-3'>
+                            <p className='text-5 text-black text-xs font-quicksand font-semibold'>{employee_name}</p>
+                            <span className="text-xs font-quicksand font-medium inline-block py-1 text-blueGray-600 last:mr-0 mr-1">
+                                        Assigned By: {assignee === employee_name ? <span className='font-quicksand font-semibold'>Self</span> : <span className='font-quicksand font-semibold'>{assignee}</span>}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div className='mb-2 h-12 justify-center align-middle font-quicksand font-medium flex flex-col'>
+                        <p className='text-5 text-blueGray-800 font-sans line-clamp-2'>{task}</p>
+                    </div>
+                    
+                    <div className='flex justify-between flex-wrap'>
+                        <span className="text-xs font-semibold font-quicksand inline-block py-1 px-2 rounded text-lightBlue-600 bg-lightBlue-200 last:mr-0 mr-1">
+                        {project_name}</span>
+                        <span className="text-xs font-semibold font-quicksand inline-block py-1 last:mr-0 mr-1 self-center">
+                        {"Module Name"}</span>
+                    </div>
+
+                    <div className="flex flex-wrap my-2">
+                        <div className='mr-auto'>
+                            <span className={`text-xs font-quicksand font-semibold inline-block py-1 px-0 self-center rounded-full ${expiredCheck(dead_line) ? 'text-red-400' : 'text-green-400'} last:mr-0 mr-1`}>
+                                <i className="fa-solid fa-clock mr-1"></i> {moment(dead_line).format(DateFormatCard)}
+                            </span>
+                        </div>
+
+                        <div className='ml-auto'>
+                            <span className="text-gray-500 ml-auto mt-1 text-xs font-quicksand font-semibold self-center">{getTimeAgo(created_at)}</span>
+                        </div>
+                    </div>
+                </div> */}
+
+                {/* <div onClick={() => {onEditClick(props)}}>
                     <div className='flex flex-col'>
                         <div className='mt-4 h-12 justify-center align-middle font-quicksand font-medium flex flex-col'>
                             <p className='text-5 text-blueGray-800 font-sans line-clamp-2'>{task}</p>
@@ -273,12 +365,6 @@ const DashboardCard = (props) => {
                         </span>
                     </div>
                     
-                    <div className='flex rounded-lg flex-wrap mt-2 items-center'>
-                        <img className='w-6 h-6 rounded-full' src={imagesList.employee_default_img.src} alt=''></img>
-                        <div className='flex flex-col ml-3'>
-                            <p className='text-5 text-black text-xs font-quicksand font-medium'>{employee_name}</p>
-                        </div>
-                    </div>
 
                     <div className="flex flex-wrap mt-2">
                         <div className='mr-auto'>
@@ -291,10 +377,10 @@ const DashboardCard = (props) => {
                             <span className="text-gray-500 ml-auto mt-1 text-xs font-quicksand font-semibold">{getTimeAgo(created_at)}</span>
                         </div>
                     </div>
-                </div>
-                {props.status === "On Hold" && <StatusComponent {...props} my_task={my_task} />}
+                </div> */}
+
             </div>
-            <PopUpMenu popoverRef={popoverRef} popoverShow={popoverShow} onTaskEditClick={""} onTaskCompleteClick={""} taskData={props}></PopUpMenu>
+            {/* <PopUpMenu popoverRef={popoverRef} popoverShow={popoverShow} onTaskEditClick={""} onTaskCompleteClick={""} taskData={props}></PopUpMenu> */}
             {/* <Card className={`h-full ${my_task ? 'border-left-success' : 'border-left-blue'}`}>
                 <div className='p-3 '>
                     <div className="flex flex-wrap relative">
@@ -356,7 +442,7 @@ const StatusComponent = (props) => {
     };
     return (
         <React.Fragment>
-            <div className="flex items-center mt-2">
+            <div className="flex items-center self-center">
                 {status === "On Hold" && (
                     <div className={`rounded-2xl bg-white pt-0 text-xs font-bold leading-none flex flex-col flex-wrap`}>
                         <span className={`text-yellow-400`} onClick={() => {showOnHoldReason(!openOnHoldReason)}}>{status}</span>
