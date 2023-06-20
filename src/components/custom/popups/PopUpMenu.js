@@ -1,5 +1,4 @@
 import React from "react";
-import { createPopper } from "@popperjs/core";
 
 const PopUpMenu = (props) => {
   const {popoverRef, popoverShow, onTaskEditClick, onTaskCompleteClick, taskData} = props

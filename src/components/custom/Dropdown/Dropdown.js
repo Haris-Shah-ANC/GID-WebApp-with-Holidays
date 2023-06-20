@@ -18,7 +18,7 @@ const Dropdown = (props) => {
         onChange={handleSelectChange}
         value={JSON.stringify(value)}
         className= {`${disabled?'bg-gray-100 ':''} cursor-pointer w-full border-blueGray-300 text-blueGray-700 rounded px-4 py-2`}
-      >
+      > 
         {options.map((item, index) => {
           return (
             <React.Fragment key={index}>
@@ -36,6 +36,7 @@ const Dropdown = (props) => {
           )
         }
         )}
+        
       </select>
     </div>
   );

@@ -2,12 +2,11 @@ import React, { useEffect, useState } from 'react';
 import moment from 'moment';
 import Card from '../../custom/Cards/Card';
 import { apiAction } from '../../../api/api';
-import { useNavigate } from 'react-router-dom';
+import { json, useNavigate } from 'react-router-dom';
 import * as Actions from '../../../state/Actions';
 import Dropdown from '../../custom/Dropdown/Dropdown';
-import { DateFormatCard, add_task, create_new_work_space, imagesList } from '../../../utils/Constant';
+import { DateFormatCard, add_task, create_new_work_space, filter_and_sort, imagesList } from '../../../utils/Constant';
 import ModelComponent from '../../custom/Model/ModelComponent';
-import { createPopper } from "@popperjs/core";
 
 import {
     get_task,
@@ -38,15 +37,16 @@ const Dashboard = () => {
     const [employeeResults, setEmployeeResults] = useState([]);
     const [projectsResults, setProjectsResults] = useState([]);
     const [taskCategoryIndex, setTaskCategoryIndex] = useState(0)
-    const [btnLabelList,setTaskCount] = useState([{ title: "In Progress", count: 0 }, { title: "Pending", count: 0 }, { title: "Completed", count: 0 }])
-    const [postBody, setPostBody] = useState({ "workspace_id": work_id,projects:[], "tasks": ["In-Progress", "On Hold"], "employees": [user_id] })
+    const [btnLabelList, setTaskCount] = useState([{ index: 0, title: "In Progress", count: 0 }, { index: 1, title: "Pending", count: 0 }, { index: 2, title: "Completed", count: 0 }])
+    const [postBody, setPostBody] = useState({ "workspace_id": work_id, projects: [], "tasks": ["In-Progress", "On Hold"], "employees": [user_id] })
 
     const [showModal, setShowModal] = useState(false);
     const [formData, setFormData] = useState({});
 
     const [filters, setFilters] = useState({
+        employee_id: null,
+        module_id: null,
         project_id: null,
-        employee_id: user_id,
     })
 
 
@@ -117,6 +117,7 @@ const Dashboard = () => {
     const getTaskList = async () => {
         let res = await apiAction({ url: getTaskListUrl(), method: 'post', navigate: navigate, dispatch: dispatch, data: postBody })
         if (res.success) {
+            console.log("RESPONSE", JSON.stringify(res, 0, 2))
             setTasksResults(res.result)
             btnLabelList[taskCategoryIndex].count = res.result.length
             setTaskCount([...btnLabelList])
@@ -125,11 +126,11 @@ const Dashboard = () => {
 
     const onCategoryBtnClick = (index) => {
         setTaskCategoryIndex(index)
-        if(index===0){
-            setPostBody({...postBody,tasks:["In-Progress","On Hold"]})
-        }else if(index===1){
+        if (index === 0) {
+            setPostBody({ ...postBody, tasks: ["In-Progress", "On Hold"] })
+        } else if (index === 1) {
             setPostBody({ ...postBody, tasks: ["Pending"] })
-        }else if(index===2){
+        } else if (index === 2) {
             setPostBody({ ...postBody, tasks: ["Completed"] })
         }
     }
@@ -146,25 +147,62 @@ const Dashboard = () => {
             task: item.task,
             module_id: null,
             work_id: work_id,
-            status: item.status, 
+            status: item.status,
             task_id: item.task_id,
             project_id: item.project_id,
             on_hold_reason: item.on_hold_reason,
             dead_line: moment(item.dead_line).format("YYYY-MM-DD HH:mm"),
-          });
+        });
         setShowModal(add_task)
+    }
+    const onFilterApply = (data) => {
+        console.log("FILTER DATA", data)
+        setFilters(data)
+        let pBody = { ...postBody, workspace_id: work_id }
+        if (data.employee_id) {
+            pBody["employees"] = [data.employee_id]
+        } else {
+            pBody["employees"] = []
+        }
+        if (data.module_id) {
+            // pBody["module_id"] = [data.module_id]
+        } else {
+            // pBody["module_id"] = [data.module_id]
+        }
+        if (data.project_id) {
+            pBody["projects"] = [data.project_id]
+        } else {
+            pBody["projects"] = []
+        }
+        
+        if (postBody !== {}) {
+            setPostBody(pBody)
+        }
+    }
+    const onFilterClear = () => {
+        setFilters({
+            employee_id: null,
+            module_id: null,
+            project_id: null,
+        })
+        setPostBody({ tasks: [btnLabelList[taskCategoryIndex].title], projects: [], workspace_id: work_id, employees: [] })
+    }
+
+    const onFilterClick = () => {
+        setFormData(filters);
+        setShowModal(filter_and_sort)
     }
 
     return (
         <React.Fragment>
-            <ModelComponent showModal={showModal} setShowModal={setShowModal} data={formData} />
+            <ModelComponent showModal={showModal} setShowModal={setShowModal} data={formData} onFilterApply={onFilterApply} onFilterClear={onFilterClear} />
             {/* <Filter
                 filters={filters}
                 setFilters={setFilters}
                 employeeResults={employeeResults}
                 projectsResults={projectsResults}
             /> */}
-            
+
             <div className="bg-white rounded-xl pt-4 flex justify-between shadow">
                 <div className='flex-row flex'>
                     {btnLabelList.map((item, index) => {
@@ -172,26 +210,29 @@ const Dashboard = () => {
                         return (
                             <div className={`flex flex-row px-0.5 mx-5 pb-3 items-center ${getBtnStyle(index)}`} >
                                 <button className={classNames("flex font-quicksand font-bold flex-row items-center text-md hover:opacity-75  outline-none focus:outline-none", {
-                                    "text-[#b7c1cc]": index!==taskCategoryIndex,
-                                    "text-[#2e53e2]":index===taskCategoryIndex})} onClick={() => onCategoryBtnClick(index)}>
+                                    "text-[#b7c1cc]": index !== taskCategoryIndex,
+                                    "text-[#2e53e2]": index === taskCategoryIndex
+                                })} onClick={() => onCategoryBtnClick(index)}>
                                     {item.title}
                                 </button>
                                 <p className={classNames("px-1 text-xs mx-2 text-white rounded", {
-                                    "bg-[#2e53e2]":index===taskCategoryIndex,
-                                    "bg-[#b7c1cc]":index!==taskCategoryIndex})}>{item.count}</p>
+                                    "bg-[#2e53e2]": index === taskCategoryIndex,
+                                    "bg-[#b7c1cc]": index !== taskCategoryIndex
+                                })}>{item.count}</p>
                             </div>
                         )
                     })}
 
                 </div>
                 <div className='flex items-center mr-5'>
-                    <button className='flex items-center border border-[#dddddf] rounded-lg mb-3 py-2 px-3 mr-6 hover:opacity-75 outline-none focus:outline-none'>
+                    <button className='flex items-center border border-[#dddddf] rounded-lg mb-3 py-2 px-3 mr-6 hover:opacity-75 outline-none focus:outline-none'
+                        onClick={onFilterClick}>
                         <i className="fa-solid fa-sliders mr-2 text-[#75787b]"></i>
                         <p className='text-[#75787b] font-medium'>Filter & Sort</p>
                     </button>
-                    <button className='flex  items-center py-2 px-3 mb-3 border border-[#dddddf] rounded-lg hover:opacity-75 outline-none focus:outline-none'>
-                        <i className="fa-solid fa-plus mr-2 text-[#75787b]" ></i>
-                        <p className='text-[#75787b] font-medium'>Add New</p>
+                    <button className='flex  items-center py-2 px-3 mb-3 border border-[#2e53e2] rounded-lg hover:opacity-75 outline-none focus:outline-none'>
+                        <i className="fa-solid fa-plus mr-2 text-[#2e53e2]" ></i>
+                        <p className='text-[#2e53e2] font-medium'>Add New</p>
                     </button>
 
 
@@ -200,10 +241,10 @@ const Dashboard = () => {
             </div>
 
             <div className=" mt-6 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                {getFilteredTask(tasksResults, filters).map((item, index) => {
+                {tasksResults.map((item, index) => {
                     return (
                         <div className="h-full w-full" key={index}>
-                            <DashboardCard {...item} onEditClick={onEditClick}/>
+                            <DashboardCard {...item} onEditClick={onEditClick} />
                         </div>
                     )
                 })}
@@ -241,38 +282,30 @@ const DashboardCard = (props) => {
 
     let my_task = user_id === employee_id;
 
-    const openPopover = () => {
-        createPopper(btnRef.current, popoverRef.current, {
-          placement: "left"
-        });
-        setPopoverShow(true);
-      };
-      const closePopover = () => {
-        setPopoverShow(false);
-      };
+
 
     return (
         <React.Fragment>
             <div className='bg-white flex flex-col p-5 rounded-lg h-full border-borderColor-0 shadow-md' >
-                
-                
+
+
                 <div className='flex justify-between'>
                     <span className="text-xs font-semibold font-quicksand inline-block py-1 px-2 rounded-xl text-lightBlue-600 bg-lightBlue-200 last:mr-0 mr-1">
-                    {project_name}</span>
+                        {project_name}</span>
                     {/* <i class="fa-solid fa-ellipsis fa-lg" style={{color: "#b4bcc2"}} onClick={() => {popoverShow ? closePopover() : openPopover();}} ref={btnRef}></i> */}
                     <span className="text-xs font-semibold font-quicksand inline-block py-1 px-2 last:mr-0 mr-1">
-                    {"Module Name"}</span>
+                        {"Module Name"}</span>
                 </div>
-                <div onClick={() => {onEditClick(props)}}>
+                <div onClick={() => { onEditClick(props) }}>
                     <div className='flex flex-col'>
                         <div className='mt-4 h-12 justify-center align-middle font-quicksand font-medium flex flex-col'>
                             <p className='text-5 text-blueGray-800 font-sans line-clamp-2'>{task}</p>
                         </div>
                         <span className="text-xs font-quicksand font-normal inline-block py-1 text-blueGray-600 last:mr-0 mr-1">
-                                    Assigned By: {assignee === employee_name ? <span className='font-quicksand font-semibold'>Self</span> : <span className='font-quicksand font-semibold'>{assignee}</span>}
+                            Assigned By: {assignee === employee_name ? <span className='font-quicksand font-semibold'>Self</span> : <span className='font-quicksand font-semibold'>{assignee}</span>}
                         </span>
                     </div>
-                    
+
                     <div className='flex rounded-lg flex-wrap mt-2 items-center'>
                         <img className='w-6 h-6 rounded-full' src={imagesList.employee_default_img.src} alt=''></img>
                         <div className='flex flex-col ml-3'>
@@ -359,8 +392,8 @@ const StatusComponent = (props) => {
             <div className="flex items-center mt-2">
                 {status === "On Hold" && (
                     <div className={`rounded-2xl bg-white pt-0 text-xs font-bold leading-none flex flex-col flex-wrap`}>
-                        <span className={`text-yellow-400`} onClick={() => {showOnHoldReason(!openOnHoldReason)}}>{status}</span>
-                        { openOnHoldReason && 
+                        <span className={`text-yellow-400`} onClick={() => { showOnHoldReason(!openOnHoldReason) }}>{status}</span>
+                        {openOnHoldReason &&
                             <span className={`text-gray-500 font-quicksand font-semibold my-2`}>{on_hold_reason}</span>
                         }
                     </div>
