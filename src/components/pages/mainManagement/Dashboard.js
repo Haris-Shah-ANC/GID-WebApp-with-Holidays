@@ -7,13 +7,14 @@ import * as Actions from '../../../state/Actions';
 import Dropdown from '../../custom/Dropdown/Dropdown';
 import { DateFormatCard, add_task, create_new_work_space, imagesList } from '../../../utils/Constant';
 import ModelComponent from '../../custom/Model/ModelComponent';
-import { createPopper } from "@popperjs/core";
+import {isFormValid, notifyErrorMessage, notifySuccessMessage, formattedDeadline} from '../../../utils/Utils'
 
 import {
     get_task,
     employee,
     get_all_project,
     getTaskListUrl,
+    update_task,
 } from '../../../api/urls';
 
 import {
@@ -142,6 +143,10 @@ const Dashboard = () => {
         return ""
     }
 
+    const onTaskComplete = () => {
+        
+    }
+
     const onEditClick = (item) => {
         setFormData({
             task: item.task,
@@ -169,7 +174,6 @@ const Dashboard = () => {
             <div className="bg-white rounded-xl pt-4 flex justify-between shadow">
                 <div className='flex-row flex'>
                     {btnLabelList.map((item, index) => {
-                        { console.log("BTN ", item) }
                         return (
                             <div className={`flex flex-row px-0.5 mx-5 pb-3 items-center ${getBtnStyle(index)}`} >
                                 <button className={classNames("flex font-quicksand font-bold flex-row items-center text-sm hover:opacity-75  outline-none focus:outline-none", {
@@ -204,7 +208,7 @@ const Dashboard = () => {
                 {getFilteredTask(tasksResults, filters).map((item, index) => {
                     return (
                         <div className="h-full w-full" key={index}>
-                            <DashboardCard {...item} onEditClick={onEditClick}/>
+                            <DashboardCard {...item} onEditClick={onEditClick} onTaskComplete={onTaskComplete}/>
                         </div>
                     )
                 })}
@@ -238,37 +242,77 @@ const DashboardCard = (props) => {
     const [popoverShow, setPopoverShow] = React.useState(false);
     const btnRef = React.createRef();
     const popoverRef = React.createRef();
+    const dispatch = Actions.getDispatch(React.useContext);
     const [openOnHoldReason, showOnHoldReason] = useState(false)
-    const { assignee, dead_line, employee_name, project_name, employee_id, task, created_at, onEditClick } = props;
-
+    const { assignee, dead_line, employee_name, project_name, employee_id, task, created_at, 
+        onEditClick, task_id, work_id, module_id, project_id, on_hold_reason, status, onTaskComplete } = props;
+    const [isChecked, setChecked] = useState(status === "Completed")
     let my_task = user_id === employee_id;
-
-    const openPopover = () => {
-        createPopper(btnRef.current, popoverRef.current, {
-          placement: "left"
-        });
-        setPopoverShow(true);
-      };
-      const closePopover = () => {
-        setPopoverShow(false);
-      };
+    
+    const completeTheTask = async (e) => {
+        e.preventDefault();
+        const formData = {
+            work_id: work_id,
+            task: task,
+            task_id: task_id,
+            module_id: module_id,
+            dead_line: dead_line,
+            project_id: project_id,
+            on_hold_reason: on_hold_reason,
+            status: "Completed",
+        }
+        console.log("Task Desc", formData)
+        let validation_data = [
+            { key: "project_id", message: 'Please select the project!' },
+            { key: "task", message: `Description field left empty!` },
+            { key: "dead_line", message: 'Deadline field left empty!' },
+        ]
+        const { isValid, message } = isFormValid(formData, validation_data);
+        if (isValid) {
+            let res = await apiAction({
+                method: 'post',
+                // navigate: navigate,
+                dispatch: dispatch,
+                url: update_task(),
+                data: { ...formData, dead_line: formattedDeadline(formData.dead_line) },
+            })
+            if (res.success) {
+                onTaskComplete()
+                notifySuccessMessage(res.status);
+            } else {
+                setChecked(false)
+                notifyErrorMessage(res.detail)
+            }
+        } else {
+            setChecked(false)
+            notifyErrorMessage(message)
+        }
+    };
 
     return (
         <React.Fragment>
             <div className='bg-white flex flex-col px-5 py-2 rounded-lg h-full border-borderColor-0 shadow-md' >
                 
-                
-                    <div className='flex flex-col'>
-                        <div className='max-h-12 align-top font-quicksand font-medium flex'>
-                            { props.status != "Completed" && <input
+                    <div className='flex'>
+                        { ((status != "Completed") && (status != "On Hold")) && <input
                                 type="checkbox"
-                                className="form-checkbox appearance-none ml-1 w-4 h-4 self-center mr-2 ease-linear transition-all duration-150 border border-blueGray-300 rounded focus:border-blueGray-300"
+                                value={isChecked}
+                                onChange={(e) => {
+                                    setChecked(!isChecked)
+                                    console.log("CHECK CLICK")
+                                    completeTheTask(e)
+                                }}
+                                className="form-checkbox appearance-none w-4 h-4 self-center mr-2 ease-linear transition-all duration-150 border border-blueGray-300 rounded focus:border-blueGray-300"
                                 />}
-                            <p className='text-5 text-blueGray-800 font-sans line-clamp-2'>{task}</p>
-                        </div>
-                        <span className="text-xs font-quicksand font-normal inline-block pb-1 text-blueGray-600 last:mr-0 mr-1">
-                                    {"This is sample task description "}
-                        </span>
+                                <div className='flex flex-col'>
+                                    <div className='max-h-14 align-top font-quicksand font-medium flex'>
+                                        <p className='text-5 text-blueGray-800 font-quicksand font-bold text-lg line-clamp-2'>{task}</p>
+                                    </div>
+                                    <span className="text-sm font-quicksand font-medium inline-block pb-1 text-blueGray-600 last:mr-0 mr-1">
+                                                {"This is sample task description "}
+                                    </span>
+                                </div>
+                        
                     </div>
                     
                     <div onClick={() => {onEditClick(props)}}>
@@ -294,7 +338,7 @@ const DashboardCard = (props) => {
                     </div>
                     
                     <div className='flex flex-wrap justify-between items-center'>
-                    <span className="text-xs font-quicksand font-normal inline-block py-1 text-blueGray-600 last:mr-0 mr-1 self-center">
+                    <span className="text-sm font-quicksand font-normal inline-block py-1 text-blueGray-600 last:mr-0 mr-1 self-center">
                                     Assigned By: {assignee === employee_name ? <span className='font-quicksand font-semibold'>Self</span> : <span className='font-quicksand font-semibold'>{assignee}</span>}
                         </span>
                         { props.status === "On Hold" && 
@@ -306,15 +350,15 @@ const DashboardCard = (props) => {
                     </div>
 
                     { openOnHoldReason && 
-                        <div className='border px-1 rounded-sm'>
-                            <span className={`text-gray-500 text-xs font-quicksand font-medium my-2`}>{props.on_hold_reason}</span>
+                        <div className='border py-1 px-2 rounded-md'>
+                            <span className={`text-gray-500 text-sm font-quicksand font-medium my-2 py-4`}>{props.on_hold_reason}</span>
                         </div>
                     }
 
                     <div className='flex rounded-lg flex-wrap mt-2 items-center'>
                         <img className='w-6 h-6 rounded-full' src={imagesList.employee_default_img.src} alt=''></img>
                         <div className='flex flex-col ml-3'>
-                            <p className='text-5 text-black text-xs font-quicksand font-semibold'>{employee_name}</p>
+                            <p className='text-5 text-black text-sm font-quicksand font-semibold'>{employee_name}</p>
                         </div>
                     </div>
             
