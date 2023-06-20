@@ -198,16 +198,16 @@ const CreateNewTask = (props) => {
                         </div>
 
                         { formData.status === "On Hold" &&
-                            <div className="my-4 flex flex-col">
-                            <CustomLabel label={`Reason`} className={'font-quicksand font-semibold text-sm mb-1'} />
-                            <Input
-                                type='textarea'
-                                id='on_hold_reason'
-                                className="h-20"
-                                placeholder="Add the task on hold reason"
-                                value={formData.on_hold_reason ? formData.on_hold_reason : ''}
-                                onChange={(e) => setFormData((previous) => ({ ...previous, on_hold_reason: e.target.value }))}
-                            />
+                            <div className="mt-4 flex flex-col">
+                                <CustomLabel label={`Reason`} className={'font-quicksand font-semibold text-sm'} />
+                                <Input
+                                    type='textarea'
+                                    id='on_hold_reason'
+                                    className="h-20 m-0"
+                                    placeholder="Add the task on hold reason"
+                                    value={formData.on_hold_reason ? formData.on_hold_reason : ''}
+                                    onChange={(e) => setFormData((previous) => ({ ...previous, on_hold_reason: e.target.value }))}
+                                />
                         </div>
                         }
 
