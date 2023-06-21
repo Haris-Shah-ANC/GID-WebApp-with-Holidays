@@ -59,12 +59,12 @@ export const sidebarMenu = [
         active: routesName.dashboard.activeRoute,
 
     },
-    {
-        name: routesName.timeLine.name,
-        path: routesName.timeLine.path,
-        icon: "fa-solid fa-business-time",
-        active: routesName.timeLine.activeRoute,
-    },
+    // {
+    //     name: routesName.timeLine.name,
+    //     path: routesName.timeLine.path,
+    //     icon: "fa-solid fa-business-time",
+    //     active: routesName.timeLine.activeRoute,
+    // },
     {
         name: routesName.assignTask.name,
         path: routesName.assignTask.path,

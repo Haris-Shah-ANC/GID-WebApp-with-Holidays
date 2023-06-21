@@ -187,14 +187,14 @@ const CreateNewTask = (props) => {
                                 </div>
                             }
 
-                            {formData.status.toLowerCase != "on hold" && <div className="flex items-center cursor-pointer">
+                            <div className="flex items-center cursor-pointer">
                                 <Checkbox
                                     value="On Hold"
                                     checked={formData.status === 'On Hold'}
                                     onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
                                 />
                                 <CustomLabel className={`ml-2`} label={'On Hold'} />
-                            </div>}
+                            </div>
                         </div>
 
                         { formData.status === "On Hold" &&

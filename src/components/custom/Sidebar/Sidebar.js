@@ -7,7 +7,10 @@ import {
   add_task,
   imagesList,
   create_new_work_space,
+  add_project,
+  add_project_module,
 } from '../../../utils/Constant';
+import AddProject from '../../pages/mainManagement/AddProject';
 
 const Sidebar = ({ navigationUrl = [], isSidebarOpen, setIsSidebarOpen, sidebarShow, setSidebarShow, handleDrawerClick }) => {
   const navigate = useNavigate();
@@ -28,9 +31,8 @@ const Sidebar = ({ navigationUrl = [], isSidebarOpen, setIsSidebarOpen, sidebarS
 
   const [showModal, setShowModal] = React.useState(false);
   return (
-    <div className={`bg-white text-white block  top-0 bottom-0 w-${isSidebarOpen ? '64' : 'auto'} shadow-xl left-0 fixed flex-row flex-nowrap md:z-10 z-9999 transition-all duration-300 ease-in-out transform md:translate-x-0 ${sidebarShow}`}>
-      <ModelComponent showModal={showModal} setShowModal={setShowModal} />
-
+    <>
+      <div className={`bg-white text-white block  top-0 bottom-0 w-${isSidebarOpen ? '64' : 'auto'} shadow-xl left-0 fixed flex-row flex-nowrap md:z-10 z-9999 transition-all duration-300 ease-in-out transform md:translate-x-0 ${sidebarShow}`}>
       <div className="flex-grow">
         <div className="flex items-center justify-between border-gray-400">
           <div className='flex items-center  w-full'>
@@ -73,7 +75,16 @@ const Sidebar = ({ navigationUrl = [], isSidebarOpen, setIsSidebarOpen, sidebarS
                     <li
                       title={isSidebarOpen ? '' : item.name}
                       className={` ${isSidebarOpen ? '' : 'justify-center'} ${activeItem === item.active ? 'bg-blue-600 font-bold text-white' : ''} m-1 text-gray-500 text-sm font-quicksand font-semibold px-4 py-5 border-gray-400 flex items-center rounded-md ${activeItem === item.active ? 'hover:bg-blue-600': 'hover:bg-blue-400'} cursor-pointer hover:text-white`}
-                      onClick={() => { setActiveItem(item.active); navigate(item.path) }}
+                      onClick={() => { 
+                        setActiveItem(item.active)
+                        if(item.name === "Create New Project"){
+                          setShowModal(add_project)
+                        }else if(item.name === "Create New Module") {
+                          setShowModal(add_project_module)
+                        }else{
+                          navigate(item.path)
+                        }
+                      }}
                     >
                       <Link
                         to={item.path}
@@ -92,6 +103,9 @@ const Sidebar = ({ navigationUrl = [], isSidebarOpen, setIsSidebarOpen, sidebarS
         </nav>
       </div>
     </div>
+    <ModelComponent showModal={showModal} setShowModal={setShowModal} />
+
+    </>
 
 
   )
@@ -146,7 +160,9 @@ const ChildItemComponent = (props) => {
             {childItem === 'meeting' &&
               <React.Fragment>
                 <li className='p-2 text-gray-500 font-quicksand font-semibold text-sm'>Select Meeting:</li>
-                <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm'>Daily Standup</li>
+                <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm'>
+                  <a class="collapse-item" href="https://meet.google.com/zbx-mkky-gux" target="_blank">Daily Standup</a>
+                </li>
                 <li className='p-2 text-sm cursor-pointer hover:bg-gray-200 rounded-md'><div className=" flex items-center"><i className="fa-solid fa-plus mr-1 font-semibold font-quicksand text-sm"></i>Add New Meeting</div></li>
               </React.Fragment>
             }

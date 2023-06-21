@@ -59,6 +59,14 @@ export const getTaskListUrl=()=>{
     return HOST + APP_NAME + `/multifilter_task/`
 }
 
+export const getCreateProjectUrl =() => {
+    return HOST + APP_NAME +  `create_project/`
+}
+
+export const getTheModuleCreationUrl = () => {
+    return HOST + APP_NAME + `create_project_module/`
+}
+
 
 
 

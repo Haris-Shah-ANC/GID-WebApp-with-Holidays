@@ -3,11 +3,15 @@ import CreateNewTask from '../../pages/mainManagement/CreateNewTask';
 import CreateNewWorkspace from '../../pages/mainManagement/CreateNewWorkspace';
 
 import {
+    add_project,
+    add_project_module,
     add_task,
     create_new_work_space,
     filter_and_sort,
 } from '../../../utils/Constant';
 import FilterAndSort from '../../pages/mainManagement/FilterAndSort';
+import AddProject from '../../pages/mainManagement/AddProject';
+import AddModule from '../../pages/mainManagement/AddModule';
 
 const ModelComponent = (props) => {
     const { showModal, setShowModal, data ,onFilterApply,onFilterClear} = props
@@ -26,6 +30,12 @@ const ModelComponent = (props) => {
                     }
                     {showModal === filter_and_sort &&
                         <FilterAndSort setShowModal={setShowModal} data={data} onFilterApply={onFilterApply} onFilterClear={onFilterClear}/>
+                    }
+                    { showModal === add_project && 
+                        <AddProject setShowModal={setShowModal} data={data}></AddProject>
+                    }
+                    { showModal === add_project_module && 
+                        <AddModule setShowModal={setShowModal} data={data}></AddModule>
                     }
                 </div>
                 {/* </div> */}

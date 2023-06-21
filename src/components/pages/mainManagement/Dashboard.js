@@ -85,10 +85,10 @@ const Dashboard = () => {
     }
 
     const onTaskComplete = () => {
-        
+        getTaskList()
     }
 
-    const onEditClick = (item) => {
+    const onTaskEditClick = (item) => {
         setFormData({
             task: item.task,
             module_id: null,
@@ -101,6 +101,12 @@ const Dashboard = () => {
         });
         setShowModal(add_task)
     }
+
+    const onNewTaskAddClick = (item) => {
+        // setFormData();
+        setShowModal(add_task)
+    }
+
     const onFilterApply = (data) => {
         console.log("FILTER DATA", data)
         setFilters(data)
@@ -174,7 +180,7 @@ const Dashboard = () => {
                         <i className="fa-solid fa-sliders mr-2 text-[#75787b]"></i>
                         <p className='text-[#75787b] font-semibold font-quicksand text-sm'>Filter & Sort</p>
                     </button>
-                    <button className='flex  items-center py-2 px-3 mb-3 border border-[#dddddf] rounded-lg hover:opacity-75 outline-none focus:outline-none'>
+                    <button className='flex  items-center py-2 px-3 mb-3 border border-[#dddddf] rounded-lg hover:opacity-75 outline-none focus:outline-none' onClick={() => onNewTaskAddClick()}>
                         <i className="fa-solid fa-plus mr-2 text-[#75787b]" ></i>
                         <p className='text-[#75787b] font-semibold font-quicksand text-sm'>Add New</p>
                     </button>
@@ -188,7 +194,7 @@ const Dashboard = () => {
                 {tasksResults.map((item, index) => {
                     return (
                         <div className="h-full w-full" key={index}>
-                            <DashboardCard {...item} onEditClick={onEditClick} onTaskComplete={onTaskComplete}/>
+                            <DashboardCard {...item} onEditClick={onTaskEditClick} onTaskComplete={onTaskComplete}/>
                         </div>
                     )
                 })}

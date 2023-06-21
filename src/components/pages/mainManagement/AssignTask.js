@@ -73,7 +73,9 @@ const AssignTask = () => {
     return (
         <div>
             <div className='grid sm:grid-cols-1 md:grid-cols-2 gap-3'>
-                <div></div>
+                <div class="items-center p-10 flex justify-center">
+                    <img className='w-3/4 self-center' src="https://gid.artdexandcognoscis.com/static/img/undraw_add_tasks_re_s5yj.svg" alt=""></img>
+                </div>
                 <div>
                     <AssignedTask />
                 </div>
@@ -104,7 +106,7 @@ const CustomTable = (props) => {
             <div className="px-6 py-4 border-0">
                 <div className="flex flex-wrap items-center">
                     <div className="w-full md:w-1/2 items-center">
-                        <h3 className="font-bold text-lg text-blueGray-700">Assigned Tasks</h3>
+                        <h3 className="text-lg text-blueGray-700 font-quicksand font-bold">Assigned Tasks</h3>
                     </div>
                     <div className="w-full md:w-1/2 text-right items-center justify-end">
                         <div className="w-full md:w-72">
@@ -131,7 +133,7 @@ const CustomTable = (props) => {
                                 return (
                                     <th
                                         key={index}
-                                        className="px-6 py-3 text-xs font-bold text-left bg-blueGray-100 text-blueGray-500 border-blueGray-200"
+                                        className="px-6 py-3 text-xs text-left bg-blueGray-100 text-blueGray-500 border-blueGray-200 rounded-sm font-quicksand font-semibold "
                                     >
                                         {item.fields}
                                     </th>
@@ -284,49 +286,50 @@ const AssignedTask = () => {
         }
     };
     return (
-        <div className="w-full mb-10 border-0 rounded-lg shadow-lg flex flex-col bg-white outline-none focus:outline-none">
+        <div className="w-full mb-10 border-0 rounded-xl shadow-lg flex flex-col bg-white outline-none focus:outline-none">
             {/* header */}
             <form className="p-6 pt-0">
                 <div className="text-center items-center p-5 border-b border-solid border-slate-200 rounded-t text-black">
-                    <h3 className="text-2xl font-semibold">{'Assign Task'}</h3>
+                    <h3 className="text-2xl font-quicksand font-bold">{'Assign Task'}</h3>
                 </div>
 
                 {/* body */}
-                <div className="relative p-6 flex-auto">
-                    <div className="my-1">
-                        <CustomLabel label={`Select Employee`} />
+                <div className="relative p-6 flex-auto font-quicksand font-medium text-sm">
+                    <div className="my-1 flex flex-col">
+                        <CustomLabel label={`Select Employee`} className={'py-1'} />
                         <Dropdown options={employeeResults} optionLabel="employee_name" value={selectedUser ? selectedUser : { employee_name: 'All Users' }} setValue={(value) => setFormData((previous) => ({ ...previous, employee_id: value ? value.id : null }))} />
                     </div>
 
-                    <div className="my-4">
-                        <CustomLabel label={`Select Project`} />
+                    <div className="my-3 flex flex-col">
+                        <CustomLabel label={`Select Project`} className={'py-1'}/>
                         <Dropdown placeholder={true} options={projectsResults} optionLabel="project_name" value={selectedProject ? selectedProject : { project_name: 'Select project' }} setValue={(value) => setFormData((previous) => ({ ...previous, project_id: value ? value.project_id : null }))} />
                     </div>
 
                     {!formData.task_id && (
-                        <div className="my-4">
-                            <CustomLabel label={`Select Module`} />
+                        <div className="my-3 flex flex-col">
+                            <CustomLabel label={`Select Module`} className={'py-1'}/>
                             <Dropdown placeholder={true} options={moduleResults} optionLabel="module_name" value={selectedModule ? selectedModule : { module_name: 'Select project' }} setValue={(value) => setFormData((previous) => ({ ...previous, module_id: value ? value.module_id : null }))} />
                         </div>
                     )}
 
-                    <div className="my-4">
-                        <CustomLabel label={`Description`} />
+                    <div className="my-3 flex flex-col">
+                        <CustomLabel label={`Description`} className={'py-1'}/>
                         <Input
                             type="textarea"
                             id="description"
-                            className="h-20"
+                            className="h-20 font-quicksand font-medium"
                             placeholder="Add the task description"
                             value={formData.task ? formData.task : ''}
                             onChange={(e) => setFormData((previous) => ({ ...previous, task: e.target.value }))}
                         />
                     </div>
 
-                    <div className="my-4">
-                        <CustomLabel className={`ml-2`} label={<span><i className="fa-solid fa-calendar-days text-base mr-1"></i>Deadline</span>} />
+                    <div className="my-3 flex flex-col">
+                        <CustomLabel className={`ml-0 py-1`} label={<span><i className="fa-solid fa-calendar-days text-base mr-1"></i>Deadline</span>} />
                         <Input
                             id="datetime"
                             name="datetime"
+                            className={'font-quicksand font-medium'}
                             type="datetime-local"
                             value={formData.dead_line ? formData.dead_line : ''}
                             onChange={(e) => setFormData((previous) => ({ ...previous, dead_line: e.target.value }))}
@@ -339,7 +342,7 @@ const AssignedTask = () => {
                     <button
                         type="button"
                         onClick={handleSaveChanges}
-                        className="bg-blue-500 text-white active:bg-blue-600 font-bold text-sm w-full py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150"
+                        className="font-quicksand font-bold bg-blue-500 text-white active:bg-blue-600 text-sm w-full py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150"
                     >
                         Assign
                     </button>
