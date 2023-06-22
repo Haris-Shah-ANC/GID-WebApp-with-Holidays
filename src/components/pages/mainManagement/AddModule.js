@@ -45,9 +45,12 @@ export default function AddModule(props) {
 
     const createProjectModule = async() => {
         let validation_data = [
-            { key: "project_name", message: 'Project field left empty!' },
+            { key: "module_name", message: 'Module field left empty!' },
             { key: "workspace_id", message: 'Workspace left empty!' },
+            {key: "project_id", message: 'Project field left empty'}
         ]
+
+        // console.log(JSON.stringify(formData, 0, 2))
         const { isValid, message } = isFormValid(formData, validation_data);
         if (isValid) {
             let res = await apiAction({
@@ -102,8 +105,8 @@ export default function AddModule(props) {
                                 id="datetime"
                                 name="datetime"
                                 type="datetime-local"
-                                value={formData.dead_line ? formData.dead_line : ''}
-                                onChange={(e) => setFormData((previous) => ({ ...previous, dead_line: e.target.value }))}
+                                value={formData.deadline ? formData.deadline : ''}
+                                onChange={(e) => setFormData((previous) => ({ ...previous, deadline: e.target.value }))}
                             />
                         </div>
 

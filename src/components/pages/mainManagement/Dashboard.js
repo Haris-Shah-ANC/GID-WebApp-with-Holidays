@@ -53,7 +53,7 @@ const Dashboard = () => {
 
     useEffect(() => {
         getTaskList()
-    }, [postBody])
+    }, [postBody, work_id])
     
 
     const getTaskList = async () => {

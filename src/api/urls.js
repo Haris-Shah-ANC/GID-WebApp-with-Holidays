@@ -60,11 +60,15 @@ export const getTaskListUrl=()=>{
 }
 
 export const getCreateProjectUrl =() => {
-    return HOST + APP_NAME +  `create_project/`
+    return HOST + APP_NAME +  `/create_project/`
 }
 
 export const getTheModuleCreationUrl = () => {
-    return HOST + APP_NAME + `create_project_module/`
+    return HOST + APP_NAME + `/create_project_module/`
+}
+
+export const getTheCreateWorkspaceUrl =() => {
+    return HOST + APP_NAME + `/create_new_workspace/`
 }
 
 

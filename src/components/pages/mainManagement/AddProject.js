@@ -59,14 +59,18 @@ export default function AddProject(props) {
                         <div className="my-4 flex flex-col">
                             <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={"Project Name"} />
                             <Input className="border rounded-sm focus:border-blue-600 focus:border-2" 
-                            onchange={(e) => setFormData((previous) => ({ ...previous, project_name: e.target.value }))}
+                            type="text"
+                            onChange={(e) => setFormData({...formData, project_name: e.target.value})}
                             value={formData.project_name ? formData.project_name : ''}></Input>
                         </div>
                         
 
                         <div className="my-4 flex flex-col">
                             <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={"Project Description"} />
-                            <Input className="border rounded-sm focus:border-blue-600 focus:border-2"></Input>
+                            <Input className="border rounded-sm focus:border-blue-600 focus:border-2" 
+                            type="text"
+                            value={formData.project_tag}
+                            onChange={(e) => {setFormData((previous) => ({...previous, project_tag: e.target.value}))}}></Input>
                         </div>
 
                     </div>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ModelComponent from '../Model/ModelComponent';
 import { routesName } from '../../../config/routesName';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
@@ -11,6 +11,9 @@ import {
   add_project_module,
 } from '../../../utils/Constant';
 import AddProject from '../../pages/mainManagement/AddProject';
+import { apiAction } from '../../../api/api';
+import { get_workspace } from '../../../api/urls';
+import { getWorkspaceInfo, setWorkspaceInfo } from '../../../config/cookiesInfo';
 
 const Sidebar = ({ navigationUrl = [], isSidebarOpen, setIsSidebarOpen, sidebarShow, setSidebarShow, handleDrawerClick }) => {
   const navigate = useNavigate();
@@ -89,7 +92,11 @@ const Sidebar = ({ navigationUrl = [], isSidebarOpen, setIsSidebarOpen, sidebarS
                       <Link
                         to={item.path}
                         className="cursor-pointer"
-                        onClick={() => navigate(item.path)}
+                        onClick={() => {
+                          if((item.name != "Create New Project") && (item.name != "Create New Module")){
+                            navigate(item.path)
+                          }
+                        }}
                       >
                         <i className={`${item.icon} mr-2`}></i>
                         <span className={`${isSidebarOpen ? '' : 'hidden'}`}>{item.name}</span>
@@ -116,6 +123,8 @@ export default Sidebar;
 const ChildItemComponent = (props) => {
   const { item, activeItem, isSidebarOpen, setIsSidebarOpen, setShowModal } = props;
   const { childItem } = item;
+  const [workspaces, setWorkSpaces] = useState([])
+  const {work_id} = getWorkspaceInfo()
 
   const [collapse, setCollapse] = React.useState(false);
   const onClickedHandler = () => {
@@ -128,7 +137,22 @@ const ChildItemComponent = (props) => {
       setCollapse(false)
     }
   }, [isSidebarOpen])
+
+  useEffect(() => {
+    fetchWorkspaces()
+  },[])
+
+  const fetchWorkspaces = async() => {
+    let response = await apiAction({url: get_workspace(), method: "get", data: null})
+    setWorkSpaces(response.result)
+    
+  }
   // const [showModal, setShowModal] = React.useState(false);
+
+  const onItemInteraction = (workspace) => {
+    setWorkspaceInfo(workspace);
+    setWorkSpaces([...workspaces])
+  }
 
   return (
 
@@ -152,7 +176,9 @@ const ChildItemComponent = (props) => {
             {childItem === 'work_space' &&
               <React.Fragment>
                 <li className='p-2 text-gray-500 font-quicksand font-semibold text-sm'>Select Workspace:</li>
-                <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-semibold text-sm'>ANC</li>
+                {workspaces.map((item, index) => {
+                  return <li className={`p-2 cursor-pointer ${work_id === item.work_id ? "bg-gray-200" : "bg-white"} hover:bg-gray-100 rounded-md font-semibold text-sm`} onClick={() => {onItemInteraction(item)}}>{item.workspace_name}</li>
+                })}
                 <li onClick={() => { setShowModal(create_new_work_space) }} className='p-2 text-sm cursor-pointer hover:bg-gray-200 rounded-md font-medium'><div className=" flex items-center"><i className="fa-solid fa-plus mr-1 font-semibold"></i>Create New Workspace</div></li>
               </React.Fragment>
             }
