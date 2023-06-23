@@ -1,11 +1,13 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import { routesName } from "../../config/routesName";
 import Navbar from "../../components/custom/Navbar/Navbar";
 import { mainRoutes, sidebarMenu } from "../../config/routes";
 import Sidebar from "../../components/custom/Sidebar/Sidebar";
+import * as Actions from '../../state/Actions'
 
 import {
   getToken,
+  getWorkspaceInfo,
   isAuthenticated,
 } from "../../config/cookiesInfo";
 import {
@@ -31,6 +33,14 @@ function MainLayout() {
 
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
   const [sidebarShow, setSidebarShow] = React.useState("-translate-x-full");
+  const dispatch = Actions.getDispatch(useContext);
+  
+  
+  useEffect(() => {
+    dispatch(Actions.stateChange("workspace", getWorkspaceInfo()))
+  }, [])
+
+
   
   const handleDrawerClick = () => {
     if (sidebarShow === "") {

@@ -1,3 +1,5 @@
 {
-    "loader": false
+    "loader": false,
+    "workspace": null,
+    "userinfo": null
 }

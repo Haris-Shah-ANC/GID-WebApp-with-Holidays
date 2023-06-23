@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import ModelComponent from '../Model/ModelComponent';
 import { routesName } from '../../../config/routesName';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
@@ -14,12 +14,15 @@ import AddProject from '../../pages/mainManagement/AddProject';
 import { apiAction } from '../../../api/api';
 import { get_workspace } from '../../../api/urls';
 import { getWorkspaceInfo, setWorkspaceInfo } from '../../../config/cookiesInfo';
+import * as Actions from '../../../state/Actions'
+
 
 const Sidebar = ({ navigationUrl = [], isSidebarOpen, setIsSidebarOpen, sidebarShow, setSidebarShow, handleDrawerClick }) => {
   const navigate = useNavigate();
   const location = useLocation();
-
-  const [activeItem, setActiveItem] = React.useState(routesName.dashboard.activeRoute);
+  const state = Actions.getState(useContext)
+  const {work_id} = state
+  const [activeItem, setActiveItem] = useState(routesName.dashboard.activeRoute);
 
   React.useEffect(() => {
     let pathname = Object.values(routesName).find((item) => item.path === location.pathname);
@@ -81,18 +84,22 @@ const Sidebar = ({ navigationUrl = [], isSidebarOpen, setIsSidebarOpen, sidebarS
                       onClick={() => { 
                         setActiveItem(item.active)
                         if(item.name === "Create New Project"){
+                          console.log("IF "+item.name)
                           setShowModal(add_project)
                         }else if(item.name === "Create New Module") {
+                          console.log("ELSE IF "+item.name)
                           setShowModal(add_project_module)
                         }else{
+                          console.log("ELSE "+item.name)
                           navigate(item.path)
                         }
                       }}
                     >
                       <Link
-                        to={item.path}
+                        // to={((item.name != "Create New Project") && (item.name != "Create New Module")) ? item.path : null}
                         className="cursor-pointer"
                         onClick={() => {
+                          console.log((item.name != "Create New Project") && (item.name != "Create New Module"))
                           if((item.name != "Create New Project") && (item.name != "Create New Module")){
                             navigate(item.path)
                           }
@@ -125,6 +132,7 @@ const ChildItemComponent = (props) => {
   const { childItem } = item;
   const [workspaces, setWorkSpaces] = useState([])
   const {work_id} = getWorkspaceInfo()
+  const dispatch = Actions.getDispatch(useContext);
 
   const [collapse, setCollapse] = React.useState(false);
   const onClickedHandler = () => {
@@ -152,6 +160,7 @@ const ChildItemComponent = (props) => {
   const onItemInteraction = (workspace) => {
     setWorkspaceInfo(workspace);
     setWorkSpaces([...workspaces])
+    dispatch(Actions.stateChange("workspace", workspace))
   }
 
   return (

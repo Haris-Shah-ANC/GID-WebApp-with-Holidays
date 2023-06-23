@@ -1,10 +1,15 @@
 import React from 'react';
 import Input from '../Elements/Input';
 import { imagesList } from '../../../utils/Constant';
+import { getWorkspaceInfo } from '../../../config/cookiesInfo';
+import { getLoginDetails } from '../../../config/cookiesInfo';
 
 const Navbar = ({ handleDrawerClick }) => {
     const bellCount = 3;
     const messageCount = 5;
+    const workspace = getWorkspaceInfo()
+    const userInfo = getLoginDetails()
+    console.log("Login Details", JSON.stringify(userInfo, 0, 2))
 
     return (
         <nav className="bg-white p-4 flex flex-col sm:flex-row items-center justify-between">
@@ -13,7 +18,7 @@ const Navbar = ({ handleDrawerClick }) => {
                     <div className="sm:hidden" onClick={handleDrawerClick}>
                         <i className="fa-solid fa-bars text-gray-600 text-xl"></i>
                     </div>
-                    <h1 className="text-gray-600 text-2xl font-medium mr-4">ANC</h1>
+                    <h1 className="text-gray-600 text-2xl font-medium mr-4">{workspace.workspace_name}</h1>
                     <div className="hidden sm:block md:block lg:block xl:block">
                         <Searchbar />
                     </div>
@@ -37,7 +42,7 @@ const Navbar = ({ handleDrawerClick }) => {
                     </div>
                     <div className="flex items-center border-l pl-2 pr-2">
                         <div className="flex flex-col">
-                            <span className="ml-2 text-gray-600 text-sm">Ajay Pal</span>
+                            <span className="ml-2 text-gray-600 text-sm">{userInfo.name}</span>
                             <span className="ml-2 text-gray-600 text-sm">Employee</span>
                         </div>
                         <img

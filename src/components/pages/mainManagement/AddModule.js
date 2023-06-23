@@ -29,7 +29,7 @@ export default function AddModule(props) {
     const getProjectsResultsApi = async (id) => {
         let res = await apiAction({
             method: 'get',
-            navigate: navigate,
+            // navigate: navigate,
             dispatch: dispatch,
             url: get_all_project(id),
         })

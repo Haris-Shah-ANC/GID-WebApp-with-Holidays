@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import moment from 'moment';
 import Card from '../../custom/Cards/Card';
 import { apiAction } from '../../../api/api';
@@ -35,12 +35,13 @@ const Dashboard = () => {
     const dispatch = Actions.getDispatch(React.useContext);
 
     const { user_id } = getLoginDetails();
-    const { work_id } = getWorkspaceInfo();
+    const state = Actions.getState(useContext)
+    const {workspace} = state
+    const {work_id}  = getWorkspaceInfo();
     const [tasksResults, setTasksResults] = useState([]);
     const [taskCategoryIndex, setTaskCategoryIndex] = useState(0)
     const [btnLabelList, setTaskCount] = useState([{ index: 0, title: "In Progress", count: 0 }, { index: 1, title: "Pending", count: 0 }, { index: 2, title: "Completed", count: 0 }])
     const [postBody, setPostBody] = useState({ "workspace_id": work_id, projects: [], "tasks": ["In-Progress", "On Hold"], "employees": [user_id] })
-
     const [showModal, setShowModal] = useState(false);
     const [formData, setFormData] = useState({});
 
@@ -50,16 +51,18 @@ const Dashboard = () => {
         project_id: null,
     })
 
+    useEffect(() => {
+        console.log("COOKIE DATA", state)
+    }, [])
 
     useEffect(() => {
         getTaskList()
-    }, [postBody, work_id])
+    }, [postBody, workspace])
     
 
     const getTaskList = async () => {
         let res = await apiAction({ url: getTaskListUrl(), method: 'post', navigate: navigate, dispatch: dispatch, data: postBody })
         if (res.success) {
-            console.log("RESPONSE", JSON.stringify(res, 0, 2))
             setTasksResults(res.result)
             btnLabelList[taskCategoryIndex].count = res.result.length
             setTaskCount([...btnLabelList])

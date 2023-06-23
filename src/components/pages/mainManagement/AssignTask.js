@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import moment from 'moment';
 import Card from '../../custom/Cards/Card';
 import { apiAction } from '../../../api/api';
@@ -36,6 +36,8 @@ import Input from '../../custom/Elements/Input';
 const AssignTask = () => {
     const navigate = useNavigate();
     const dispatch = Actions.getDispatch(React.useContext);
+    const state = Actions.getState(useContext)
+    const {workspace} = state
 
     const { user_id } = getLoginDetails();
     const { work_id } = getWorkspaceInfo();
@@ -59,10 +61,10 @@ const AssignTask = () => {
         if (work_id) {
             getEmployeeResultsApi(work_id);
         }
-    }, [work_id])
+    }, [workspace])
 
     const headers = [
-        { fields: 'Sr. No' },
+        { fields: 'Sr.No' },
         { fields: 'Employee' },
         { fields: 'Project' },
         { fields: 'Task' },
@@ -93,13 +95,22 @@ const CustomTable = (props) => {
     const { headers = [], columns = [] } = props;
 
     const [searchTerm, setSearchTerm] = React.useState('')
-    const getFilteredTask = (data, searchTerm) => {
+    const [assignedTasks, setAssignedTasks] = useState([...columns])
+    const [filteredArray, setFilteredArray] = useState([])
+
+
+    useEffect(() => {
+        setAssignedTasks([...columns])
+        setFilteredArray([...columns])
+    }, [columns])
+
+    const getFilteredTask = (searchTerm) => {
         if (searchTerm.trim() === "") {
-            return data;
+            setFilteredArray(assignedTasks)
+            return assignedTasks;
         }
-        return data.filter((item) => {
-            return item.employee_name.toLowerCase().includes(searchTerm.toLowerCase());
-        });
+        setFilteredArray(assignedTasks.filter((item) => 
+            item.employee_name.toLowerCase().includes(searchTerm.toLowerCase())))
     };
     return (
         <>
@@ -119,6 +130,7 @@ const CustomTable = (props) => {
                                 rightIcon={'fa-solid fa-magnifying-glass'}
                                 onChange={(e) => {
                                     setSearchTerm(e.target.value);
+                                    getFilteredTask(e.target.value)
                                 }}
                             />
                         </div>
@@ -128,12 +140,12 @@ const CustomTable = (props) => {
             <div className="px-6 py-4 block w-full overflow-x-auto">
                 <table className="items-center w-full bg-transparent border-collapse">
                     <thead>
-                        <tr>
+                        <tr className='w-full'>
                             {headers.map((item, index) => {
                                 return (
                                     <th
                                         key={index}
-                                        className="px-6 py-3 text-xs text-left bg-blueGray-100 text-blueGray-500 border-blueGray-200 rounded-sm font-quicksand font-semibold "
+                                        className={`px-6 py-3 text-sm ${item.fields.toLowerCase() ==="status" ? "text-center": "text-left"} bg-blueGray-100 text-blueGray-500 border-blueGray-200 rounded-sm font-quicksand font-bold break-words`}
                                     >
                                         {item.fields}
                                     </th>
@@ -142,39 +154,51 @@ const CustomTable = (props) => {
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        {getFilteredTask(columns, searchTerm).map((item, index) => {
-                            return (
-                                <tr key={index}>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-base">{index + 1}</div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-base">{item.employee_name}</div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-base">{item.project_name}</div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-base">{item.task}</div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className={task_status_color(item.status)}>
-                                            {item.status}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-base">
-                                            {moment(item.dead_line).format(DateFormatCard)}
-                                        </div>
-                                    </td>
-                                    <td className="px-6 py-4 whitespace-nowrap">
-                                        <div className="text-base">{getTimeAgo(item.created_at)}</div>
-                                    </td>
-                                </tr>
-                            );
-                        })}
+                        { filteredArray.length > 0 &&
+                            filteredArray.map((item, index) => {
+                                return (
+                                    <tr key={index}>
+                                        <td className="px-6 py-4 ">
+                                            <div className="font-quicksand font-medium text-sm">{index + 1}</div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="font-quicksand font-medium text-sm">{item.employee_name}</div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="font-quicksand font-medium text-sm">{item.project_name}</div>
+                                        </td>
+                                        <td className="px-6 py-4 ">
+                                            <div className="font-quicksand font-medium text-sm">{item.task}</div>
+                                        </td>
+                                        <td className="px-6 py-4 ">
+                                            <div className={task_status_color(item.status)+`font-quicksand font-medium text-sm text-white w-full justify-center`}>
+                                                {item.status}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="font-quicksand font-medium text-sm">
+                                                {moment(item.dead_line).format(DateFormatCard)}
+                                            </div>
+                                        </td>
+                                        <td className="px-6 py-4 whitespace-nowrap">
+                                            <div className="font-quicksand font-medium text-sm">{getTimeAgo(item.created_at)}</div>
+                                        </td>
+                                    </tr>
+                                );
+                            })
+                        }
+                        
                     </tbody>
                 </table>
+                {
+                    filteredArray.length === 0 && 
+                    <div className='h-12 flex flex-col  justify-center items-center'>
+                        <div className='flex'>
+                            <p className='font-quicksand font-medium text-md mr-1'>No tasks found </p>
+                            {searchTerm.length > 0 && <span> with <span className='font-quicksand font-bold'>{searchTerm}</span></span>}
+                        </div>
+                    </div>
+                }
             </div>
         </>
 

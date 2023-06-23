@@ -24,7 +24,7 @@ export default function AddProject(props) {
         if (isValid) {
             let res = await apiAction({
                 method: 'post',
-                navigate: navigate,
+                // navigate: navigate,
                 dispatch: dispatch,
                 url: getCreateProjectUrl(),
                 data: formData,
