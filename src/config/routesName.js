@@ -45,6 +45,21 @@ export const routesName = {
         name: 'Create New Module',
         activeRoute: 'Create New Module',
     },
+    inviteToWorkspace: {
+        path: '/invite_to_workspace',
+        name: "Invite To Workspace",
+        activeRoute: "Invite To Workspace",
+    },
+    reports: {
+        path: '/reports',
+        name: "Reports",
+        activeRoute: "Reports",
+    },
+    analytics: {
+        path: '/analytics',
+        name: "Analytics",
+        activeRoute: "Analytics",
+    },
     meeting: {
         path: '/join-meeting',
         name: 'Join Meeting',

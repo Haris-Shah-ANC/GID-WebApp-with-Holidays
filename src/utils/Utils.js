@@ -153,7 +153,9 @@ export const task_status_color = (value) => {
 
 export const formattedDeadline = (dead_line) => moment.utc(moment(dead_line)).format("YYYY-MM-DD HH:mm");
 
-
+export function validateEmail(input) {
+  return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(input) ? true : false
+}
 
 
 

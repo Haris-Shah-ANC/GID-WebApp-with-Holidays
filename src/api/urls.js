@@ -71,6 +71,10 @@ export const getTheCreateWorkspaceUrl =() => {
     return HOST + APP_NAME + `/create_new_workspace/`
 }
 
+export const getThesentInvitationUrl = () =>{
+    return HOST + APP_NAME + `/send_invite_mail/`
+}
+
 
 
 

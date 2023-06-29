@@ -7,6 +7,7 @@ import Registration from "../components/pages/authManagement/Registration";
 import Dashboard from "../components/pages/mainManagement/Dashboard";
 import Timeline from "../components/pages/mainManagement/Timeline";
 import AssignTask from "../components/pages/mainManagement/AssignTask";
+import InviteToWorkspace from "../components/pages/mainManagement/InviteToWorkspace";
 
 export const authRoutes = [
     {
@@ -40,6 +41,11 @@ export const mainRoutes = [
         path: routesName.assignTask.path,
         name: routesName.assignTask.name,
         component: <AssignTask />,
+    },
+    {
+        path: routesName.inviteToWorkspace.path,
+        name: routesName.inviteToWorkspace.name,
+        component: <InviteToWorkspace />,
     },
 ];
 export const landingRoutes = [];
@@ -90,6 +96,30 @@ export const sidebarMenu = [
         active: routesName.meeting.activeRoute,
         childItem: 'meeting'
     },
+
+    {
+        name: routesName.inviteToWorkspace.name,
+        path: routesName.inviteToWorkspace.path,
+        icon: "fa-solid fa-envelope",
+        active: routesName.inviteToWorkspace.activeRoute,
+    },
+
+    // {
+    //     name: routesName.meeting.name,
+    //     path: routesName.meeting.path,
+    //     icon: "fa-solid fa-video",
+    //     active: routesName.meeting.activeRoute,
+    //     childItem: 'meeting'
+    // },
+
+    // {
+    //     name: routesName.meeting.name,
+    //     path: routesName.meeting.path,
+    //     icon: "fa-solid fa-video",
+    //     active: routesName.meeting.activeRoute,
+    //     childItem: 'meeting'
+    // },
+
 ];
 
 

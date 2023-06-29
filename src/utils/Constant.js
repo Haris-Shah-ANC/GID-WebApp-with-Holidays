@@ -17,3 +17,9 @@ export const create_new_work_space=`create_new_work_space`;
 export const filter_and_sort=`filter_and_sort`;
 export const add_project = `add_project`;
 export const add_project_module = `add_project_module`;
+
+export const ROLES = [
+    {role: "Employee", short_name: "employee", id:1},
+    {role: "Admin", short_name: "admin", id:2},
+    {role: "Manager", short_name: "manager", id:3}
+]
