@@ -283,7 +283,7 @@ const DashboardCard = (props) => {
             <div className='bg-white flex flex-col px-5 py-2 rounded-lg h-full border-borderColor-0 shadow-md' >
                 
                     <div className='flex'>
-                        { ((status != "Completed") && (status != "On Hold")) && <input
+                        {/* { ((status != "Completed") && (status != "On Hold")) && <input
                                 type="checkbox"
                                 value={isChecked}
                                 onChange={(e) => {
@@ -292,7 +292,7 @@ const DashboardCard = (props) => {
                                     completeTheTask(e)
                                 }}
                                 className="form-checkbox appearance-none w-4 h-4 self-center mr-2 ease-linear transition-all duration-150 border border-blueGray-300 rounded focus:border-blueGray-300"
-                                />}
+                                />} */}
                                 <div className='flex flex-col'>
                                     <div className='max-h-14 align-top font-quicksand font-medium flex'>
                                         <p className='text-5 text-blueGray-800 font-quicksand font-bold text-lg line-clamp-2'>{task}</p>
@@ -304,7 +304,11 @@ const DashboardCard = (props) => {
                         
                     </div>
                     
-                    <div onClick={() => {onEditClick(props)}}>
+                    <div onClick={() => {
+                        if(status != "Completed"){
+                            onEditClick(props)
+                        }
+                    }}>
                         <div className='flex justify-between my-3'>
                             <span className="text-xs font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-md text-lightBlue-600 bg-lightBlue-200 last:mr-0 mr-1">
                             {project_name}</span>
