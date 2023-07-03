@@ -75,6 +75,14 @@ export const getThesentInvitationUrl = () =>{
     return HOST + APP_NAME + `/send_invite_mail/`
 }
 
+export const getTheAttendanceReportUrl = (fromDate, toDate, workId) => {
+    return HOST + APP_NAME + `/get_employees_attendance_report/?from_date=${fromDate}&to_date=${toDate}&work_id=${workId}`
+}
+
+export const getTheAttendanceReportUploadUrl = () => {
+    return HOST + APP_NAME + `/attendance/`
+}
+
 
 
 

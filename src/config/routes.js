@@ -8,6 +8,7 @@ import Dashboard from "../components/pages/mainManagement/Dashboard";
 import Timeline from "../components/pages/mainManagement/Timeline";
 import AssignTask from "../components/pages/mainManagement/AssignTask";
 import InviteToWorkspace from "../components/pages/mainManagement/InviteToWorkspace";
+import AttendanceReport from "../components/pages/mainManagement/AttendanceReport";
 
 export const authRoutes = [
     {
@@ -46,6 +47,11 @@ export const mainRoutes = [
         path: routesName.inviteToWorkspace.path,
         name: routesName.inviteToWorkspace.name,
         component: <InviteToWorkspace />,
+    },
+    {
+        path: routesName.reports.path,
+        name: routesName.reports.name,
+        component: <AttendanceReport />,
     },
 ];
 export const landingRoutes = [];
@@ -104,13 +110,13 @@ export const sidebarMenu = [
         active: routesName.inviteToWorkspace.activeRoute,
     },
 
-    // {
-    //     name: routesName.meeting.name,
-    //     path: routesName.meeting.path,
-    //     icon: "fa-solid fa-video",
-    //     active: routesName.meeting.activeRoute,
-    //     childItem: 'meeting'
-    // },
+    {
+        name: routesName.reports.name,
+        path: routesName.reports.path,
+        icon: "fa-solid fa-video",
+        active: routesName.reports.activeRoute,
+        childItem: 'hrms'
+    },
 
     // {
     //     name: routesName.meeting.name,

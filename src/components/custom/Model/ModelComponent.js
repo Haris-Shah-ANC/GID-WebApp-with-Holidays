@@ -7,11 +7,13 @@ import {
     add_project_module,
     add_task,
     create_new_work_space,
+    file_upload,
     filter_and_sort,
 } from '../../../utils/Constant';
 import FilterAndSort from '../../pages/mainManagement/FilterAndSort';
 import AddProject from '../../pages/mainManagement/AddProject';
 import AddModule from '../../pages/mainManagement/AddModule';
+import FileUpload from '../../pages/mainManagement/FileUpload';
 
 const ModelComponent = (props) => {
     const { showModal, setShowModal, data ,onFilterApply,onFilterClear} = props
@@ -36,6 +38,10 @@ const ModelComponent = (props) => {
                     }
                     { showModal === add_project_module && 
                         <AddModule setShowModal={setShowModal} data={data}></AddModule>
+                    }
+                    {
+                        showModal=== file_upload &&
+                        <FileUpload setShowModal={setShowModal} data={data}></FileUpload>
                     }
                 </div>
                 {/* </div> */}

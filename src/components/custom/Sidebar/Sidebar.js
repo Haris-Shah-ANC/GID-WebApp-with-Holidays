@@ -9,6 +9,7 @@ import {
   create_new_work_space,
   add_project,
   add_project_module,
+  file_upload,
 } from '../../../utils/Constant';
 import AddProject from '../../pages/mainManagement/AddProject';
 import { apiAction } from '../../../api/api';
@@ -76,7 +77,7 @@ const Sidebar = ({ navigationUrl = [], isSidebarOpen, setIsSidebarOpen, sidebarS
               return (
                 <React.Fragment key={index}>
                   {item.hasOwnProperty('childItem') ? (
-                    <ChildItemComponent item={item} isSidebarOpen={isSidebarOpen} activeItem={activeItem} setIsSidebarOpen={setIsSidebarOpen} setShowModal={setShowModal} />
+                    <ChildItemComponent item={item} isSidebarOpen={isSidebarOpen} activeItem={activeItem} setIsSidebarOpen={setIsSidebarOpen} setShowModal={setShowModal} navigate={navigate}/>
                   ) : (
                     <li
                       title={isSidebarOpen ? '' : item.name}
@@ -128,7 +129,7 @@ const Sidebar = ({ navigationUrl = [], isSidebarOpen, setIsSidebarOpen, sidebarS
 export default Sidebar;
 
 const ChildItemComponent = (props) => {
-  const { item, activeItem, isSidebarOpen, setIsSidebarOpen, setShowModal } = props;
+  const { item, activeItem, isSidebarOpen, setIsSidebarOpen, setShowModal, navigate } = props;
   const { childItem } = item;
   const [workspaces, setWorkSpaces] = useState([])
   const {work_id} = getWorkspaceInfo()
@@ -201,6 +202,20 @@ const ChildItemComponent = (props) => {
                 <li className='p-2 text-sm cursor-pointer hover:bg-gray-200 rounded-md'><div className=" flex items-center"><i className="fa-solid fa-plus mr-1 font-semibold font-quicksand text-sm"></i>Add New Meeting</div></li>
               </React.Fragment>
             }
+
+            {childItem === 'hrms' &&
+              <React.Fragment>
+                <li className='p-2 text-gray-500 font-quicksand font-semibold text-sm'>Select:</li>
+                <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm' onClick={() => {navigate(item.path)}}>
+                  <a class="collapse-item" href="https://meet.google.com/zbx-mkky-gux" target="_blank">Reports</a>
+                </li>
+                <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm' onClick={() => {setShowModal(file_upload)}}>
+                  <a class="collapse-item" href="https://meet.google.com/zbx-mkky-gux" target="_blank">Upload</a>
+                </li>
+                {/* <li className='p-2 text-sm cursor-pointer hover:bg-gray-200 rounded-md'><div className=" flex items-center"><i className="fa-solid fa-plus mr-1 font-semibold font-quicksand text-sm"></i>Add New Meeting</div></li> */}
+              </React.Fragment>
+            }
+
           </ul>
         </div>
       }

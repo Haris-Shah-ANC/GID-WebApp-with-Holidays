@@ -2,7 +2,7 @@
 export const imagesList = {
     appLogo: { src: require('../assets/image/logo.png'), alt: 'logo.png' },
     profile: { src: require('../assets/image/undraw_profile.png'), alt: 'undraw_profile.png' },
-    employee_default_img: {src: require('../assets/image/profile.png')}
+    employee_default_img: {src: require('../assets/image/profile.png')},
 
 }
 
@@ -17,6 +17,7 @@ export const create_new_work_space=`create_new_work_space`;
 export const filter_and_sort=`filter_and_sort`;
 export const add_project = `add_project`;
 export const add_project_module = `add_project_module`;
+export const file_upload = "file_upload";
 
 export const ROLES = [
     {role: "Employee", short_name: "employee", id:1},

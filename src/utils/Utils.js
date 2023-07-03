@@ -157,5 +157,34 @@ export function validateEmail(input) {
   return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(input) ? true : false
 }
 
+const subtractByMonth = () => {
+  return moment().subtract(1, "month")
+}
+
+const getStartAndEndOfPreviousMonthDates = (requireFormat) => {
+  const startOfPrevMonth = moment(subtractByMonth()).startOf('month').format(requireFormat)
+  const endOfPrevMonth = moment(subtractByMonth()).endOf('month').format(requireFormat)
+  return `From ${startOfPrevMonth} To ${endOfPrevMonth}`
+}
+
+export function formatDate(date, requireFormat) {
+  return (date) ? moment(date).format(requireFormat) : null
+}
 
 
+export const startOfCurrentMonth = (requireFormat) => { return formatDate(moment().startOf("month"), requireFormat)}
+
+export const endOfCurrentMonth = (requireFormat) => { return formatDate(moment().endOf("month"), requireFormat) }
+
+export const startOfPrevMonth = (requireFormat) => { return moment(subtractByMonth()).startOf('month').format(requireFormat) }
+
+export const endOfPrevMonth = (requireFormat) => { return moment(subtractByMonth()).endOf('month').format(requireFormat) }
+
+export const getDateRange = (type, requireFormat, timeOn) => {
+  console.log(type, requireFormat, timeOn)
+  if(type === "previous month"){
+    return timeOn==="start" ? startOfPrevMonth(requireFormat) : endOfPrevMonth(requireFormat) 
+  }else if(type === "current month"){
+    return timeOn==="start" ? startOfCurrentMonth(requireFormat) : endOfCurrentMonth(requireFormat) 
+  }
+}
