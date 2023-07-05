@@ -171,6 +171,9 @@ export function formatDate(date, requireFormat) {
   return (date) ? moment(date).format(requireFormat) : null
 }
 
+export function formatTime(timeString, timeFormat, requireFormat) {
+  return timeString === undefined || "" ? "" : moment(timeString, [timeFormat]).format(requireFormat)
+}
 
 export const startOfCurrentMonth = (requireFormat) => { return formatDate(moment().startOf("month"), requireFormat)}
 

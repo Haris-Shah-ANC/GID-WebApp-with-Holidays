@@ -9,6 +9,7 @@ import Timeline from "../components/pages/mainManagement/Timeline";
 import AssignTask from "../components/pages/mainManagement/AssignTask";
 import InviteToWorkspace from "../components/pages/mainManagement/InviteToWorkspace";
 import AttendanceReport from "../components/pages/mainManagement/AttendanceReport";
+import Analytics from "../components/pages/mainManagement/Analytics";
 
 export const authRoutes = [
     {
@@ -53,6 +54,11 @@ export const mainRoutes = [
         name: routesName.reports.name,
         component: <AttendanceReport />,
     },
+    {
+        path: routesName.analytics.path,
+        name: routesName.analytics.name,
+        component: <Analytics />,
+    },
 ];
 export const landingRoutes = [];
 
@@ -95,13 +101,13 @@ export const sidebarMenu = [
         icon: "fa-solid fa-paste",
         active: routesName.newModule.activeRoute,
     },
-    {
-        name: routesName.meeting.name,
-        path: routesName.meeting.path,
-        icon: "fa-solid fa-video",
-        active: routesName.meeting.activeRoute,
-        childItem: 'meeting'
-    },
+    // {
+    //     name: routesName.meeting.name,
+    //     path: routesName.meeting.path,
+    //     icon: "fa-solid fa-video",
+    //     active: routesName.meeting.activeRoute,
+    //     childItem: 'meeting'
+    // },
 
     {
         name: routesName.inviteToWorkspace.name,
@@ -113,18 +119,25 @@ export const sidebarMenu = [
     {
         name: routesName.reports.name,
         path: routesName.reports.path,
-        icon: "fa-solid fa-video",
+        icon: "fa-solid fa-file-invoice",
         active: routesName.reports.activeRoute,
         childItem: 'hrms'
     },
 
-    // {
-    //     name: routesName.meeting.name,
-    //     path: routesName.meeting.path,
-    //     icon: "fa-solid fa-video",
-    //     active: routesName.meeting.activeRoute,
-    //     childItem: 'meeting'
-    // },
+    {
+        name: routesName.analytics.name,
+        path: routesName.analytics.path,
+        icon: "fa-solid fa-chart-line",
+        active: routesName.analytics.activeRoute,
+    },
+
+    {
+        name: routesName.meeting.name,
+        path: routesName.meeting.path,
+        icon: "fa-solid fa-video",
+        active: routesName.meeting.activeRoute,
+        childItem: 'meeting'
+    },
 
 ];
 

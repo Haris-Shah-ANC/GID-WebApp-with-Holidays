@@ -58,7 +58,7 @@ const CreateNewWorkspace = (props) => {
     }
 
     return (
-        <div className="relative my-6 md:w-2/4">
+        <div className="relative my-6 w-full mx-2 sm:max-w-sm md:max-w-md overflow-x-auto">
             <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
                 {/* header */}
                 <div className="flex items-center justify-between p-5 border-solid border-slate-200 rounded-t text-black">

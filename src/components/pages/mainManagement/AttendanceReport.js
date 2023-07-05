@@ -237,11 +237,12 @@ export default function AttendanceReport(props) {
                 </table>
             </div> 
         }
-        <div className='flex w-full h-full mt-2 justify-center'>
+
+        {attendanceData.length === 0 && <div className='flex w-full h-full mt-2 justify-center'>
             <div>
                 <img src={no_data_found} alt="" className='h-96 w-96'></img>
             </div>
-        </div>
+        </div>}
     </div>
     
 

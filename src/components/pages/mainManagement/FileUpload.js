@@ -21,9 +21,9 @@ export default function FileUpload(props) {
             let response = await apiActionFormData({url: getTheAttendanceReportUploadUrl(), method: "post", data: {work_id: work_id, fileupload: file, year: fileUploadData.year}})
             if(response.success){
               setShowModal(false)
-              notifySuccessMessage(response.status)
+              notifySuccessMessage(response.result)
             }else{
-              notifyErrorMessage(response.status)
+              notifyErrorMessage(response.result)
             }
           }else{
             notifyErrorMessage(message)
@@ -92,7 +92,7 @@ const onFileEvent = (event) => {
                     onChange={(e)=> {setFileData({...fileUploadData, year: e.target.value})}} 
                     />
 
-                    <button className='mt-5 bg-blue-600 text-white hover:bg-blue-700 py-2 rounded-md' onClick={() => {uploadFile()}}>Upload</button>
+                    <button className='mt-10 bg-blue-600 text-white hover:bg-blue-700 py-2 rounded-md' onClick={() => {uploadFile()}}>Upload</button>
                 </div>
             </div>
         </div>

@@ -8,7 +8,6 @@ import { getThesentInvitationUrl } from '../../../api/urls'
 import { getWorkspaceInfo } from '../../../config/cookiesInfo'
 
 
-
 export default function InviteToWorkspace(props) {
   const [listOfTeamMembers, setTeamMembers] = useState([{email: "", role: "Employee", isSent: false, hasInvalidEmail: false}])
   // const [teamMemberInfo, setTeamMemberInfo] = useState({email: "", role: ""})
@@ -42,6 +41,7 @@ export default function InviteToWorkspace(props) {
 
   const hasValidData = () => {
     const emptyItemIndex = listOfTeamMembers.findIndex(item => !validateEmail(item.email))    
+    // console.log(emptyItemIndex)
     if(emptyItemIndex > -1){
       console.log("INSIDE")
       listOfTeamMembers[emptyItemIndex].hasInvalidEmail = true
@@ -54,7 +54,6 @@ export default function InviteToWorkspace(props) {
   
 
   const onSendClick = () => {
-    
     if(hasValidData()){
       let validation_data = [
         { key: "workspace_id", message: 'Workspace field left empty!' },
@@ -83,7 +82,7 @@ export default function InviteToWorkspace(props) {
             notifySuccessMessage(res.status);
             // navigate(routesName.assignTask.path);
         } else {
-            notifyErrorMessage(res.detail)
+            notifyErrorMessage(res.status)
         }
 };
 
@@ -93,7 +92,7 @@ export default function InviteToWorkspace(props) {
         <div className='font-medium font-quicksand text-sm md:text-md text-center text-gray-500 my-4'>Get your project up and running faster by directly inviting your team members to your project.</div>
         
         <div className='flex flex-col w-full justify-center items-center'>
-            <div className='w-full max-w-sm'>
+            <div className='w-full max-w-sm md:max-w-md'>
               {listOfTeamMembers.map((item, index)=>{
                 console.log(index,item)
                 return <div className='flex flex-col'>

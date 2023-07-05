@@ -43,6 +43,8 @@ const CreateNewTask = (props) => {
         project_id: data ? data.project_id : null,
         on_hold_reason: data? data.on_hold_reason: null,
         status: data ? data.status : 'In-Progress',
+        detailed_description: data ? data.detailed_description : null,
+        description_link: data ? data.description_link : null
     }
     const [formData, setFormData] = React.useState({ ...initial_data })
 
@@ -119,7 +121,7 @@ const CreateNewTask = (props) => {
     };
 
     return (
-        <div className="relative my-6 md:w-2/4">
+        <div className="relative my-6 w-full mx-2 sm:max-w-sm md:max-w-md overflow-y-auto overflow-x-auto">
             <div className="w-full border-0 rounded-lg shadow-lg relative flex flex-col bg-white outline-none focus:outline-none">
                 {/* header */}
                 <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
@@ -146,7 +148,7 @@ const CreateNewTask = (props) => {
                         }
 
                         <div className="mt-4 flex flex-col">
-                            <CustomLabel label={`Description`} className={'font-quicksand font-semibold text-sm mb-1'} />
+                            <CustomLabel label={`Task Description`} className={'font-quicksand font-semibold text-sm mb-1'} />
                             <Input
                                 type='textarea'
                                 id='description'
@@ -156,6 +158,29 @@ const CreateNewTask = (props) => {
                                 onChange={(e) => setFormData((previous) => ({ ...previous, task: e.target.value }))}
                             />
                         </div>
+                        <div className="mt-2 flex flex-col">
+                            <CustomLabel label={`Detailed Description`} className={'font-quicksand font-semibold text-sm mb-1'} />
+                            <Input
+                                type='textarea'
+                                id='description'
+                                className="h-20"
+                                placeholder="Add the task description"
+                                value={formData.detailed_description ? formData.detailed_description : ''}
+                                onChange={(e) => setFormData((previous) => ({ ...previous, detailed_description: e.target.value }))}
+                            />
+                        </div>
+
+                        <div className="mt-2 flex flex-col">
+                            <CustomLabel label={`Description Link`} className={'font-quicksand font-semibold text-sm mb-1'} />
+                            <Input
+                                type='text'
+                                id='description'
+                                placeholder="Add the task description"
+                                value={formData.description_link ? formData.description_link : ''}
+                                onChange={(e) => setFormData((previous) => ({ ...previous, description_link: e.target.value }))}
+                            />
+                        </div>
+
                         <CustomLabel label={`Status`} className={'font-quicksand font-semibold text-sm mb-1'} />
                         <div className='grid grid-cols-1 space-y-2 md:grid-cols-2 font-quicksand font-semibold text-sm'>
                             <div className="flex items-center cursor-pointer ">

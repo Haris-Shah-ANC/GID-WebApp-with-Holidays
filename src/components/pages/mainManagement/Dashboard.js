@@ -233,8 +233,8 @@ const DashboardCard = (props) => {
     const popoverRef = React.createRef();
     const dispatch = Actions.getDispatch(React.useContext);
     const [openOnHoldReason, showOnHoldReason] = useState(false)
-    const { assignee, dead_line, employee_name, project_name, employee_id, task, created_at, 
-        onEditClick, task_id, work_id, module_id, project_id, on_hold_reason, status, onTaskComplete } = props;
+    const { assignee, dead_line, employee_name, project_name, employee_id, task, created_at, description_link,
+        onEditClick, task_id, work_id, module_id, project_id, on_hold_reason, status, onTaskComplete, detailed_description, module_name } = props;
     const [isChecked, setChecked] = useState(status === "Completed")
     let my_task = user_id === employee_id;
     
@@ -295,10 +295,15 @@ const DashboardCard = (props) => {
                                 />} */}
                                 <div className='flex flex-col'>
                                     <div className='max-h-14 align-top font-quicksand font-medium flex'>
-                                        <p className='text-5 text-blueGray-800 font-quicksand font-bold text-lg line-clamp-2'>{task}</p>
+                                        <a href={description_link === null ? null: description_link}
+                                            target="blank"
+                                            className={`text-5 ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg line-clamp-2`}>
+                                            {task}
+                                        </a>
+                                        {/* <p className={`text-5 ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg line-clamp-2`}></p> */}
                                     </div>
                                     <span className="text-sm font-quicksand font-medium inline-block pb-1 text-blueGray-600 last:mr-0 mr-1">
-                                                {"This is sample task description "}
+                                                {detailed_description}
                                     </span>
                                 </div>
                         
@@ -313,7 +318,7 @@ const DashboardCard = (props) => {
                             <span className="text-xs font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-md text-lightBlue-600 bg-lightBlue-200 last:mr-0 mr-1">
                             {project_name}</span>
                             <span className="text-xs font-semibold font-quicksand inline-block py-1">
-                            {"Module Name"}</span>
+                            {module_name}</span>
                         </div>
 
                         <div className="flex flex-wrap my-2">

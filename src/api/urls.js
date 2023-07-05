@@ -83,8 +83,21 @@ export const getTheAttendanceReportUploadUrl = () => {
     return HOST + APP_NAME + `/attendance/`
 }
 
+export const getThePeriodicNotificationsGetUrl = (work_id) => {
+    return HOST + APP_NAME + `/get_periodic_tasks/?workspace_id=${work_id}`
+}
 
+export const getTheNotificationTypesUrl = (work_id) => {
+    return HOST + APP_NAME + `/get_notification_types/?workspace_id=${work_id}`
+}
+ 
+export const getThePeriodScheduleTask = () => {
+    return HOST + APP_NAME + `/schedule_periodic_tasks/`
+}
 
+export const getTheModuleProgressPeriodicTasksUrl = () => {
+    return HOST + APP_NAME + `/schedule_module_progress_periodic_tasks/`
+}
 
 
 

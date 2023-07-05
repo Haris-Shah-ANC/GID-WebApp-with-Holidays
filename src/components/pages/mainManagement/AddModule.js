@@ -47,7 +47,8 @@ export default function AddModule(props) {
         let validation_data = [
             { key: "module_name", message: 'Module field left empty!' },
             { key: "workspace_id", message: 'Workspace left empty!' },
-            {key: "project_id", message: 'Project field left empty'}
+            {key: "project_id", message: 'Project field left empty'},
+            {key: "deadline", message: 'Deadline field left empty'}
         ]
 
         // console.log(JSON.stringify(formData, 0, 2))
@@ -73,9 +74,8 @@ export default function AddModule(props) {
 
     
   return (
-    <div
-    className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
-        <div className="relative my-6 md:w-2/4">
+    // <div className="justify-center items-center flex overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none w-full mx-2 sm:max-w-sm md:max-w-md overflow-x-auto">
+        <div className="relative my-6 md:w-2/4 w-full mx-2 sm:max-w-sm md:max-w-md overflow-x-auto">
             <div className="w-full border-0 rounded-lg shadow-lg relative flex flex-col bg-white outline-none focus:outline-none">
                 {/* header */}
                 <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
@@ -127,6 +127,6 @@ export default function AddModule(props) {
 
             </div>
         </div>
-    </div>
+    // </div>
   )
 }

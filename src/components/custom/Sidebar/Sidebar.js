@@ -40,7 +40,7 @@ const Sidebar = ({ navigationUrl = [], isSidebarOpen, setIsSidebarOpen, sidebarS
   return (
     <>
       <div className={`bg-white text-white block  top-0 bottom-0 w-${isSidebarOpen ? '64' : 'auto'} shadow-xl left-0 fixed flex-row flex-nowrap md:z-10 z-9999 transition-all duration-300 ease-in-out transform md:translate-x-0 ${sidebarShow}`}>
-      <div className="flex-grow">
+      <div className="flex-grow h-full mx-2">
         <div className="flex items-center justify-between border-gray-400">
           <div className='flex items-center  w-full'>
             <img
@@ -62,8 +62,8 @@ const Sidebar = ({ navigationUrl = [], isSidebarOpen, setIsSidebarOpen, sidebarS
             </span>
           </button>
         </div>
-        <nav className=" overflow-y-auto overflow-x-hidden">
-          <ul className="flex flex-col">
+        <nav className=" h-full overflow-y-auto overflow-x-hidden">
+          <ul className="flex flex-col ">
             <li
               title={isSidebarOpen ? '' : "Add Task"}
               className={` ${isSidebarOpen ? '' : 'justify-center'} m-1 rounded-md font-quicksand font-bold bg-blue-500 p-4 border-gray-400 flex items-center hover:bg-vimeo-active cursor-pointer`}
@@ -193,6 +193,21 @@ const ChildItemComponent = (props) => {
               </React.Fragment>
             }
 
+            
+
+            {childItem === 'hrms' &&
+              <React.Fragment>
+                <li className='p-2 text-gray-500 font-quicksand font-semibold text-sm'>Select:</li>
+                <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm' onClick={() => {navigate(item.path)}}>
+                  Reports
+                </li>
+                <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm' onClick={() => {setShowModal(file_upload)}}>
+                  <a class="collapse-item" target="_blank">Upload</a>
+                </li>
+                {/* <li className='p-2 text-sm cursor-pointer hover:bg-gray-200 rounded-md'><div className=" flex items-center"><i className="fa-solid fa-plus mr-1 font-semibold font-quicksand text-sm"></i>Add New Meeting</div></li> */}
+              </React.Fragment>
+            }
+
             {childItem === 'meeting' &&
               <React.Fragment>
                 <li className='p-2 text-gray-500 font-quicksand font-semibold text-sm'>Select Meeting:</li>
@@ -200,19 +215,6 @@ const ChildItemComponent = (props) => {
                   <a class="collapse-item" href="https://meet.google.com/zbx-mkky-gux" target="_blank">Daily Standup</a>
                 </li>
                 <li className='p-2 text-sm cursor-pointer hover:bg-gray-200 rounded-md'><div className=" flex items-center"><i className="fa-solid fa-plus mr-1 font-semibold font-quicksand text-sm"></i>Add New Meeting</div></li>
-              </React.Fragment>
-            }
-
-            {childItem === 'hrms' &&
-              <React.Fragment>
-                <li className='p-2 text-gray-500 font-quicksand font-semibold text-sm'>Select:</li>
-                <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm' onClick={() => {navigate(item.path)}}>
-                  <a class="collapse-item" href="https://meet.google.com/zbx-mkky-gux" target="_blank">Reports</a>
-                </li>
-                <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm' onClick={() => {setShowModal(file_upload)}}>
-                  <a class="collapse-item" href="https://meet.google.com/zbx-mkky-gux" target="_blank">Upload</a>
-                </li>
-                {/* <li className='p-2 text-sm cursor-pointer hover:bg-gray-200 rounded-md'><div className=" flex items-center"><i className="fa-solid fa-plus mr-1 font-semibold font-quicksand text-sm"></i>Add New Meeting</div></li> */}
               </React.Fragment>
             }
 
