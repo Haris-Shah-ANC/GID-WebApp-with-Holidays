@@ -90,13 +90,17 @@ export const getThePeriodicNotificationsGetUrl = (work_id) => {
 export const getTheNotificationTypesUrl = (work_id) => {
     return HOST + APP_NAME + `/get_notification_types/?workspace_id=${work_id}`
 }
- 
+
 export const getThePeriodScheduleTask = () => {
     return HOST + APP_NAME + `/schedule_periodic_tasks/`
 }
 
 export const getTheModuleProgressPeriodicTasksUrl = () => {
     return HOST + APP_NAME + `/schedule_module_progress_periodic_tasks/`
+}
+
+export const getTheAttendanceSyncWithRazorPayUrl = (workId, fromDate, toDate) => {
+    return HOST + APP_NAME + `/sync_attendance_with_razorpay/?work_id=${workId}&from_date=${fromDate}&to_date=${toDate}`
 }
 
 

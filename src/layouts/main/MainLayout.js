@@ -6,6 +6,7 @@ import Sidebar from "../../components/custom/Sidebar/Sidebar";
 import * as Actions from '../../state/Actions'
 
 import {
+  clearCookie,
   getToken,
   getWorkspaceInfo,
   isAuthenticated,
@@ -40,7 +41,10 @@ function MainLayout() {
     dispatch(Actions.stateChange("workspace", getWorkspaceInfo()))
   }, [])
 
-
+  const logOutFromTheApp = () => {
+    clearCookie()
+    navigate("/auth"+routesName.login.path)
+  }
   
   const handleDrawerClick = () => {
     if (sidebarShow === "") {
@@ -54,7 +58,7 @@ function MainLayout() {
       <div className="w-full min-h-screen bg-screenBackgroundColor">
           <Sidebar navigationUrl={sidebarMenu} sidebarShow={sidebarShow} setSidebarShow={setSidebarShow} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} handleDrawerClick={handleDrawerClick}/>
         <div className={`relative md:ml-64`}>
-          <Navbar handleDrawerClick={handleDrawerClick} />
+          <Navbar handleDrawerClick={handleDrawerClick} logOutClick = {logOutFromTheApp}/>
 
           <div className="p-4 overflow-y-auto w-full">
             <Routes>

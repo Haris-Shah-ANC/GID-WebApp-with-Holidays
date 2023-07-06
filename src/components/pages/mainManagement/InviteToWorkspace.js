@@ -22,7 +22,6 @@ export default function InviteToWorkspace(props) {
     if(listOfTeamMembers.length === 1){
       setTeamMembers([{email: "", role: "Employee", isSent: false, hasInvalidEmail: false}])
     }else{
-      console.log(JSON.stringify(listOfTeamMembers[index], 0, 1))
       listOfTeamMembers.splice(index, 1)
       setTeamMembers([...listOfTeamMembers])
     }
@@ -41,9 +40,7 @@ export default function InviteToWorkspace(props) {
 
   const hasValidData = () => {
     const emptyItemIndex = listOfTeamMembers.findIndex(item => !validateEmail(item.email))    
-    // console.log(emptyItemIndex)
     if(emptyItemIndex > -1){
-      console.log("INSIDE")
       listOfTeamMembers[emptyItemIndex].hasInvalidEmail = true
       setTeamMembers([...listOfTeamMembers])
       return false
@@ -80,11 +77,12 @@ export default function InviteToWorkspace(props) {
         })
         if (res.success) {
             notifySuccessMessage(res.status);
+            setTeamMembers([{email: "", role: "Employee", isSent: false, hasInvalidEmail: false}])
             // navigate(routesName.assignTask.path);
         } else {
             notifyErrorMessage(res.status)
         }
-};
+  };
 
   return (
     <React.Fragment>
@@ -94,7 +92,6 @@ export default function InviteToWorkspace(props) {
         <div className='flex flex-col w-full justify-center items-center'>
             <div className='w-full max-w-sm md:max-w-md'>
               {listOfTeamMembers.map((item, index)=>{
-                console.log(index,item)
                 return <div className='flex flex-col'>
                   <div className='flex flex-row space-x-1 mt-3'>
                     <div className='w-full flex items-center'>
@@ -143,7 +140,7 @@ export default function InviteToWorkspace(props) {
                   <svg xmlns="http://www.w3.org/2000/svg" className='mr-2' height="1em" viewBox="0 0 448 512"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg>
                   <span>Add Member</span>
                 </div>
-                <div className='flex rounded-md bg-blue-600 border-gray-200 border text-white font-quicksand font-semibold text-sm py-2 px-4 mt-4 hover:bg-blue-700' onClick={() => {onSendClick()}}>
+                <div className='flex rounded-md bg-blue-600 border-gray-200 border text-white font-quicksand font-semibold text-sm py-2 px-4 mt-4 hover:bg-blue-700 cursor-default' onClick={() => {onSendClick()}}>
                   <svg xmlns="http://www.w3.org/2000/svg" className='self-center mr-2' height="1em" viewBox="0 0 512 512" fill="#FFFFFF"><path d="M64 112c-8.8 0-16 7.2-16 16v22.1L220.5 291.7c20.7 17 50.4 17 71.1 0L464 150.1V128c0-8.8-7.2-16-16-16H64zM48 212.2V384c0 8.8 7.2 16 16 16H448c8.8 0 16-7.2 16-16V212.2L322 328.8c-38.4 31.5-93.7 31.5-132 0L48 212.2zM0 128C0 92.7 28.7 64 64 64H448c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128z"/></svg>
                   <span>Send Invitation</span>
                 </div>

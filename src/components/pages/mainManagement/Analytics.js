@@ -10,13 +10,14 @@ import Dropdown from '../../custom/Dropdown/Dropdown'
 import * as Actions from '../../../state/Actions';
 import Input from '../../custom/Elements/Input'
 
+const listOfNumbers = [1,2,3,4,5,6]
 export default function Analytics(props) {
     const [listOfModules, setModules] = useState([])
     const [listOfProjects, setProjects] = useState([])
     const {work_id} = getWorkspaceInfo()
     const [formData, setFormData] = useState({project_id: null, workspace_id: work_id, module_id: null, time_list: [], today: false})
     const [listOfNotifications, setNotifications] = useState([])
-    
+    const [days, setDays] = useState([])
 
     //================================  Fetch projects ========================================//
     const fetchProjects = async (id) => {
@@ -73,6 +74,19 @@ export default function Analytics(props) {
         }
     }, [work_id, formData.project_id])
 
+    useEffect(() => {
+        
+        const getCurrentWeekDays = () => {
+            const weekStart = moment().startOf('week');
+          
+            for (let i = 0; i <= 6; i++) {
+              days.push(moment(weekStart).add(i, 'days'));
+            }
+            setDays([...days])
+          }
+          getCurrentWeekDays()
+    }, [])
+
   return (
     <div className=' flex flex-col h-screen'>
         <div className='flex flex-col'>
@@ -84,29 +98,6 @@ export default function Analytics(props) {
                 <div>
                     <AddNotification onNewPeriodicNotificationAdd = {onNewPeriodicNotificationAdd}/>
                 </div>
-            </div>
-            <div className='justify-center items-center flex'>
-                <table className='shadow-md w-3/4 self-center my-2'>
-                    <thead className='bg-gray-100 border-b-2'>
-                        <tr>
-                            <th className='p-3 text-sm font-quicksand whitespace-nowrap font-bold text-left w-16'>#</th>
-                            <th className='p-3 text-sm font-quicksand whitespace-nowrap font-bold text-left'>Tasks</th>
-                            <th className='p-3 text-sm font-quicksand whitespace-nowrap font-bold text-left w-24'>Time</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        { listOfNotifications.length > 0 &&
-                        listOfNotifications.map((item, index) => {
-                            return <tr className={`${index % 2 === 0 ? 'bg-white' : 'bg-gray-100'}`}>
-                                <td className='p-3 text-sm font-quicksand whitespace-nowrap font-medium text-left w-16'>{index+1}</td>
-                                <td className='p-3 text-sm font-quicksand whitespace-nowrap font-medium text-left'>{item.task_type}</td>
-                                <td className='p-3 text-sm font-quicksand whitespace-nowrap font-medium text-left w-24'>{formatTime(item.notification_time, "HH:mm A","hh:mm a")}</td>
-                            </tr>
-                            })
-                        }
-                        
-                    </tbody>
-                </table>
             </div>
         </div>
     </div>

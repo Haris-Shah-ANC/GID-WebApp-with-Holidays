@@ -1,14 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import Input from '../../custom/Elements/Input'
 import moment, { duration } from 'moment/moment'
-import { formatDate, getDateRange, isFormValid, notifyErrorMessage } from '../../../utils/Utils'
+import { formatDate, getDateRange, isFormValid, notifyErrorMessage, notifySuccessMessage } from '../../../utils/Utils'
 import {
     getLoginDetails,
     getWorkspaceInfo,
 } from '../../../config/cookiesInfo';
 import { apiAction, apiActionFormData } from '../../../api/api';
-import { getTheAttendanceReportUrl } from '../../../api/urls';
+import { getTheAttendanceReportUrl, getTheAttendanceSyncWithRazorPayUrl } from '../../../api/urls';
 import no_data_found from '../../../assets/image/no_data_found.svg'
+import sync from '../../../assets/image/sync.svg';
+import razerpayx from '../../../assets/image/razerpayx.png';
 
 const timePeriods = [
     {name: "Current Month", fromDate: getDateRange("Current Month".toLowerCase(), "YYYY-MM-DD", "start"), toDate: getDateRange("Current Month".toLowerCase(), "YYYY-MM-DD", "end")},
@@ -67,6 +69,34 @@ export default function AttendanceReport(props) {
         }
     }
 
+    const syncAttendanceWithRazorPay = async () => {
+        console.log(JSON.stringify(postData, 0, 2))
+        // let validation_data = [
+        //     { key: "work_id", message: 'Workspace field left empty!' },
+        //     { key: "from_date", message: `Description field left empty!` },
+        //     { key: "to_date", message: 'Deadline field left empty!' },
+        // ]
+        // const { isValid, message } = isFormValid(postData, validation_data);
+        // if (isValid) {
+        //     let res = await apiAction({
+        //         method: 'get',
+        //         // navigate: navigate,
+        //         // dispatch: dispatch,
+        //         url: getTheAttendanceSyncWithRazorPayUrl(workspace.work_id, postData.to_date, workspace.work_id),
+        //     })
+        //     if (res.success) {
+        //         notifySuccessMessage(res.detail)
+        //     } else {
+        //         notifyErrorMessage(res.detail)
+        //     }
+        // } else {
+        //     notifyErrorMessage(message)
+        // }
+    }
+
+    const hasFromDateAndToDate = () => {
+        return postData.from_date.length > 0 && postData.to_date.length > 0
+    }
 
   return (
     <div className='w-full h-screen'>
@@ -143,7 +173,15 @@ export default function AttendanceReport(props) {
                 {/* </div> */}
                 
             </div>
-            <button className='font-quicksand font-bold text-sm text-white rounded-md border bg-blue-600 px-4 py-2'>Sync To Razorpay</button>
+            
+            <button className={`flex font-quicksand font-bold text-sm text-white rounded-md border ${hasFromDateAndToDate() ? "bg-blue-600": "bg-blue-400"} items-center`} disabled={hasFromDateAndToDate() ? false : true} onClick={() => {syncAttendanceWithRazorPay()}}>
+                <div className={`${hasFromDateAndToDate() ? "bg-blue-700": "bg-blue-500"} h-full rounded-l-lg`}>
+                    <img src={sync} alt='' className='w-5 mx-2 h-full'></img>
+                </div>
+                <span className='mr-2'>Sync To Razorpay</span>
+                <img src={razerpayx} alt='' className='w-5 h-5 mr-2'></img>
+            </button>
+                
             
         </div>
         { attendanceData.length > 0&&

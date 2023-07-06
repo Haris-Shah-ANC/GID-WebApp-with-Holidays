@@ -1,15 +1,23 @@
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import Input from '../Elements/Input';
-import { imagesList } from '../../../utils/Constant';
-import { getWorkspaceInfo } from '../../../config/cookiesInfo';
+import { MENU, imagesList } from '../../../utils/Constant';
+import { clearCookie, getWorkspaceInfo } from '../../../config/cookiesInfo';
 import { getLoginDetails } from '../../../config/cookiesInfo';
 
-const Navbar = ({ handleDrawerClick }) => {
+const Navbar = ({ handleDrawerClick , logOutClick}) => {
     const bellCount = 3;
     const messageCount = 5;
     const workspace = getWorkspaceInfo()
     const userInfo = getLoginDetails()
-    console.log("Login Details", JSON.stringify(userInfo, 0, 2))
+    const [isPopupMenuVisible, setPopupMenuVisibility] = useState(false)
+    const menuRef = useRef()
+    const imgRef = useRef()
+
+    window.addEventListener('click', (e) => {
+        if(e.target !== menuRef.current && e.target !== imgRef.current){
+            setPopupMenuVisibility(false)
+        }
+    })
 
     return (
         <nav className="bg-white p-4 flex flex-col sm:flex-row items-center justify-between">
@@ -45,13 +53,33 @@ const Navbar = ({ handleDrawerClick }) => {
                             <span className="ml-2 text-gray-600 text-sm">{userInfo.name}</span>
                             <span className="ml-2 text-gray-600 text-sm">Employee</span>
                         </div>
-                        <img
+                        <div className='relative flex mr-5'>
+                         <img
+                            ref={imgRef}
                             src={imagesList.profile.src}
                             alt={imagesList.profile.alt}
                             className="ml-2 w-10 h-10 rounded-full"
-                        />
-                    </div>
-                </div>
+                            onClick={() => {setPopupMenuVisibility(!isPopupMenuVisible)}}
+                         />
+                            {
+                                isPopupMenuVisible &&
+                                <div 
+                                    ref={menuRef}
+                                    className='absolute bg-white shadow-xl w-auto mt-10 flex flex-col -left-20 rounded-md'>
+                                    <ul className='font-medium font-quicksand text-sm w-40 p-2'>
+                                        {
+                                        MENU.map((menu) => (
+                                            <li key={menu} className="p-2 rounded-md hover:bg-blue-50" >{menu}</li>
+                                        )) 
+                                        }
+                                    </ul>
+                                    <div className='h-[1px] bg-gray-200'></div>
+                                    <button className='font-medium font-quicksand text-sm w-28 pl-4 py-2 text-left hover:bg-blue-50' onClick={() => {logOutClick()}}>Logout</button>
+                                </div>
+                            }
+                        </div>
+                   </div>
+               </div>
             </div>
         </nav>
 

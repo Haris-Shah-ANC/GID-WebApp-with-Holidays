@@ -24,3 +24,9 @@ export const ROLES = [
     {role: "Admin", short_name: "admin", id:2},
     {role: "Manager", short_name: "manager", id:3}
 ]
+
+export const MENU = [
+    "Profile",
+    "Settings",
+    "Activity Log"
+]
