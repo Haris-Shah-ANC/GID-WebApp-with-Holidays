@@ -98,6 +98,15 @@ export default function AttendanceReport(props) {
         return postData.from_date.length > 0 && postData.to_date.length > 0
     }
 
+    const validateDate = (fromDate, toDate) => {
+        if(moment(fromDate).isAfter(toDate)){
+            notifyErrorMessage("From Date Should be less than to date")
+            return false
+        }else{
+            return true
+        }
+    }
+
   return (
     <div className='w-full h-screen'>
         <div className="bg-white rounded-xl flex shadow p-3 flex-wrap justify-between md:space-x-0">
@@ -156,14 +165,21 @@ export default function AttendanceReport(props) {
                                 name="datetime"
                                 type="date"
                                 value={postData.from_date}
-                                onChange={(e) => {setPostData({...postData, from_date: e.target.value})}}
+                                onChange={(e) => {
+                                    if(validateDate(e.target.value, postData.to_date)){
+                                        setPostData({...postData, from_date: e.target.value})}   
+                                    }
+                                }
                             />
                             <Input
                                 id="date"
                                 name="datetime"
                                 type="date"
                                 value={postData.to_date}
-                                onChange={(e) => {setPostData({...postData, to_date: e.target.value})}}
+                                onChange={(e) => {
+                                    if(validateDate(postData.to_date, e.target.value)){
+                                        setPostData({...postData, to_date: e.target.value})}}
+                                    }
                             />
                             
                             <button className='font-quicksand font-bold text-sm text-white rounded-md border bg-blue-600 px-4 py-2 my-2 md:mt-0' onClick={() => {onSubmitClick()}}>Submit</button>
