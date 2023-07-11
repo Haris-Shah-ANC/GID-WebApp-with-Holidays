@@ -25,6 +25,11 @@ export const routesName = {
         name: 'Dashboard',
         activeRoute: 'Dashboard',
     },
+    calendar: {
+        path: '/calendar',
+        name: 'Calendar',
+        activeRoute: 'Calendar',
+    },
     timeLine: {
         path: '/time-line',
         name: 'Timeline',
@@ -57,7 +62,7 @@ export const routesName = {
     },
     analytics: {
         path: '/analytics',
-        name: "Analytics",
+        name: "Notifications&Analytics",
         activeRoute: "Analytics",
     },
     meeting: {

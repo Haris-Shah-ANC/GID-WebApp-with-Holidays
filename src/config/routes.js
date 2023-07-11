@@ -10,6 +10,7 @@ import AssignTask from "../components/pages/mainManagement/AssignTask";
 import InviteToWorkspace from "../components/pages/mainManagement/InviteToWorkspace";
 import AttendanceReport from "../components/pages/mainManagement/AttendanceReport";
 import Analytics from "../components/pages/mainManagement/Analytics";
+import CalendarView from "../components/pages/mainManagement/CalendarView";
 
 export const authRoutes = [
     {
@@ -59,6 +60,11 @@ export const mainRoutes = [
         name: routesName.analytics.name,
         component: <Analytics />,
     },
+    {
+        path: routesName.calendar.path,
+        name: routesName.calendar.name,
+        component: <CalendarView />,
+    },
 ];
 export const landingRoutes = [];
 
@@ -77,12 +83,12 @@ export const sidebarMenu = [
         active: routesName.dashboard.activeRoute,
 
     },
-    // {
-    //     name: routesName.timeLine.name,
-    //     path: routesName.timeLine.path,
-    //     icon: "fa-solid fa-business-time",
-    //     active: routesName.timeLine.activeRoute,
-    // },
+    {
+        name: routesName.calendar.name,
+        path: routesName.calendar.path,
+        icon: "fa-solid fa-calendar-days",
+        active: routesName.calendar.activeRoute,
+    },
     {
         name: routesName.assignTask.name,
         path: routesName.assignTask.path,
@@ -101,13 +107,6 @@ export const sidebarMenu = [
         icon: "fa-solid fa-paste",
         active: routesName.newModule.activeRoute,
     },
-    // {
-    //     name: routesName.meeting.name,
-    //     path: routesName.meeting.path,
-    //     icon: "fa-solid fa-video",
-    //     active: routesName.meeting.activeRoute,
-    //     childItem: 'meeting'
-    // },
 
     {
         name: routesName.inviteToWorkspace.name,

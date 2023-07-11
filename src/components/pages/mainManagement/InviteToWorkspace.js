@@ -100,6 +100,7 @@ export default function InviteToWorkspace(props) {
                         value={item.email}
                         onChange={(e) => {onEmailChange(index, e.target.value)}}
                         required
+                        placeholder="Enter E-mail"
                       ></Input>
                       <select
                           disabled={false}

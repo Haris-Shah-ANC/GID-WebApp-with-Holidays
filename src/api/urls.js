@@ -59,6 +59,10 @@ export const getTaskListUrl=()=>{
     return HOST + APP_NAME + `/multifilter_task/`
 }
 
+export const getTheActiveModulesFetchUrl = () => {
+    return HOST + APP_NAME + `/get_active_modules/?workspace_id=${1}&project_id=${39}`
+} 
+
 export const getCreateProjectUrl =() => {
     return HOST + APP_NAME +  `/create_project/`
 }

@@ -55,9 +55,33 @@ function MainLayout() {
   };
   return (
     <React.Fragment>
+      {/* <div className="flex bg-screenBackgroundColor">
+        <Sidebar navigationUrl={sidebarMenu} sidebarShow={sidebarShow} setSidebarShow={setSidebarShow} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} handleDrawerClick={handleDrawerClick}/>
+        <div className={`relative w-full`}>
+          <Navbar handleDrawerClick={handleDrawerClick} logOutClick = {logOutFromTheApp}/>
+
+          <div className="p-4 overflow-y-auto w-full">
+            <Routes>
+              {
+                mainRoutes.map((route, index) =>
+                  <Route key={index}
+                    path={route.path}
+                    element={
+                      <ProtectedRoute>
+                        {route.component}
+                      </ProtectedRoute>
+                    }
+                  />
+                )
+              }
+            </Routes>
+          </div>
+        </div>
+      </div> */}
+
       <div className="w-full min-h-screen bg-screenBackgroundColor">
           <Sidebar navigationUrl={sidebarMenu} sidebarShow={sidebarShow} setSidebarShow={setSidebarShow} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} handleDrawerClick={handleDrawerClick}/>
-        <div className={`relative md:ml-64`}>
+        <div className={`relative ${isSidebarOpen ? 'md:ml-64':'lg:ml-20'}`}>
           <Navbar handleDrawerClick={handleDrawerClick} logOutClick = {logOutFromTheApp}/>
 
           <div className="p-4 overflow-y-auto w-full">

@@ -113,7 +113,7 @@ const CustomTable = (props) => {
             item.employee_name.toLowerCase().includes(searchTerm.toLowerCase())))
     };
     return (
-        <>
+        <React.Fragment>
             <div className="px-6 py-4 border-0">
                 <div className="flex flex-wrap items-center">
                     <div className="w-full md:w-1/2 items-center">
@@ -200,7 +200,7 @@ const CustomTable = (props) => {
                     </div>
                 }
             </div>
-        </>
+        </React.Fragment>
 
 
     )
