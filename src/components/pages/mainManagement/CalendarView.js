@@ -173,7 +173,7 @@ export default function CalendarView(props) {
 
         <div className='flex flex-col md:flex-row bg-white'>
             { days.map((item, index) => {
-                return <div className='flex flex-col w-full md:w-1/6 m-2'>
+                return <div className='flex flex-col space-x-0 p-2 space-y-2 w-full md:w-1/6 md:space-x-2'>
                         {/* <div className='flex-col md:flex-col'> */}
                             <div className='flex justify-between'>
                                 <span className='text-2xl font-quicksand font-bold'>{item.format("DD.MM")}</span>

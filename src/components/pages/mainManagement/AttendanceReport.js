@@ -99,12 +99,21 @@ export default function AttendanceReport(props) {
     }
 
     const validateDate = (fromDate, toDate) => {
-        if(moment(fromDate).isAfter(toDate)){
-            notifyErrorMessage("From Date Should be less than to date")
-            return false
+        if(formatDate.length > 0 && toDate.length > 0){
+            console.log("DATES", fromDate, toDate)
+            console.log("NOT NULL", moment(fromDate).isAfter(toDate))
+            if(moment(fromDate).isAfter(toDate)){
+                console.log("AFTER FROM DATE")
+                notifyErrorMessage("From Date Should be less than to date")
+                return false
+            }else{
+                return true
+            }
         }else{
             return true
         }
+
+        
     }
 
   return (
@@ -177,7 +186,7 @@ export default function AttendanceReport(props) {
                                 type="date"
                                 value={postData.to_date}
                                 onChange={(e) => {
-                                    if(validateDate(postData.to_date, e.target.value)){
+                                    if(validateDate(postData.from_date, e.target.value)){
                                         setPostData({...postData, to_date: e.target.value})}}
                                     }
                             />
