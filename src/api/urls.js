@@ -107,5 +107,8 @@ export const getTheAttendanceSyncWithRazorPayUrl = (workId, fromDate, toDate) =>
     return HOST + APP_NAME + `/sync_attendance_with_razorpay/?work_id=${workId}&from_date=${fromDate}&to_date=${toDate}`
 }
 
+export const getTheCalendarViewTasksUrl = (fromDate, endDate, work_id) => {
+    return HOST + APP_NAME + `/api/calendar_task_view/?dead_line__gte=${fromDate}&dead_line__lte=${endDate}&workspace=${work_id}`
+}
 
 

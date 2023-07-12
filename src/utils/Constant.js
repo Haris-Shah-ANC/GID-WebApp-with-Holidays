@@ -30,3 +30,13 @@ export const MENU = [
     "Settings",
     "Activity Log"
 ]
+
+export const WEEKS = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday"
+]

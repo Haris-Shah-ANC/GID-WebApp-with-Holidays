@@ -11,25 +11,26 @@ import { getTheAttendanceReportUrl, getTheAttendanceSyncWithRazorPayUrl } from '
 import no_data_found from '../../../assets/image/no_data_found.svg'
 import sync from '../../../assets/image/sync.svg';
 import razerpayx from '../../../assets/image/razerpayx.png';
+import { WEEKS } from '../../../utils/Constant';
 
 const timePeriods = [
     {name: "Current Month", fromDate: getDateRange("Current Month".toLowerCase(), "YYYY-MM-DD", "start"), toDate: getDateRange("Current Month".toLowerCase(), "YYYY-MM-DD", "end")},
     {name: "Previous Month", fromDate: getDateRange("Previous Month".toLowerCase(), "YYYY-MM-DD", "start"), toDate: getDateRange("Previous Month".toLowerCase(), "YYYY-MM-DD", "end")},
     {name: "Custom", fromDate: null, toDate: null}]
 
-const tableHeaders = ["Sr No", "Employee Name", "Present", "Half Day Present", "Absent", "Week Off", "Present on Week Off", "Half Day Present on Week Off", "Leave", "Unpaid Leave", "Unpaid Half Day"]
+const tableHeaders = ["Employee Name", "Present", "Half Day Present", "Absent", "Week Off", "Present on Week Off", "Half Day Present on Week Off", "Leave", "Unpaid Leave", "Unpaid Half Day"]
 
 export default function AttendanceReport(props) {
     const [selectedTimePeriod, selectTimePeriod] = useState(timePeriods[0])
     const workspace = getWorkspaceInfo()
-    const [tableHeaderNames, setTableHeaderNames] = useState([])
+    const [tableHeaderNames, setTableHeaderNames] = useState(tableHeaders)
     const [attendanceData, setAttendanceData] = useState([])
     const [postData, setPostData] = useState({from_date: selectedTimePeriod.fromDate, to_date: selectedTimePeriod.toDate, work_id: workspace.work_id})
 
     const onSubmitClick = () => {
         fetchEmployeesAttendanceDetails()
     }
-
+    
     useEffect(() => {
         if(!selectedTimePeriod.name.toLocaleLowerCase().includes("custom")){
             fetchEmployeesAttendanceDetails()
@@ -52,12 +53,16 @@ export default function AttendanceReport(props) {
             })
             if (res.success) {
                 let attendanceHeaders = []
-                if(res.result.length > 0){
-                    for (var item of res.result[0].attendance){
+                const responseResult = res.result
+                if(responseResult.length > 0){
+                    for (var item of responseResult[0].attendance){
                         attendanceHeaders.push(item.date)
                     }
-                    setTableHeaderNames([...tableHeaders.concat(attendanceHeaders)])
-                    setAttendanceData(res.result)
+                    const dummyObjects = getDummyItems(responseResult[0].start_day_number)
+                    for (let i = 0; i <responseResult.length ; i++) {
+                        responseResult[i].attendance = dummyObjects.concat(responseResult[i].attendance)
+                    }
+                    setAttendanceData(res.result.map(obj => ({ ...obj, isOpen: 'false' })))
                 }else{
                     setAttendanceData([...[]])
                 }
@@ -69,8 +74,16 @@ export default function AttendanceReport(props) {
         }
     }
 
+    const getDummyItems = (dummyObjCount) => {
+        let dummyData = []
+        for (let i = 0; i <dummyObjCount-1 ; i++) {
+            dummyData.push({attendance: "", isDummyObj: true})
+        } 
+        console.log("DUMMY DATA", JSON.stringify(dummyData, 0, 2))
+        return dummyData
+    }
+
     const syncAttendanceWithRazorPay = async () => {
-        console.log(JSON.stringify(postData, 0, 2))
         // let validation_data = [
         //     { key: "work_id", message: 'Workspace field left empty!' },
         //     { key: "from_date", message: `Description field left empty!` },
@@ -100,10 +113,7 @@ export default function AttendanceReport(props) {
 
     const validateDate = (fromDate, toDate) => {
         if(formatDate.length > 0 && toDate.length > 0){
-            console.log("DATES", fromDate, toDate)
-            console.log("NOT NULL", moment(fromDate).isAfter(toDate))
             if(moment(fromDate).isAfter(toDate)){
-                console.log("AFTER FROM DATE")
                 notifyErrorMessage("From Date Should be less than to date")
                 return false
             }else{
@@ -115,6 +125,11 @@ export default function AttendanceReport(props) {
 
         
     }
+
+const onEmployeeClick = (item, index) => {
+    attendanceData[index].isOpen = !attendanceData[index].isOpen
+    setAttendanceData([...attendanceData])
+}
 
   return (
     <div className='w-full h-screen'>
@@ -214,6 +229,11 @@ export default function AttendanceReport(props) {
                 <table className="items-center w-full bg-transparent border-collapse rounded-xl shadow-lg">
                     <thead>
                         <tr className='w-full'>
+                        <th
+                            key={"Sr No."}
+                            className={`px-3 min-w-[110px] max-w-[110px] text-sm text-left bg-white text-blueGray-500 border-blueGray-200 rounded-sm font-quicksand font-bold`}> 
+                            {"Sr No."}
+                        </th> 
                             {tableHeaderNames.map((item, index) => {
                                 return (
                                     <th
@@ -228,14 +248,15 @@ export default function AttendanceReport(props) {
                     <tbody className="bg-white divide-y divide-gray-200">
                         { attendanceData.map((item, index) => {
                                 return (
-                                    
-                                    <tr key={index} className={`${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'} hover:bg-blue-100`}>
+                                   <>
+                                     <tr key={index} className={`${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'} hover:bg-blue-100`} onClick={() => {onEmployeeClick(item, index)}}>
                                         {/* <td><i class="w-auto fa-solid fa-angle-down mr-2"></i></td> */}
-                                        <td className="px-6 py-4 ">
-                                        
-                                            <div className="font-quicksand font-medium text-sm">
-                                                {index + 1}
-                                                </div>
+                                        <td className="px-2 py-4 ">
+                                            <div className='flex items-center w-full '>
+                                                <span className="font-quicksand font-medium text-sm"></span>
+                                                <i class="w-auto fa-solid fa-angle-down mr-3"></i>
+                                                    {index + 1}
+                                            </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="font-quicksand font-medium text-sm align-top">{item.total_count[0].employee__employee_name}</div>
@@ -279,19 +300,36 @@ export default function AttendanceReport(props) {
                                                 {item.total_count[0].unpaid_half_day_count}
                                                 </div>
                                         </td>
-
-                                    {
-                                item.attendance.map((item, index) => {
-                                    return (
-                                        <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="font-quicksand font-medium text-xs text-white align-top flex justify-center">
-                                                <div className='rounded-lg bg-gray-400 px-2 font-quicksand'> {item.attendance} </div>
-                                            </div>
-                                        </td>
-                                        );
-                                    })
-                                } 
                                     </tr>
+                                    { !item.isOpen &&
+                                        <tr>
+                                        <td colSpan={11}>
+                                            <div  class="grid grid-cols-7 gap-4 mx-10 my-2">
+                                                {
+                                                    WEEKS.map((weekItem, wIndex) => {
+                                                        return <div className='font-quicksand font-bold text-center text-gray-500 text-sm'>
+                                                            {weekItem}
+                                                        </div>
+                                                    })
+                                                }
+                                            {
+                                            item.attendance.map((attendanceItem, index) => {
+                                                return (
+                                                    <td className="px-3 whitespace-nowrap">
+                                                        <div class={`flex flex-col justify-center items-center ${attendanceItem.isDummyObj ? "bg-white" : "bg-blue-100"} rounded-md py-1`}>
+                                                                <div className='font-quicksand font-bold text-gray-500 text-sm px-2 py-[2px]'>{attendanceItem.date}</div>
+                                                                <div className='font-quicksand font-bold text-sm'>{attendanceItem.attendance}</div>
+                                                        </div>
+                                                       </td>
+                                                    );
+                                                })
+                                            } 
+                                            </div>
+                                            </td>
+                                        
+                                    </tr>
+                                    }
+                                   </>
                                 );
                             })
                         }
@@ -307,8 +345,5 @@ export default function AttendanceReport(props) {
             </div>
         </div>}
     </div>
-    
-
-
   )
 }

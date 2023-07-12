@@ -191,3 +191,46 @@ export const getDateRange = (type, requireFormat, timeOn) => {
     return timeOn==="start" ? startOfCurrentMonth(requireFormat) : endOfCurrentMonth(requireFormat) 
   }
 }
+
+export const isStartDaySunday = () => {
+  return moment().startOf('week').format("dddd") === "Sunday"
+}
+
+export const getCurrentWeekDays = (number) => {
+  const week = moment().add(number, "week")
+  let weekStart = week.startOf("week")
+  let days = []
+
+  if(isStartDaySunday()){
+      weekStart = moment(weekStart).add(1, 'days');
+  }
+
+  for (let i = 0; i <= 5; i++) {
+    days.push({day: moment(weekStart).add(i, 'days'), tasks: addEmptyTasks(10)});
+  }
+  return days
+}
+
+const addEmptyTasks = (length) => {
+  let emptyTaskList = []
+  for(let i=0; i < length; i++){
+      emptyTaskList.push({
+          "task_description": "",
+      })
+  }
+  return emptyTaskList
+}
+
+// export const getNextWeekDays = () => {
+//   let weekStart = moment().startOf("week")
+//   let days = []
+
+//   if(isStartDaySunday()){
+//       weekStart = moment(weekStart).add(1, 'days');
+//   }
+  
+//   for (let i = 0; i <= 5; i++) {
+//     days.push(moment(weekStart).add(i, 'days'));
+//   }
+//   return days
+// }

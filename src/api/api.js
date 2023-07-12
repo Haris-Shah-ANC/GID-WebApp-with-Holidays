@@ -16,9 +16,7 @@ export async function apiAction({ url, method = 'get', data = null, onError = ()
   }
   try {
     let response = await fetch(url, options)
-    console.log("RESPONSE OUT ", response)
     if(!response){
-      console.log("RESPONSE ", response)
       return {success: false, status: "Something went wrong."}
     }
 

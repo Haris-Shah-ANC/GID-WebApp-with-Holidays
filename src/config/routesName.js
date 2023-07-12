@@ -57,7 +57,7 @@ export const routesName = {
     },
     reports: {
         path: '/reports',
-        name: "Reports",
+        name: "HRMS",
         activeRoute: "Reports",
     },
     analytics: {
