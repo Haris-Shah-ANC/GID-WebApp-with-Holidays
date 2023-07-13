@@ -127,6 +127,10 @@ export default function CalendarView(props) {
     //         notifyErrorMessage(message)
     //     }
     // };
+
+    const isToday = (item, defaultColor) => {
+        return moment().format("DD") === item.day.format("DD") ? "text-blue-500" : defaultColor
+    }
     
   return (
     <React.Fragment>
@@ -139,12 +143,12 @@ export default function CalendarView(props) {
                 }} />
             </div>
         </div> */}
-        <div>
+        {/* <div>
             <span className='font-quicksand font-bold text-2xl text-blue-600'>{days.length > 0 ? days[0].day.format("MMM YYYY") : moment().format("MMM YYYY")}</span>
-        </div>
-        <div className='py-2 px-2 flex justify-end items-center'>
-            {/* <span className='truncate px-1 w-full text-lg text-blue-600 tracking-normal rounded-md'>{selectedEmployee && selectedEmployee.employee_name}</span> */}
-            <div className='flex space-x-3'>
+        </div> */}
+        <div className='py-2 px-2 flex justify-between items-center'>
+            <span className='font-quicksand font-bold text-2xl text-blue-600'>{days.length > 0 ? days[0].day.format("MMM YYYY") : moment().format("MMM YYYY")}</span>
+            <div className='flex space-x-5'>
                 <div className={`cursor-pointer border-dark-purple justify-center flex my-2`} onClick={() => incrementWeek(weekNumber-1)}>
                     <svg xmlns="http://www.w3.org/2000/svg" className='w-8 h-8 p-[6px] align-baseline fill-white rounded-full bg-blue-300 shadow-xl' height="1em" viewBox="0 0 320 512">
                     <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z"/></svg>
@@ -163,8 +167,8 @@ export default function CalendarView(props) {
             { days.map((item, index) => {
                 return <div className='flex flex-col space-x-0 p-2 space-y-2 w-full md:w-1/6 md:space-x-2 overflow-hidden'>
                             <div className='flex justify-between'>
-                                <span className='text-2xl font-quicksand font-bold'>{item.day.format("DD.MM")}</span>
-                                <span className='text-xl font-quicksand font-semibold text-gray-400'>{item.day.format("ddd")}</span>
+                                <span className={`text-2xl font-quicksand font-bold ${isToday(item, "text-black")}`}>{item.day.format("DD.MM")}</span>
+                                <span className={`text-xl font-quicksand font-semibold ${isToday(item, "text-gray-400")}`}>{item.day.format("ddd")}</span>
                             </div>
                             <div className='h-[2px] bg-black'></div>
                             {

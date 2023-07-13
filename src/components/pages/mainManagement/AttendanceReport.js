@@ -131,6 +131,17 @@ const onEmployeeClick = (item, index) => {
     setAttendanceData([...attendanceData])
 }
 
+const getAttendanceColor = (attendance, isDelicateColor=false) => {
+    if(attendance.toLowerCase() === "p" || attendance.toLowerCase() === "1/2p"){
+        return isDelicateColor ? "bg-green-50" : "text-green-600"
+    }else if(attendance.toLowerCase() === "l"){
+        return isDelicateColor ? "bg-red-50" : "text-red-600"
+    }else if(attendance.toLowerCase() === "wo"){
+        return isDelicateColor ? "bg-gray-100" : "text-gray-600"
+    }else{
+        return isDelicateColor ? "bg-yellow-50" : "text-yellow-600"
+    }
+}
   return (
     <div className='w-full h-screen'>
         <div className="bg-white rounded-xl flex shadow p-3 flex-wrap justify-between md:space-x-0">
@@ -316,9 +327,18 @@ const onEmployeeClick = (item, index) => {
                                             item.attendance.map((attendanceItem, index) => {
                                                 return (
                                                     <td className="px-3 whitespace-nowrap">
-                                                        <div class={`flex flex-col justify-center items-center ${attendanceItem.isDummyObj ? "bg-white" : "bg-blue-100"} rounded-md py-1`}>
-                                                                <div className='font-quicksand font-bold text-gray-500 text-sm px-2 py-[2px]'>{attendanceItem.date}</div>
-                                                                <div className='font-quicksand font-bold text-sm'>{attendanceItem.attendance}</div>
+                                                        <div class={`flex ${attendanceItem.isDummyObj ? "bg-white" : getAttendanceColor(attendanceItem.attendance, true)} rounded-md py-3 space-x-2`}>
+                                                                <div className='flex justify-center items-center space-x-2 font-quicksand font-bold text-gray-500 text-sm px-2 py-[2px] w-1/2'>
+                                                                    <div className='text-2xl flex'>{formatDate(attendanceItem.date, "DD")}
+                                                                    </div>
+                                                                        <div className='flex flex-col'>
+                                                                            <div className='text-sm'>{formatDate(attendanceItem.date, "MMM")}</div>
+                                                                            <div className='text-sm'>{formatDate(attendanceItem.date, "YYYY")}</div>
+                                                                        </div>
+                                                                </div>
+                                                                <div className='font-quicksand font-bold text-sm flex w-1/2 justify-center items-center'>
+                                                                    <span className={`p-2 ${getAttendanceColor(attendanceItem.attendance)} text-lg`}>{attendanceItem.attendance}</span>
+                                                                </div>
                                                         </div>
                                                        </td>
                                                     );
