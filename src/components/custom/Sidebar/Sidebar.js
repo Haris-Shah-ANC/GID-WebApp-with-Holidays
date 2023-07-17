@@ -147,14 +147,6 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, sidebarShow, setSidebarShow,
               <span className="text-xl font-bold font-quicksand text-blue-500">DONE</span>
             </div>}
           </div>
-          {/* <button
-            className="p-2 text-white md:hidden outline-none focus:outline-none"
-            onClick={handleDrawerClick}
-          >
-            <span className='border-gray-400 px-4 py-2 rounded-full'>
-              <i className="fa-solid fa-xmark text-3xl"></i>
-            </span>
-          </button> */}
         </div>
         <nav className=" h-full overflow-y-auto overflow-x-hidden">
           <ul className="flex flex-col ">
@@ -182,18 +174,9 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, sidebarShow, setSidebarShow,
                         className={` ${isSidebarOpen ? '' : 'justify-center'} ${activeItem === item.active ? 'bg-blue-600 font-bold text-white' : ''} m-1 text-gray-500 text-sm font-quicksand font-semibold px-4 py-5 border-gray-400 flex items-center rounded-md ${activeItem === item.active ? 'hover:bg-blue-600': 'hover:bg-blue-400'} cursor-pointer hover:text-white`}
                         onClick={() => { 
                           navigateToPage(item)
-                          // setActiveItem(item.active)
-                          // if(item.name === "Create New Project"){
-                          //   setShowModal(add_project)
-                          // }else if(item.name === "Create New Module") {
-                          //   setShowModal(add_project_module)
-                          // }else{
-                          //   navigate(item.path)
-                          // }
                         }}
                       >
                         <Link
-                          // to={((item.name != "Create New Project") && (item.name != "Create New Module")) ? item.path : null}
                           className="cursor-pointer"
                           onClick={() => {
                             console.log((item.name != "Create New Project") && (item.name != "Create New Module"))
@@ -262,6 +245,7 @@ const ChildItemComponent = (props) => {
   // const [showModal, setShowModal] = React.useState(false);
 
   const onItemInteraction = (workspace) => {
+    setCollapse(!collapse)
     setWorkspaceInfo(workspace);
     setWorkSpaces([...workspaces])
     dispatch(Actions.stateChange("workspace", workspace))

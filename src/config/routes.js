@@ -76,14 +76,12 @@ export const sidebarMenu = (isAdminMenu) => {
             icon: "fa-solid fa-briefcase",
             active: routesName.workSpace.activeRoute,
             childItem: 'work_space',
-            accessibleToEmployee: true
         },
         {
             name: routesName.dashboard.name,
             path: routesName.dashboard.path,
             icon: "fa-solid fa-gauge-simple-high",
             active: routesName.dashboard.activeRoute,
-            accessibleToEmployee: true
     
         },
         {
@@ -91,28 +89,24 @@ export const sidebarMenu = (isAdminMenu) => {
             path: routesName.calendar.path,
             icon: "fa-solid fa-calendar-days",
             active: routesName.calendar.activeRoute,
-            accessibleToEmployee: false
         },
         {
             name: routesName.assignTask.name,
             path: routesName.assignTask.path,
             icon: "fa-solid fa-user-plus",
             active: routesName.assignTask.activeRoute,
-            accessibleToEmployee: true
         },
         {
             name: routesName.newProject.name,
             path: routesName.newProject.path,
             icon: "fa-solid fa-folder-plus",
             active: routesName.newProject.activeRoute,
-            accessibleToEmployee: true
         },
         {
             name: routesName.newModule.name,
             path: routesName.newModule.path,
             icon: "fa-solid fa-paste",
             active: routesName.newModule.activeRoute,
-            accessibleToEmployee: true
         },
     
         {
@@ -120,7 +114,6 @@ export const sidebarMenu = (isAdminMenu) => {
             path: routesName.inviteToWorkspace.path,
             icon: "fa-solid fa-envelope",
             active: routesName.inviteToWorkspace.activeRoute,
-            accessibleToEmployee: false
         },
     
         {
@@ -129,7 +122,6 @@ export const sidebarMenu = (isAdminMenu) => {
             icon: "fa-solid fa-file-invoice",
             active: routesName.reports.activeRoute,
             childItem: 'hrms',
-            accessibleToEmployee: false
         },
     
         {
@@ -137,7 +129,6 @@ export const sidebarMenu = (isAdminMenu) => {
             path: routesName.analytics.path,
             icon: "fa-solid fa-chart-line",
             active: routesName.analytics.activeRoute,
-            accessibleToEmployee: false
         },
     
         {
@@ -146,7 +137,6 @@ export const sidebarMenu = (isAdminMenu) => {
             icon: "fa-solid fa-video",
             active: routesName.meeting.activeRoute,
             childItem: 'meeting',
-            accessibleToEmployee: true
         },
     
     ] : 
@@ -157,14 +147,12 @@ export const sidebarMenu = (isAdminMenu) => {
             icon: "fa-solid fa-briefcase",
             active: routesName.workSpace.activeRoute,
             childItem: 'work_space',
-            accessibleToEmployee: true
         },
         {
             name: routesName.dashboard.name,
             path: routesName.dashboard.path,
             icon: "fa-solid fa-gauge-simple-high",
             active: routesName.dashboard.activeRoute,
-            accessibleToEmployee: true
     
         },
         // {
@@ -179,21 +167,18 @@ export const sidebarMenu = (isAdminMenu) => {
             path: routesName.assignTask.path,
             icon: "fa-solid fa-user-plus",
             active: routesName.assignTask.activeRoute,
-            accessibleToEmployee: true
         },
         {
             name: routesName.newProject.name,
             path: routesName.newProject.path,
             icon: "fa-solid fa-folder-plus",
             active: routesName.newProject.activeRoute,
-            accessibleToEmployee: true
         },
         {
             name: routesName.newModule.name,
             path: routesName.newModule.path,
             icon: "fa-solid fa-paste",
             active: routesName.newModule.activeRoute,
-            accessibleToEmployee: true
         },
     
     
@@ -203,7 +188,6 @@ export const sidebarMenu = (isAdminMenu) => {
             icon: "fa-solid fa-video",
             active: routesName.meeting.activeRoute,
             childItem: 'meeting',
-            accessibleToEmployee: true
         },
     
     ];

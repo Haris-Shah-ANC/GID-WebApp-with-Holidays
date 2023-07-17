@@ -135,7 +135,7 @@ export default function CalendarView(props) {
     // };
 
     const isToday = (item, defaultColor) => {
-        return moment().format("DD") === item.day.format("DD") ? "text-blue-500" : defaultColor
+        return moment().format("DD-MM") === item.day.format("DD-MM") ? "text-blue-500" : defaultColor
     }
     
   return (

@@ -51,7 +51,7 @@ const Navbar = ({ handleDrawerClick , logOutClick}) => {
                     <div className="flex items-center border-l pl-2 pr-2">
                         <div className="flex flex-col">
                             <span className="ml-2 text-gray-600 text-sm">{userInfo.name}</span>
-                            <span className="ml-2 text-gray-600 text-sm">Employee</span>
+                            <span className="ml-2 text-gray-600 text-sm">{workspace.role}</span>
                         </div>
                         <div className='relative flex mr-5'>
                          <img
