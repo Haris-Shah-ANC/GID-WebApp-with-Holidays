@@ -83,6 +83,13 @@ export default function AttendanceReport(props) {
         return dummyData
     }
 
+    const showPrompt = () => {
+        const isOk = window.confirm("Are you sure! You want sync with razorpay data ? ")
+        if(isOk){
+            syncAttendanceWithRazorPay()
+        }
+    }
+
     const syncAttendanceWithRazorPay = async () => {
         // let validation_data = [
         //     { key: "work_id", message: 'Workspace field left empty!' },
@@ -132,12 +139,19 @@ const onEmployeeClick = (item, index) => {
 }
 
 const getAttendanceColor = (attendance, isDelicateColor=false) => {
-    if(attendance.toLowerCase() === "p" || attendance.toLowerCase() === "1/2p"){
+
+    let attendanceType = attendance.toLowerCase()
+    
+    if(attendanceType === "p" || attendance.includes("P")){
         return isDelicateColor ? "bg-green-50" : "text-green-600"
-    }else if(attendance.toLowerCase() === "l"){
+    }else if(attendanceType === "a"){
         return isDelicateColor ? "bg-red-50" : "text-red-600"
-    }else if(attendance.toLowerCase() === "wo"){
-        return isDelicateColor ? "bg-gray-100" : "text-gray-600"
+    }else if(attendanceType=== "l" || attendanceType=== "ul"){
+        return isDelicateColor ? "bg-orange-50" : "text-orange-600"
+    }else if(attendanceType === "wo"){
+        return isDelicateColor ?  "bg-purple-100" : "text-purple-600"
+    }else if(attendanceType === "h"){
+        return isDelicateColor ? "bg-yellow-50" : "text-yellow-600"
     }else{
         return isDelicateColor ? "bg-yellow-50" : "text-yellow-600"
     }
@@ -225,7 +239,7 @@ const getAttendanceColor = (attendance, isDelicateColor=false) => {
                 
             </div>
             
-            <button className={`flex font-quicksand font-bold text-sm text-white rounded-md border ${hasFromDateAndToDate() ? "bg-blue-600": "bg-blue-400"} items-center`} disabled={hasFromDateAndToDate() ? false : true} onClick={() => {syncAttendanceWithRazorPay()}}>
+            <button className={`flex font-quicksand font-bold text-sm text-white rounded-md border ${hasFromDateAndToDate() ? "bg-blue-600": "bg-blue-400"} items-center`} disabled={hasFromDateAndToDate() ? false : true} onClick={() => {showPrompt()}}>
                 <div className={`${hasFromDateAndToDate() ? "bg-blue-700": "bg-blue-500"} h-full rounded-l-lg`}>
                     <img src={sync} alt='' className='w-5 mx-2 h-full'></img>
                 </div>
@@ -273,36 +287,36 @@ const getAttendanceColor = (attendance, isDelicateColor=false) => {
                                             <div className="font-quicksand font-medium text-sm align-top">{item.total_count[0].employee__employee_name}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="font-quicksand font-medium text-sm">{item.total_count[0].present_count}</div>
+                                            <div className="font-quicksand text-sm font-bold text-green-600">{item.total_count[0].present_count}</div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="font-quicksand font-medium text-sm">{item.total_count[0].half_day_present}</div>
+                                            <div className="font-quicksand font-bold text-green-600 text-sm">{item.total_count[0].half_day_present}</div>
                                         </td>
                                         <td className="px-6 py-4 ">
-                                            <div className={`font-quicksand font-medium text-sm`}>
+                                            <div className={`font-quicksand text-sm font-bold text-red-600`}>
                                                 {item.total_count[0].absent_count}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="font-quicksand font-medium text-sm">
+                                            <div className="font-quicksand font-bold text-purple-600 text-sm">
                                                 {item.total_count[0].week_off}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="font-quicksand font-medium text-sm">
+                                            <div className="font-quicksand font-bold text-green-600 text-sm">
                                                 {item.total_count[0].week_off_present}
                                                 </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="font-quicksand font-medium text-sm">{item.total_count[0].half_day_present_on_week_off}</div>
+                                            <div className="font-quicksand font-bold text-green-600 text-sm">{item.total_count[0].half_day_present_on_week_off}</div>
                                         </td>
                                         <td className="px-6 py-4 ">
-                                            <div className={`font-quicksand font-medium text-sm`}>
+                                            <div className={`font-quicksand font-bold text-sm text-orange-600`}>
                                                 {item.total_count[0].leave_count}
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
-                                            <div className="font-quicksand font-medium text-sm">
+                                            <div className="font-quicksand font-bold text-sm text-orange-600">
                                                 {item.total_count[0].unpaid_leave_count}
                                             </div>
                                         </td>
@@ -331,10 +345,10 @@ const getAttendanceColor = (attendance, isDelicateColor=false) => {
                                                                 <div className='flex justify-center items-center space-x-2 font-quicksand font-bold text-gray-500 text-sm px-2 py-[2px] w-1/2'>
                                                                     <div className='text-2xl flex'>{formatDate(attendanceItem.date, "DD")}
                                                                     </div>
-                                                                        <div className='flex flex-col'>
+                                                                        {/* <div className='flex flex-col'>
                                                                             <div className='text-sm'>{formatDate(attendanceItem.date, "MMM")}</div>
                                                                             <div className='text-sm'>{formatDate(attendanceItem.date, "YYYY")}</div>
-                                                                        </div>
+                                                                        </div> */}
                                                                 </div>
                                                                 <div className='font-quicksand font-bold text-sm flex w-1/2 justify-center items-center'>
                                                                     <span className={`p-2 ${getAttendanceColor(attendanceItem.attendance)} text-lg`}>{attendanceItem.attendance}</span>

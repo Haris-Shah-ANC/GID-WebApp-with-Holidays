@@ -1,7 +1,7 @@
 import React, { useContext, useEffect } from "react";
 import { routesName } from "../../config/routesName";
 import Navbar from "../../components/custom/Navbar/Navbar";
-import { mainRoutes, sidebarMenu } from "../../config/routes";
+import { mainRoutes } from "../../config/routes";
 import Sidebar from "../../components/custom/Sidebar/Sidebar";
 import * as Actions from '../../state/Actions'
 
@@ -80,7 +80,7 @@ function MainLayout() {
       </div> */}
 
       <div className="w-full min-h-screen bg-screenBackgroundColor">
-          <Sidebar navigationUrl={sidebarMenu} sidebarShow={sidebarShow} setSidebarShow={setSidebarShow} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} handleDrawerClick={handleDrawerClick}/>
+          <Sidebar sidebarShow={sidebarShow} setSidebarShow={setSidebarShow} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} handleDrawerClick={handleDrawerClick}/>
         <div className={`relative ${isSidebarOpen ? 'md:ml-64':'lg:ml-20'}`}>
           <Navbar handleDrawerClick={handleDrawerClick} logOutClick = {logOutFromTheApp}/>
 

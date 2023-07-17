@@ -19,8 +19,9 @@ export const get_workspace = () => {
     return HOST + APP_NAME +  `/get_workspace/`
 }
 
-export const get_task = (work_id) => {
-    return HOST + APP_NAME +  `/get_task/?work_id=${work_id}`
+export const get_task = () => {
+    return HOST + APP_NAME +  `/api/get_task/`
+    // return HOST + APP_NAME +`/get_task/?created_at__date__gte=&created_at__date__lte=&workspace=${work_id}&project=${project_id}}&employee=6&status=In-Progress`
 }
 
 export const get_assigned_task = (work_id) => {
@@ -55,9 +56,9 @@ export const timeline_task = (work_id,employee_id,status_in) => {
     return HOST + APP_NAME +  `/timeline_task/?workspace_id=${work_id}&employee_id=${employee_id}&status_in=${status_in}`
 }
 
-export const getTaskListUrl=()=>{
-    return HOST + APP_NAME + `/multifilter_task/`
-}
+// export const getTaskListUrl=()=>{
+//     return HOST + APP_NAME + `/multifilter_task/`
+// }
 
 export const getTheActiveModulesFetchUrl = () => {
     return HOST + APP_NAME + `/get_active_modules/?workspace_id=${1}&project_id=${39}`

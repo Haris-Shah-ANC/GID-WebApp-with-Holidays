@@ -28,6 +28,7 @@
     "prod": "env-cmd -e prod react-scripts start",
     "linode": "env-cmd -e linode react-scripts start",
     "ngrok": "env-cmd -e ngrok react-scripts start",
+    "local": "env-cmd -e local react-scripts start",
     "build": "GENERATE_SOURCEMAP=false react-scripts build && gulp licenses",
     "build-dev": "GENERATE_SOURCEMAP=false env-cmd -e dev react-scripts build && gulp licenses",
     "build-prod": "GENERATE_SOURCEMAP=false env-cmd -e prod react-scripts build && gulp licenses",

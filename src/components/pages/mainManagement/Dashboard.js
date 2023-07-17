@@ -29,6 +29,7 @@ import {
 import classNames from 'classnames';
 import PopUpMenu from '../../custom/popups/PopUpMenu';
 import Checkbox from '../../custom/Elements/Checkbox';
+import CustomLabel from '../../custom/Elements/CustomLabel';
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -40,7 +41,14 @@ const Dashboard = () => {
     const {work_id}  = getWorkspaceInfo();
     const [tasksResults, setTasksResults] = useState([]);
     const [taskCategoryIndex, setTaskCategoryIndex] = useState(0)
-    const [btnLabelList, setTaskCount] = useState([{ index: 0, title: "In Progress", count: 0 }, { index: 1, title: "Pending", count: 0 }, { index: 2, title: "Completed", count: 0 }])
+    const [listOfEmployees, setEmployees] = useState([])
+    const [selectedUser, selectUser] = useState(null)
+    const [btnLabelList, setTaskCount] = useState([
+        { index: 0, title: "In Progress", count: 0 }, 
+        { index: 1, title: "Pending", count: 0 }, 
+        { index: 2, title: "Completed", count: 0 }, 
+        { index: 3, title: "All", count: 0 }, 
+    ])
     const [postBody, setPostBody] = useState({ "workspace_id": work_id, projects: [], "tasks": ["In-Progress", "On Hold"], "employees": [user_id] })
     const [showModal, setShowModal] = useState(false);
     const [formData, setFormData] = useState({});
@@ -51,33 +59,58 @@ const Dashboard = () => {
         project_id: null,
     })
 
-    useEffect(() => {
-        console.log("COOKIE DATA", state)
-    }, [])
 
     useEffect(() => {
-        getTaskList()
+        let URL = get_task() + `?created_at__date__gte=&created_at__date__lte=&workspace=${work_id}&project__in=${postBody.projects.join(",")}&employee__in=${taskCategoryIndex === 3 ? "" : postBody.employees.join(",")}&status__in=${postBody.tasks.join(",")}`
+        getTaskList(URL)
     }, [postBody, workspace])
+
+    useEffect(() => {
+        getEmployeeResultsApi()
+    }, [])
     
 
-    const getTaskList = async () => {
-        let res = await apiAction({ url: getTaskListUrl(), method: 'post', navigate: navigate, dispatch: dispatch, data: postBody })
-        if (res.success) {
-            setTasksResults(res.result)
-            btnLabelList[taskCategoryIndex].count = res.result.length
+    const getTaskList = async (URL) => {
+        let res = await apiAction({ url: URL, method: 'get', navigate: navigate, dispatch: dispatch })
+        console.log("TASKS", JSON.stringify(res, 0,2 ))
+        // if (res.success) {
+            setTasksResults(res.results)
+            btnLabelList[taskCategoryIndex].count = res.results.length
             setTaskCount([...btnLabelList])
+        // }
+    }
+
+    // const getAllTaskList = async () => {
+    //     let res = await apiAction({ url: get_task(work_id), method: 'get', navigate: navigate, dispatch: dispatch })
+    //     if (res.success) {
+    //         setTasksResults(res.result)
+    //         btnLabelList[taskCategoryIndex].count = res.result.length
+    //         setTaskCount([...btnLabelList])
+    //     }
+    // }
+
+    const getEmployeeResultsApi = async () => {
+        let res = await apiAction({
+            url: employee(work_id),
+            method: 'get',
+            navigate: navigate,
+            dispatch: dispatch,
+        })
+        if (res.success) {
+            selectUser(res.results.find((item, index) => item.id === user_id))
+            setEmployees([{ employee_name: 'Select Employee' }, ...res.results])
         }
     }
 
     const onCategoryBtnClick = (index) => {
-        setTaskCategoryIndex(index)
-        if (index === 0) {
+        if (index === 0 || index ===3) {
             setPostBody({ ...postBody, tasks: ["In-Progress", "On Hold"] })
         } else if (index === 1) {
             setPostBody({ ...postBody, tasks: ["Pending"] })
         } else if (index === 2) {
             setPostBody({ ...postBody, tasks: ["Completed"] })
         }
+        setTaskCategoryIndex(index)
     }
 
     const getBtnStyle = (index) => {
@@ -88,7 +121,7 @@ const Dashboard = () => {
     }
 
     const onTaskComplete = () => {
-        getTaskList()
+        // getTaskList()
     }
 
     const onTaskEditClick = (item) => {
@@ -158,8 +191,8 @@ const Dashboard = () => {
                 projectsResults={projectsResults}
             /> */}
 
-            <div className="bg-white rounded-xl pt-4 flex justify-between shadow">
-                <div className='flex-row flex'>
+            <div className="bg-white rounded-xl flex flex-col md:flex-row justify-between shadow">
+                <div className='flex-row flex w-1/2 pt-8'>
                     {btnLabelList.map((item, index) => {
                         return (
                             <div className={`flex flex-row px-0.5 mx-5 pb-3 items-center ${getBtnStyle(index)}`} >
@@ -177,28 +210,42 @@ const Dashboard = () => {
                     })}
 
                 </div>
-                <div className='flex items-center mr-5'>
-                    <button className='flex items-center border border-[#dddddf] rounded-lg mb-3 py-2 px-3 mr-6 hover:opacity-75 outline-none focus:outline-none'
+                <div className='flex flex-col md:flex-row ml-2 space-x-0 space-y-3 items-start md:space-x-3 md:space-y-0 md:items-center mr-5 w-1/2 justify-end'>
+                        <div className='max-w-sm w-full'>
+                            <Dropdown options={listOfEmployees} optionLabel="employee_name" value={selectedUser ? selectedUser : { employee_name: 'All Users' }} setValue={(value) => {
+                                selectUser(value)
+                                setTasksResults([])
+                                setPostBody({...postBody, employees: [value.id]})
+                                }} />
+                        </div>
+
+                        <button className='border border-[#dddddf] rounded-lg flex px-3 py-2' onClick={onFilterClick}>
+                            <i className="fa-solid fa-sliders mr-2 text-[#75787b]"></i>
+                            <p className='text-[#75787b] font-semibold font-quicksand text-sm'>Filter</p>
+                        </button>
+
+                        <button className='border border-[#dddddf] rounded-lg flex px-3 py-2' onClick={() => onNewTaskAddClick()}>
+                            <i className="fa-solid fa-plus mr-2 text-[#75787b]" ></i>
+                            <p className='text-[#75787b] font-semibold font-quicksand text-sm'>Add New</p>
+                        </button>
+                    {/* <button className='flex items-center border border-[#dddddf] rounded-lg mb-3 py-2 px-3 mr-6 hover:opacity-75 outline-none focus:outline-none'
                         onClick={onFilterClick}>
                         <i className="fa-solid fa-sliders mr-2 text-[#75787b]"></i>
-                        <p className='text-[#75787b] font-semibold font-quicksand text-sm'>Filter & Sort</p>
-                    </button>
-                    <button className='flex  items-center py-2 px-3 mb-3 border border-[#dddddf] rounded-lg hover:opacity-75 outline-none focus:outline-none' onClick={() => onNewTaskAddClick()}>
+                        <p className='text-[#75787b] font-semibold font-quicksand text-sm'>Filter</p>
+                    </button> */}
+                    {/* <button className='flex  items-center py-2 px-3 mb-3 border border-[#dddddf] rounded-lg hover:opacity-75 outline-none focus:outline-none' onClick={() => onNewTaskAddClick()}>
                         <i className="fa-solid fa-plus mr-2 text-[#75787b]" ></i>
                         <p className='text-[#75787b] font-semibold font-quicksand text-sm'>Add New</p>
-                    </button>
-
-
-
+                    </button> */}
                 </div>
             </div>
 
             <div className=" mt-6 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {tasksResults.map((item, index) => {
                     return (
-                        <div className="h-full w-full" key={index}>
+                        // <div className="h-full w-full" key={index}>
                             <DashboardCard {...item} onEditClick={onTaskEditClick} onTaskComplete={onTaskComplete}/>
-                        </div>
+                        // </div>
                     )
                 })}
 
@@ -233,7 +280,7 @@ const DashboardCard = (props) => {
     const popoverRef = React.createRef();
     const dispatch = Actions.getDispatch(React.useContext);
     const [openOnHoldReason, showOnHoldReason] = useState(false)
-    const { assignee, dead_line, employee_name, project_name, employee_id, task, created_at, description_link,
+    const { assignee_name, dead_line, employee_name, project_name, employee_id, task_description, created_at, description_link,
         onEditClick, task_id, work_id, module_id, project_id, on_hold_reason, status, onTaskComplete, detailed_description, module_name } = props;
     const [isChecked, setChecked] = useState(status === "Completed")
     let my_task = user_id === employee_id;
@@ -242,7 +289,7 @@ const DashboardCard = (props) => {
         e.preventDefault();
         const formData = {
             work_id: work_id,
-            task: task,
+            task: task_description,
             task_id: task_id,
             module_id: module_id,
             dead_line: dead_line,
@@ -298,7 +345,7 @@ const DashboardCard = (props) => {
                                         <a href={description_link === null ? null: description_link}
                                             target="blank"
                                             className={`text-5 ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg line-clamp-2`}>
-                                            {task}
+                                            {task_description}
                                         </a>
                                         {/* <p className={`text-5 ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg line-clamp-2`}></p> */}
                                     </div>
@@ -333,11 +380,9 @@ const DashboardCard = (props) => {
                             </div>
                         </div>
 
-                    </div>
-                    
-                    <div className='flex flex-wrap justify-between items-center'>
+                        <div className='flex flex-wrap justify-between items-center'>
                     <span className="text-sm font-quicksand font-normal inline-block py-1 text-blueGray-600 last:mr-0 mr-1 self-center">
-                                    Assigned By: {assignee === employee_name ? <span className='font-quicksand font-semibold'>Self</span> : <span className='font-quicksand font-semibold'>{assignee}</span>}
+                                    Assigned By: {assignee_name === employee_name ? <span className='font-quicksand font-semibold'>Self</span> : <span className='font-quicksand font-semibold'>{assignee_name}</span>}
                         </span>
                         { props.status === "On Hold" && 
                             <div className={`rounded-2xl bg-white pt-0 text-xs font-bold leading-none flex flex-col flex-wrap`}>
@@ -346,6 +391,10 @@ const DashboardCard = (props) => {
                         }
                     {/* {props.status === "On Hold" && <StatusComponent {...props} my_task={my_task} />} */}
                     </div>
+
+                    </div>
+                    
+                   
 
                     { openOnHoldReason && 
                         <div className='border py-1 px-2 rounded-md'>

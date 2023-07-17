@@ -138,10 +138,10 @@ const FilterAndSort = (props) => {
                 <form>
 
                     <div className="relative px-5 pt-2 flex-auto">
-                        <div className="my-1 flex flex-col">
+                        {/* <div className="my-1 flex flex-col">
                             <CustomLabel label={`User`} className={'font-quicksand font-semibold text-sm mb-1'} />
                             <Dropdown disabled={false} placeholder={true} options={employeeList} optionLabel={'employee_name'} value={selectedEmployee ? selectedEmployee :{ employee_name: 'Select employee' }} setValue={(value) => onEmployeeChange(value)} />
-                        </div>
+                        </div> */}
                         <div className="my-1 flex flex-col my-6">
                             <CustomLabel label={`Project`} className={'font-quicksand font-semibold text-sm mb-1'} />
                             <Dropdown disabled={false} placeholder={true} options={projectsResults} optionLabel={'project_name'} value={selectedProject ? selectedProject : { project_name: 'Select project' }} setValue={(value) => onProjectSelect(value)} />

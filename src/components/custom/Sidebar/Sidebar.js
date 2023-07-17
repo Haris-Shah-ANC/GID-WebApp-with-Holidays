@@ -16,13 +16,15 @@ import { apiAction } from '../../../api/api';
 import { get_workspace } from '../../../api/urls';
 import { getWorkspaceInfo, setWorkspaceInfo } from '../../../config/cookiesInfo';
 import * as Actions from '../../../state/Actions'
+import { sidebarMenu } from '../../../config/routes';
 
 
-const Sidebar = ({ navigationUrl = [], isSidebarOpen, setIsSidebarOpen, sidebarShow, setSidebarShow, handleDrawerClick }) => {
+const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, sidebarShow, setSidebarShow, handleDrawerClick }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const state = Actions.getState(useContext)
-  const {work_id} = state
+  const workspace = getWorkspaceInfo()
+  const [navigationUrl, setNavigationUrl] = useState([])
   const [activeItem, setActiveItem] = useState(routesName.dashboard.activeRoute);
 
   React.useEffect(() => {
@@ -41,16 +43,22 @@ const Sidebar = ({ navigationUrl = [], isSidebarOpen, setIsSidebarOpen, sidebarS
   const navigateToPage = (item) => {
     setActiveItem(item.active)
     if(item.name === "Create New Project"){
-      console.log("IF "+item.name)
       setShowModal(add_project)
     }else if(item.name === "Create New Module") {
-      console.log("ELSE IF "+item.name)
       setShowModal(add_project_module)
     }else{
-      console.log("ELSE "+item.name)
       navigate(item.path)
     }
   }
+
+  useEffect(() => {
+    console.log("USE EFFECT OF SIDEBAR",)
+    setNavigationUrl(sidebarMenu(workspace.role))
+  }, [])
+
+  useEffect(() => {
+    setNavigationUrl([...sidebarMenu(workspace.role)])
+  }, [state])
 
   // duration-300 bottom-2 w-8 h-8 ${isSidebarOpen ? "ml-20" : "m-2"}
   return (
@@ -162,41 +170,44 @@ const Sidebar = ({ navigationUrl = [], isSidebarOpen, setIsSidebarOpen, sidebarS
             {navigationUrl.map((item, index) => {
               return (
                 <React.Fragment key={index}>
-                  {item.hasOwnProperty('childItem') ? (
-                    <ChildItemComponent item={item} isSidebarOpen={isSidebarOpen} activeItem={activeItem} setIsSidebarOpen={setIsSidebarOpen} setShowModal={setShowModal} navigate={navigate}/>
-                  ) : (
-                    <li
-                      title={isSidebarOpen ? '' : item.name}
-                      className={` ${isSidebarOpen ? '' : 'justify-center'} ${activeItem === item.active ? 'bg-blue-600 font-bold text-white' : ''} m-1 text-gray-500 text-sm font-quicksand font-semibold px-4 py-5 border-gray-400 flex items-center rounded-md ${activeItem === item.active ? 'hover:bg-blue-600': 'hover:bg-blue-400'} cursor-pointer hover:text-white`}
-                      onClick={() => { 
-                        setActiveItem(item.active)
-                        if(item.name === "Create New Project"){
-                          console.log("IF "+item.name)
-                          setShowModal(add_project)
-                        }else if(item.name === "Create New Module") {
-                          console.log("ELSE IF "+item.name)
-                          setShowModal(add_project_module)
-                        }else{
-                          console.log("ELSE "+item.name)
-                          navigate(item.path)
-                        }
-                      }}
-                    >
-                      <Link
-                        // to={((item.name != "Create New Project") && (item.name != "Create New Module")) ? item.path : null}
-                        className="cursor-pointer"
-                        onClick={() => {
-                          console.log((item.name != "Create New Project") && (item.name != "Create New Module"))
-                          if((item.name != "Create New Project") && (item.name != "Create New Module")){
-                            navigate(item.path)
-                          }
+                      
+                  {
+                    item.hasOwnProperty('childItem') ? (
+
+                      <ChildItemComponent item={item} isSidebarOpen={isSidebarOpen} activeItem={activeItem} setIsSidebarOpen={setIsSidebarOpen} setShowModal={setShowModal} navigate={navigate}/>
+                      
+                    ) : (
+                      <li
+                        title={isSidebarOpen ? '' : item.name}
+                        className={` ${isSidebarOpen ? '' : 'justify-center'} ${activeItem === item.active ? 'bg-blue-600 font-bold text-white' : ''} m-1 text-gray-500 text-sm font-quicksand font-semibold px-4 py-5 border-gray-400 flex items-center rounded-md ${activeItem === item.active ? 'hover:bg-blue-600': 'hover:bg-blue-400'} cursor-pointer hover:text-white`}
+                        onClick={() => { 
+                          navigateToPage(item)
+                          // setActiveItem(item.active)
+                          // if(item.name === "Create New Project"){
+                          //   setShowModal(add_project)
+                          // }else if(item.name === "Create New Module") {
+                          //   setShowModal(add_project_module)
+                          // }else{
+                          //   navigate(item.path)
+                          // }
                         }}
                       >
-                        <i className={`${item.icon} mr-2`}></i>
-                        <span className={`${isSidebarOpen ? '' : 'hidden'}`}>{item.name}</span>
-                      </Link>
-                    </li>
-                  )}
+                        <Link
+                          // to={((item.name != "Create New Project") && (item.name != "Create New Module")) ? item.path : null}
+                          className="cursor-pointer"
+                          onClick={() => {
+                            console.log((item.name != "Create New Project") && (item.name != "Create New Module"))
+                            if((item.name != "Create New Project") && (item.name != "Create New Module")){
+                              navigate(item.path)
+                            }
+                          }}
+                        >
+                          <i className={`${item.icon} mr-2`}></i>
+                          <span className={`${isSidebarOpen ? '' : 'hidden'}`}>{item.name}</span>
+                        </Link>
+                      </li>
+                    )
+                  }
                 </React.Fragment>
               );
             })}
@@ -279,7 +290,7 @@ const ChildItemComponent = (props) => {
               <React.Fragment>
                 <li className='p-2 text-gray-500 font-quicksand font-semibold text-sm'>Select Workspace:</li>
                 {workspaces.map((item, index) => {
-                  return <li className={`p-2 cursor-pointer ${work_id === item.work_id ? "bg-gray-200" : "bg-white"} hover:bg-gray-100 rounded-md font-semibold text-sm`} onClick={() => {onItemInteraction(item)}}>{item.workspace_name}</li>
+                  return <li className={`p-2 cursor-pointer ${work_id === item.work_id ? "bg-gray-200" : "bg-white"} hover:bg-gray-100 py-2 m-1 rounded-md font-semibold text-sm`} onClick={() => {onItemInteraction(item)}}>{item.workspace_name}</li>
                 })}
                 <li onClick={() => { setShowModal(create_new_work_space) }} className='p-2 text-sm cursor-pointer hover:bg-gray-200 rounded-md font-medium'><div className=" flex items-center"><i className="fa-solid fa-plus mr-1 font-semibold"></i>Create New Workspace</div></li>
               </React.Fragment>

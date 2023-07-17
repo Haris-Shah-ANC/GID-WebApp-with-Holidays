@@ -52,6 +52,12 @@ export const theme = {
     projectDivBGColor: "#F8F9FD",
     borderColor: "#030303",
     current: "current",
+    absent: "#FF0101",
+    present: "#03CC02",
+    holiday: "#FEA501",
+    weekOff: "#BA56D4",
+    leave: "#FE339C",
+
     facebook: {
       regular: "#3b5999",
       active: "#344e87",

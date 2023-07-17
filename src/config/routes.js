@@ -68,78 +68,147 @@ export const mainRoutes = [
 ];
 export const landingRoutes = [];
 
-export const sidebarMenu = [
-    {
-        name: routesName.workSpace.name,
-        path: routesName.workSpace.path,
-        icon: "fa-solid fa-briefcase",
-        active: routesName.workSpace.activeRoute,
-        childItem: 'work_space'
-    },
-    {
-        name: routesName.dashboard.name,
-        path: routesName.dashboard.path,
-        icon: "fa-solid fa-gauge-simple-high",
-        active: routesName.dashboard.activeRoute,
-
-    },
-    {
-        name: routesName.calendar.name,
-        path: routesName.calendar.path,
-        icon: "fa-solid fa-calendar-days",
-        active: routesName.calendar.activeRoute,
-    },
-    {
-        name: routesName.assignTask.name,
-        path: routesName.assignTask.path,
-        icon: "fa-solid fa-user-plus",
-        active: routesName.assignTask.activeRoute,
-    },
-    {
-        name: routesName.newProject.name,
-        path: routesName.newProject.path,
-        icon: "fa-solid fa-folder-plus",
-        active: routesName.newProject.activeRoute,
-    },
-    {
-        name: routesName.newModule.name,
-        path: routesName.newModule.path,
-        icon: "fa-solid fa-paste",
-        active: routesName.newModule.activeRoute,
-    },
-
-    {
-        name: routesName.inviteToWorkspace.name,
-        path: routesName.inviteToWorkspace.path,
-        icon: "fa-solid fa-envelope",
-        active: routesName.inviteToWorkspace.activeRoute,
-    },
-
-    {
-        name: routesName.reports.name,
-        path: routesName.reports.path,
-        icon: "fa-solid fa-file-invoice",
-        active: routesName.reports.activeRoute,
-        childItem: 'hrms'
-    },
-
-    {
-        name: routesName.analytics.name,
-        path: routesName.analytics.path,
-        icon: "fa-solid fa-chart-line",
-        active: routesName.analytics.activeRoute,
-    },
-
-    {
-        name: routesName.meeting.name,
-        path: routesName.meeting.path,
-        icon: "fa-solid fa-video",
-        active: routesName.meeting.activeRoute,
-        childItem: 'meeting'
-    },
-
-];
-
+export const sidebarMenu = (isAdminMenu) => {
+    return isAdminMenu === "Admin" ?  [
+        {
+            name: routesName.workSpace.name,
+            path: routesName.workSpace.path,
+            icon: "fa-solid fa-briefcase",
+            active: routesName.workSpace.activeRoute,
+            childItem: 'work_space',
+            accessibleToEmployee: true
+        },
+        {
+            name: routesName.dashboard.name,
+            path: routesName.dashboard.path,
+            icon: "fa-solid fa-gauge-simple-high",
+            active: routesName.dashboard.activeRoute,
+            accessibleToEmployee: true
+    
+        },
+        {
+            name: routesName.calendar.name,
+            path: routesName.calendar.path,
+            icon: "fa-solid fa-calendar-days",
+            active: routesName.calendar.activeRoute,
+            accessibleToEmployee: false
+        },
+        {
+            name: routesName.assignTask.name,
+            path: routesName.assignTask.path,
+            icon: "fa-solid fa-user-plus",
+            active: routesName.assignTask.activeRoute,
+            accessibleToEmployee: true
+        },
+        {
+            name: routesName.newProject.name,
+            path: routesName.newProject.path,
+            icon: "fa-solid fa-folder-plus",
+            active: routesName.newProject.activeRoute,
+            accessibleToEmployee: true
+        },
+        {
+            name: routesName.newModule.name,
+            path: routesName.newModule.path,
+            icon: "fa-solid fa-paste",
+            active: routesName.newModule.activeRoute,
+            accessibleToEmployee: true
+        },
+    
+        {
+            name: routesName.inviteToWorkspace.name,
+            path: routesName.inviteToWorkspace.path,
+            icon: "fa-solid fa-envelope",
+            active: routesName.inviteToWorkspace.activeRoute,
+            accessibleToEmployee: false
+        },
+    
+        {
+            name: routesName.reports.name,
+            path: routesName.reports.path,
+            icon: "fa-solid fa-file-invoice",
+            active: routesName.reports.activeRoute,
+            childItem: 'hrms',
+            accessibleToEmployee: false
+        },
+    
+        {
+            name: routesName.analytics.name,
+            path: routesName.analytics.path,
+            icon: "fa-solid fa-chart-line",
+            active: routesName.analytics.activeRoute,
+            accessibleToEmployee: false
+        },
+    
+        {
+            name: routesName.meeting.name,
+            path: routesName.meeting.path,
+            icon: "fa-solid fa-video",
+            active: routesName.meeting.activeRoute,
+            childItem: 'meeting',
+            accessibleToEmployee: true
+        },
+    
+    ] : 
+    [
+        {
+            name: routesName.workSpace.name,
+            path: routesName.workSpace.path,
+            icon: "fa-solid fa-briefcase",
+            active: routesName.workSpace.activeRoute,
+            childItem: 'work_space',
+            accessibleToEmployee: true
+        },
+        {
+            name: routesName.dashboard.name,
+            path: routesName.dashboard.path,
+            icon: "fa-solid fa-gauge-simple-high",
+            active: routesName.dashboard.activeRoute,
+            accessibleToEmployee: true
+    
+        },
+        // {
+        //     name: routesName.calendar.name,
+        //     path: routesName.calendar.path,
+        //     icon: "fa-solid fa-calendar-days",
+        //     active: routesName.calendar.activeRoute,
+        //     accessibleToEmployee: false
+        // },
+        {
+            name: routesName.assignTask.name,
+            path: routesName.assignTask.path,
+            icon: "fa-solid fa-user-plus",
+            active: routesName.assignTask.activeRoute,
+            accessibleToEmployee: true
+        },
+        {
+            name: routesName.newProject.name,
+            path: routesName.newProject.path,
+            icon: "fa-solid fa-folder-plus",
+            active: routesName.newProject.activeRoute,
+            accessibleToEmployee: true
+        },
+        {
+            name: routesName.newModule.name,
+            path: routesName.newModule.path,
+            icon: "fa-solid fa-paste",
+            active: routesName.newModule.activeRoute,
+            accessibleToEmployee: true
+        },
+    
+    
+        {
+            name: routesName.meeting.name,
+            path: routesName.meeting.path,
+            icon: "fa-solid fa-video",
+            active: routesName.meeting.activeRoute,
+            childItem: 'meeting',
+            accessibleToEmployee: true
+        },
+    
+    ];
+        
+}
 
 
 

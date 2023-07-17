@@ -164,7 +164,7 @@ const CreateNewTask = (props) => {
                                 type='textarea'
                                 id='description'
                                 className="h-20"
-                                placeholder="Add the task description"
+                                placeholder="Add the detailed task description"
                                 value={formData.detailed_description ? formData.detailed_description : ''}
                                 onChange={(e) => setFormData((previous) => ({ ...previous, detailed_description: e.target.value }))}
                             />
@@ -175,7 +175,7 @@ const CreateNewTask = (props) => {
                             <Input
                                 type='text'
                                 id='description'
-                                placeholder="Add the task description"
+                                placeholder="Add the link description"
                                 value={formData.description_link ? formData.description_link : ''}
                                 onChange={(e) => setFormData((previous) => ({ ...previous, description_link: e.target.value }))}
                             />
