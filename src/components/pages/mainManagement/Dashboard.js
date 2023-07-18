@@ -343,7 +343,7 @@ const DashboardCard = (props) => {
                                         <a href={description_link === null ? null: description_link}
                                             target="blank"
                                             className={`text-5 ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg line-clamp-2 text-ellipsis overflow-x-hidden`}>
-                                            {task_description+"lfjhaklsjfhaklsjfhasjkldfhaskdjfhaksjfhasklfjhaslkfjhjkffhakljfhdalkfjhasklfhasklfhaldkdjsgfhaklgfh"}
+                                            {task_description}
                                         </a>
                                         {/* <p className={`text-5 ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg line-clamp-2`}></p> */}
                                     </div>
