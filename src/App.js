@@ -5,6 +5,7 @@ import { ToastContainer } from 'react-toastify';
 import AuthLayout from './layouts/auth/AuthLayout';
 import MainLayout from "./layouts/main/MainLayout";
 import LandingLayout from "./layouts/landing/LandingLayout";
+import './index.css'
 
 import {
   Route,

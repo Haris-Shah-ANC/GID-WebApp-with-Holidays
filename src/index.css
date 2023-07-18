@@ -15,3 +15,41 @@
     border-left: 4px solid #3b82f6;
     border-radius: 4px;
   }
+
+  @layer components {
+    .font_family_smibold {
+        @apply font-quicksand font-semibold
+    }
+
+    .font_family_bold {
+        @apply font-quicksand font-bold
+    }
+
+    .font_family_xtra_bold {
+        @apply font-quicksand font-extrabold
+    }
+
+    .font_family_normal {
+        @apply font-quicksand font-normal
+    }
+
+    .font_family_medium {
+        @apply font-quicksand font-medium
+    }
+
+    .font_family_light {
+        @apply font-quicksand font-light    
+    }
+
+    .font_family_xtra_light {
+        @apply font-quicksand font-extralight
+    }
+
+    .alert {
+        @apply flex flex-col p-4 pt-2 w-full border-l-8
+    }
+
+    .button-submit {
+        @apply font-quicksand font-bold bg-blue-500 text-white active:bg-blue-600 text-sm w-full py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150
+    }
+}

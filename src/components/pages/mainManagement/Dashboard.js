@@ -240,12 +240,10 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            <div className=" mt-6 grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <div className=" mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                 {tasksResults.map((item, index) => {
                     return (
-                        // <div className="h-full w-full" key={index}>
-                            <DashboardCard {...item} onEditClick={onTaskEditClick} onTaskComplete={onTaskComplete}/>
-                        // </div>
+                        <DashboardCard {...item} onEditClick={onTaskEditClick} onTaskComplete={onTaskComplete}/>
                     )
                 })}
 
@@ -340,18 +338,20 @@ const DashboardCard = (props) => {
                                 }}
                                 className="form-checkbox appearance-none w-4 h-4 self-center mr-2 ease-linear transition-all duration-150 border border-blueGray-300 rounded focus:border-blueGray-300"
                                 />} */}
-                                <div className='flex flex-col'>
-                                    <div className='max-h-14 align-top font-quicksand font-medium flex'>
+                                <div className='flex flex-col w-full'>
+                                    <div className='max-h-14 align-top font-quicksand font-medium flex w-full'>
                                         <a href={description_link === null ? null: description_link}
                                             target="blank"
-                                            className={`text-5 ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg line-clamp-2`}>
-                                            {task_description}
+                                            className={`text-5 ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg line-clamp-2 text-ellipsis overflow-x-hidden`}>
+                                            {task_description+"lfjhaklsjfhaklsjfhasjkldfhaskdjfhaksjfhasklfjhaslkfjhjkffhakljfhdalkfjhasklfhasklfhaldkdjsgfhaklgfh"}
                                         </a>
                                         {/* <p className={`text-5 ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg line-clamp-2`}></p> */}
                                     </div>
-                                    <span className="text-sm font-quicksand font-medium inline-block pb-1 text-blueGray-600 last:mr-0 mr-1">
+                                    <span className="text-sm font-quicksand font-medium inline-block pb-1 text-blueGray-600 last:mr-0 mr-1 truncate text-ellipsis w-full">
                                                 {detailed_description}
                                     </span>
+
+                                    
                                 </div>
                         
                     </div>
@@ -389,7 +389,6 @@ const DashboardCard = (props) => {
                                 <span className={`text-yellow-400`} onClick={() => {showOnHoldReason(!openOnHoldReason)}}>{props.status}</span>
                             </div>
                         }
-                    {/* {props.status === "On Hold" && <StatusComponent {...props} my_task={my_task} />} */}
                     </div>
 
                     </div>
