@@ -17,6 +17,7 @@ import {
   Navigate,
   useNavigate
 } from "react-router-dom";
+import SidebarContainer from "../../components/custom/Sidebar/SidebarContainer";
 
 function MainLayout() {
 
@@ -30,9 +31,6 @@ function MainLayout() {
     return children;
   };
 
-
-
-  const [isSidebarOpen, setIsSidebarOpen] = React.useState(true);
   const [sidebarShow, setSidebarShow] = React.useState("-translate-x-full");
   const dispatch = Actions.getDispatch(useContext);
   
@@ -79,29 +77,31 @@ function MainLayout() {
         </div>
       </div> */}
 
-      <div className="w-full min-h-screen bg-screenBackgroundColor">
-          <Sidebar sidebarShow={sidebarShow} setSidebarShow={setSidebarShow} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} handleDrawerClick={handleDrawerClick}/>
-        <div className={`relative ${isSidebarOpen ? 'md:ml-64':'lg:ml-20'}`}>
-          <Navbar handleDrawerClick={handleDrawerClick} logOutClick = {logOutFromTheApp}/>
 
-          <div className="p-4 overflow-y-auto w-full">
-            <Routes>
-              {
-                mainRoutes.map((route, index) =>
-                  <Route key={index}
-                    path={route.path}
-                    element={
-                      <ProtectedRoute>
-                        {route.component}
-                      </ProtectedRoute>
-                    }
-                  />
-                )
-              }
-            </Routes>
-          </div>
+    <div className="flex w-screen h-screen bg-screenBackgroundColor">
+      <SidebarContainer></SidebarContainer>
+      <div className="w-full overflow-auto">
+        <Navbar></Navbar>
+        <div className="overflow-x-hidden p-3">
+          <Routes>
+                {
+                  mainRoutes.map((route, index) =>
+                    <Route key={index}
+                      path={route.path}
+                      element={
+                        <ProtectedRoute>
+                          {route.component}
+                        </ProtectedRoute>
+                      }
+                    />
+                  )
+                }
+              </Routes>
         </div>
+        
       </div>
+    </div>
+
     </React.Fragment>
 
   );
