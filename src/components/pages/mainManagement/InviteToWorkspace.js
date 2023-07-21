@@ -10,7 +10,6 @@ import { getWorkspaceInfo } from '../../../config/cookiesInfo'
 
 export default function InviteToWorkspace(props) {
   const [listOfTeamMembers, setTeamMembers] = useState([{email: "", role: "Employee", isSent: false, hasInvalidEmail: false}])
-  // const [teamMemberInfo, setTeamMemberInfo] = useState({email: "", role: ""})
   const {work_id} = getWorkspaceInfo()
 
   const addTeamMember = (index) => {

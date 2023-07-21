@@ -4,6 +4,7 @@ import { apiAction } from '../../../api/api';
 import { getTheCreateWorkspaceUrl } from '../../../api/urls';
 import { isFormValid, notifyErrorMessage, notifySuccessMessage } from '../../../utils/Utils';
 import * as Actions from '../../../state/Actions';
+import PlainButton from '../../custom/Elements/buttons/PlainButton';
 
 const CreateNewWorkspace = (props) => {
     const { setShowModal } = props
@@ -114,13 +115,14 @@ const CreateNewWorkspace = (props) => {
 
                 {/* footer */}
                 <div className="p-6 border-solid border-slate-200 rounded-b">
-                    <button
+                    {/* <button
                         className="bg-blue-500 text-white active:bg-blue-600 font-bold text-sm w-full py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150"
                         type="button"
                         onClick={handleSaveChanges}
                     >
                         Save Changes
-                    </button>
+                    </button> */}
+                    <PlainButton title={"Create"} className={"w-full"} onButtonClick={handleSaveChanges} disable={false}></PlainButton>
                 </div>
 
 

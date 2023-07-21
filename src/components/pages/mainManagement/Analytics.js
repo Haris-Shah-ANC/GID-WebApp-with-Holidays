@@ -9,6 +9,7 @@ import CustomLabel from '../../custom/Elements/CustomLabel'
 import Dropdown from '../../custom/Dropdown/Dropdown'
 import * as Actions from '../../../state/Actions';
 import Input from '../../custom/Elements/Input'
+import PlainButton from '../../custom/Elements/buttons/PlainButton'
 
 export default function Analytics(props) {
     const [listOfModules, setModules] = useState([])
@@ -349,13 +350,14 @@ const AddNotification = (props) => {
 
                 {/* footer */}
                 <div className="p-6 border-t border-solid border-slate-200 rounded-b">
-                    <button
+                    {/* <button
                         type="button"
                         onClick={onAddClick}
                         className="font-quicksand font-bold bg-blue-500 text-white active:bg-blue-600 text-sm w-full py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150"
                     >
                         Add
-                    </button>
+                    </button> */}
+                    <PlainButton title={"Add"} className={"w-full"} onButtonClick={onAddClick} disable={false}></PlainButton>
                 </div>
             </form>
         </div>

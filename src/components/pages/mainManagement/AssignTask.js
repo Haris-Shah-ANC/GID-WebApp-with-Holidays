@@ -31,8 +31,9 @@ import {
     getWorkspaceInfo,
 } from '../../../config/cookiesInfo';
 import Input from '../../custom/Elements/Input';
-import Button from '../../custom/Elements/Button';
+import PlainButton from '../../custom/Elements/buttons/PlainButton';
 import Loader from '../../custom/Loaders/Loader';
+import PlainButtonButton from '../../custom/Elements/buttons/PlainButton';
 
 
 const AssignTask = () => {
@@ -365,7 +366,7 @@ const AssignedTask = () => {
 
                 {/* footer */}
                 <div className="p-6 border-t border-solid border-slate-200 rounded-b">
-                    <Button title={"Assign"} className={"base_btn button-submit"} onButtonClick={handleSaveChanges} disable={false}></Button>
+                    <PlainButton title={"Assign"} className={"w-full"} onButtonClick={handleSaveChanges} disable={false}></PlainButton>
                     {/* <button
                         type="button"
                         onClick={handleSaveChanges}

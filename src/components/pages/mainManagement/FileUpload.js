@@ -3,6 +3,7 @@ import { apiActionFormData } from '../../../api/api'
 import { getWorkspaceInfo } from '../../../config/cookiesInfo'
 import { isFormValid, notifyErrorMessage, notifySuccessMessage } from '../../../utils/Utils'
 import { getTheAttendanceReportUploadUrl } from '../../../api/urls'
+import PlainButton from '../../custom/Elements/buttons/PlainButton'
 
 export default function FileUpload(props) {
   const { setShowModal } = props
@@ -92,7 +93,8 @@ const onFileEvent = (event) => {
                     onChange={(e)=> {setFileData({...fileUploadData, year: e.target.value})}} 
                     />
 
-                    <button className='mt-10 bg-blue-600 text-white hover:bg-blue-700 py-2 rounded-md' onClick={() => {uploadFile()}}>Upload</button>
+                    {/* <button className='mt-10 bg-blue-600 text-white hover:bg-blue-700 py-2 rounded-md' onClick={() => {uploadFile()}}>Upload</button> */}
+                    <PlainButton title={"Upload"} className={"mt-10"} onButtonClick={uploadFile} disable={false}></PlainButton>
                 </div>
             </div>
         </div>

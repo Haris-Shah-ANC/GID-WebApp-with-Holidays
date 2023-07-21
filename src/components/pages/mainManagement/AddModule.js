@@ -8,6 +8,7 @@ import * as Actions from '../../../state/Actions';
 import { getTheModuleCreationUrl, get_all_project } from '../../../api/urls'
 import { getWorkspaceInfo } from '../../../config/cookiesInfo'
 import Dropdown from '../../custom/Dropdown/Dropdown'
+import PlainButton from '../../custom/Elements/buttons/PlainButton'
 
 export default function AddModule(props) {
     const { work_id } = getWorkspaceInfo();
@@ -109,18 +110,17 @@ export default function AddModule(props) {
                                 onChange={(e) => setFormData((previous) => ({ ...previous, deadline: e.target.value }))}
                             />
                         </div>
-
                     </div>
 
-                    
                     <div className="p-6 border-solid border-slate-200 rounded-b">
-                        <button
+                        {/* <button
                             type="button"
                             onClick={() => {createProjectModule()}}
                             className="bg-blue-500 text-white active:bg-blue-600 font-bold text-sm w-full py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150"
                         >
                             Submit
-                        </button>
+                        </button> */}
+                        <PlainButton title={"Add Module"} className={"w-full"} onButtonClick={createProjectModule} disable={false}></PlainButton>
                     </div>
                 </form>
 
