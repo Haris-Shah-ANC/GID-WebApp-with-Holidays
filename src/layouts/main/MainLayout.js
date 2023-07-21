@@ -18,6 +18,7 @@ import {
   useNavigate
 } from "react-router-dom";
 import SidebarContainer from "../../components/custom/Sidebar/SidebarContainer";
+import Loader from "../../components/custom/Loaders/Loader";
 
 function MainLayout() {
 
@@ -53,32 +54,9 @@ function MainLayout() {
   };
   return (
     <React.Fragment>
-      {/* <div className="flex bg-screenBackgroundColor">
-        <Sidebar navigationUrl={sidebarMenu} sidebarShow={sidebarShow} setSidebarShow={setSidebarShow} isSidebarOpen={isSidebarOpen} setIsSidebarOpen={setIsSidebarOpen} handleDrawerClick={handleDrawerClick}/>
-        <div className={`relative w-full`}>
-          <Navbar handleDrawerClick={handleDrawerClick} logOutClick = {logOutFromTheApp}/>
 
-          <div className="p-4 overflow-y-auto w-full">
-            <Routes>
-              {
-                mainRoutes.map((route, index) =>
-                  <Route key={index}
-                    path={route.path}
-                    element={
-                      <ProtectedRoute>
-                        {route.component}
-                      </ProtectedRoute>
-                    }
-                  />
-                )
-              }
-            </Routes>
-          </div>
-        </div>
-      </div> */}
-
-
-    <div className="flex w-screen h-screen bg-screenBackgroundColor">
+    <div className="flex w-screen h-screen bg-screenBackgroundColor relative">
+    <Loader></Loader>
       <SidebarContainer></SidebarContainer>
       <div className="w-full overflow-auto">
         <Navbar></Navbar>

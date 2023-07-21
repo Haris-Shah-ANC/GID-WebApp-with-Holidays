@@ -1,8 +1,13 @@
 import fileDownload from 'js-file-download';
 import { getAccessToken, clearCookie } from "../config/cookiesInfo";
+import * as Actions from '../state/Actions'
 import { isAPISuccess, isBusinessUnauthorized, isUnAuthorized, isUrlNotFound, isInternalServerError, isBadRequest } from '../utils/Utils';
 
-export async function apiAction({ url, method = 'get', data = null, onError = () => { } }) {
+export async function apiAction({ url, method = 'get', data = null, onError = () => { }, dispatch }) {
+  // if(dispatch){
+  //   dispatch(Actions.stateChange("loader", true))
+  // }
+  
   let options = {
     method: method,
     body: JSON.stringify(data),
@@ -22,6 +27,10 @@ export async function apiAction({ url, method = 'get', data = null, onError = ()
 
     let status = response.status
     if (isAPISuccess(status)) {
+      // if(dispatch){
+      //   dispatch(Actions.stateChange("loader", false))
+      // }
+      
       let data = await response.json()
 
       if (isBusinessUnauthorized(data.status)) {

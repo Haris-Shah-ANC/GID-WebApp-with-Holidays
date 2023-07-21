@@ -1,5 +1,5 @@
 import moment from 'moment';
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Card from '../../custom/Elements/Card';
 import { apiAction } from '../../../api/api';
 import { employee, getTaskListUrl, getTheCalendarViewTasksUrl, post_task, update_task } from '../../../api/urls';
@@ -8,41 +8,29 @@ import { formatDate, formattedDeadline, getCurrentWeekDays, isFormValid, isStart
 import ModelComponent from '../../custom/Model/ModelComponent';
 import { add_task } from '../../../utils/Constant';
 import Dropdown from '../../custom/Dropdown/Dropdown';
+import * as Actions from '../../../state/Actions'
 
 export default function CalendarView(props) {
     const [days, setDays] = useState([])
     const workspace = getWorkspaceInfo()
     const userInfo = getLoginDetails()
-    // const [tasks, setTasks] = useState([])
     const [formData, setFormData] = useState({});
     const [showModal, setShowModal] = useState(false);
-    // const [listOfEmployees, setEmployees] = useState([])
-    // const [selectedEmployee, selectEmployee] = useState(null)
     const [weekNumber, incrementWeek] = useState(0)
+    const dispatch = Actions.getDispatch(useContext)
 
     useEffect(() => {
 
         const weekDays = getCurrentWeekDays(weekNumber)
-        // setDays([...weekDays])
         getTaskList(weekDays[0].day.format("YYYY-MM-DD"), weekDays[weekDays.length-1].day.format("YYYY-MM-DD"), weekDays)
 
     }, [weekNumber])
 
-    // const getEmployeeList = async () => {
-        // let res = await apiAction({ url: employee(workspace.work_id), method: 'get', 
-        // navigate: navigate, 
-        // dispatch: dispatch 
-    // })
-    //     if (res.success) {
-    //         selectEmployee(res.results[0])
-    //         setEmployees([{ employee_name: 'Select employee' }, ...res.results])
-    //     }
-    // }
 
     const getTaskList = async (fromDate, toDate, weekDays) => {
         let res = await apiAction({ url: getTheCalendarViewTasksUrl(fromDate, toDate, workspace.work_id), method: 'get', 
         // navigate: navigate, 
-        // dispatch: dispatch, 
+        dispatch: dispatch, 
         })
         if (res) {
             if(res.results.length > 0){
@@ -108,31 +96,6 @@ export default function CalendarView(props) {
     const onTaskStatusBtnClick = (item, index) => {
         
     }
-
-    // const handleSaveChanges = async (item, index) => {
-    //     let validation_data = [
-    //         { key: "project_id", message: 'Please select the project!' },
-    //         { key: "task", message: `Description field left empty!` },
-    //         { key: "dead_line", message: 'Deadline field left empty!' },
-    //     ]
-    //     const { isValid, message } = isFormValid(item, validation_data);
-    //     if (isValid) {
-    //         let res = await apiAction({
-    //             method: 'post',
-    //             // navigate: navigate,
-    //             // dispatch: dispatch,
-    //             url:update_task(),
-    //             data: { ...item, dead_line: formattedDeadline(item.dead_line) },
-    //         })
-    //         if (res.success) {
-    //             notifySuccessMessage(res.status);
-    //         } else {
-    //             notifyErrorMessage(res.detail)
-    //         }
-    //     } else {
-    //         notifyErrorMessage(message)
-    //     }
-    // };
 
     const isToday = (item, defaultColor) => {
         return moment().format("DD-MM") === item.day.format("DD-MM") ? "text-blue-500" : defaultColor

@@ -31,6 +31,8 @@ import {
     getWorkspaceInfo,
 } from '../../../config/cookiesInfo';
 import Input from '../../custom/Elements/Input';
+import Button from '../../custom/Elements/Button';
+import Loader from '../../custom/Loaders/Loader';
 
 
 const AssignTask = () => {
@@ -73,7 +75,7 @@ const AssignTask = () => {
         { fields: 'Created' },
     ]
     return (
-        <div>
+        <div className='relative'>
             <div className='grid sm:grid-cols-1 md:grid-cols-2 gap-3'>
                 <div class="items-center p-10 flex justify-center">
                     <img className='w-3/4 self-center' src="https://gid.artdexandcognoscis.com/static/img/undraw_add_tasks_re_s5yj.svg" alt=""></img>
@@ -363,13 +365,15 @@ const AssignedTask = () => {
 
                 {/* footer */}
                 <div className="p-6 border-t border-solid border-slate-200 rounded-b">
-                    <button
+                    <Button title={"Assign"} className={"base_btn button-submit"} onButtonClick={handleSaveChanges} disable={false}></Button>
+                    {/* <button
                         type="button"
                         onClick={handleSaveChanges}
-                        className="font-quicksand font-bold bg-blue-500 text-white active:bg-blue-600 text-sm w-full py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150"
+                        className='button-submit'
+                        // className="font-quicksand font-bold bg-blue-500 text-white active:bg-blue-600 text-sm w-full py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150"
                     >
                         Assign
-                    </button>
+                    </button> */}
                 </div>
             </form>
         </div>
