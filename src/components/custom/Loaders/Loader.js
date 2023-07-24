@@ -8,6 +8,7 @@ export default function Loader() {
     return (
     <>
     
+    
     {state.loader ? (
       <>
         <div
@@ -15,11 +16,18 @@ export default function Loader() {
           onClick={() => ""}
         >
           <div className="relative w-auto my-6 mx-auto max-w-sm">
-          <div className='flex ml-2'>
-                <div className={`${circleCommonClasses} mr-1 animate-bounce400`}></div>
-                <div className={`${circleCommonClasses} animate-bounce400`}></div>
-                <div className={`${circleCommonClasses} ml-1 animate-bounce`}></div>
+            
+          <div className='flex items-center justify-center rounded-lg bg-blue-200 px-5 py-1'>
+            <div className=''>
+                Loading
             </div>
+              <div className='flex ml-2'>
+                          
+              <div className={`${circleCommonClasses} mr-1 animate-bounce400`}></div>
+              <div className={`${circleCommonClasses} animate-bounce400`}></div>
+              <div className={`${circleCommonClasses} ml-1 animate-bounce`}></div>
+          </div>
+        </div>
           </div>
         </div>
         <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>

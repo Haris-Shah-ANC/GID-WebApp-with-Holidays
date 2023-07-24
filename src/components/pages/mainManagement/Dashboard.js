@@ -37,7 +37,6 @@ const Dashboard = () => {
 
     const { user_id } = getLoginDetails();
     const state = Actions.getState(useContext)
-    const {workspace} = state
     const {work_id}  = getWorkspaceInfo();
     const [tasksResults, setTasksResults] = useState([]);
     const [taskCategoryIndex, setTaskCategoryIndex] = useState(0)

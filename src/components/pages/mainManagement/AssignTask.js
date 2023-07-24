@@ -40,7 +40,6 @@ const AssignTask = () => {
     const navigate = useNavigate();
     const dispatch = Actions.getDispatch(React.useContext);
     const state = Actions.getState(useContext)
-    const {workspace} = state
 
     const { user_id } = getLoginDetails();
     const { work_id } = getWorkspaceInfo();
@@ -64,7 +63,7 @@ const AssignTask = () => {
         if (work_id) {
             getEmployeeResultsApi(work_id);
         }
-    }, [workspace])
+    }, [state.workspace])
 
     const headers = [
         { fields: 'Sr.No' },

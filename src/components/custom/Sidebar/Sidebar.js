@@ -63,7 +63,13 @@ const Sidebar = ({isSidebarOpen,setIsSidebarOpen}) => {
   // }, [])
 
   useEffect(() => {
-    setNavigationUrl([...sidebarMenu(workspace.role)])
+    const menuOptions = sidebarMenu(workspace.role)
+    const item = menuOptions.find((item, index) => {return item.name === activeItem})
+    if(!item){
+      setActiveItem("Dashboard")
+      navigate("/dashboard")
+    }
+    setNavigationUrl([...menuOptions])
   }, [state.workspace])
 
   return (

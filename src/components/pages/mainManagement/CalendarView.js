@@ -106,7 +106,7 @@ export default function CalendarView(props) {
     <React.Fragment>
 
     <div className='flex flex-col rounded-lg'>
-        
+
         <div className='py-2 px-2 flex justify-between items-center'>
 
             <span className='font-quicksand font-bold text-2xl text-blue-600'>{days.length > 0 ? days[0].day.format("MMM YYYY") : moment().format("MMM YYYY")}</span>
@@ -128,8 +128,10 @@ export default function CalendarView(props) {
         </div>
         
         
-
-        <div className='flex flex-col md:flex-row bg-white'>
+{/* grid grid-cols-1 md:grid-cols-3 lg:grid-cols-6 gap-4 m-4 */}
+        <div className='grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4 m-4'>
+        {/* <div className='flex flex-col md:flex-row bg-white'> */}
+        
             { days.map((item, index) => {
                 return <div className='flex flex-col space-x-0 p-2 space-y-2 w-full md:w-1/6 md:space-x-2 overflow-hidden'>
                             <div className='flex justify-between'>
