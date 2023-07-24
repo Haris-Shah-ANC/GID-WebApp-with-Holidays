@@ -6,6 +6,7 @@ import { apiAction } from '../../../api/api'
 import { notifyErrorMessage, notifySuccessMessage, isFormValid, validateEmail } from '../../../utils/Utils'
 import { getThesentInvitationUrl } from '../../../api/urls'
 import { getWorkspaceInfo } from '../../../config/cookiesInfo'
+import ButtonWithImage from '../../custom/Elements/buttons/ButtonWithImage'
 
 
 export default function InviteToWorkspace(props) {
@@ -136,14 +137,22 @@ export default function InviteToWorkspace(props) {
                 </div>
               })}
               <div className='flex flex-col justify-center items-center'>
-                <div className='w-full flex border-dashed border-[2px] bg-white hover:bg-gray-100 py-2 px-4 mt-4 !outline-none font-quicksand font-semibold text-sm justify-center items-center' onClick={() => {addTeamMember()}}>
+                {/* <div className='w-full flex border-dashed border-[2px] bg-white hover:bg-gray-100 py-2 px-4 mt-4 !outline-none font-quicksand font-semibold text-sm justify-center items-center' onClick={() => {addTeamMember()}}>
                   <svg xmlns="http://www.w3.org/2000/svg" className='mr-2' height="1em" viewBox="0 0 448 512"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg>
                   <span>Add Member</span>
-                </div>
-                <div className='flex rounded-md bg-blue-600 border-gray-200 border text-white font-quicksand font-semibold text-sm py-2 px-4 mt-4 hover:bg-blue-700 cursor-default' onClick={() => {onSendClick()}}>
+                </div> */}
+                <ButtonWithImage className={'w-full mt-4 border-dashed border-[2px] bg-white hover:bg-gray-100 justify-center items-center text-black font-semibold rounded-none'} title={"Add Member"} iconStyle={`mr-2`} disabled={false} onButtonClick={onSendClick}
+                  icon={<svg xmlns="http://www.w3.org/2000/svg" className='mr-2' height="1em" viewBox="0 0 448 512"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg>}>
+                </ButtonWithImage>
+
+                <ButtonWithImage className={'mt-4'} title={"Send Invitation"} iconStyle={`self-center mr-2`} disabled={false} onButtonClick={onSendClick} 
+                  icon={<svg xmlns="http://www.w3.org/2000/svg" className='self-center mr-2' height="1em" viewBox="0 0 512 512" fill="#FFFFFF"><path d="M64 112c-8.8 0-16 7.2-16 16v22.1L220.5 291.7c20.7 17 50.4 17 71.1 0L464 150.1V128c0-8.8-7.2-16-16-16H64zM48 212.2V384c0 8.8 7.2 16 16 16H448c8.8 0 16-7.2 16-16V212.2L322 328.8c-38.4 31.5-93.7 31.5-132 0L48 212.2zM0 128C0 92.7 28.7 64 64 64H448c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128z"/></svg>}>
+                </ButtonWithImage>
+
+                {/* <div className='flex rounded-md bg-blue-600 border-gray-200 border text-white font-quicksand font-semibold text-sm py-2 px-4 mt-4 hover:bg-blue-700 cursor-default' onClick={() => {onSendClick()}}>
                   <svg xmlns="http://www.w3.org/2000/svg" className='self-center mr-2' height="1em" viewBox="0 0 512 512" fill="#FFFFFF"><path d="M64 112c-8.8 0-16 7.2-16 16v22.1L220.5 291.7c20.7 17 50.4 17 71.1 0L464 150.1V128c0-8.8-7.2-16-16-16H64zM48 212.2V384c0 8.8 7.2 16 16 16H448c8.8 0 16-7.2 16-16V212.2L322 328.8c-38.4 31.5-93.7 31.5-132 0L48 212.2zM0 128C0 92.7 28.7 64 64 64H448c35.3 0 64 28.7 64 64V384c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V128z"/></svg>
                   <span>Send Invitation</span>
-                </div>
+                </div> */}
               </div>
             </div>
         </div>
