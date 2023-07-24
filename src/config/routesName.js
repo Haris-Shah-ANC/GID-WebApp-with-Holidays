@@ -62,7 +62,7 @@ export const routesName = {
     },
     analytics: {
         path: '/analytics',
-        name: "Notifications&Analytics",
+        name: "Notifications",
         activeRoute: "Analytics",
     },
     meeting: {

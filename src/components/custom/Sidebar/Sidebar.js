@@ -18,6 +18,9 @@ import { getWorkspaceInfo, setWorkspaceInfo } from '../../../config/cookiesInfo'
 import * as Actions from '../../../state/Actions'
 import { sidebarMenu } from '../../../config/routes';
 import ButtonWithImage from '../Elements/buttons/ButtonWithImage';
+import SidebarHeader from './SidebarHeader';
+import SidebarMenuItem from './SidebarMenuItem';
+import WorkspaceList from './WorkspaceList';
 
 
 const Sidebar = ({isSidebarOpen,setIsSidebarOpen}) => {
@@ -75,17 +78,7 @@ const Sidebar = ({isSidebarOpen,setIsSidebarOpen}) => {
     <>
       <div className="flex flex-col h-full mx-2 bg-white" ref={sideNavigationRef}>
         <div className="flex items-center justify-between border-gray-400">
-          <div className='flex items-center  w-full'>
-            <img
-              src={imagesList.appLogo.src}
-              alt={imagesList.appLogo.alt}
-              className="w-20 my-4 rounded-full mr-4 bg-cover"
-            />
-            { isSidebarOpen && <div className="flex flex-col">
-              <span className="text-xl font-bold font-quicksand text-blue-500">GET IT</span>
-              <span className="text-xl font-bold font-quicksand text-blue-500">DONE</span>
-            </div>}
-          </div>
+          <SidebarHeader isSidebarOpen={isSidebarOpen}></SidebarHeader>
         </div>
         <nav className=" h-full overflow-y-auto overflow-x-hidden">
           <ul className="flex flex-col ">
@@ -108,26 +101,7 @@ const Sidebar = ({isSidebarOpen,setIsSidebarOpen}) => {
                       <ChildItemComponent item={item} isSidebarOpen={isSidebarOpen} activeItem={activeItem} setIsSidebarOpen={setIsSidebarOpen} setShowModal={setShowModal} navigate={navigate}/>
                       
                     ) : (
-                      <li
-                        title={isSidebarOpen ? '' : item.name}
-                        className={` ${isSidebarOpen ? '' : 'justify-center'} ${activeItem === item.active ? 'bg-blue-600 font-bold text-white' : ''} m-1 text-gray-500 text-sm font-quicksand font-semibold px-4 py-5 border-gray-400 flex items-center rounded-md ${activeItem === item.active ? 'hover:bg-blue-600': 'hover:bg-blue-400'} cursor-pointer hover:text-white`}
-                        onClick={() => { 
-                          navigateToPage(item)
-                        }}
-                      >
-                        <Link
-                          className="cursor-pointer"
-                          onClick={() => {
-                            console.log((item.name != "Create New Project") && (item.name != "Create New Module"))
-                            if((item.name != "Create New Project") && (item.name != "Create New Module")){
-                              navigate(item.path)
-                            }
-                          }}
-                        >
-                          <i className={`${item.icon} mr-2`}></i>
-                          <span className={`${isSidebarOpen ? '' : 'hidden'}`}>{item.name}</span>
-                        </Link>
-                      </li>
+                      <SidebarMenuItem isSidebarOpen={isSidebarOpen} onClick={navigateToPage} activeItem={activeItem} menuItem={item}></SidebarMenuItem>
                     )
                   }
                 </React.Fragment>
@@ -213,16 +187,8 @@ const ChildItemComponent = (props) => {
         <div className='px-4 py-2 '>
           <ul className='p-0 bg-white shadow-lg rounded-md flex flex-col text-black'>
             {childItem === 'work_space' &&
-              <React.Fragment>
-                <li className='p-2 text-gray-500 font-quicksand font-semibold text-sm'>Select Workspace:</li>
-                {workspaces.map((item, index) => {
-                  return <li className={`p-2 cursor-pointer ${work_id === item.work_id ? "bg-gray-200" : "bg-white"} hover:bg-gray-100 py-2 m-1 rounded-md font-semibold text-sm`} onClick={() => {onItemInteraction(item)}}>{item.workspace_name}</li>
-                })}
-                <li onClick={() => { setShowModal(create_new_work_space) }} className='p-2 text-sm cursor-pointer hover:bg-gray-200 rounded-md font-medium'><div className=" flex items-center"><i className="fa-solid fa-plus mr-1 font-semibold"></i>Create New Workspace</div></li>
-              </React.Fragment>
+              <WorkspaceList workspaces={workspaces} setShowModal={setShowModal} work_id={work_id} onItemInteraction={onItemInteraction}></WorkspaceList>
             }
-
-            
 
             {childItem === 'hrms' &&
               <React.Fragment>
@@ -233,7 +199,6 @@ const ChildItemComponent = (props) => {
                 <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm' onClick={() => {setShowModal(file_upload)}}>
                   <a class="collapse-item" target="_blank">Upload</a>
                 </li>
-                {/* <li className='p-2 text-sm cursor-pointer hover:bg-gray-200 rounded-md'><div className=" flex items-center"><i className="fa-solid fa-plus mr-1 font-semibold font-quicksand text-sm"></i>Add New Meeting</div></li> */}
               </React.Fragment>
             }
 
