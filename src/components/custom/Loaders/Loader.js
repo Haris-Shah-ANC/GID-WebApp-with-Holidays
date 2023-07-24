@@ -7,22 +7,24 @@ export default function Loader() {
 
     return (
     <>
-        {state.loader && <div className='flex absolute top-0 bottom-0 h-full w-full bg-black bg-opacity-25'>
-            <div className='flex justify-center items-center w-full h-full'>
-                <div className='flex items-center justify-center rounded-lg bg-blue-200 px-5 py-1'>
-                    <div className=''>
-                        Loading
-                    </div>
-                    <div className='flex ml-2'>
-                        
-                        <div className={`${circleCommonClasses} mr-1 animate-bounce400`}></div>
-                        <div className={`${circleCommonClasses} animate-bounce400`}></div>
-                        <div className={`${circleCommonClasses} ml-1 animate-bounce`}></div>
-                    </div>
-                </div>
+    
+    {state.loader ? (
+      <>
+        <div
+          className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
+          onClick={() => ""}
+        >
+          <div className="relative w-auto my-6 mx-auto max-w-sm">
+          <div className='flex ml-2'>
+                <div className={`${circleCommonClasses} mr-1 animate-bounce400`}></div>
+                <div className={`${circleCommonClasses} animate-bounce400`}></div>
+                <div className={`${circleCommonClasses} ml-1 animate-bounce`}></div>
             </div>
+          </div>
         </div>
-        }
-    </>
+        <div className="opacity-25 fixed inset-0 z-40 bg-black"></div>
+      </>
+    ) : null}
+  </>
     );
 }

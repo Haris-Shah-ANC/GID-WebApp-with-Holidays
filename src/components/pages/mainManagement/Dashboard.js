@@ -63,7 +63,7 @@ const Dashboard = () => {
     useEffect(() => {
         let URL = get_task() + `?created_at__date__gte=&created_at__date__lte=&workspace=${work_id}&project__in=${postBody.projects.join(",")}&employee__in=${taskCategoryIndex === 3 ? "" : postBody.employees.join(",")}&status__in=${postBody.tasks.join(",")}`
         getTaskList(URL)
-    }, [postBody, workspace])
+    }, [postBody, state.workspace])
 
     useEffect(() => {
         getEmployeeResultsApi()

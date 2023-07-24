@@ -48,32 +48,24 @@ const Sidebar = ({isSidebarOpen,setIsSidebarOpen}) => {
   const [showModal, setShowModal] = React.useState(false);
 
   const navigateToPage = (item) => {
-    setActiveItem(item.active)
     if(item.name === "Create New Project"){
       setShowModal(add_project)
     }else if(item.name === "Create New Module") {
       setShowModal(add_project_module)
     }else{
+      setActiveItem(item.active)
       navigate(item.path)
     }
   }
 
-  useEffect(() => {
-    setNavigationUrl(sidebarMenu(workspace.role))
-  }, [])
+  // useEffect(() => {
+  //   setNavigationUrl(sidebarMenu(workspace.role))
+  // }, [])
 
   useEffect(() => {
     setNavigationUrl([...sidebarMenu(workspace.role)])
-  }, [state])
+  }, [state.workspace])
 
-//   window.addEventListener('click', (e) => {
-//     console.log("ONCLICK", e)
-//     if (sideNavigationRef.current && e.target !== sideNavigationRef.current) {
-//         setIsSidebarOpen(false)
-//     }
-// })
-
-  // duration-300 bottom-2 w-8 h-8 ${isSidebarOpen ? "ml-20" : "m-2"}
   return (
     <>
       <div className="flex flex-col h-full mx-2 bg-white" ref={sideNavigationRef}>

@@ -106,36 +106,25 @@ export default function CalendarView(props) {
     <React.Fragment>
 
     <div className='flex flex-col rounded-lg'>
-        {/* <div className='flex justify-end'>
-            <div className='max-w-xs w-full mr-2 mt-2'>
-                <Dropdown options={listOfEmployees} optionLabel="employee_name" value={selectedEmployee ? selectedEmployee : { employee_name: 'All Users' }} setValue={(value) => {
-                    selectEmployee(value)
-                }} />
-            </div>
-        </div> */}
-        {/* <div>
-            <span className='font-quicksand font-bold text-2xl text-blue-600'>{days.length > 0 ? days[0].day.format("MMM YYYY") : moment().format("MMM YYYY")}</span>
-        </div> */}
+        
         <div className='py-2 px-2 flex justify-between items-center'>
+
             <span className='font-quicksand font-bold text-2xl text-blue-600'>{days.length > 0 ? days[0].day.format("MMM YYYY") : moment().format("MMM YYYY")}</span>
+           
             <div className='flex space-x-5'>
-                {/* <div className={`cursor-pointer border-dark-purple justify-center flex my-2 group`} onClick={() => incrementWeek(weekNumber-1)}>
-                    <svg xmlns="http://www.w3.org/2000/svg" className='w-8 h-8 p-[6px] align-baseline fill-white rounded-full bg-blue-500 group-hover:bg-blue-600 shadow-xl' height="1em" viewBox="0 0 320 512">
-                    <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z"/></svg>
-                </div> */}
+                
                 <ButtonWithImage className={'cursor-pointer w-10 h-10 rounded-full border-dark-purple justify-center flex p-0 m-0 group'} title={""} iconStyle={`mr-0`} disabled={false} onButtonClick={() => {incrementWeek(weekNumber-1)}}
                   icon={<svg xmlns="http://www.w3.org/2000/svg" className='w-10 h-10 p-[8px] align-baseline fill-white rounded-full bg-blue-500 group-hover:bg-blue-600 shadow-xl' height="1em" viewBox="0 0 320 512">
                   <path d="M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z"/></svg>}>
                 </ButtonWithImage>
+
                 <ButtonWithImage className={'cursor-pointer w-10 h-10 rounded-full border-dark-purple justify-center flex p-0 m-0 group'} title={""} iconStyle={`mr-0`} disabled={false} onButtonClick={() => {incrementWeek(weekNumber+1)}}
                   icon={<svg xmlns="http://www.w3.org/2000/svg" className='w-10 h-10 p-[8px] align-baseline fill-white rounded-full bg-blue-500 group-hover:bg-blue-600 shadow-xl' height="1em" viewBox="0 0 320 512">
                   <path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z"/></svg>}>
                 </ButtonWithImage>
-                {/* <div className={`cursor-pointer border-dark-purple justify-center flex my-2 group`} onClick={() => incrementWeek(weekNumber+1)}>
-                    <svg xmlns="http://www.w3.org/2000/svg" className='w-8 h-8 p-[6px] align-baseline fill-white rounded-full bg-blue-500 group-hover:bg-blue-600 shadow-xl' height="1em" viewBox="0 0 320 512">
-                <path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z"/></svg>
-                </div> */}
+
             </div>
+
         </div>
         
         
