@@ -34,6 +34,8 @@ import Input from '../../custom/Elements/Input';
 import PlainButton from '../../custom/Elements/buttons/PlainButton';
 import Loader from '../../custom/Loaders/Loader';
 import PlainButtonButton from '../../custom/Elements/buttons/PlainButton';
+import GidInput from '../../custom/Elements/inputs/GidInput';
+import IconInput from '../../custom/Elements/inputs/IconInput';
 
 
 const AssignTask = () => {
@@ -123,7 +125,7 @@ const CustomTable = (props) => {
                     </div>
                     <div className="w-full md:w-1/2 text-right items-center justify-end">
                         <div className="w-full md:w-72">
-                            <Input
+                            {/* <Input
                                 type="text"
                                 id="employee_name"
                                 name="employee_name"
@@ -134,7 +136,22 @@ const CustomTable = (props) => {
                                     setSearchTerm(e.target.value);
                                     getFilteredTask(e.target.value)
                                 }}
-                            />
+                            /> */}
+                            <IconInput
+                                inputType={"text"}
+                                disable={false}
+                                className={``}
+                                value={searchTerm}
+                                onTextChange={(e) => {
+                                    setSearchTerm(e.target.value);
+                                    getFilteredTask(e.target.value)
+                                }}
+                                onBlurEvent={() => {}}
+                                icon={'fa-solid fa-magnifying-glass'}
+                                placeholderMsg={"Search with Employee Name"}
+                                isRightIcon={true}
+                                >
+                            </IconInput>
                         </div>
                     </div>
                 </div>
@@ -352,14 +369,27 @@ const AssignedTask = () => {
 
                     <div className="my-3 flex flex-col">
                         <CustomLabel className={`ml-0 py-1`} label={<span><i className="fa-solid fa-calendar-days text-base mr-1"></i>Deadline</span>} />
-                        <Input
+                        <IconInput
+                                inputType={"datetime-local"}
+                                disable={false}
+                                className={`w-full`}
+                                value={formData.dead_line ? formData.dead_line : ''}
+                                onTextChange={(e) => {
+                                    setFormData((previous) => ({ ...previous, dead_line: e.target.value }))
+                                }}
+                                onBlurEvent={() => {}}
+                                placeholder={""}
+                                isRightIcon={true}
+                                >
+                            </IconInput>
+                        {/* <Input
                             id="datetime"
                             name="datetime"
                             className={'font-quicksand font-medium'}
                             type="datetime-local"
                             value={formData.dead_line ? formData.dead_line : ''}
                             onChange={(e) => setFormData((previous) => ({ ...previous, dead_line: e.target.value }))}
-                        />
+                        /> */}
                     </div>
                 </div>
 

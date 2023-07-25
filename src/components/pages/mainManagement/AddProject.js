@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom'
 import * as Actions from '../../../state/Actions';
 import { getCreateProjectUrl } from '../../../api/urls'
 import { getWorkspaceInfo } from '../../../config/cookiesInfo'
+import GidInput from '../../custom/Elements/inputs/GidInput'
 
 export default function AddProject(props) {
     const { work_id } = getWorkspaceInfo();
@@ -58,19 +59,33 @@ export default function AddProject(props) {
                     <div className="relative px-5 pt-2 flex-auto">
                         <div className="my-4 flex flex-col">
                             <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={"Project Name"} />
-                            <Input className="border rounded-sm focus:border-blue-600 focus:border-2" 
-                            type="text"
-                            onChange={(e) => setFormData({...formData, project_name: e.target.value})}
-                            value={formData.project_name ? formData.project_name : ''}></Input>
+                            <GidInput 
+                                inputType={"text"} 
+                                disable={false} 
+                                className={""} 
+                                value={formData.project_name ? formData.project_name : ''} 
+                                onBlurEvent={() => {}}
+                                onTextChange={(e) =>{
+                                    setFormData((previous) => ({...previous, project_name: e.target.value}))
+                            }}>
+
+                            </GidInput>
                         </div>
                         
 
                         <div className="my-4 flex flex-col">
                             <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={"Project Description"} />
-                            <Input className="border rounded-sm focus:border-blue-600 focus:border-2" 
-                            type="text"
-                            value={formData.project_tag}
-                            onChange={(e) => {setFormData((previous) => ({...previous, project_tag: e.target.value}))}}></Input>
+                                <GidInput 
+                                    inputType={"text"} 
+                                    disable={false} 
+                                    className={""} 
+                                    value={formData.project_tag ? formData.project_tag : ""} 
+                                    onBlurEvent={() => {}}
+                                    onTextChange={(e) =>{
+                                        setFormData((previous) => ({...previous, project_tag: e.target.value}))
+                                }}>
+
+                                </GidInput>
                         </div>
 
                     </div>

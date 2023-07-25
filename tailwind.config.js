@@ -120,7 +120,7 @@ export const theme = {
     },
     animation: {
       bounce200: 'bounce 1s infinite 200ms',
-      bounce400: 'bounce 1s infinite 400ms',
+      bounce400: 'bounce 2s infinite 400ms',
     },
     borderRadius: {
       inherit: "inherit",
