@@ -9,6 +9,8 @@ import { getTheModuleCreationUrl, get_all_project } from '../../../api/urls'
 import { getWorkspaceInfo } from '../../../config/cookiesInfo'
 import Dropdown from '../../custom/Dropdown/Dropdown'
 import PlainButton from '../../custom/Elements/buttons/PlainButton'
+import GidInput from '../../custom/Elements/inputs/GidInput'
+import ButtonWithImage from '../../custom/Elements/buttons/ButtonWithImage'
 
 export default function AddModule(props) {
     const { work_id } = getWorkspaceInfo();
@@ -81,11 +83,12 @@ export default function AddModule(props) {
                 {/* header */}
                 <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
                     <h3 className="text-lg font-quicksand font-bold text-center w-full">{'Create Module'}</h3>
-                    <button
-                        className="text-lg w-10 h-10 ml-auto rounded-full focus:outline-none hover:bg-gray-200 flex justify-center items-center"
-                        onClick={() => setShowModal(false)}>
-                        <i className="fa-solid fa-times"></i>
-                    </button>
+                    <ButtonWithImage
+                        onButtonClick={()=>{setShowModal(false)}} 
+                        title={""}
+                        className={"rounded-full w-10 h-10 p-0 m-0 justify-center items-center bg-white shadow-none hover:bg-gray-200 active:bg-gray-200"}
+                        icon={<i className="fa-solid fa-times text text-black self-center" color='black'></i> }
+                        ></ButtonWithImage>
                 </div>
                 <form>
                     <div className="relative px-5 pt-2 flex-auto">
@@ -97,7 +100,17 @@ export default function AddModule(props) {
 
                         <div className="my-4 flex flex-col">
                             <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={"Module name"} />
-                            <Input className="border rounded-sm focus:border-blue-600 focus:border-2" onChange={(e) => setFormData((previous) => ({ ...previous, module_name: e.target.value }))}></Input>
+                            <GidInput 
+                                inputType={"text"} 
+                                disable={false} 
+                                className={""} 
+                                value={formData.module_name ? formData.module_name : ''} 
+                                onBlurEvent={() => {}}
+                                onTextChange={(e) =>{
+                                    setFormData((previous) => ({ ...previous, module_name: e.target.value }))
+                            }}>
+
+                            </GidInput>
                         </div>
 
                         <div className="my-4 flex flex-col">
@@ -113,13 +126,6 @@ export default function AddModule(props) {
                     </div>
 
                     <div className="p-6 border-solid border-slate-200 rounded-b">
-                        {/* <button
-                            type="button"
-                            onClick={() => {createProjectModule()}}
-                            className="bg-blue-500 text-white active:bg-blue-600 font-bold text-sm w-full py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150"
-                        >
-                            Submit
-                        </button> */}
                         <PlainButton title={"Add Module"} className={"w-full"} onButtonClick={createProjectModule} disable={false}></PlainButton>
                     </div>
                 </form>

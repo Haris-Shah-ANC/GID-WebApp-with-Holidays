@@ -5,6 +5,9 @@ import { getTheCreateWorkspaceUrl } from '../../../api/urls';
 import { isFormValid, notifyErrorMessage, notifySuccessMessage } from '../../../utils/Utils';
 import * as Actions from '../../../state/Actions';
 import PlainButton from '../../custom/Elements/buttons/PlainButton';
+import ButtonWithImage from '../../custom/Elements/buttons/ButtonWithImage';
+import GidInput from '../../custom/Elements/inputs/GidInput';
+import IconInput from '../../custom/Elements/inputs/IconInput';
 
 const CreateNewWorkspace = (props) => {
     const { setShowModal } = props
@@ -63,65 +66,68 @@ const CreateNewWorkspace = (props) => {
             <div className="border-0 rounded-lg shadow-lg relative flex flex-col w-full bg-white outline-none focus:outline-none">
                 {/* header */}
                 <div className="flex items-center justify-between p-5 border-solid border-slate-200 rounded-t text-black">
-                    <h3 className="text-lg font-quicksand font-bold text-center justify-center w-full">Create New Workspace</h3>
-                    <button
-                        className="text-lg w-10 h-10 ml-auto rounded-full focus:outline-none hover:bg-gray-200 flex justify-center items-center"
-                        onClick={() => setShowModal(false)}
-                    >
-                        <i className="fa-solid fa-times"></i>
-                    </button>
+                    <h3 className="text-lg font-quicksand font-bold text-center justify-center w-full">Create New Workspace</h3>                   
+                    <ButtonWithImage
+                        onButtonClick={()=>{setShowModal(false)}} 
+                        title={""}
+                        className={"rounded-full w-10 h-10 p-0 m-0 justify-center items-center bg-white shadow-none hover:bg-gray-200 active:bg-gray-200"}
+                        icon={<i className="fa-solid fa-times text text-black self-center" color='black'></i> }
+                        ></ButtonWithImage>
                 </div>
 
                 {/* body */}
                 <div className="relative p-6 flex-auto">
                     <div className="my-1 flex flex-col">
                         <label className="text-slate-500 ont-quicksand font-semibold text-sm mb-1" htmlFor="workspaceName">Workspace Name</label>
-                        <Input
-                            type="text"
-                            id="workspaceName"
-                            name="workspaceName"
-                            placeholder="Enter workspace name"
-                            value={wsFormData.workspace_name}
-                            onChange={handleWorkspaceNameChange}
-                        />
+                        <GidInput 
+                            inputType={"text"} 
+                            disable={false} 
+                            className={""} 
+                            value={wsFormData.workspace_name ? wsFormData.workspace_name : ''} 
+                            onBlurEvent={() => {}}
+                            onTextChange={handleWorkspaceNameChange}>
+                        </GidInput>
                     </div>
                     <div className="my-4 flex flex-col">
                         <label className="text-slate-500 flex items-center ont-quicksand font-semibold text-sm mb-1" htmlFor="clock-in">
                             <i className="fa-regular fa-clock text-base mr-1"></i>
                             Clock In
                         </label>
-                        <Input
-                            type="time"
+                        <IconInput
+                            inputType={"time"}
                             id="clock-in"
-                            name="clock-in"
-                            value={wsFormData.office_start_time}
-                            onChange={handleClockInChange}
-                        />
+                            disable={false}
+                            className={`w-full`}
+                            value={wsFormData.office_start_time ? wsFormData.office_start_time : ''}
+                            onTextChange={handleClockInChange}
+                            onBlurEvent={() => {}}
+                            placeholder={""}
+                            isRightIcon={true}
+                            >
+                        </IconInput>
                     </div>
                     <div className="my-4 flex flex-col">
                         <label className="text-slate-500 flex items-center ont-quicksand font-semibold text-sm mb-1" htmlFor="clock-out">
                             <i className="fa-regular fa-clock text-base mr-1"></i>
                             Clock Out
                         </label>
-                        <Input
-                            type="time"
-                            id="clock-out"
-                            name="clock-out"
-                            value={wsFormData.office_end_time}
-                            onChange={handleClockOutChange}
-                        />
+                        <IconInput
+                            inputType={"time"}
+                            id="clock-in"
+                            disable={false}
+                            className={`w-full`}
+                            value={wsFormData.office_end_time ? wsFormData.office_end_time   : ''}
+                            onTextChange={handleClockOutChange}
+                            onBlurEvent={() => {}}
+                            placeholder={""}
+                            isRightIcon={true}
+                            >
+                        </IconInput>
                     </div>
                 </div>
 
                 {/* footer */}
                 <div className="p-6 border-solid border-slate-200 rounded-b">
-                    {/* <button
-                        className="bg-blue-500 text-white active:bg-blue-600 font-bold text-sm w-full py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150"
-                        type="button"
-                        onClick={handleSaveChanges}
-                    >
-                        Save Changes
-                    </button> */}
                     <PlainButton title={"Create"} className={"w-full"} onButtonClick={handleSaveChanges} disable={false}></PlainButton>
                 </div>
 

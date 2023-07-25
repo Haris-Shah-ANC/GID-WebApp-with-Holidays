@@ -10,7 +10,7 @@ export default function ButtonWithImage(props) {
         onClick={onButtonClick}
         className={tailwindMergedCSS}>
         {icon}
-        <span>{title}</span>
+        {title && <span>{title}</span>}
     </button>
   )
 }

@@ -284,13 +284,6 @@ const CreateNewTask = (props) => {
                     
                     <div className="p-6 border-solid border-slate-200 rounded-b">
                         <PlainButton title={"Save Changes"} className={"w-full"} onButtonClick={handleSaveChanges} disable={false}></PlainButton>
-                        {/* <button
-                            type="button"
-                            onClick={handleSaveChanges}
-                            className="bg-blue-500 text-white active:bg-blue-600 font-bold text-sm w-full py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150"
-                        >
-                            Save Changes
-                        </button> */}
                     </div>
                 </form>
 

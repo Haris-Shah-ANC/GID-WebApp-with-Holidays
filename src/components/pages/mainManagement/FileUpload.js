@@ -93,7 +93,6 @@ const onFileEvent = (event) => {
                     onChange={(e)=> {setFileData({...fileUploadData, year: e.target.value})}} 
                     />
 
-                    {/* <button className='mt-10 bg-blue-600 text-white hover:bg-blue-700 py-2 rounded-md' onClick={() => {uploadFile()}}>Upload</button> */}
                     <PlainButton title={"Upload"} className={"mt-10"} onButtonClick={uploadFile} disable={false}></PlainButton>
                 </div>
             </div>
