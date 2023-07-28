@@ -176,7 +176,7 @@ const CreateNewTask = (props) => {
                             <Input
                                 type='text'
                                 id='description'
-                                placeholder="Add the link description"
+                                placeholder="Add link"
                                 value={formData.description_link ? formData.description_link : ''}
                                 onChange={(e) => setFormData((previous) => ({ ...previous, description_link: e.target.value }))}
                             />
