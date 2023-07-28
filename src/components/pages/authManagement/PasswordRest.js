@@ -5,9 +5,16 @@ import { routesName } from '../../../config/routesName';
 import { notifySuccessMessage } from '../../../utils/Utils';
 import CustomLabel from '../../custom/Elements/CustomLabel';
 import CustomButton from '../../custom/Elements/CustomButton';
+import GidInput from '../../custom/Elements/inputs/GidInput';
+import PlainButton from '../../custom/Elements/buttons/PlainButton';
+import { RESET_PASSWORD } from '../../../utils/StringConstants';
 
 const PasswordRest = () => {
     const navigate = useNavigate();
+    const initial_data = {
+        email: null,
+    }
+    const [formData, setFormData] = React.useState({ ...initial_data })
 
     return (
         <React.Fragment>
@@ -18,19 +25,21 @@ const PasswordRest = () => {
                         <p>We get it, stuff happens. Just enter your email address below and we'll send you a link to reset your password!</p>
                     </div>
                     <form>
-                        <div className="relative w-full">
+                        <div className="relative w-full flex flex-col">
                             <CustomLabel label={`Email`}/>
-                            <Input
-                                type="email"
-                                placeholder="Enter Email"
-                                onChange={(event) => { console.log('===>Email', event.target.value) }}
-                            />
+                            <GidInput 
+                                inputType={"email"} 
+                                id={"email-pass-reset"}
+                                disable={false} 
+                                className={""} 
+                                value={formData.email ? formData.email : ''} 
+                                onBlurEvent={() => {}}
+                                placeholderMsg = "Enter Email"
+                                onTextChange={(event) => { setFormData({ ...formData, email: event.target.value }) }}>
+                            </GidInput>
                         </div>
-                        <div className="text-center mt-5">
-                            <CustomButton fullWidth={true} color="facebook" onClick={() => notifySuccessMessage('clicked')} >
-                                Reset Password
-                            </CustomButton>
-                        </div>
+
+                            <PlainButton onButtonClick={() => {notifySuccessMessage('clicked')}} title={RESET_PASSWORD} className={"w-full mt-5 bg-blue-600 hover:bg-blue-700"} ></PlainButton>
                     </form>
                 </div>
             </div>

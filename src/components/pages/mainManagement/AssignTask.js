@@ -77,7 +77,7 @@ const AssignTask = () => {
         { fields: 'Created' },
     ]
     return (
-        <div className='relative'>
+        <div className=''>
             <div className='grid sm:grid-cols-1 md:grid-cols-2 gap-3'>
                 <div class="items-center p-10 flex justify-center">
                     <img className='w-3/4 self-center' src="https://gid.artdexandcognoscis.com/static/img/undraw_add_tasks_re_s5yj.svg" alt=""></img>

@@ -5,7 +5,7 @@ import { isAPISuccess, isBusinessUnauthorized, isUnAuthorized, isUrlNotFound, is
 
 export async function apiAction({ url, method = 'get', data = null, onError = () => { }, dispatch }) {
   // if(dispatch){
-  //   dispatch(Actions.stateChange("loader", true))
+    // dispatch(Actions.stateChange("loader", true))
   // }
   
   let options = {
@@ -270,8 +270,8 @@ export async function apiHandleDownload({ url, method = 'POST', data, filename, 
   if (method.toLowerCase() === "get") {
     delete options["body"]
   }
-
-  fetch(url, options)
+  try{
+    fetch(url, options)
     .then((response) => response.blob())
     .then((res) => {
 
@@ -283,4 +283,9 @@ export async function apiHandleDownload({ url, method = 'POST', data, filename, 
     .catch((err) => {
       console.log(err.message);
     });
+  }catch(error){
+    console.log(error.message);
+  }
+
+ 
 }

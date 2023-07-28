@@ -23,16 +23,23 @@ export default function CalendarView(props) {
     useEffect(() => {
 
         const weekDays = getCurrentWeekDays(weekNumber)
-        getTaskList(weekDays[0].day.format("YYYY-MM-DD"), weekDays[weekDays.length-1].day.format("YYYY-MM-DD"), weekDays)
+        // try{
+            getTaskList(weekDays[0].day.format("YYYY-MM-DD"), weekDays[weekDays.length-1].day.format("YYYY-MM-DD"), weekDays)
+        // }catch(error){
+
+        // }
+        
 
     }, [weekNumber])
 
 
     const getTaskList = async (fromDate, toDate, weekDays) => {
+        // dispatch(Actions.stateChange("loader", true))
         let res = await apiAction({ url: getTheCalendarViewTasksUrl(fromDate, toDate, workspace.work_id), method: 'get', 
         // navigate: navigate, 
         dispatch: dispatch, 
         })
+        // dispatch(Actions.stateChange("loader", false))
         if (res) {
             if(res.results.length > 0){
                 putTasksOnDayWise(organizeTasksByDate(res.results), weekDays)

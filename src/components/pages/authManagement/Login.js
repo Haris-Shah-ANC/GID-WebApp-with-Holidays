@@ -7,6 +7,7 @@ import { routesName } from '../../../config/routesName';
 import { login, get_workspace } from '../../../api/urls';
 import CustomLabel from '../../custom/Elements/CustomLabel';
 import CustomButton from '../../custom/Elements/CustomButton';
+import GidInput from '../../custom/Elements/inputs/GidInput'
 
 import {
     apiAction,
@@ -25,6 +26,8 @@ import {
     notifyErrorMessage,
     notifySuccessMessage,
 } from '../../../utils/Utils';
+import PlainButton from '../../custom/Elements/buttons/PlainButton';
+import { SIGN_IN } from '../../../utils/StringConstants';
 
 
 
@@ -106,31 +109,53 @@ const Login = () => {
                         <small>Or login with credentials</small>
                     </div>
                     <form>
-                        <div className="relative w-full">
+                        <div className="relative w-full flex flex-col">
                             <CustomLabel label={`Email`} />
-                            <Input
+                            <GidInput 
+                                inputType={"email"} 
+                                id={"email-login"}
+                                disable={false} 
+                                className={""} 
+                                value={formData.email ? formData.email : ''} 
+                                onBlurEvent={() => {}}
+                                placeholderMsg = "Enter Email"
+                                onTextChange={(event) => { setFormData({ ...formData, email: event.target.value }) }}>
+                            </GidInput>
+                            {/* <Input
                                 type="email"
                                 placeholder="Enter Email"
                                 onChange={(event) => { setFormData({ ...formData, email: event.target.value }) }}
-                            />
+                            /> */}
                         </div>
-                        <div className="relative w-full">
+                        <div className="relative flex flex-col mt-2 w-full">
                             <CustomLabel label={`Password`} />
-                            <Input
+                            <GidInput 
+                                inputType={"password"} 
+                                id={"password"}
+                                disable={false} 
+                                className={""} 
+                                value={formData.password ? formData.password : ''} 
+                                onBlurEvent={() => {}}
+                                placeholderMsg = "Enter Password"
+                                onTextChange={(event) => { setFormData({ ...formData, password: event.target.value }) }}>
+                            </GidInput>
+                            {/* <Input
                                 type="password"
                                 placeholder="Enter Password"
                                 onChange={(event) => { setFormData({ ...formData, password: event.target.value }) }}
-                            />
+                            /> */}
                         </div>
 
                         <div className="mt-2 inline-block">
                             <Checkbox label={'Remember me'} />
                         </div>
-                        <div className="text-center mt-5">
+                        
+                        <PlainButton onButtonClick={handleSubmit} title={SIGN_IN} className={"w-full mt-5 bg-blue-600 hover:bg-blue-700"} ></PlainButton>
+                        {/* <div className="text-center mt-5">
                             <CustomButton fullWidth={true} color="facebook" onClick={handleSubmit} >
                                 Sign in
                             </CustomButton>
-                        </div>
+                        </div> */}
                     </form>
                 </div>
             </div>

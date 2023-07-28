@@ -2,12 +2,10 @@ import React, { useContext, useEffect } from "react";
 import { routesName } from "../../config/routesName";
 import Navbar from "../../components/custom/Navbar/Navbar";
 import { mainRoutes } from "../../config/routes";
-import Sidebar from "../../components/custom/Sidebar/Sidebar";
 import * as Actions from '../../state/Actions'
 
 import {
   clearCookie,
-  getToken,
   getWorkspaceInfo,
   isAuthenticated,
 } from "../../config/cookiesInfo";
@@ -19,6 +17,7 @@ import {
 } from "react-router-dom";
 import SidebarContainer from "../../components/custom/Sidebar/SidebarContainer";
 import Loader from "../../components/custom/Loaders/Loader";
+import ModelComponent from "../../components/custom/Model/ModelComponent";
 
 function MainLayout() {
 
@@ -33,6 +32,7 @@ function MainLayout() {
   };
 
   const [sidebarShow, setSidebarShow] = React.useState("-translate-x-full");
+  const state =Actions.getState(useContext)
   const dispatch = Actions.getDispatch(useContext);
   
   
@@ -59,7 +59,7 @@ function MainLayout() {
     <Loader></Loader>
       <SidebarContainer></SidebarContainer>
       <div className="w-full overflow-auto">
-        <Navbar></Navbar>
+        <Navbar logOutClick={logOutFromTheApp}></Navbar>
         <div className="overflow-x-hidden p-3">
           <Routes>
                 {
@@ -78,6 +78,7 @@ function MainLayout() {
         </div>
         
       </div>
+      {state.modalVisibility && <ModelComponent showModal={state.modalVisibility} setShowModal={dispatch(Actions.stateChange("modalVisibility", false))} />}
     </div>
 
     </React.Fragment>

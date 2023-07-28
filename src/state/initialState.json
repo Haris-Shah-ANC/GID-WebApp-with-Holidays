@@ -1,5 +1,6 @@
 {
     "loader": false,
     "workspace": null,
-    "userinfo": null
+    "userinfo": null,
+    "modalVisibility": false
 }

@@ -5,9 +5,16 @@ import { routesName } from '../../../config/routesName';
 import CustomLabel from '../../custom/Elements/CustomLabel';
 import CustomButton from '../../custom/Elements/CustomButton';
 import { notifySuccessMessage } from '../../../utils/Utils';
+import GidInput from '../../custom/Elements/inputs/GidInput';
+import PlainButton from '../../custom/Elements/buttons/PlainButton';
+import { REGISTER_ACCOUNT } from '../../../utils/StringConstants';
 
 const Registration = () => {
     const navigate = useNavigate();
+    const initial_data = {
+        email: null,
+    }
+    const [formData, setFormData] = React.useState({ ...initial_data })
 
     return (
         <React.Fragment>
@@ -37,18 +44,29 @@ const Registration = () => {
                         <small>Or Register using Email</small>
                     </div>
                     <form>
-                        <div className="relative w-full">
+                        <div className="relative w-full flex flex-col">
                             <CustomLabel label={`Email`}/>
-                            <Input
+                            {/* <Input
                                 type="email"
                                 placeholder="Enter Email"
                                 onChange={(event) => { console.log('===>Email', event.target.value) }}
-                            />
+                            /> */}
+                            <GidInput 
+                                inputType={"email"} 
+                                id={"email-registration"}
+                                disable={false} 
+                                className={""} 
+                                value={formData.email ? formData.email : ''} 
+                                onBlurEvent={() => {}}
+                                placeholderMsg = "Enter Email"
+                                onTextChange={(event) => { setFormData({ ...formData, email: event.target.value }) }}>
+                            </GidInput>
                         </div>
                         <div className="text-center mt-5">
-                            <CustomButton fullWidth={true} color="facebook" onClick={() => notifySuccessMessage('clicked')} >
+                            {/* <CustomButton fullWidth={true} color="facebook" onClick={() => notifySuccessMessage('clicked')} >
                                 Reset Password
-                            </CustomButton>
+                            </CustomButton> */}
+                            <PlainButton onButtonClick={() => {notifySuccessMessage('clicked')}} title={REGISTER_ACCOUNT} className={"w-full mt-5 bg-blue-600 hover:bg-blue-700"} ></PlainButton>
                         </div>
                     </form>
                 </div>
