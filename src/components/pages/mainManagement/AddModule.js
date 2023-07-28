@@ -103,6 +103,7 @@ export default function AddModule(props) {
                             <GidInput 
                                 inputType={"text"} 
                                 disable={false} 
+                                placeholderMsg={"Enter module name"}
                                 className={""} 
                                 value={formData.module_name ? formData.module_name : ''} 
                                 onBlurEvent={() => {}}

@@ -83,6 +83,7 @@ const CreateNewWorkspace = (props) => {
                             inputType={"text"} 
                             disable={false} 
                             className={""} 
+                            placeholderMsg={"Enter workspace name"}
                             value={wsFormData.workspace_name ? wsFormData.workspace_name : ''} 
                             onBlurEvent={() => {}}
                             onTextChange={handleWorkspaceNameChange}>

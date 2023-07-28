@@ -66,6 +66,7 @@ export default function AddProject(props) {
                                 inputType={"text"} 
                                 disable={false} 
                                 className={""} 
+                                placeholderMsg={"Enter project name"}
                                 value={formData.project_name ? formData.project_name : ''} 
                                 onBlurEvent={() => {}}
                                 onTextChange={(e) =>{
@@ -82,6 +83,7 @@ export default function AddProject(props) {
                                     inputType={"text"} 
                                     disable={false} 
                                     className={""} 
+                                    placeholderMsg={"Enter project description"}
                                     value={formData.project_tag ? formData.project_tag : ""} 
                                     onBlurEvent={() => {}}
                                     onTextChange={(e) =>{

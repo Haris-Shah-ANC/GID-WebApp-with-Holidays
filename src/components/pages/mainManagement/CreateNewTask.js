@@ -27,6 +27,7 @@ import {
     get_project_module,
 } from '../../../api/urls';
 import PlainButton from '../../custom/Elements/buttons/PlainButton';
+import GidInput from '../../custom/Elements/inputs/GidInput';
 
 const CreateNewTask = (props) => {
     const { setShowModal, data } = props;
@@ -169,17 +170,39 @@ const CreateNewTask = (props) => {
                                 value={formData.detailed_description ? formData.detailed_description : ''}
                                 onChange={(e) => setFormData((previous) => ({ ...previous, detailed_description: e.target.value }))}
                             />
+                            {/* <GidInput 
+                                inputType={"textarea"} 
+                                id='task_detail_description'
+                                disable={false} 
+                                placeholderMsg={"Add the detailed task description"}
+                                className={"h-20"} 
+                                value={formData.detailed_description ? formData.detailed_description : ''} 
+                                onBlurEvent={() => {}}
+                                onTextChange={(e) =>{
+                                    setFormData((previous) => ({ ...previous, detailed_description: e.target.value }))
+                            }}></GidInput> */}
                         </div>
 
                         <div className="mt-2 flex flex-col">
                             <CustomLabel label={`Description Link`} className={'font-quicksand font-semibold text-sm mb-1'} />
-                            <Input
+                            {/* <Input
                                 type='text'
                                 id='description'
                                 placeholder="Add link"
                                 value={formData.description_link ? formData.description_link : ''}
                                 onChange={(e) => setFormData((previous) => ({ ...previous, description_link: e.target.value }))}
-                            />
+                            /> */}
+                            <GidInput 
+                                inputType={"text"} 
+                                id='link_description'
+                                disable={false} 
+                                placeholderMsg={"Enter link"}
+                                className={""} 
+                                value={formData.description_link ? formData.description_link : ''} 
+                                onBlurEvent={() => {}}
+                                onTextChange={(e) =>{
+                                    setFormData((previous) => ({ ...previous, description_link: e.target.value }))
+                            }}></GidInput>
                         </div>
 
                         <CustomLabel label={`Status`} className={'font-quicksand font-semibold text-sm mb-1'} />
