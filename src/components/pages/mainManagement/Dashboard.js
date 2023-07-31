@@ -72,11 +72,11 @@ const Dashboard = () => {
     const getTaskList = async (URL) => {
         let res = await apiAction({ url: URL, method: 'get', navigate: navigate, dispatch: dispatch })
         console.log("TASKS", JSON.stringify(res, 0,2 ))
-        // if (res.success) {
+        if (res.success) {
             setTasksResults(res.results)
             btnLabelList[taskCategoryIndex].count = res.results.length
             setTaskCount([...btnLabelList])
-        // }
+        }
     }
 
     // const getAllTaskList = async () => {
@@ -240,7 +240,7 @@ const Dashboard = () => {
             </div>
 
             <div className=" mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                {tasksResults.map((item, index) => {
+                {tasksResults.length > 0 && tasksResults.map((item, index) => {
                     return (
                         <DashboardCard {...item} onEditClick={onTaskEditClick} onTaskComplete={onTaskComplete}/>
                     )

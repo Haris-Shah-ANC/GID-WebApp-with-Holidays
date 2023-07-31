@@ -20,9 +20,10 @@ export default function SidebarContainer(props) {
   // }
 
   return (
-    <div className={`bg-white text-white hidden md:block top-0 bottom-0 ${isSidebarOpen ? 'w-72' : 'w-20'} shadow-xl flex-row flex-nowrap md:z-10 z-9999 transition-all duration-300 ease-in-out transform md:translate-x-0`}>
-        <Sidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={(value)=>handleClick(value)} ></Sidebar>
-        {/* <ModelComponent showModal={showModal} setShowModal={setShowModal} /> */}
-    </div>
+    // <div className={`bg-black text-white hidden md:block ${isSidebarOpen ? 'w-72' : 'w-20'} shadow-xl md:z-10 z-9999 transition-all duration-300 ease-in-out transform md:translate-x-0`}>
+        <div className={`bg-white text-white hidden md:block transition-all duration-300 ${isSidebarOpen ? 'w-72' : 'w-20'}`}>
+            <Sidebar isSidebarOpen={isSidebarOpen} setIsSidebarOpen={(value)=>handleClick(value)} ></Sidebar>
+        </div>
+    // </div>
   )
 }

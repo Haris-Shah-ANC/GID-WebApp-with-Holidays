@@ -23,14 +23,15 @@ import SidebarMenuItem from './SidebarMenuItem';
 import WorkspaceList from './WorkspaceList';
 
 
-const Sidebar = ({isSidebarOpen,setIsSidebarOpen}) => {
+const Sidebar = ({isSidebarOpen,setIsSidebarOpen, sideNavigationRef}) => {
   const navigate = useNavigate();
   const location = useLocation();
   const state = Actions.getState(useContext)
+  const dispatch = Actions.getDispatch(useContext)
   const workspace = getWorkspaceInfo()
   const [navigationUrl, setNavigationUrl] = useState([])
 
-  const sideNavigationRef= useRef()
+  // const sideNavigationRef= useRef()
 
   const [activeItem, setActiveItem] = useState(routesName.dashboard.activeRoute);
 
@@ -108,14 +109,14 @@ const Sidebar = ({isSidebarOpen,setIsSidebarOpen}) => {
           </ul>
         </nav>
         
-      <div className={`cursor-pointer border-dark-purple justify-center flex my-2`} onClick={() => setIsSidebarOpen(!isSidebarOpen)}>
-        <ButtonWithImage className={'cursor-pointer w-8 h-8 rounded-full border-dark-purple justify-center flex p-0 m-0 group'} title={""} iconStyle={`mr-0`} disabled={false} onButtonClick={() => setIsSidebarOpen(!isSidebarOpen)}
-          icon={<svg xmlns="http://www.w3.org/2000/svg" className={`w-8 h-8 p-[6px] align-baseline hidden md:block fill-blue-600 rounded-full bg-blue-300 shadow-xl ${isSidebarOpen ? "rotate-180" : "rotate-0"}`} height="1em" viewBox="0 0 320 512">
-          <path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z"/></svg>}>
-        </ButtonWithImage>
-        {/* <svg xmlns="http://www.w3.org/2000/svg" className={`w-8 h-8 p-[6px] align-baseline hidden md:block fill-blue-600 rounded-full bg-blue-300 shadow-xl ${isSidebarOpen ? "rotate-180" : "rotate-0"}`} height="1em" viewBox="0 0 320 512">
-          <path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z"/></svg> */}
-      </div>
+        <div className={`cursor-default border-dark-purple justify-center flex my-2`}>
+          <ButtonWithImage className={'cursor-pointer w-8 h-8 rounded-full border-dark-purple justify-center flex p-0 m-0 group'} title={""} iconStyle={`mr-0`} disabled={false} onButtonClick={() => setIsSidebarOpen(!isSidebarOpen)}
+            icon={<svg xmlns="http://www.w3.org/2000/svg" className={`w-8 h-8 p-[6px] align-baseline  fill-blue-600 rounded-full bg-blue-300 shadow-xl ${isSidebarOpen ? "rotate-180" : "rotate-0"}`} height="1em" viewBox="0 0 320 512">
+            <path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z"/></svg>}>
+          </ButtonWithImage>
+          {/* <svg xmlns="http://www.w3.org/2000/svg" className={`w-8 h-8 p-[6px] align-baseline hidden md:block fill-blue-600 rounded-full bg-blue-300 shadow-xl ${isSidebarOpen ? "rotate-180" : "rotate-0"}`} height="1em" viewBox="0 0 320 512">
+            <path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z"/></svg> */}
+        </div>
       
         </div>
     <ModelComponent showModal={showModal} setShowModal={setShowModal} />
@@ -138,7 +139,7 @@ const ChildItemComponent = (props) => {
   const [collapse, setCollapse] = React.useState(false);
   const onClickedHandler = () => {
     setCollapse(!collapse)
-    setIsSidebarOpen(true)
+    // setIsSidebarOpen(true)
   }
 
   React.useEffect(() => {

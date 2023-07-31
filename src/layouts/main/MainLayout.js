@@ -40,6 +40,10 @@ function MainLayout() {
     dispatch(Actions.stateChange("workspace", getWorkspaceInfo()))
   }, [])
 
+  useEffect(() => {
+    console.log("modalVisibility")
+  }, [dispatch.modalVisibility])
+
   const logOutFromTheApp = () => {
     clearCookie()
     navigate("/auth"+routesName.login.path)
@@ -78,7 +82,7 @@ function MainLayout() {
         </div>
         
       </div>
-      {state.modalVisibility && <ModelComponent showModal={state.modalVisibility} setShowModal={dispatch(Actions.stateChange("modalVisibility", false))} />}
+      
     </div>
 
     </React.Fragment>

@@ -14,9 +14,15 @@ const Navbar = ({ logOutClick }) => {
     const menuRef = useRef()
     const imgRef = useRef()
 
+    const sideNavigationRef= useRef()
+    
+
     window.addEventListener('click', (e) => {
         if (e.target !== menuRef.current && e.target !== imgRef.current) {
             setPopupMenuVisibility(false)
+        }else if(e.target === sideNavigationRef.current){
+            console.log("INSIDE ELSE IF")
+            setSidebarShow("-translate-x-full");
         }
     })
     const [sidebarShow, setSidebarShow] = React.useState("-translate-x-full");
@@ -94,8 +100,9 @@ const Navbar = ({ logOutClick }) => {
                     </div>
                 </div>
             </nav>
-            <div className={`bg-white text-white sm:hidden absolute top-0 bottom-0 'w-64' shadow-xl flex-row flex-nowrap md:z-10 z-9999 transition-all duration-300 ease-in-out transform md:translate-x-0 ${sidebarShow}`}>
-                    <Sidebar isSidebarOpen={true} setIsSidebarOpen={(value) => {}}></Sidebar>
+            {/* <div className={`bg-white text-white sm:hidden absolute top-0 bottom-0 w-64 shadow-xl flex-row flex-nowrap md:z-10 z-9999 transition-all duration-300 ease-in-out transform md:translate-x-0 ${sidebarShow}`}> */}
+            <div className={`bg-white text-white sm:hidden top-0 bottom-0 absolute transition-all duration-300 md:z-10 z-9999 w-72 ${sidebarShow}`}>
+                    <Sidebar isSidebarOpen={true} setIsSidebarOpen={(value) => handleDrawerClick()}></Sidebar>
                 </div>
         </div>
     )
