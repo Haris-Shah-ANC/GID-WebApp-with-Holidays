@@ -60,7 +60,6 @@ function MainLayout() {
     <React.Fragment>
 
     <div className="flex w-screen h-screen bg-screenBackgroundColor relative">
-    <Loader></Loader>
       <SidebarContainer></SidebarContainer>
       <div className="w-full overflow-auto">
         <Navbar logOutClick={logOutFromTheApp}></Navbar>

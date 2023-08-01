@@ -10,6 +10,7 @@ import { add_task } from '../../../utils/Constant';
 import Dropdown from '../../custom/Dropdown/Dropdown';
 import * as Actions from '../../../state/Actions'
 import ButtonWithImage from '../../custom/Elements/buttons/ButtonWithImage';
+import Loader from '../../../components/custom/Loaders/Loader'
 
 export default function CalendarView(props) {
     const [days, setDays] = useState([])
@@ -19,6 +20,7 @@ export default function CalendarView(props) {
     const [showModal, setShowModal] = useState(false);
     const [weekNumber, incrementWeek] = useState(0)
     const dispatch = Actions.getDispatch(useContext)
+    const [isNetworkCallRunning, setNetworkCallStatus] = useState(false)
 
     useEffect(() => {
         const weekDays = getCurrentWeekDays(weekNumber)
@@ -27,12 +29,12 @@ export default function CalendarView(props) {
 
 
     const getTaskList = async (fromDate, toDate, weekDays) => {
-        // dispatch(Actions.stateChange("loader", true))
+        setNetworkCallStatus(true)
         let res = await apiAction({ url: getTheCalendarViewTasksUrl(fromDate, toDate, workspace.work_id), method: 'get', 
         // navigate: navigate, 
         dispatch: dispatch, 
         })
-        // dispatch(Actions.stateChange("loader", false))
+        setNetworkCallStatus(false)
         if (res) {
             if(res.results.length > 0){
                 putTasksOnDayWise(organizeTasksByDate(res.results), weekDays)
@@ -154,6 +156,7 @@ export default function CalendarView(props) {
         
     </div>
     <ModelComponent showModal={showModal} setShowModal={setShowModal} data={formData} />
+    {isNetworkCallRunning && <Loader></Loader>}
     </React.Fragment>
   )
 }

@@ -3,16 +3,13 @@ import * as Actions from '../../../state/Actions'
 
 export default function Loader() {
     let circleCommonClasses = 'h-2.5 w-2.5 bg-blue-600 rounded-full';
-    const state = Actions.getState(useContext)
+    // const state = Actions.getState(useContext)
 
-
-  useEffect(() => {
-
-  }, [state.loader])
 
     return (
     <>
-      {state.loader ? (
+      {/* {state.loader ? ( */}
+      {true ? (
         <>
           <div
             className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none"
