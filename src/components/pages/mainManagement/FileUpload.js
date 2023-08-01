@@ -4,6 +4,7 @@ import { getWorkspaceInfo } from '../../../config/cookiesInfo'
 import { isFormValid, notifyErrorMessage, notifySuccessMessage } from '../../../utils/Utils'
 import { getTheAttendanceReportUploadUrl } from '../../../api/urls'
 import PlainButton from '../../custom/Elements/buttons/PlainButton'
+import GidInput from '../../custom/Elements/inputs/GidInput'
 
 export default function FileUpload(props) {
   const { setShowModal } = props
@@ -86,12 +87,16 @@ const onFileEvent = (event) => {
                     />
 
                     <label className='mt-3 text-gray-600 font-quicksand font-semibold'>Year</label>
-                    <input 
-                    type="number"  
-                    className='border w-full p-1 rounded-md'
-                    value={fileUploadData.year}
-                    onChange={(e)=> {setFileData({...fileUploadData, year: e.target.value})}} 
-                    />
+                    <GidInput 
+                          inputType={"number"} 
+                          id={"year"}
+                          disable={false} 
+                          className={""} 
+                          value={fileUploadData.year} 
+                          onBlurEvent={() => {}}
+                          placeholderMsg = "e.g 2023"
+                          onTextChange={(event) => { setFileData({...fileUploadData, year: event.target.value}) }}>
+                      </GidInput>
 
                     <PlainButton title={"Upload"} className={"mt-10"} onButtonClick={uploadFile} disable={false}></PlainButton>
                 </div>

@@ -36,6 +36,7 @@ import Loader from '../../custom/Loaders/Loader';
 import PlainButtonButton from '../../custom/Elements/buttons/PlainButton';
 import GidInput from '../../custom/Elements/inputs/GidInput';
 import IconInput from '../../custom/Elements/inputs/IconInput';
+import GIDTextArea from '../../custom/Elements/inputs/GIDTextArea';
 
 
 const AssignTask = () => {
@@ -125,18 +126,6 @@ const CustomTable = (props) => {
                     </div>
                     <div className="w-full md:w-1/2 text-right items-center justify-end">
                         <div className="w-full md:w-72">
-                            {/* <Input
-                                type="text"
-                                id="employee_name"
-                                name="employee_name"
-                                value={searchTerm}
-                                placeholder="Enter Employee Name"
-                                rightIcon={'fa-solid fa-magnifying-glass'}
-                                onChange={(e) => {
-                                    setSearchTerm(e.target.value);
-                                    getFilteredTask(e.target.value)
-                                }}
-                            /> */}
                             <IconInput
                                 inputType={"text"}
                                 disable={false}
@@ -357,14 +346,12 @@ const AssignedTask = () => {
 
                     <div className="my-3 flex flex-col">
                         <CustomLabel label={`Description`} className={'py-1'}/>
-                        <Input
-                            type="textarea"
-                            id="description"
-                            className="h-20 font-quicksand font-medium"
-                            placeholder="Add the task description"
-                            value={formData.task ? formData.task : ''}
-                            onChange={(e) => setFormData((previous) => ({ ...previous, task: e.target.value }))}
-                        />
+                        <GIDTextArea
+                            id={"task_description"} disable={false} className={"h-20"} value={formData.task} 
+                            onBlurEvent={() => {}} 
+                            placeholderMsg={"Add the task description"} 
+                            onTextChange={(e) => setFormData((previous) => ({ ...previous, task: e.target.value }))}>
+                        </GIDTextArea>
                     </div>
 
                     <div className="my-3 flex flex-col">
@@ -382,14 +369,6 @@ const AssignedTask = () => {
                                 isRightIcon={true}
                                 >
                             </IconInput>
-                        {/* <Input
-                            id="datetime"
-                            name="datetime"
-                            className={'font-quicksand font-medium'}
-                            type="datetime-local"
-                            value={formData.dead_line ? formData.dead_line : ''}
-                            onChange={(e) => setFormData((previous) => ({ ...previous, dead_line: e.target.value }))}
-                        /> */}
                     </div>
                 </div>
 

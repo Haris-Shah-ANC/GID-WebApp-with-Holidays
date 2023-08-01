@@ -121,11 +121,6 @@ const Login = () => {
                                 placeholderMsg = "Enter Email"
                                 onTextChange={(event) => { setFormData({ ...formData, email: event.target.value }) }}>
                             </GidInput>
-                            {/* <Input
-                                type="email"
-                                placeholder="Enter Email"
-                                onChange={(event) => { setFormData({ ...formData, email: event.target.value }) }}
-                            /> */}
                         </div>
                         <div className="relative flex flex-col mt-2 w-full">
                             <CustomLabel label={`Password`} />
@@ -139,11 +134,6 @@ const Login = () => {
                                 placeholderMsg = "Enter Password"
                                 onTextChange={(event) => { setFormData({ ...formData, password: event.target.value }) }}>
                             </GidInput>
-                            {/* <Input
-                                type="password"
-                                placeholder="Enter Password"
-                                onChange={(event) => { setFormData({ ...formData, password: event.target.value }) }}
-                            /> */}
                         </div>
 
                         <div className="mt-2 inline-block">

@@ -46,11 +46,6 @@ const Registration = () => {
                     <form>
                         <div className="relative w-full flex flex-col">
                             <CustomLabel label={`Email`}/>
-                            {/* <Input
-                                type="email"
-                                placeholder="Enter Email"
-                                onChange={(event) => { console.log('===>Email', event.target.value) }}
-                            /> */}
                             <GidInput 
                                 inputType={"email"} 
                                 id={"email-registration"}

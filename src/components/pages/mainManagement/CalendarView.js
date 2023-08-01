@@ -21,15 +21,8 @@ export default function CalendarView(props) {
     const dispatch = Actions.getDispatch(useContext)
 
     useEffect(() => {
-
         const weekDays = getCurrentWeekDays(weekNumber)
-        // try{
-            getTaskList(weekDays[0].day.format("YYYY-MM-DD"), weekDays[weekDays.length-1].day.format("YYYY-MM-DD"), weekDays)
-        // }catch(error){
-
-        // }
-        
-
+        getTaskList(weekDays[0].day.format("YYYY-MM-DD"), weekDays[weekDays.length-1].day.format("YYYY-MM-DD"), weekDays)
     }, [weekNumber])
 
 

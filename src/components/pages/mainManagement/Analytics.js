@@ -321,12 +321,6 @@ const AddNotification = (props) => {
                 return <div className='flex flex-col'>
                     <div className="my-3 flex flex-col">
                         <div className='flex flex-row space-x-1 w-full'>
-                            {/* <input className={`border-blueGray-300 border focus:border-blue-600 focus:border-1 rounded-md justify-start w-full`} 
-                                type="time"
-                                placeholder=''
-                                value={item.time}
-                                onChange={(e) => {onTimeSet(index, e.target.value)}}
-                            ></input> */}
                             <IconInput
                                 inputType={"time"}
                                 disable={false}

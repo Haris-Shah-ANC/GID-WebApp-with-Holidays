@@ -327,16 +327,6 @@ const DashboardCard = (props) => {
             <div className='bg-white flex flex-col px-5 py-2 rounded-lg h-full border-borderColor-0 shadow-md' >
                 
                     <div className='flex'>
-                        {/* { ((status != "Completed") && (status != "On Hold")) && <input
-                                type="checkbox"
-                                value={isChecked}
-                                onChange={(e) => {
-                                    setChecked(!isChecked)
-                                    console.log("CHECK CLICK")
-                                    completeTheTask(e)
-                                }}
-                                className="form-checkbox appearance-none w-4 h-4 self-center mr-2 ease-linear transition-all duration-150 border border-blueGray-300 rounded focus:border-blueGray-300"
-                                />} */}
                                 <div className='flex flex-col w-full'>
                                     <div className='max-h-14 align-top font-quicksand font-medium flex w-full'>
                                         <a href={description_link === null ? null: description_link}

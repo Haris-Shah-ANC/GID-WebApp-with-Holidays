@@ -28,6 +28,9 @@ import {
 } from '../../../api/urls';
 import PlainButton from '../../custom/Elements/buttons/PlainButton';
 import GidInput from '../../custom/Elements/inputs/GidInput';
+import TextAreaInput from '../../custom/Elements/inputs/GIDTextArea';
+import GID_TextArea from '../../custom/Elements/inputs/GIDTextArea';
+import GIDTextArea from '../../custom/Elements/inputs/GIDTextArea';
 
 const CreateNewTask = (props) => {
     const { setShowModal, data } = props;
@@ -151,47 +154,25 @@ const CreateNewTask = (props) => {
 
                         <div className="mt-4 flex flex-col">
                             <CustomLabel label={`Task Description`} className={'font-quicksand font-semibold text-sm mb-1'} />
-                            <Input
-                                type='textarea'
-                                id='description'
-                                className="h-20"
-                                placeholder="Add the task description"
-                                value={formData.task ? formData.task : ''}
-                                onChange={(e) => setFormData((previous) => ({ ...previous, task: e.target.value }))}
-                            />
+                            <GIDTextArea
+                                id={"task_description"} disable={false} className={"h-20"} value={formData.task} 
+                                onBlurEvent={() => {}} 
+                                placeholderMsg={"Add the task description"} 
+                                onTextChange={(event) => { setFormData({ ...formData, task: event.target.value }) }}>
+                            </GIDTextArea>
                         </div>
                         <div className="mt-2 flex flex-col">
                             <CustomLabel label={`Detailed Description`} className={'font-quicksand font-semibold text-sm mb-1'} />
-                            <Input
-                                type='textarea'
-                                id='description'
-                                className="h-20"
-                                placeholder="Add the detailed task description"
-                                value={formData.detailed_description ? formData.detailed_description : ''}
-                                onChange={(e) => setFormData((previous) => ({ ...previous, detailed_description: e.target.value }))}
-                            />
-                            {/* <GidInput 
-                                inputType={"textarea"} 
-                                id='task_detail_description'
-                                disable={false} 
-                                placeholderMsg={"Add the detailed task description"}
-                                className={"h-20"} 
-                                value={formData.detailed_description ? formData.detailed_description : ''} 
-                                onBlurEvent={() => {}}
-                                onTextChange={(e) =>{
-                                    setFormData((previous) => ({ ...previous, detailed_description: e.target.value }))
-                            }}></GidInput> */}
+                            <GIDTextArea
+                                id={"task_detailed_description"} disable={false} className={"h-20"} value={formData.detailed_description} 
+                                onBlurEvent={() => {}} 
+                                placeholderMsg={"Add the detailed task description"} 
+                                onTextChange={(event) => setFormData((previous) => ({ ...previous, detailed_description: event.target.value }))}>
+                            </GIDTextArea>
                         </div>
 
                         <div className="mt-2 flex flex-col">
                             <CustomLabel label={`Description Link`} className={'font-quicksand font-semibold text-sm mb-1'} />
-                            {/* <Input
-                                type='text'
-                                id='description'
-                                placeholder="Add link"
-                                value={formData.description_link ? formData.description_link : ''}
-                                onChange={(e) => setFormData((previous) => ({ ...previous, description_link: e.target.value }))}
-                            /> */}
                             <GidInput 
                                 inputType={"text"} 
                                 id='link_description'
@@ -249,14 +230,21 @@ const CreateNewTask = (props) => {
                         { formData.status === "On Hold" &&
                             <div className="mt-4 flex flex-col">
                                 <CustomLabel label={`Reason`} className={'font-quicksand font-semibold text-sm'} />
-                                <Input
+                                {/* <Input
                                     type='textarea'
                                     id='on_hold_reason'
                                     className="h-20 m-0"
                                     placeholder="Add the task on hold reason"
                                     value={formData.on_hold_reason ? formData.on_hold_reason : ''}
                                     onChange={(e) => setFormData((previous) => ({ ...previous, on_hold_reason: e.target.value }))}
-                                />
+                                /> */}
+
+                            <GIDTextArea
+                                id={"on_hold_reason_text_input"} disable={false} className={"h-20"} value={formData.on_hold_reason} 
+                                onBlurEvent={() => {}} 
+                                placeholderMsg={"Add the task on hold reason"} 
+                                onTextChange={(e) => setFormData((previous) => ({ ...previous, on_hold_reason: e.target.value }))}>
+                            </GIDTextArea>
                         </div>
                         }
 
