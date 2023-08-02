@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import Input from '../../custom/Elements/Input'
 import Dropdown from '../../custom/Dropdown/Dropdown'
 import { ROLES } from '../../../utils/Constant'
 import { apiAction } from '../../../api/api'

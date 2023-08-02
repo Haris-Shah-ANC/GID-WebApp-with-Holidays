@@ -1,8 +1,7 @@
 import React from 'react';
-import Input from '../../custom/Elements/Input';
 import * as Actions from '../../../state/Actions';
 import { Link, useNavigate } from 'react-router-dom';
-import Checkbox from '../../custom/Elements/Checkbox';
+import Checkbox from '../../custom/Elements/buttons/Checkbox';
 import { routesName } from '../../../config/routesName';
 import { login, get_workspace } from '../../../api/urls';
 import CustomLabel from '../../custom/Elements/CustomLabel';

@@ -2,9 +2,8 @@ import React, { useState } from 'react';
 import moment from 'moment';
 import { apiAction } from '../../../api/api';
 import { useNavigate } from 'react-router-dom';
-import Input from '../../custom/Elements/Input';
 import * as Actions from '../../../state/Actions';
-import Checkbox from '../../custom/Elements/Checkbox';
+import Checkbox from '../../custom/Elements/buttons/Checkbox';
 import Dropdown from '../../custom/Dropdown/Dropdown';
 import { routesName } from '../../../config/routesName';
 import CustomLabel from '../../custom/Elements/CustomLabel';
@@ -153,44 +152,6 @@ const FilterAndSort = (props) => {
                             </div>
                         }
 
-                        {/* <CustomLabel label={`Status`} className={'font-quicksand font-semibold text-sm'} />
-                        <div className='grid grid-cols-1 space-y-4 md:grid-cols-2 font-quicksand font-semibold text-sm'>
-                            <div className="flex items-center cursor-pointer ">
-                                <Checkbox
-                                    value="In Progress"
-                                    checked={formData.status.includes('In Progress')}
-                                    onChange={(e) => handleStatusChanges(e.target.value)}
-
-                                />
-                                <CustomLabel className={`ml-2`} label={'In Progress'} />
-                            </div>
-                            <div className="flex items-center cursor-pointer mt-2">
-                                <Checkbox
-                                    value="Pending"
-                                    checked={formData.status.includes('Pending')}
-                                    onChange={(e) => handleStatusChanges(e.target.value)}
-                                />
-                                <CustomLabel className={`ml-2`} label={'Pending'} />
-                            </div>
-
-                            <div className="flex items-center cursor-pointer">
-                                <Checkbox
-                                    value="Completed"
-                                    checked={formData.status.includes('Completed')}
-                                    onChange={(e) => handleStatusChanges(e.target.value)}
-                                />
-                                <CustomLabel className={`ml-2`} label={'Completed'} />
-                            </div>
-
-                            <div className="flex items-center cursor-pointer pt-4">
-                                <Checkbox
-                                    value="On Hold"
-                                    checked={formData.status.includes('On Hold')}
-                                    onChange={(e) => handleStatusChanges(e.target.value)}
-                                />
-                                <CustomLabel className={`ml-2`} label={'On Hold'} />
-                            </div>
-                        </div> */}
                     </div>
 
                     <div className="p-6 border-solid border-slate-200 rounded-b flex flex-row mt-6">

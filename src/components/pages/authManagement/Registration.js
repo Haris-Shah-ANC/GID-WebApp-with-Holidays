@@ -1,5 +1,4 @@
 import React from 'react';
-import Input from '../../custom/Elements/Input';
 import { Link, useNavigate } from 'react-router-dom';
 import { routesName } from '../../../config/routesName';
 import CustomLabel from '../../custom/Elements/CustomLabel';

@@ -1,5 +1,4 @@
 import React, { useContext, useState } from 'react'
-import Input from '../../custom/Elements/Input'
 import CustomLabel from '../../custom/Elements/CustomLabel'
 import { isFormValid, notifyErrorMessage, notifySuccessMessage } from '../../../utils/Utils'
 import { apiAction } from '../../../api/api'
@@ -11,6 +10,7 @@ import Dropdown from '../../custom/Dropdown/Dropdown'
 import PlainButton from '../../custom/Elements/buttons/PlainButton'
 import GidInput from '../../custom/Elements/inputs/GidInput'
 import ButtonWithImage from '../../custom/Elements/buttons/ButtonWithImage'
+import IconInput from '../../custom/Elements/inputs/IconInput'
 
 export default function AddModule(props) {
     const { work_id } = getWorkspaceInfo();
@@ -116,13 +116,18 @@ export default function AddModule(props) {
 
                         <div className="my-4 flex flex-col">
                             <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={<span><i className="fa-solid fa-calendar-days text-base mb-1 mr-1"></i>Deadline</span>} />
-                            <Input
-                                id="datetime"
-                                name="datetime"
-                                type="datetime-local"
-                                value={formData.deadline ? formData.deadline : ''}
-                                onChange={(e) => setFormData((previous) => ({ ...previous, deadline: e.target.value }))}
-                            />
+                            <IconInput
+                                id={"module_deadline_datetime"}
+                                inputType={"datetime"}
+                                disable={false}
+                                className={``}
+                                value={formData.deadline ? formData.deadline : ""}
+                                onTextChange={(e) => setFormData((previous) => ({ ...previous, deadline: e.target.value }))}
+                                onBlurEvent={() => {}}
+                                placeholder={""}
+                                isRightIcon={true}
+                                >
+                            </IconInput>
                         </div>
                     </div>
 

@@ -30,7 +30,6 @@ import {
     getLoginDetails,
     getWorkspaceInfo,
 } from '../../../config/cookiesInfo';
-import Input from '../../custom/Elements/Input';
 import PlainButton from '../../custom/Elements/buttons/PlainButton';
 import Loader from '../../custom/Loaders/Loader';
 import PlainButtonButton from '../../custom/Elements/buttons/PlainButton';

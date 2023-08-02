@@ -28,7 +28,7 @@ import {
 } from '../../../config/cookiesInfo';
 import classNames from 'classnames';
 import PopUpMenu from '../../custom/popups/PopUpMenu';
-import Checkbox from '../../custom/Elements/Checkbox';
+import Checkbox from '../../custom/Elements/buttons/Checkbox';
 import CustomLabel from '../../custom/Elements/CustomLabel';
 
 const Dashboard = () => {

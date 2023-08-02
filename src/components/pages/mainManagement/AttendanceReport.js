@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import Input from '../../custom/Elements/Input'
 import moment, { duration } from 'moment/moment'
 import { formatDate, getDateRange, isFormValid, notifyErrorMessage, notifySuccessMessage } from '../../../utils/Utils'
 import {
@@ -12,6 +11,7 @@ import no_data_found from '../../../assets/image/no_data_found.svg'
 import sync from '../../../assets/image/sync.svg';
 import razerpayx from '../../../assets/image/razerpayx.png';
 import { WEEKS } from '../../../utils/Constant';
+import IconInput from '../../custom/Elements/inputs/IconInput';
 
 const timePeriods = [
     {name: "Current Month", fromDate: getDateRange("Current Month".toLowerCase(), "YYYY-MM-DD", "start"), toDate: getDateRange("Current Month".toLowerCase(), "YYYY-MM-DD", "end")},
@@ -209,27 +209,38 @@ const getAttendanceColor = (attendance, isDelicateColor=false) => {
                     {
                         selectedTimePeriod.name === "Custom" && 
                         <div className='flex flex-wrap mt-2 space-x-0 space-y-2 md:mt-0 md:space-x-2 md:space-y-0'>
-                            <Input
-                                id="datetime"
-                                name="datetime"
-                                type="date"
+                            <IconInput
+                                id={"attendance_start_date"}
+                                inputType={"date"}
+                                disable={false}
+                                className={``}
                                 value={postData.from_date}
-                                onChange={(e) => {
+                                onTextChange={(e) => { 
                                     if(validateDate(e.target.value, postData.to_date)){
-                                        setPostData({...postData, from_date: e.target.value})}   
+                                        setPostData({...postData, from_date: e.target.value})
                                     }
-                                }
-                            />
-                            <Input
-                                id="date"
-                                name="datetime"
-                                type="date"
+                                 }}
+                                onBlurEvent={() => {}}
+                                placeholder={""}
+                                isRightIcon={true}
+                                >
+                            </IconInput>
+                            <IconInput
+                                id={"attendance_end_date"}
+                                inputType={"date"}
+                                disable={false}
+                                className={``}
                                 value={postData.to_date}
-                                onChange={(e) => {
+                                onTextChange={(e) => { 
                                     if(validateDate(postData.from_date, e.target.value)){
-                                        setPostData({...postData, to_date: e.target.value})}}
+                                        setPostData({...postData, to_date: e.target.value})
                                     }
-                            />
+                                 }}
+                                onBlurEvent={() => {}}
+                                placeholder={""}
+                                isRightIcon={true}
+                                >
+                            </IconInput>
                             
                             <button className='font-quicksand font-bold text-sm text-white rounded-md border bg-blue-600 px-4 py-2 my-2 md:mt-0' onClick={() => {onSubmitClick()}}>Submit</button>
                         </div>

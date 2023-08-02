@@ -2,9 +2,8 @@ import React from 'react';
 import moment from 'moment';
 import { apiAction } from '../../../api/api';
 import { useNavigate } from 'react-router-dom';
-import Input from '../../custom/Elements/Input';
 import * as Actions from '../../../state/Actions';
-import Checkbox from '../../custom/Elements/Checkbox';
+import Checkbox from '../../custom/Elements/buttons/Checkbox';
 import Dropdown from '../../custom/Dropdown/Dropdown';
 import { routesName } from '../../../config/routesName';
 import CustomLabel from '../../custom/Elements/CustomLabel';
@@ -31,6 +30,7 @@ import GidInput from '../../custom/Elements/inputs/GidInput';
 import TextAreaInput from '../../custom/Elements/inputs/GIDTextArea';
 import GID_TextArea from '../../custom/Elements/inputs/GIDTextArea';
 import GIDTextArea from '../../custom/Elements/inputs/GIDTextArea';
+import IconInput from '../../custom/Elements/inputs/IconInput';
 
 const CreateNewTask = (props) => {
     const { setShowModal, data } = props;
@@ -161,7 +161,7 @@ const CreateNewTask = (props) => {
                                 onTextChange={(event) => { setFormData({ ...formData, task: event.target.value }) }}>
                             </GIDTextArea>
                         </div>
-                        <div className="mt-2 flex flex-col">
+                        <div className="mt-4 flex flex-col">
                             <CustomLabel label={`Detailed Description`} className={'font-quicksand font-semibold text-sm mb-1'} />
                             <GIDTextArea
                                 id={"task_detailed_description"} disable={false} className={"h-20"} value={formData.detailed_description} 
@@ -171,7 +171,7 @@ const CreateNewTask = (props) => {
                             </GIDTextArea>
                         </div>
 
-                        <div className="mt-2 flex flex-col">
+                        <div className="mt-4 flex flex-col">
                             <CustomLabel label={`Description Link`} className={'font-quicksand font-semibold text-sm mb-1'} />
                             <GidInput 
                                 inputType={"text"} 
@@ -186,58 +186,41 @@ const CreateNewTask = (props) => {
                             }}></GidInput>
                         </div>
 
-                        <CustomLabel label={`Status`} className={'font-quicksand font-semibold text-sm mb-1'} />
-                        <div className='grid grid-cols-1 space-y-2 md:grid-cols-2 font-quicksand font-semibold text-sm'>
-                            <div className="flex items-center cursor-pointer ">
-                                <Checkbox
-                                    value="In-Progress"
-                                    checked={formData.status === 'In-Progress'}
-                                    onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
-                                />
-                                <CustomLabel className={`ml-2`} label={'In Progress'} />
-                            </div>
-                            <div className="flex items-center cursor-pointer">
-                                <Checkbox
-                                    value="Pending"
-                                    checked={formData.status === 'Pending'}
-                                    onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
-                                />
-                                <CustomLabel className={`ml-2`} label={'Pending'} />
-                            </div>
-
+                        <CustomLabel label={`Status`} className={'font-quicksand text-sm flex mt-2 mb-1'} />
+                        <div className='grid grid-cols-2 gap-2 font-quicksand font-semibold text-sm'>
+                            <Checkbox
+                                value="In-Progress"
+                                checked={formData.status === 'In-Progress'}
+                                label={'In Progress'}
+                                onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
+                            />
+                            <Checkbox
+                                value="Pending"
+                                checked={formData.status === 'Pending'}
+                                label={'Pending'}
+                                onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
+                            />
                             {
                                 formData.task_id &&
-                                <div className="flex items-center cursor-pointer">
                                     <Checkbox
                                         value="Completed"
                                         checked={formData.status === 'Completed'}
+                                        label={'Completed'}
                                         onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
                                     />
-                                    <CustomLabel className={`ml-2`} label={'Completed'} />
-                                </div>
                             }
 
-                            <div className="flex items-center cursor-pointer">
                                 <Checkbox
                                     value="On Hold"
                                     checked={formData.status === 'On Hold'}
+                                    label={'On Hold'}
                                     onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
                                 />
-                                <CustomLabel className={`ml-2`} label={'On Hold'} />
-                            </div>
                         </div>
 
                         { formData.status === "On Hold" &&
                             <div className="mt-4 flex flex-col">
                                 <CustomLabel label={`Reason`} className={'font-quicksand font-semibold text-sm'} />
-                                {/* <Input
-                                    type='textarea'
-                                    id='on_hold_reason'
-                                    className="h-20 m-0"
-                                    placeholder="Add the task on hold reason"
-                                    value={formData.on_hold_reason ? formData.on_hold_reason : ''}
-                                    onChange={(e) => setFormData((previous) => ({ ...previous, on_hold_reason: e.target.value }))}
-                                /> */}
 
                             <GIDTextArea
                                 id={"on_hold_reason_text_input"} disable={false} className={"h-20"} value={formData.on_hold_reason} 
@@ -248,46 +231,20 @@ const CreateNewTask = (props) => {
                         </div>
                         }
 
-
-                        {/* <div className="mb-4 mt-2 flex justify-between items-center">
-                            <div className="flex items-center cursor-pointer">
-                                <Checkbox
-                                    value="In-Progress"
-                                    checked={formData.status === 'In-Progress'}
-                                    onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
-                                />
-                                <CustomLabel className={`ml-2`} label={'In Progress'} />
-                            </div>
-                            <div className="flex items-center cursor-pointer">
-                                <Checkbox
-                                    value="Pending"
-                                    checked={formData.status === 'Pending'}
-                                    onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
-                                />
-                                <CustomLabel className={`ml-2`} label={'Pending'} />
-                            </div>
-                            {
-                                formData.task_id &&
-                                <div className="flex items-center cursor-pointer">
-                                    <Checkbox
-                                        value="Completed"
-                                        checked={formData.status === 'Completed'}
-                                        onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
-                                    />
-                                    <CustomLabel className={`ml-2`} label={'Completed'} />
-                                </div>
-                            }
-                        </div> */}
-
                         <div className="my-4 flex flex-col">
                             <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={<span><i className="fa-solid fa-calendar-days text-base mb-1 mr-1"></i>Deadline</span>} />
-                            <Input
-                                id="datetime"
-                                name="datetime"
-                                type="datetime-local"
-                                value={formData.dead_line ? formData.dead_line : ''}
-                                onChange={(e) => setFormData((previous) => ({ ...previous, dead_line: e.target.value }))}
-                            />
+                            <IconInput
+                                id={"task_end_datetime"}
+                                inputType={"datetime-local"}
+                                disable={false}
+                                className={``}
+                                value={formData.dead_line ? formData.dead_line : ""}
+                                onTextChange={(e) => setFormData((previous) => ({ ...previous, dead_line: e.target.value }))}
+                                onBlurEvent={() => {}}
+                                placeholder={""}
+                                isRightIcon={true}
+                                >
+                            </IconInput>
                         </div>
 
                     </div>

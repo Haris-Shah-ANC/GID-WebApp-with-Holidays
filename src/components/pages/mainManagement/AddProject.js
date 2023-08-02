@@ -1,5 +1,4 @@
 import React, { useContext, useState } from 'react'
-import Input from '../../custom/Elements/Input'
 import CustomLabel from '../../custom/Elements/CustomLabel'
 import { isFormValid, notifyErrorMessage, notifySuccessMessage } from '../../../utils/Utils'
 import { apiAction } from '../../../api/api'

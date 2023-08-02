@@ -4,6 +4,7 @@ import { createPopper } from "@popperjs/core";
 
 // components
 import Input from "../../components/Elements/Input.js";
+import GidInput from "./inputs/GidInput.js";
 
 export default function Select({
   border,
@@ -70,15 +71,20 @@ export default function Select({
   return (
     <>
       <div className="relative">
-        <Input
-          value={inputValue}
-          type="text"
-          onChange={() => {}}
+
+        <GidInput 
+          inputType={"text"} 
+          disable={false} 
+          placeholderMsg={"Enter module name"}
+          className={""} 
+          value={inputValue} 
           onClick={startAnimation}
-          placeholder={placeholder}
-          ref={btnDropdownRef}
-          size={size}
-        />
+          onBlurEvent={() => {}}
+          onTextChange={(e) =>{
+              // setFormData((previous) => ({ ...previous, module_name: e.target.value }))
+          }}>
+        </GidInput>
+        
         <div
           ref={popoverDropdownRef}
           className={(menuShow ? "block " : "hidden ") + "z-50"}

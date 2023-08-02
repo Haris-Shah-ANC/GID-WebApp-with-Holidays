@@ -12,7 +12,7 @@ export default function IconInput(props) {
             name={inputType}
             id={id}
             value={value} 
-            className={`border-none w-full text-blueGray-700 rounded-md ${(inputType === "datetime-local" || inputType === "time") ? "" : "pr-10"} font-quicksand font-medium text-sm`} 
+            className={`border-none w-full text-blueGray-700 rounded-md ${(inputType === "datetime-local" || inputType === "time" || inputType === "date") ? "" : "pr-10"} font-quicksand font-medium text-sm`} 
             onChange={(e) => {onTextChange(e)}} 
             onBlur={() => {onBlurEvent()}} 
             placeholder={placeholderMsg}
