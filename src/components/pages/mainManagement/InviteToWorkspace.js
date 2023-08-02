@@ -141,7 +141,7 @@ export default function InviteToWorkspace(props) {
               })}
               <div className='flex flex-col justify-center items-center'>
 
-                <ButtonWithImage className={'w-full mt-4 border-dashed border-[2px] bg-white hover:bg-gray-100 justify-center items-center text-black font-semibold rounded-none'} title={"Add Member"} iconStyle={`mr-2`} disabled={false} onButtonClick={onSendClick}
+                <ButtonWithImage className={'w-full mt-4 border-dashed border-[2px] bg-white hover:bg-gray-100 justify-center items-center text-black font-semibold rounded-none'} title={"Add Member"} iconStyle={`mr-2`} disabled={false} onButtonClick={addTeamMember}
                   icon={<svg xmlns="http://www.w3.org/2000/svg" className='mr-2' height="1em" viewBox="0 0 448 512"><path d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"/></svg>}>
                 </ButtonWithImage>
 

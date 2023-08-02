@@ -11,7 +11,6 @@ import Dropdown from '../../custom/Dropdown/Dropdown';
 import * as Actions from '../../../state/Actions'
 import ButtonWithImage from '../../custom/Elements/buttons/ButtonWithImage';
 import Loader from '../../../components/custom/Loaders/Loader'
-import GIDDiv from '../../custom/Elements/GIDDiv';
 
 export default function CalendarView(props) {
     const [days, setDays] = useState([])
