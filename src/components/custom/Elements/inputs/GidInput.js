@@ -8,6 +8,7 @@ export default function GidInput(props) {
     <input 
         type={inputType} 
         id={id}
+        disabled={disable}
         name={inputType}
         value={value} 
         className={tailwindMergedCSS} 

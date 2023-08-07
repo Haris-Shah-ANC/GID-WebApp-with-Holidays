@@ -5,6 +5,11 @@ export const routesName = {
         name: 'Registration',
         activeRoute: 'Registration',
     },
+    create_account: {
+        path: '/create',
+        name: 'Create Account',
+        activeRoute: 'Create Account',
+    },
     login: {
         path: '/login',
         name: 'Login',

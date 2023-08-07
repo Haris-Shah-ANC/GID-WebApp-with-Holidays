@@ -13,6 +13,23 @@ export const register = () => {
     return HOST + APP_NAME +  `/register/`
 }
 
+export const getTheSendRegistrationMailUrl = () => {
+    return HOST + APP_NAME + `/send_registration_mail/`
+}
+
+
+export const getTheForgotPasswordSendLinkUrl = () => {
+    return HOST + APP_NAME + `/send_forgot_password_mail/`
+}
+
+export const getTheUserRegisterUrl = () => {
+    return HOST + APP_NAME + `/user_register`
+}
+
+export const getTheUserRegisterWithWorkspaceUrl = () => {
+    return HOST + APP_NAME + "/register/"
+}
+
 //////////////////////////////////////Main Api's///////////////////////////////////////////////////////
 
 export const get_workspace = () => {

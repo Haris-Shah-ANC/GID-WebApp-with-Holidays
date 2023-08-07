@@ -11,6 +11,7 @@ import InviteToWorkspace from "../components/pages/mainManagement/InviteToWorksp
 import AttendanceReport from "../components/pages/mainManagement/AttendanceReport";
 import Analytics from "../components/pages/mainManagement/Analytics";
 import CalendarView from "../components/pages/mainManagement/CalendarView";
+import CreateAccount from "../components/pages/authManagement/CreateAccount";
 
 export const authRoutes = [
     {
@@ -27,6 +28,11 @@ export const authRoutes = [
         path: routesName.resetPassword.path,
         name: routesName.resetPassword.name,
         component: <PasswordRest />,
+    },
+    {
+        path: routesName.create_account.path,
+        name: routesName.create_account.name,
+        component: <CreateAccount />,
     },
 ];
 export const mainRoutes = [
