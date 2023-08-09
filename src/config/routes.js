@@ -1,7 +1,7 @@
 import { routesName } from "./routesName";
 
 import Login from "../components/pages/authManagement/Login";
-import PasswordRest from "../components/pages/authManagement/PasswordRest";
+import SendPasswordResetLink from "../components/pages/authManagement/SendPasswordResetLink";
 import Registration from "../components/pages/authManagement/Registration";
 
 import Dashboard from "../components/pages/mainManagement/Dashboard";
@@ -12,6 +12,8 @@ import AttendanceReport from "../components/pages/mainManagement/AttendanceRepor
 import Analytics from "../components/pages/mainManagement/Analytics";
 import CalendarView from "../components/pages/mainManagement/CalendarView";
 import CreateAccount from "../components/pages/authManagement/CreateAccount";
+import ResetPassword from "../components/pages/authManagement/ResetPassword";
+import Invitation from "../components/pages/authManagement/Invitation";
 
 export const authRoutes = [
     {
@@ -27,12 +29,28 @@ export const authRoutes = [
     {
         path: routesName.resetPassword.path,
         name: routesName.resetPassword.name,
-        component: <PasswordRest />,
+        component: <SendPasswordResetLink />,
     },
     {
         path: routesName.create_account.path,
         name: routesName.create_account.name,
         component: <CreateAccount />,
+    },
+    // {
+    //     path: routesName.resetPassword.path,
+    //     name: routesName.resetPassword.name,
+    //     component: <CreateAccount />,
+    // },
+    {
+        path: routesName.changePassword.path,
+        name: routesName.changePassword.name,
+        component: <ResetPassword />,
+    },
+
+    {
+        path: routesName.invitation.path,
+        name: routesName.invitation.name,
+        component: <Invitation />,
     },
 ];
 export const mainRoutes = [

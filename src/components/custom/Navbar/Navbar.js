@@ -43,7 +43,7 @@ const Navbar = ({ logOutClick }) => {
                         <div className="sm:hidden" onClick={handleDrawerClick}>
                             <i className="fa-solid fa-bars text-gray-600 text-xl"></i>
                         </div>
-                        <h1 className="text-gray-600 text-2xl font-medium mr-4">{workspace.workspace_name}</h1>
+                        <h1 className="text-gray-600 text-2xl font-medium mr-4">{workspace ? workspace.workspace_name : ""}</h1>
                         <div className="hidden sm:block md:block lg:block xl:block">
                             <Searchbar />
                         </div>
@@ -67,8 +67,8 @@ const Navbar = ({ logOutClick }) => {
                         </div>
                         <div className="flex items-center border-l pl-2 pr-2">
                             <div className="flex flex-col">
-                                <span className="ml-2 text-gray-600 text-sm">{userInfo.name}</span>
-                                <span className="ml-2 text-gray-600 text-sm">{workspace.role}</span>
+                                <span className="ml-2 text-gray-600 text-sm">{userInfo ? userInfo.name : ""}</span>
+                                <span className="ml-2 text-gray-600 text-sm">{workspace ? workspace.role : ""}</span>
                             </div>
                             <div className='relative flex mr-5'>
                                 <img

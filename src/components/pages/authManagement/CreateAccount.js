@@ -6,7 +6,7 @@ import Checkbox from '../../custom/Elements/buttons/Checkbox';
 import PlainButton from '../../custom/Elements/buttons/PlainButton';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { routesName } from '../../../config/routesName';
-import { decodeToken, isFormValid, notifyErrorMessage, notifySuccessMessage } from '../../../utils/Utils';
+import { decodeToken, isFormValid, notifyErrorMessage, notifySuccessMessage, socials } from '../../../utils/Utils';
 import { apiAction, apiAction_social } from '../../../api/api';
 import { employee, getTheUserRegisterUrl, getTheUserRegisterWithWorkspaceUrl, get_workspace } from '../../../api/urls';
 import IconInput from '../../custom/Elements/inputs/IconInput';
@@ -142,7 +142,7 @@ export default function CreateAccount() {
                     <CustomLabel label={`First Name`} />
                     <GidInput 
                         inputType={"text"} 
-                        id={"first-name"}
+                        id={"first_name"}
                         disable={false} 
                         className={""} 
                         value={formData.first_name ? formData.first_name : ''} 
@@ -155,7 +155,7 @@ export default function CreateAccount() {
                     <CustomLabel label={`Last Name`} />
                     <GidInput 
                         inputType={"text"} 
-                        id={"first-name"}
+                        id={"last_name"}
                         disable={false} 
                         className={""} 
                         value={formData.last_name ? formData.last_name : ''} 
@@ -288,7 +288,3 @@ export default function CreateAccount() {
 }
 
 
-const socials = [
-    { icon: "google", button: { href: "#pablo" } },
-    { icon: "facebook", button: { href: "#pablo" } },
-]

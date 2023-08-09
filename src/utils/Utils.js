@@ -1,5 +1,7 @@
 import moment from 'moment';
 import queryString from 'query-string';
+import { useMemo } from 'react';
+import { useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
 export const notifyInfoMessage = (message) => toast.info(message);
@@ -243,3 +245,13 @@ export const decodeToken = (token) => {
 //   }
 //   return days
 // }
+
+export function useQuery() {
+  const { search } = useLocation();
+  return useMemo(() => new URLSearchParams(search), [search]);
+}
+
+export const socials = [
+  { icon: "google", button: { href: "#pablo" } },
+  { icon: "facebook", button: { href: "#pablo" } },
+]

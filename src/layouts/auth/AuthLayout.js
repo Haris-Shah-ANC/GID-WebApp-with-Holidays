@@ -22,11 +22,12 @@ export default function AuthLayout() {
 
   const ProtectedRoute = ({ children }) => {
     // if (true) {
+      console.log(children)
       if (!params.token && isAuthenticated()) {
-      return <Navigate to={routesName.dashboard.path} replace />;
-    } else {
-      return children;
-    }
+        return <Navigate to={routesName.dashboard.path} replace />;
+      } else {
+        return children;
+      }
   };
 
   return (

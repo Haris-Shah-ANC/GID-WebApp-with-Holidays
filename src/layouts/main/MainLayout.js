@@ -16,8 +16,6 @@ import {
   useNavigate
 } from "react-router-dom";
 import SidebarContainer from "../../components/custom/Sidebar/SidebarContainer";
-import Loader from "../../components/custom/Loaders/Loader";
-import ModelComponent from "../../components/custom/Model/ModelComponent";
 
 function MainLayout() {
 
@@ -25,10 +23,14 @@ function MainLayout() {
 
   const ProtectedRoute = ({ children }) => {
     // if (false) {
+      console.log("MAIN", !isAuthenticated())
+      console.log("CHILDREN", window.location)
+      
       if (!isAuthenticated()) {
-      return <Navigate to={"/auth" + routesName.login.path} replace />;
-    }
-    return children;
+        return <Navigate to={"/auth" + routesName.login.path} replace={true}/>;
+      }else{
+        return children;
+      }
   };
 
   const [sidebarShow, setSidebarShow] = React.useState("-translate-x-full");

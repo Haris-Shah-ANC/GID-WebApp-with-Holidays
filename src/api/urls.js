@@ -30,6 +30,10 @@ export const getTheUserRegisterWithWorkspaceUrl = () => {
     return HOST + APP_NAME + "/register/"
 }
 
+export const getTheUpdatePasswordUrl = () => {
+    return HOST + APP_NAME + "/forgot_password/"
+}
+
 //////////////////////////////////////Main Api's///////////////////////////////////////////////////////
 
 export const get_workspace = () => {

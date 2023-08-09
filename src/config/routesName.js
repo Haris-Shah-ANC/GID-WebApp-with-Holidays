@@ -20,6 +20,11 @@ export const routesName = {
         name: 'Forgot Password',
         activeRoute: 'Forgot Password',
     },
+    changePassword: {
+        path: '/change-password',
+        name: 'Change Password',
+        activeRoute: 'Change Password',
+    },
     workSpace: {
         path: '/work-space',
         name: 'Workspace',
@@ -59,6 +64,11 @@ export const routesName = {
         path: '/invite_to_workspace',
         name: "Invite To Workspace",
         activeRoute: "Invite To Workspace",
+    },
+    invitation: {
+        path: '/invitation',
+        name: 'Invitation',
+        activeRoute: 'Invitation'
     },
     reports: {
         path: '/reports',
