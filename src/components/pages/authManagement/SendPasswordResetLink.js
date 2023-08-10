@@ -73,7 +73,7 @@ const SendPasswordResetLink = () => {
 
                 <div className="flex flex-wrap mt-6 relative">
                     <div className="w-1/2 ">
-                        <Link to={'/auth' + routesName.login.path} className="text-white font-semibold hover:underline" onClick={() => navigate('/auth' + routesName.resetPassword.path)}>
+                        <Link to={'/auth' + routesName.login.path} className="text-white font-semibold hover:underline" onClick={() => navigate('/auth' + routesName.login.path)}>
                             <small>Already have an account? Login</small>
                         </Link>
                     </div>

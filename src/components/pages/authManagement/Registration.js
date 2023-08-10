@@ -3,7 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { routesName } from '../../../config/routesName';
 import CustomLabel from '../../custom/Elements/CustomLabel';
 import CustomButton from '../../custom/Elements/CustomButton';
-import { isFormValid, notifyErrorMessage, notifySuccessMessage } from '../../../utils/Utils';
+import { isFormValid, notifyErrorMessage, notifySuccessMessage, socials, validateEmail } from '../../../utils/Utils';
 import GidInput from '../../custom/Elements/inputs/GidInput';
 import PlainButton from '../../custom/Elements/buttons/PlainButton';
 import { REGISTER_ACCOUNT } from '../../../utils/StringConstants';
@@ -21,7 +21,7 @@ const Registration = () => {
 
     const handleSubmit = async () => {
         let validation_data = [
-            { key: "send_to", message: `Email field left empty!` },
+            { key: "send_to", validation: !validateEmail(formData.send_to) , message: `Email field left empty!` },
         ]
         const { isValid, message } = isFormValid(formData, validation_data);
         if (isValid) {
@@ -99,13 +99,13 @@ const Registration = () => {
 
             <div className="flex flex-wrap mt-6 relative">
                 <div className="w-1/2">
-                    <Link to={'/auth' + routesName.login.path} className="text-white font-semibold hover:underline" onClick={() => navigate('/auth' + routesName.resetPassword.path)}>
+                    <Link to={'/auth' + routesName.login.path} className="text-white font-semibold hover:underline" onClick={() => navigate('/auth' + routesName.login.path)}>
                         <small>Already have an account? Login</small>
                     </Link>
                 </div>
 
                 <div className="w-1/2 text-right">
-                    <Link to={'/auth' + routesName.resetPassword.path} className="text-white font-semibold hover:underline" onClick={() => navigate('/auth' + routesName.resetPassword.path)}>
+                    <Link to={'/auth' + routesName.forgot_password.path} className="text-white font-semibold hover:underline" onClick={() => navigate('/auth' + routesName.forgot_password.path)}>
                         <small>Forgot password?</small>
                     </Link>
                 </div>
@@ -116,10 +116,6 @@ const Registration = () => {
 
 export default Registration;
 
-const socials = [
-    { icon: "google", button: { href: "#pablo" } },
-    { icon: "facebook", button: { href: "#pablo" } },
-]
 
 const EmailSent = (props) => {
 

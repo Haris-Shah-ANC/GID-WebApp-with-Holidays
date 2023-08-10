@@ -27,8 +27,8 @@ export const authRoutes = [
         component: <Login />,
     },
     {
-        path: routesName.resetPassword.path,
-        name: routesName.resetPassword.name,
+        path: routesName.forgot_password.path,
+        name: routesName.forgot_password.name,
         component: <SendPasswordResetLink />,
     },
     {
@@ -36,14 +36,9 @@ export const authRoutes = [
         name: routesName.create_account.name,
         component: <CreateAccount />,
     },
-    // {
-    //     path: routesName.resetPassword.path,
-    //     name: routesName.resetPassword.name,
-    //     component: <CreateAccount />,
-    // },
     {
-        path: routesName.changePassword.path,
-        name: routesName.changePassword.name,
+        path: routesName.set_password.path,
+        name: routesName.set_password.name,
         component: <ResetPassword />,
     },
 

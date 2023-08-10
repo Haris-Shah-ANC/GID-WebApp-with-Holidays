@@ -225,7 +225,7 @@ const AddEmployee = (props) => {
     const createWorkspace = async () => {
         let validation_data = [
             { key: "workspace_name", message: `Workspace field left empty!` },
-            { key: "email_id", validation: !validateEmail(formData.email_id), message: `Email field left empty!` },
+            { key: "email_id", validation: !validateEmail(formData.email_id), message: `Please enter valid email!` },
             { key: "password", message: `Password field left empty!` },
         ]
         const { isValid, message } = isFormValid(formData, validation_data);

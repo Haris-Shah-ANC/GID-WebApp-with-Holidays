@@ -273,7 +273,7 @@ export default function CreateAccount() {
 
     <div className="flex flex-wrap mt-6 relative">
         <div className="w-1/2">
-            <Link to={'/auth' + routesName.resetPassword.path} className="text-white font-semibold hover:underline" onClick={() => navigate('/auth' + routesName.resetPassword.path)}>
+            <Link to={'/auth' + routesName.forgot_password.path} className="text-white font-semibold hover:underline" onClick={() => navigate('/auth' + routesName.forgot_password.path)}>
                 <small>Forgot password?</small>
             </Link>
         </div>

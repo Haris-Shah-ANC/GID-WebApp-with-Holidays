@@ -6,7 +6,7 @@ export const routesName = {
         activeRoute: 'Registration',
     },
     create_account: {
-        path: '/create',
+        path: '/create-account',
         name: 'Create Account',
         activeRoute: 'Create Account',
     },
@@ -15,13 +15,13 @@ export const routesName = {
         name: 'Login',
         activeRoute: 'Login',
     },
-    resetPassword: {
+    forgot_password: {
         path: '/forgot-password',
         name: 'Forgot Password',
         activeRoute: 'Forgot Password',
     },
-    changePassword: {
-        path: '/change-password',
+    set_password: {
+        path: '/set-password',
         name: 'Change Password',
         activeRoute: 'Change Password',
     },
@@ -66,7 +66,7 @@ export const routesName = {
         activeRoute: "Invite To Workspace",
     },
     invitation: {
-        path: '/invitation',
+        path: '/workspace-invitation',
         name: 'Invitation',
         activeRoute: 'Invitation'
     },

@@ -24,6 +24,7 @@ import {
     isFormValid,
     notifyErrorMessage,
     notifySuccessMessage,
+    validateEmail,
 } from '../../../utils/Utils';
 import PlainButton from '../../custom/Elements/buttons/PlainButton';
 import { SIGN_IN } from '../../../utils/StringConstants';
@@ -43,7 +44,7 @@ const Login = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         let validation_data = [
-            { key: "email", message: `Email field left empty!` },
+            { key: "email", validation: !validateEmail(formData.email), message: `Please enter valid email!` },
             { key: "password", message: 'Password field left empty!' },
         ]
         const { isValid, message } = isFormValid(formData, validation_data);
@@ -151,7 +152,7 @@ const Login = () => {
 
             <div className="flex flex-wrap mt-6 relative">
                 <div className="w-1/2">
-                    <Link to={'/auth' + routesName.resetPassword.path} className="text-white font-semibold hover:underline" onClick={() => navigate('/auth' + routesName.resetPassword.path)}>
+                    <Link to={'/auth' + routesName.forgot_password.path} className="text-white font-semibold hover:underline" onClick={() => navigate('/auth' + routesName.forgot_password.path)}>
                         <small>Forgot password?</small>
                     </Link>
                 </div>
