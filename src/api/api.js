@@ -55,7 +55,7 @@ export async function apiAction({ url, method = 'get', data = null, onError = ()
       return { success: false };
     }
   } catch (error) {
-    console.log('api_Action :', error)
+    
     onError(error)
   }
 }
@@ -158,7 +158,7 @@ export async function apiActionFormData({ url, method = 'post', data }) {
       return { success: false };
     }
   } catch (error) {
-    console.log("error response", url, error.message);
+    console.log("error response",  error.message);
 
   }
 }
@@ -219,7 +219,7 @@ export async function apiFormData({ url, method = 'post', data, file_key = "atta
       return { success: false };
     }
   } catch (error) {
-    console.log("error response", url, error.message);
+    console.log("error response", error.message);
 
   }
 }
@@ -257,7 +257,6 @@ export async function apiHandleDownload({ url, method = 'POST', data, filename, 
   data['payment_term_id'] = data.payment_term;
   data['terms_and_conditions_id'] = data.terms_and_conditions;
 
-  console.log('===>', filename + formate)
 
   let options = {
     method: method,

@@ -20,7 +20,6 @@ const Navbar = ({ logOutClick }) => {
         if (e.target !== menuRef.current && e.target !== imgRef.current) {
             setPopupMenuVisibility(false)
         }else if(e.target === sideNavigationRef.current){
-            console.log("INSIDE ELSE IF")
             setSidebarShow("-translate-x-full");
         }
     })

@@ -23,8 +23,6 @@ function MainLayout() {
 
   const ProtectedRoute = ({ children }) => {
     // if (false) {
-      console.log("MAIN", !isAuthenticated())
-      console.log("CHILDREN", window.location)
       
       if (!isAuthenticated()) {
         return <Navigate to={"/auth" + routesName.login.path} replace={true}/>;
@@ -43,7 +41,6 @@ function MainLayout() {
   }, [])
 
   useEffect(() => {
-    console.log("modalVisibility")
   }, [dispatch.modalVisibility])
 
   const logOutFromTheApp = () => {

@@ -45,7 +45,6 @@ export default function CalendarView(props) {
     }
 
     const putTasksOnDayWise = (setOfTasksByDay, weekDays) => {
-        // console.log("RESPONSE TASKS", setOfTasksByDay, weekDays)
         setDays(weekDays.map(obj => ({ ...obj, tasks:  obj.day.format("YYYY-MM-DD") in setOfTasksByDay ? combineResponseTasksWithDummyTasks(setOfTasksByDay[obj.day.format("YYYY-MM-DD")]) : getEmptyTasks(10) })))   
     }
 
@@ -82,8 +81,6 @@ export default function CalendarView(props) {
     }
 
     const onTaskClick = (item, index) => {
-        console.log("ITEM", JSON.stringify(item, 0, 2))
-        console.log("STATUS", item.status)
         setFormData({
             task: item.task_description,
             module_id: null,

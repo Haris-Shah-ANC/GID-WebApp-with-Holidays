@@ -71,7 +71,6 @@ const Dashboard = () => {
 
     const getTaskList = async (URL) => {
         let res = await apiAction({ url: URL, method: 'get', navigate: navigate, dispatch: dispatch })
-        console.log("TASKS", JSON.stringify(res, 0,2 ))
         if (res.success) {
             setTasksResults(res.results)
             btnLabelList[taskCategoryIndex].count = res.results.length
@@ -143,7 +142,7 @@ const Dashboard = () => {
     }
 
     const onFilterApply = (data) => {
-        console.log("FILTER DATA", data)
+
         setFilters(data)
         let pBody = { ...postBody, workspace_id: work_id }
         if (data.employee_id) {
@@ -294,7 +293,7 @@ const DashboardCard = (props) => {
             on_hold_reason: on_hold_reason,
             status: "Completed",
         }
-        console.log("Task Desc", formData)
+
         let validation_data = [
             { key: "project_id", message: 'Please select the project!' },
             { key: "task", message: `Description field left empty!` },

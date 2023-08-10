@@ -35,7 +35,6 @@ export default function CreateAccount() {
     
     useEffect(() => {
         const userInfo = decodeToken(query.get("token"))
-        console.log(userInfo)
         setFormData({...formData, email_id: userInfo.email_id, token: query.get("token")})
     }, [])
 

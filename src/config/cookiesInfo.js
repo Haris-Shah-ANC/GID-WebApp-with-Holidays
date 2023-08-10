@@ -21,7 +21,7 @@ export const setLoginStatus = (info) => {
     Cookies.set('gid-loginStatus', info);
 }
 export const isAuthenticated = () => {
-    console.log("gid-loginStatus", Cookies.get('gid-loginStatus'))
+
     if (Cookies.get('gid-loginStatus') === "true"){
         return true;
     }else{

@@ -15,7 +15,6 @@ export default function SidebarMenuItem(props) {
       {/* <Link
         className="cursor-pointer"
         onClick={() => {
-          console.log("MENU ITEM CLICK", "ON LINK CLICK")
           if((menuItem.name != "Create New Project") && (menuItem.name != "Create New Module")){
             navigate(menuItem.path)
           }

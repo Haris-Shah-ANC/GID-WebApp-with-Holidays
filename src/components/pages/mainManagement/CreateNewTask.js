@@ -35,7 +35,6 @@ import IconInput from '../../custom/Elements/inputs/IconInput';
 const CreateNewTask = (props) => {
     const { setShowModal, data } = props;
     const { work_id } = getWorkspaceInfo();
-    console.log("CREATE NEW TASK", JSON.stringify(data, 0, 2))
     const navigate = useNavigate();
     const dispatch = Actions.getDispatch(React.useContext);
 

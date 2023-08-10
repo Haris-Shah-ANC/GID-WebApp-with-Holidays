@@ -15,9 +15,6 @@ import {
 } from "react-router-dom";
 
 export default function LandingLayout() {
-    // console.log('LandingLayout=>')
-
-
   const location = useLocation();
   const params = getQueryParams(location.search);
 

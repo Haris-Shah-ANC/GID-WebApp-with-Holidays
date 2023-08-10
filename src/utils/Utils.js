@@ -186,7 +186,6 @@ export const startOfPrevMonth = (requireFormat) => { return moment(subtractByMon
 export const endOfPrevMonth = (requireFormat) => { return moment(subtractByMonth()).endOf('month').format(requireFormat) }
 
 export const getDateRange = (type, requireFormat, timeOn) => {
-  console.log(type, requireFormat, timeOn)
   if(type === "previous month"){
     return timeOn==="start" ? startOfPrevMonth(requireFormat) : endOfPrevMonth(requireFormat) 
   }else if(type === "current month"){

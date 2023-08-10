@@ -18,7 +18,6 @@ export default function ResetPassword(props) {
     
     useEffect(() => {
         let queryData = decodeToken(query.get("token"))
-        console.log("Q", queryData)
         setFormData({...formData, token: query.get("token")})
         setQueryData(queryData)
     }, [query])
@@ -40,7 +39,6 @@ export default function ResetPassword(props) {
                 data: { ...formData },
             })
             if (res.success) {
-                console.log("res", res)
                 navigate(`/auth${routesName.login.path}`)
                 notifySuccessMessage(res.status)
             } else {

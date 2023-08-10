@@ -39,7 +39,6 @@ const CreateNewWorkspace = (props) => {
             { key: "office_start_time", message: `Workspace start time field left empty!` },
             { key: "office_end_time", message: 'Workspace end time field left empty!' },
         ]
-        console.log(JSON.stringify(wsFormData, 0, 2))
         const { isValid, message } = isFormValid(wsFormData, validation_data);
         if (isValid) {
             let res = await apiAction({

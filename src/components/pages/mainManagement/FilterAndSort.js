@@ -30,7 +30,7 @@ import {
 const FilterAndSort = (props) => {
     const { setShowModal, data,onFilterApply,onFilterClear } = props;
     const { work_id } = getWorkspaceInfo();
-    console.log("CREATE NEW TASK", JSON.stringify(data, 0, 2))
+
     const navigate = useNavigate();
     const dispatch = Actions.getDispatch(React.useContext);
 

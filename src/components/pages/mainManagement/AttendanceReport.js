@@ -79,7 +79,6 @@ export default function AttendanceReport(props) {
         for (let i = 0; i <dummyObjCount-1 ; i++) {
             dummyData.push({attendance: "", isDummyObj: true})
         } 
-        console.log("DUMMY DATA", JSON.stringify(dummyData, 0, 2))
         return dummyData
     }
 

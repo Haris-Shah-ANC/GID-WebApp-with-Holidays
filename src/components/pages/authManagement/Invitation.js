@@ -18,7 +18,6 @@ export default function Invitation(props) {
 
     useEffect(() => {
         let info = decodeToken(query.get("token"))
-        console.log("Q", info)
         // setFormData({...formData, token: query.get("token")})
         setQueryData(info)
     }, [query])

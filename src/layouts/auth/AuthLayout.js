@@ -15,14 +15,12 @@ import {
 } from "react-router-dom";
 
 export default function AuthLayout() {
-  console.log('AuthLayout=>', authRoutes)
 
   const location = useLocation();
   const params = getQueryParams(location.search);
 
   const ProtectedRoute = ({ children }) => {
     // if (true) {
-      console.log(children)
       if (!params.token && isAuthenticated()) {
         return <Navigate to={routesName.dashboard.path} replace />;
       } else {

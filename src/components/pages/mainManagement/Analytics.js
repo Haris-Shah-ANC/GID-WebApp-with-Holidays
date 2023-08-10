@@ -150,7 +150,6 @@ const AddNotification = (props) => {
         if (res.success) {
             selectNotificationType(res.notification_type_list[0])
             setNotificationTypes(res.notification_type_list)
-            console.log(JSON.stringify(res, 0, 2))
         }
     }
 
@@ -173,8 +172,6 @@ const AddNotification = (props) => {
             url: get_project_module(w_id, p_id),
         })
         if (res.success) {
-            console.log("ONMODULES", JSON.stringify(res, 0, 2))
-
             setModuleResults([{ module_name: 'Select module' }, ...res.project_module_list])
         }
     }
@@ -219,7 +216,6 @@ const AddNotification = (props) => {
         let postBodyData = null
         let URL = ""
         if(selectedNotificationType.type_name === "Module Analytics"){
-            console.log("MODULE")
             postBodyData = {workspace_id: work_id, module_id: formData.module_id, project_id: formData.project_id, time_list: getTimesData(), today: "False"}
             URL = getTheModuleProgressPeriodicTasksUrl()
             validation_data = [
@@ -228,7 +224,6 @@ const AddNotification = (props) => {
                 { key: "module_id", message: "Please select module!" }
             ]
         }else{
-            console.log("NOT MODULE", selectedNotificationType)
             postBodyData = {workspace_id: work_id, time_list: getTimesData(), today: "False", notification_type_id: selectedNotificationType.type_id}
             URL = getThePeriodScheduleTask()
             validation_data = [
@@ -237,7 +232,6 @@ const AddNotification = (props) => {
             ]
         }
 
-        console.log("POST DATA", JSON.stringify(postBodyData, 0, 2))
         if(!hasValidTimes()){
             notifyErrorMessage("Time field left empty!")
             return 
@@ -278,7 +272,6 @@ const AddNotification = (props) => {
       }
     
       const onTimeSet = (index, data) => {
-        console.log(data)
         timesList[index].time = data
         timesList[index].hasInvalidEmail = false
         setTimesList([...timesList])
