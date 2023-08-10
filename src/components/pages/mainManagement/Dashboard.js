@@ -71,11 +71,11 @@ const Dashboard = () => {
 
     const getTaskList = async (URL) => {
         let res = await apiAction({ url: URL, method: 'get', navigate: navigate, dispatch: dispatch })
-        if (res.success) {
+        // if (res.success) {
             setTasksResults(res.results)
             btnLabelList[taskCategoryIndex].count = res.results.length
             setTaskCount([...btnLabelList])
-        }
+        // }
     }
 
     // const getAllTaskList = async () => {
@@ -277,7 +277,7 @@ const DashboardCard = (props) => {
     const dispatch = Actions.getDispatch(React.useContext);
     const [openOnHoldReason, showOnHoldReason] = useState(false)
     const { assignee_name, dead_line, employee_name, project_name, employee_id, task_description, created_at, description_link,
-        onEditClick, task_id, work_id, module_id, project_id, on_hold_reason, status, onTaskComplete, detailed_description, module_name } = props;
+        onEditClick, task_id, work_id, module_id, project_id, on_hold_reason, status, onTaskComplete, detailed_description, module_name, employee } = props;
     const [isChecked, setChecked] = useState(status === "Completed")
     let my_task = user_id === employee_id;
     
@@ -345,10 +345,11 @@ const DashboardCard = (props) => {
                     </div>
                     
                     <div onClick={() => {
-                        if(status != "Completed"){
+                        if(status !== "Completed" && user_id === employee){
+                            console.log( user_id, employee)
                             onEditClick(props)
                         }
-                    }}>
+                    }} className={`${(status !== "Completed" && user_id === employee) ? "cursor-pointer" : ""}`}>
                         <div className='flex justify-between my-3'>
                             <span className="text-xs font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-md text-lightBlue-600 bg-lightBlue-200 last:mr-0 mr-1">
                             {project_name}</span>
