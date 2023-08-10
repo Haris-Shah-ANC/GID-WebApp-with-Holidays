@@ -21,7 +21,7 @@ const Registration = () => {
 
     const handleSubmit = async () => {
         let validation_data = [
-            { key: "send_to", validation: !validateEmail(formData.send_to) , message: `Email field left empty!` },
+            { key: "send_to", validation: !validateEmail(formData.send_to) , message: `Please enter valid email!` },
         ]
         const { isValid, message } = isFormValid(formData, validation_data);
         if (isValid) {
