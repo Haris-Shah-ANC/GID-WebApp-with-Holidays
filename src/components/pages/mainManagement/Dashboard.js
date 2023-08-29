@@ -96,7 +96,7 @@ const Dashboard = () => {
         })
         if (res.success) {
             selectUser(res.results.find((item, index) => item.id === user_id))
-            setEmployees([{ employee_name: 'Select Employee' }, ...res.results])
+            setEmployees([{ employee_name: 'All' }, ...res.results])
         }
     }
 

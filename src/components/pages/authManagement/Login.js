@@ -56,6 +56,7 @@ const Login = () => {
                 dispatch: dispatch,
                 data: { ...formData },
             })
+            console.log("RESPONSE",login(),formData)
             if (res.success) {
                 setLoginDetails(res);
                 setAccessToken(res.access);
