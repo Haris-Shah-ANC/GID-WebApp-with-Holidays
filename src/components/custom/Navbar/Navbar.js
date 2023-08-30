@@ -35,8 +35,8 @@ const Navbar = ({ logOutClick }) => {
         }
     };
     return (
-        <div>
-            <nav className="bg-white p-4 flex flex-col sm:flex-row items-center justify-between">
+        <div className='overflow-hidden'>
+            <nav className="bg-white p-4 flex flex-col sm:flex-row items-center justify-between" >
                 <div className="flex items-center justify-between sm:justify-start w-full">
                     <div className="flex items-center space-x-4">
                         <div className="sm:hidden" onClick={handleDrawerClick}>

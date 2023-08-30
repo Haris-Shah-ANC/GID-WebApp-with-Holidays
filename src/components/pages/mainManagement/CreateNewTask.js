@@ -100,6 +100,7 @@ const CreateNewTask = (props) => {
             { key: "dead_line", message: 'Deadline field left empty!' },
         ]
         const { isValid, message } = isFormValid(formData, validation_data);
+        console.log("IS VALID",isValid)
         if (isValid) {
             let res = await apiAction({
                 method: 'post',

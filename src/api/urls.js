@@ -44,7 +44,9 @@ export const get_task = () => {
     return HOST + APP_NAME +  `/api/get_task/`
     // return HOST + APP_NAME +`/get_task/?created_at__date__gte=&created_at__date__lte=&workspace=${work_id}&project=${project_id}}&employee=6&status=In-Progress`
 }
-
+export const get_task_count_url = (work_id) => {
+    return HOST + APP_NAME + `/get_task_count/?workspace_id=${work_id}`
+}
 export const get_assigned_task = (work_id) => {
     return HOST + APP_NAME +  `/get_assigned_task/?workspace_id=${work_id}`
 }

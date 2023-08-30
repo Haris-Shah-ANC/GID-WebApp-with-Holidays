@@ -7,7 +7,7 @@ import * as Actions from '../../../state/Actions';
 import Dropdown from '../../custom/Dropdown/Dropdown';
 import { DateFormatCard, add_task, create_new_work_space, filter_and_sort, imagesList } from '../../../utils/Constant';
 import ModelComponent from '../../custom/Model/ModelComponent';
-import {isFormValid, notifyErrorMessage, notifySuccessMessage, formattedDeadline} from '../../../utils/Utils'
+import { isFormValid, notifyErrorMessage, notifySuccessMessage, formattedDeadline } from '../../../utils/Utils'
 
 import {
     get_task,
@@ -15,6 +15,7 @@ import {
     get_all_project,
     getTaskListUrl,
     update_task,
+    get_task_count_url,
 } from '../../../api/urls';
 
 import {
@@ -30,6 +31,7 @@ import classNames from 'classnames';
 import PopUpMenu from '../../custom/popups/PopUpMenu';
 import Checkbox from '../../custom/Elements/buttons/Checkbox';
 import CustomLabel from '../../custom/Elements/CustomLabel';
+import { Box, Pagination, Stack } from '@mui/material';
 
 const Dashboard = () => {
     const navigate = useNavigate();
@@ -37,21 +39,21 @@ const Dashboard = () => {
 
     const { user_id } = getLoginDetails();
     const state = Actions.getState(useContext)
-    const {work_id}  = getWorkspaceInfo();
+    const { work_id } = getWorkspaceInfo();
     const [tasksResults, setTasksResults] = useState([]);
     const [taskCategoryIndex, setTaskCategoryIndex] = useState(0)
     const [listOfEmployees, setEmployees] = useState([])
     const [selectedUser, selectUser] = useState(null)
     const [btnLabelList, setTaskCount] = useState([
-        { index: 0, title: "In Progress", count: 0 }, 
-        { index: 1, title: "Pending", count: 0 }, 
-        { index: 2, title: "Completed", count: 0 }, 
-        { index: 3, title: "All", count: 0 }, 
+        { index: 0, title: "In Progress", count: 0 },
+        { index: 1, title: "Pending", count: 0 },
+        { index: 2, title: "Completed", count: 0 },
+        { index: 3, title: "All", count: 0 },
     ])
     const [postBody, setPostBody] = useState({ "workspace_id": work_id, projects: [], "tasks": ["In-Progress", "On Hold"], "employees": [user_id] })
     const [showModal, setShowModal] = useState(false);
     const [formData, setFormData] = useState({});
-
+    const [paginationData, setPaginationData] = useState(0)
     const [filters, setFilters] = useState({
         employee_id: null,
         module_id: null,
@@ -60,22 +62,54 @@ const Dashboard = () => {
 
 
     useEffect(() => {
-        let URL = get_task() + `?created_at__date__gte=&created_at__date__lte=&workspace=${work_id}&project__in=${postBody.projects.join(",")}&employee__in=${taskCategoryIndex === 3 ? "" : postBody.employees.join(",")}&status__in=${postBody.tasks.join(",")}`
-        getTaskList(URL)
+        // let getTasksUrl = get_task() + `?created_at__date__gte=&created_at__date__lte=&workspace=${work_id}&project__in=${postBody.projects.join(",")}&employee__in=${taskCategoryIndex === 3 ? "" : postBody.employees.join(",")}&status__in=${postBody.tasks.join(",")}`
+
+        let getTasksUrl = get_task() + `?created_at__date__gte=&created_at__date__lte=&workspace=${work_id}`
+
+        let taskCountUrl = get_task_count_url(work_id) + `&employee_id=${postBody.employees}&project_id=${postBody.projects}`
+        if (postBody.employees != "") {
+            taskCountUrl = taskCountUrl + `&employee_id=${postBody.employees}`
+            getTasksUrl = getTasksUrl + `&employee__in=${postBody.employees}`
+        }
+        if (postBody.projects != "") {
+            taskCountUrl = taskCountUrl + `&project_id=${postBody.projects}`
+            getTasksUrl = getTasksUrl + `&project__in=${postBody.projects}`
+
+        }
+        if (taskCategoryIndex !== 3) {
+            taskCountUrl = taskCountUrl + `&status_id=${postBody.tasks}`
+            getTasksUrl = getTasksUrl + `&status__in=${postBody.tasks}`
+        }
+        if (postBody.pageNumber) {
+            getTasksUrl = getTasksUrl + `&page=${postBody.pageNumber}`
+        }
+        getTaskList(getTasksUrl)
+        getTaskCount(taskCountUrl)
     }, [postBody, state.workspace])
 
     useEffect(() => {
         getEmployeeResultsApi()
     }, [])
-    
+
 
     const getTaskList = async (URL) => {
         let res = await apiAction({ url: URL, method: 'get', navigate: navigate, dispatch: dispatch })
-        // if (res.success) {
+        if (res) {
+            setPaginationData(res.total_pages)
             setTasksResults(res.results)
-            btnLabelList[taskCategoryIndex].count = res.results.length
+        }
+    }
+    const getTaskCount = async (URL) => {
+        let res = await apiAction({ url: URL, method: 'get', navigate: navigate, dispatch: dispatch })
+        if (res) {
+            const responseData = res.result
+            btnLabelList[0].count = responseData.in_progress + responseData.on_hold
+            btnLabelList[1].count = responseData.pending
+            btnLabelList[2].count = responseData.completed
+            btnLabelList[3].count = responseData.all_tasks
             setTaskCount([...btnLabelList])
-        // }
+        }
+
     }
 
     // const getAllTaskList = async () => {
@@ -101,7 +135,7 @@ const Dashboard = () => {
     }
 
     const onCategoryBtnClick = (index) => {
-        if (index === 0 || index ===3) {
+        if (index === 0 || index === 3) {
             setPostBody({ ...postBody, tasks: ["In-Progress", "On Hold"] })
         } else if (index === 1) {
             setPostBody({ ...postBody, tasks: ["Pending"] })
@@ -123,13 +157,14 @@ const Dashboard = () => {
     }
 
     const onTaskEditClick = (item) => {
+        // console.log("ITEM",item)
         setFormData({
-            task: item.task,
+            task: item.task_description,
             module_id: null,
             work_id: work_id,
             status: item.status,
-            task_id: item.task_id,
-            project_id: item.project_id,
+            task_id: item.id,
+            project_id: item.project,
             on_hold_reason: item.on_hold_reason,
             dead_line: moment(item.dead_line).format("YYYY-MM-DD HH:mm"),
         });
@@ -145,11 +180,11 @@ const Dashboard = () => {
 
         setFilters(data)
         let pBody = { ...postBody, workspace_id: work_id }
-        if (data.employee_id) {
-            pBody["employees"] = [data.employee_id]
-        } else {
-            pBody["employees"] = []
-        }
+        // if (data.employee_id) {
+        //     pBody["employees"] = [data.employee_id]
+        // } else {
+        //     pBody["employees"] = []
+        // }
         if (data.module_id) {
             // pBody["module_id"] = [data.module_id]
         } else {
@@ -160,23 +195,25 @@ const Dashboard = () => {
         } else {
             pBody["projects"] = []
         }
-        
+
         if (postBody !== {}) {
             setPostBody(pBody)
         }
     }
     const onFilterClear = () => {
         setFilters({
-            employee_id: null,
             module_id: null,
             project_id: null,
         })
-        setPostBody({ tasks: [btnLabelList[taskCategoryIndex].title], projects: [], workspace_id: work_id, employees: [] })
+        setPostBody({ ...postBody, tasks: [btnLabelList[taskCategoryIndex].title], projects: [], workspace_id: work_id, })
     }
 
     const onFilterClick = () => {
         setFormData(filters);
         setShowModal(filter_and_sort)
+    }
+    const onPaginationHandle = (pageNumber) => {
+        setPostBody({ ...postBody, pageNumber: pageNumber })
     }
 
     return (
@@ -188,63 +225,91 @@ const Dashboard = () => {
                 employeeResults={employeeResults}
                 projectsResults={projectsResults}
             /> */}
-
-            <div className="bg-white rounded-xl flex flex-col md:flex-row justify-between shadow">
-                <div className='flex-row flex w-1/2 pt-8'>
+            <div className="bg-white rounded-xl flex flex-col md:flex-row justify-between shadow overflow-auto">
+                <div className='flex-row flex'>
                     {btnLabelList.map((item, index) => {
                         return (
-                            <div className={`flex flex-row px-0.5 mx-5 pb-3 items-center ${getBtnStyle(index)}`} >
-                                <button className={classNames("flex font-quicksand font-bold flex-row items-center text-sm hover:opacity-75  outline-none focus:outline-none", {
-                                    "text-[#b7c1cc]": index!==taskCategoryIndex,
-                                    "text-[#2e53e2]":index===taskCategoryIndex})} onClick={() => onCategoryBtnClick(index)}>
+                            <div className={`flex flex-row px-0.5 mx-5 items-center ${getBtnStyle(index)}`} >
+                                <button className={classNames("flex font-quicksand font-bold flex-row items-center text-md hover:opacity-75  outline-none focus:outline-none py-6", {
+                                    "text-[#b7c1cc]": index !== taskCategoryIndex,
+                                    "text-[#2e53e2]": index === taskCategoryIndex
+                                })} onClick={() => onCategoryBtnClick(index)}>
                                     {item.title}
+
+                                    <p className={classNames("px-1 text-xs mx-2 text-white rounded", {
+                                        "bg-[#2e53e2]": index === taskCategoryIndex,
+                                        "bg-[#b7c1cc]": index !== taskCategoryIndex
+                                    })}>{item.count}</p>
                                 </button>
-                                <p className={classNames("px-1 text-xs mx-2 text-white rounded", {
-                                    "bg-[#2e53e2]": index === taskCategoryIndex,
-                                    "bg-[#b7c1cc]": index !== taskCategoryIndex
-                                })}>{item.count}</p>
                             </div>
                         )
                     })}
 
                 </div>
+
                 <div className='flex flex-col md:flex-row ml-2 space-x-0 space-y-3 items-start md:space-x-3 md:space-y-0 md:items-center mr-5 w-1/2 justify-end'>
-                        <div className='max-w-sm w-full'>
-                            <Dropdown options={listOfEmployees} optionLabel="employee_name" value={selectedUser ? selectedUser : { employee_name: 'All Users' }} setValue={(value) => {
-                                selectUser(value)
-                                setTasksResults([])
-                                setPostBody({...postBody, employees: [value.id]})
-                                }} />
-                        </div>
+                    <div className='max-w-sm w-full'>
+                        <Dropdown options={listOfEmployees} optionLabel="employee_name" value={selectedUser ? selectedUser : { employee_name: 'All Users' }} setValue={(value) => {
+                            selectUser(value)
+                            setTasksResults([])
+                            setPostBody({ ...postBody, employees: [value.id] })
+                        }} />
+                    </div>
 
-                        <button className='border border-[#dddddf] rounded-lg flex px-3 py-2' onClick={onFilterClick}>
-                            <i className="fa-solid fa-sliders mr-2 text-[#75787b]"></i>
-                            <p className='text-[#75787b] font-semibold font-quicksand text-sm'>Filter</p>
-                        </button>
-
-                        <button className='border border-[#dddddf] rounded-lg flex px-3 py-2' onClick={() => onNewTaskAddClick()}>
-                            <i className="fa-solid fa-plus mr-2 text-[#75787b]" ></i>
-                            <p className='text-[#75787b] font-semibold font-quicksand text-sm'>Add New</p>
-                        </button>
-                    {/* <button className='flex items-center border border-[#dddddf] rounded-lg mb-3 py-2 px-3 mr-6 hover:opacity-75 outline-none focus:outline-none'
-                        onClick={onFilterClick}>
+                    <button className='border border-[#dddddf] rounded-lg flex px-3 py-2' onClick={onFilterClick}>
                         <i className="fa-solid fa-sliders mr-2 text-[#75787b]"></i>
                         <p className='text-[#75787b] font-semibold font-quicksand text-sm'>Filter</p>
-                    </button> */}
-                    {/* <button className='flex  items-center py-2 px-3 mb-3 border border-[#dddddf] rounded-lg hover:opacity-75 outline-none focus:outline-none' onClick={() => onNewTaskAddClick()}>
+                    </button>
+
+                    <button className='border border-[#dddddf] rounded-lg flex px-3 py-2' onClick={() => onNewTaskAddClick()}>
                         <i className="fa-solid fa-plus mr-2 text-[#75787b]" ></i>
                         <p className='text-[#75787b] font-semibold font-quicksand text-sm'>Add New</p>
-                    </button> */}
+                    </button>
+
                 </div>
             </div>
+            <div className='pb-6'
+                style={{
+                    padding: '0px',
+                    overflowY: 'scroll',
+                    // background: '#FFFFFF',
+                    height: 'calc(100vh - 215px)',
+                    // paddingBottom:'16px'
+                    // paddingLeft: '0px !important',
+                    // paddingTop: '16px !important',
+                    // paddingRight: '0px !important',
+                    // boxShadow: '1px 2px 4px rgba(0, 0, 0, 0.04)',
+                }}>
+                <div className=" mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 ">
+                    {tasksResults.length > 0 && tasksResults.map((item, index) => {
+                        return (
+                            <DashboardCard {...item} onEditClick={onTaskEditClick} onTaskComplete={onTaskComplete} />
+                        )
+                    })}
+                </div>
+            </div>
+            <div className='bg-white shadow rounded-xl bottom-0  w-full py-2'>
+                <Box sx={{
+                    display: 'flex',
+                    width: ' 100%',
+                    objectPosition: 'bottom',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    flexDirection:'row'
 
-            <div className=" mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                {tasksResults.length > 0 && tasksResults.map((item, index) => {
-                    return (
-                        <DashboardCard {...item} onEditClick={onTaskEditClick} onTaskComplete={onTaskComplete}/>
-                    )
-                })}
-
+                }}>
+                    <Stack spacing={2}>
+                        <Pagination
+                            count={paginationData}
+                            color="primary"
+                            onChange={(val, pageNumber) => onPaginationHandle(pageNumber)}
+                        />
+                    </Stack>
+                    <span style={{ textAlign: 'right', justifyContent: 'end' }}>
+                       page 1 of 1
+                    </span>
+                </Box >
+               
             </div>
         </React.Fragment>
     )
@@ -280,7 +345,7 @@ const DashboardCard = (props) => {
         onEditClick, task_id, work_id, module_id, project_id, on_hold_reason, status, onTaskComplete, detailed_description, module_name, employee } = props;
     const [isChecked, setChecked] = useState(status === "Completed")
     let my_task = user_id === employee_id;
-    
+
     const completeTheTask = async (e) => {
         e.preventDefault();
         const formData = {
@@ -322,80 +387,157 @@ const DashboardCard = (props) => {
     };
 
     return (
+        // <React.Fragment>
+        //     <div className='bg-white flex flex-col px-5 py-2 rounded-lg h-full border-borderColor-0 shadow-md' >
+        //         <div class="flex flex-wrap">
+        //             <span class="inline-flex bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-2 rounded-full dark:bg-blue-900 dark:text-blue-300"> {project_name}</span>
+        //         </div>
+
+        //         <div className='flex'>
+
+        //             <div className='flex flex-col w-full'>
+        //                 <div className='max-h-14 align-top font-quicksand font-medium flex w-full'>
+        //                     <a href={description_link === null ? null : description_link}
+        //                         target="blank"
+        //                         className={`text-5 ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg line-clamp-2 text-ellipsis overflow-x-hidden`}>
+        //                         {task_description}
+        //                     </a>
+        //                     {/* <p className={`text-5 ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg line-clamp-2`}></p> */}
+        //                 </div>
+        //                 <span className="text-sm font-quicksand font-medium inline-block pb-1 text-blueGray-600 last:mr-0 mr-1 truncate text-ellipsis w-full">
+        //                     {detailed_description}
+        //                 </span>
+
+
+        //             </div>
+
+        //         </div>
+
+        //         <div onClick={() => {
+        //             if (status !== "Completed" && user_id === employee) {
+        //                 console.log(user_id, employee)
+        //                 onEditClick(props)
+        //             }
+        //         }} className={`${(status !== "Completed" && user_id === employee) ? "cursor-pointer" : ""}`}>
+        //             <div className='flex justify-between my-3'>
+        //                 <span className="text-xs font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-md text-lightBlue-600 bg-lightBlue-200 last:mr-0 mr-1">
+        //                     {project_name}</span>
+        //                 <span className="text-xs font-semibold font-quicksand inline-block py-1">
+        //                     {module_name}</span>
+        //             </div>
+
+        //             <div className="flex flex-wrap my-2">
+        //                 <div className='mr-auto'>
+        //                     <span className={`text-xs font-quicksand font-semibold inline-block py-1 px-0 rounded-full ${expiredCheck(dead_line) ? 'text-red-400' : 'text-green-400'} last:mr-0 mr-1`}>
+        //                         <i className="fa-solid fa-clock mr-1"></i> {moment(dead_line).format(DateFormatCard)}
+        //                     </span>
+        //                 </div>
+
+        //                 <div className='ml-auto'>
+        //                     <span className="text-gray-500 ml-auto mt-1 text-xs font-quicksand font-semibold">{getTimeAgo(created_at)}</span>
+        //                 </div>
+        //             </div>
+
+        //             <div className='flex flex-wrap justify-between items-center'>
+        //                 <span className="text-sm font-quicksand font-normal inline-block py-1 text-blueGray-600 last:mr-0 mr-1 self-center">
+        //                     Assigned By: {assignee_name === employee_name ? <span className='font-quicksand font-semibold'>Self</span> : <span className='font-quicksand font-semibold'>{assignee_name}</span>}
+        //                 </span>
+        //                 {props.status === "On Hold" &&
+        //                     <div className={`rounded-2xl bg-white pt-0 text-xs font-bold leading-none flex flex-col flex-wrap`}>
+        //                         <span className={`text-yellow-400`} onClick={() => { showOnHoldReason(!openOnHoldReason) }}>{props.status}</span>
+        //                     </div>
+        //                 }
+        //             </div>
+
+        //         </div>
+
+
+
+        //         {openOnHoldReason &&
+        //             <div className='border py-1 px-2 rounded-md'>
+        //                 <span className={`text-gray-500 text-sm font-quicksand font-medium my-2 py-4`}>{props.on_hold_reason}</span>
+        //             </div>
+        //         }
+
+        //         <div className='flex rounded-lg flex-wrap mt-2 items-center'>
+        //             <img className='w-6 h-6 rounded-full' src={imagesList.employee_default_img.src} alt=''></img>
+        //             <div className='flex flex-col ml-3'>
+        //                 <p className='text-5 text-black text-sm font-quicksand font-semibold'>{employee_name}</p>
+        //             </div>
+        //         </div>
+        //     </div>
+        // </React.Fragment>
         <React.Fragment>
             <div className='bg-white flex flex-col px-5 py-2 rounded-lg h-full border-borderColor-0 shadow-md' >
-                
-                    <div className='flex'>
-                                <div className='flex flex-col w-full'>
-                                    <div className='max-h-14 align-top font-quicksand font-medium flex w-full'>
-                                        <a href={description_link === null ? null: description_link}
-                                            target="blank"
-                                            className={`text-5 ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg line-clamp-2 text-ellipsis overflow-x-hidden`}>
-                                            {task_description}
-                                        </a>
-                                        {/* <p className={`text-5 ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg line-clamp-2`}></p> */}
-                                    </div>
-                                    <span className="text-sm font-quicksand font-medium inline-block pb-1 text-blueGray-600 last:mr-0 mr-1 truncate text-ellipsis w-full">
-                                                {detailed_description}
-                                    </span>
 
-                                    
-                                </div>
-                        
-                    </div>
-                    
-                    <div onClick={() => {
-                        if(status !== "Completed" && user_id === employee){
-                            console.log( user_id, employee)
-                            onEditClick(props)
-                        }
-                    }} className={`${(status !== "Completed" && user_id === employee) ? "cursor-pointer" : ""}`}>
-                        <div className='flex justify-between my-3'>
-                            <span className="text-xs font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-md text-lightBlue-600 bg-lightBlue-200 last:mr-0 mr-1">
-                            {project_name}</span>
-                            <span className="text-xs font-semibold font-quicksand inline-block py-1">
-                            {module_name}</span>
+                <div className='flex'>
+                    <div className='flex flex-col w-full'>
+                        <div className='max-h-14 align-top font-quicksand font-medium flex w-full'>
+                            <a href={description_link === null ? null : description_link}
+                                target="blank"
+                                className={`text-5 ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg line-clamp-2 text-ellipsis overflow-x-hidden`}>
+                                {task_description}
+                            </a>
+                            {/* <p className={`text-5 ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg line-clamp-2`}></p> */}
                         </div>
-
-                        <div className="flex flex-wrap my-2">
-                            <div className='mr-auto'>
-                                <span className={`text-xs font-quicksand font-semibold inline-block py-1 px-0 rounded-full ${expiredCheck(dead_line) ? 'text-red-400' : 'text-green-400'} last:mr-0 mr-1`}>
-                                    <i className="fa-solid fa-clock mr-1"></i> {moment(dead_line).format(DateFormatCard)}
-                                </span>
-                            </div>
-
-                            <div className='ml-auto'>
-                                <span className="text-gray-500 ml-auto mt-1 text-xs font-quicksand font-semibold">{getTimeAgo(created_at)}</span>
-                            </div>
-                        </div>
-
-                        <div className='flex flex-wrap justify-between items-center'>
-                    <span className="text-sm font-quicksand font-normal inline-block py-1 text-blueGray-600 last:mr-0 mr-1 self-center">
-                                    Assigned By: {assignee_name === employee_name ? <span className='font-quicksand font-semibold'>Self</span> : <span className='font-quicksand font-semibold'>{assignee_name}</span>}
+                        <span className="text-sm font-quicksand font-medium inline-block pb-1 text-blueGray-600 last:mr-0 mr-1 truncate text-ellipsis w-full">
+                            {detailed_description}
                         </span>
-                        { props.status === "On Hold" && 
+
+
+                    </div>
+
+                </div>
+
+                <div onClick={() => {
+                    if (status !== "Completed" && user_id === employee) {
+                        console.log(user_id, employee)
+                        onEditClick(props)
+                    }
+                }} className={`${(status !== "Completed" && user_id === employee) ? "cursor-pointer" : ""}`}>
+                    <div className='flex justify-between my-3'>
+                        <span className="text-xs font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-md text-lightBlue-600 bg-lightBlue-200 last:mr-0 mr-1">
+                            {project_name}</span>
+                        <span className="text-xs font-semibold font-quicksand inline-block py-1">
+                            {module_name}</span>
+                    </div>
+
+                    <div className="flex flex-wrap my-2">
+                        <div className='mr-auto'>
+                            <span className={`text-xs font-quicksand font-semibold inline-block py-1 px-0 rounded-full ${expiredCheck(dead_line) ? 'text-red-400' : 'text-green-400'} last:mr-0 mr-1`}>
+                                <i className="fa-solid fa-clock mr-1"></i> {moment(dead_line).format(DateFormatCard)}
+                            </span>
+                        </div>
+
+                        <div className='ml-auto'>
+                            <span className="text-gray-500 ml-auto mt-1 text-xs font-quicksand font-semibold">{getTimeAgo(created_at)}</span>
+                        </div>
+                    </div>
+
+                    <div className='flex flex-wrap justify-between items-center'>
+                        <span className="text-sm font-quicksand font-normal inline-block py-1 text-blueGray-600 last:mr-0 mr-1 self-center">
+                            Assigned By: {assignee_name === employee_name ? <span className='font-quicksand font-semibold'>Self</span> : <span className='font-quicksand font-semibold'>{assignee_name}</span>}
+                        </span>
+                        {props.status === "On Hold" &&
                             <div className={`rounded-2xl bg-white pt-0 text-xs font-bold leading-none flex flex-col flex-wrap`}>
-                                <span className={`text-yellow-400`} onClick={() => {showOnHoldReason(!openOnHoldReason)}}>{props.status}</span>
+                                <span className={`text-yellow-400`} onClick={() => { showOnHoldReason(!openOnHoldReason) }}>{props.status}</span>
                             </div>
                         }
                     </div>
 
+                </div>
+                {openOnHoldReason &&
+                    <div className='border py-1 px-2 rounded-md'>
+                        <span className={`text-gray-500 text-sm font-quicksand font-medium my-2 py-4`}>{props.on_hold_reason}</span>
                     </div>
-                    
-                   
+                }
 
-                    { openOnHoldReason && 
-                        <div className='border py-1 px-2 rounded-md'>
-                            <span className={`text-gray-500 text-sm font-quicksand font-medium my-2 py-4`}>{props.on_hold_reason}</span>
-                        </div>
-                    }
-
-                    <div className='flex rounded-lg flex-wrap mt-2 items-center'>
-                        <img className='w-6 h-6 rounded-full' src={imagesList.employee_default_img.src} alt=''></img>
-                        <div className='flex flex-col ml-3'>
-                            <p className='text-5 text-black text-sm font-quicksand font-semibold'>{employee_name}</p>
-                        </div>
+                <div className='flex rounded-lg flex-wrap mt-2 items-center'>
+                    <img className='w-6 h-6 rounded-full' src={imagesList.employee_default_img.src} alt=''></img>
+                    <div className='flex flex-col ml-3'>
+                        <p className='text-5 text-black text-sm font-quicksand font-semibold'>{employee_name}</p>
                     </div>
+                </div>
             </div>
         </React.Fragment>
 

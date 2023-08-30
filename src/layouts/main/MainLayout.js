@@ -115,11 +115,11 @@ function MainLayout() {
   return (
     <React.Fragment>
       <audio ref={audioPlayer} src={NotificationSound} />
-      <div className="flex w-screen h-screen bg-screenBackgroundColor relative">
+      <div className="flex w-screen h-screen bg-screenBackgroundColor relative overflow-hidden">
         <SidebarContainer></SidebarContainer>
-        <div className="w-full overflow-auto">
+        <div className="w-full overflow-hidden flex-1">
           <Navbar logOutClick={logOutFromTheApp}></Navbar>
-          <div className="overflow-x-hidden p-3">
+          <div className="p-2 overflow-auto" style={{height:'100%'}}>
             <Routes>
               {
                 mainRoutes.map((route, index) =>

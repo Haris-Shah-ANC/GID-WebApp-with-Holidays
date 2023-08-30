@@ -7,7 +7,7 @@ export async function apiAction({ url, method = 'get', data = null, onError = ()
   // if(dispatch){
     // dispatch(Actions.stateChange("loader", true))
   // }
-  
+  // console.log("ACCESS TOKEN",getAccessToken())
   let options = {
     method: method,
     body: JSON.stringify(data),
