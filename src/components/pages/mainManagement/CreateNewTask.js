@@ -33,7 +33,7 @@ import GIDTextArea from '../../custom/Elements/inputs/GIDTextArea';
 import IconInput from '../../custom/Elements/inputs/IconInput';
 
 const CreateNewTask = (props) => {
-    const { setShowModal, data } = props;
+    const { setShowModal, data, from } = props;
     const { work_id } = getWorkspaceInfo();
     const navigate = useNavigate();
     const dispatch = Actions.getDispatch(React.useContext);
@@ -45,7 +45,7 @@ const CreateNewTask = (props) => {
         module_id: data ? data.module_id : null,
         dead_line: data ? data.dead_line : null,
         project_id: data ? data.project_id : null,
-        on_hold_reason: data? data.on_hold_reason: null,
+        on_hold_reason: data ? data.on_hold_reason : null,
         status: data ? data.status : 'In-Progress',
         detailed_description: data ? data.detailed_description : null,
         description_link: data ? data.description_link : null
@@ -100,23 +100,28 @@ const CreateNewTask = (props) => {
             { key: "dead_line", message: 'Deadline field left empty!' },
         ]
         const { isValid, message } = isFormValid(formData, validation_data);
-        console.log("IS VALID",isValid)
+        console.log("IS VALID", isValid)
         if (isValid) {
             let res = await apiAction({
                 method: 'post',
                 navigate: navigate,
                 dispatch: dispatch,
-                url:formData.task_id?update_task(): post_task(),
+                url: formData.task_id ? update_task() : post_task(),
                 data: { ...formData, dead_line: formattedDeadline(formData.dead_line) },
             })
             if (res.success) {
                 setShowModal(false);
                 notifySuccessMessage(res.status);
-                if (formData.task_id) {
-                navigate(routesName.timeLine.path);
-                } else {
-                    navigate(routesName.dashboard.path);
+                if (from === "calender_view") {
+                    navigate(routesName.calendar.path)
+                } else if (from === "dashboard") {
+                    navigate(routesName.dashboard.path)
                 }
+                // if (formData.task_id) {
+                // navigate(routesName.timeLine.path);
+                // } else {
+                //     navigate(routesName.dashboard.path);
+                // }
             } else {
                 notifyErrorMessage(res.detail)
             }
@@ -126,6 +131,7 @@ const CreateNewTask = (props) => {
     };
 
     return (
+
         <div className="relative my-6 w-full mx-2 sm:max-w-sm md:max-w-md overflow-y-auto overflow-x-auto">
             <div className="w-full border-0 rounded-lg shadow-lg relative flex flex-col bg-white outline-none focus:outline-none">
                 {/* header */}
@@ -139,51 +145,54 @@ const CreateNewTask = (props) => {
                 </div>
                 <form>
 
-                    <div className="relative px-5 pt-2 flex-auto">
-                        <div className="my-1 flex flex-col">
-                            <CustomLabel label={`Select  Project`} className={'font-quicksand font-semibold text-sm mb-1'}/>
-                            <Dropdown disabled={formData.task_id ? true : false} placeholder={true} options={projectsResults} optionLabel={'project_name'} value={selectedProject ? selectedProject : { project_name: 'Select project' }} setValue={(value) => setFormData((previous) => ({ ...previous, project_id: value ? value.project_id : null }))} />
-                        </div>
-                        {
-                            !formData.task_id &&
-                            <div className="my-4 flex flex-col">
-                                <CustomLabel label={`Select Module`} className={'font-quicksand font-semibold text-sm mb-1'}/>
-                                <Dropdown placeholder={true} options={moduleResults} optionLabel={'module_name'} value={selectedModule ? selectedModule : { module_name: 'Select project' }} setValue={(value) => setFormData((previous) => ({ ...previous, module_id: value ? value.module_id : null }))} />
+                    <div className="relative px-5 pt-2 flex-auto ">
+                        <div className='flex-row flex items-center justify-between'>
+                            <div className="my-1 flex flex-col">
+                                <CustomLabel label={`Select  Project`} className={'font-quicksand font-semibold text-sm mb-1'} />
+                                <Dropdown disabled={formData.task_id ? true : false} placeholder={true} options={projectsResults} optionLabel={'project_name'} value={selectedProject ? selectedProject : { project_name: 'Select project' }} setValue={(value) => setFormData((previous) => ({ ...previous, project_id: value ? value.project_id : null }))} />
                             </div>
-                        }
+                            {
+                                !formData.task_id &&
+                                <div className="my-4 flex flex-col">
+                                    <CustomLabel label={`Select Module`} className={'font-quicksand font-semibold text-sm mb-1'} />
+                                    <Dropdown placeholder={true} options={moduleResults} optionLabel={'module_name'} value={selectedModule ? selectedModule : { module_name: 'Select project' }} setValue={(value) => setFormData((previous) => ({ ...previous, module_id: value ? value.module_id : null }))} />
+                                </div>
+                            }
+                        </div>
+
 
                         <div className="mt-4 flex flex-col">
                             <CustomLabel label={`Task Description`} className={'font-quicksand font-semibold text-sm mb-1'} />
                             <GIDTextArea
-                                id={"task_description"} disable={false} className={"h-20"} value={formData.task} 
-                                onBlurEvent={() => {}} 
-                                placeholderMsg={"Add the task description"} 
+                                id={"task_description"} disable={false} className={"h-20"} value={formData.task}
+                                onBlurEvent={() => { }}
+                                placeholderMsg={"Add the task description"}
                                 onTextChange={(event) => { setFormData({ ...formData, task: event.target.value }) }}>
                             </GIDTextArea>
                         </div>
                         <div className="mt-4 flex flex-col">
                             <CustomLabel label={`Detailed Description`} className={'font-quicksand font-semibold text-sm mb-1'} />
                             <GIDTextArea
-                                id={"task_detailed_description"} disable={false} className={"h-20"} value={formData.detailed_description} 
-                                onBlurEvent={() => {}} 
-                                placeholderMsg={"Add the detailed task description"} 
+                                id={"task_detailed_description"} disable={false} className={"h-20"} value={formData.detailed_description}
+                                onBlurEvent={() => { }}
+                                placeholderMsg={"Add the detailed task description"}
                                 onTextChange={(event) => setFormData((previous) => ({ ...previous, detailed_description: event.target.value }))}>
                             </GIDTextArea>
                         </div>
 
                         <div className="mt-4 flex flex-col">
                             <CustomLabel label={`Description Link`} className={'font-quicksand font-semibold text-sm mb-1'} />
-                            <GidInput 
-                                inputType={"text"} 
+                            <GidInput
+                                inputType={"text"}
                                 id='link_description'
-                                disable={false} 
+                                disable={false}
                                 placeholderMsg={"Enter link"}
-                                className={""} 
-                                value={formData.description_link ? formData.description_link : ''} 
-                                onBlurEvent={() => {}}
-                                onTextChange={(e) =>{
+                                className={""}
+                                value={formData.description_link ? formData.description_link : ''}
+                                onBlurEvent={() => { }}
+                                onTextChange={(e) => {
                                     setFormData((previous) => ({ ...previous, description_link: e.target.value }))
-                            }}></GidInput>
+                                }}></GidInput>
                         </div>
 
                         <CustomLabel label={`Status`} className={'font-quicksand text-sm flex mt-2 mb-1'} />
@@ -202,33 +211,34 @@ const CreateNewTask = (props) => {
                             />
                             {
                                 formData.task_id &&
-                                    <Checkbox
-                                        value="Completed"
-                                        checked={formData.status === 'Completed'}
-                                        label={'Completed'}
-                                        onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
-                                    />
+                                <Checkbox
+                                    value="Completed"
+                                    checked={formData.status === 'Completed'}
+                                    label={'Completed'}
+                                    onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
+                                />
                             }
-
+                            {data && data.task ?
                                 <Checkbox
                                     value="On Hold"
                                     checked={formData.status === 'On Hold'}
                                     label={'On Hold'}
                                     onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
                                 />
+                                : null}
                         </div>
 
-                        { formData.status === "On Hold" &&
+                        {formData.status === "On Hold" &&
                             <div className="mt-4 flex flex-col">
                                 <CustomLabel label={`Reason`} className={'font-quicksand font-semibold text-sm'} />
 
-                            <GIDTextArea
-                                id={"on_hold_reason_text_input"} disable={false} className={"h-20"} value={formData.on_hold_reason} 
-                                onBlurEvent={() => {}} 
-                                placeholderMsg={"Add the task on hold reason"} 
-                                onTextChange={(e) => setFormData((previous) => ({ ...previous, on_hold_reason: e.target.value }))}>
-                            </GIDTextArea>
-                        </div>
+                                <GIDTextArea
+                                    id={"on_hold_reason_text_input"} disable={false} className={"h-20"} value={formData.on_hold_reason}
+                                    onBlurEvent={() => { }}
+                                    placeholderMsg={"Add the task on hold reason"}
+                                    onTextChange={(e) => setFormData((previous) => ({ ...previous, on_hold_reason: e.target.value }))}>
+                                </GIDTextArea>
+                            </div>
                         }
 
                         <div className="my-4 flex flex-col">
@@ -240,16 +250,16 @@ const CreateNewTask = (props) => {
                                 className={``}
                                 value={formData.dead_line ? formData.dead_line : ""}
                                 onTextChange={(e) => setFormData((previous) => ({ ...previous, dead_line: e.target.value }))}
-                                onBlurEvent={() => {}}
+                                onBlurEvent={() => { }}
                                 placeholder={""}
                                 isRightIcon={true}
-                                >
+                            >
                             </IconInput>
                         </div>
 
                     </div>
 
-                    
+
                     <div className="p-6 border-solid border-slate-200 rounded-b">
                         <PlainButton title={"Save Changes"} className={"w-full"} onButtonClick={handleSaveChanges} disable={false}></PlainButton>
                     </div>

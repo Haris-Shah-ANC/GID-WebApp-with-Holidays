@@ -47,7 +47,7 @@ const AssignTask = () => {
     const { work_id } = getWorkspaceInfo();
 
     const [assignedTaskResults, setAssignedTaskResults] = React.useState([]);
-    const getEmployeeResultsApi = async (id) => {
+    const getAssignedTasks = async (id) => {
         let res = await apiAction({
             method: 'get',
             navigate: navigate,
@@ -63,7 +63,7 @@ const AssignTask = () => {
 
     React.useEffect(() => {
         if (work_id) {
-            getEmployeeResultsApi(work_id);
+            getAssignedTasks(work_id);
         }
     }, [state.workspace])
 
@@ -77,7 +77,7 @@ const AssignTask = () => {
         { fields: 'Created' },
     ]
     return (
-        <div className=''>
+        <div className='pb-12'>
             <div className='grid sm:grid-cols-1 md:grid-cols-2 gap-3'>
                 <div class="items-center p-10 flex justify-center">
                     <img className='w-3/4 self-center' src="https://gid.artdexandcognoscis.com/static/img/undraw_add_tasks_re_s5yj.svg" alt=""></img>
@@ -86,7 +86,7 @@ const AssignTask = () => {
                     <AssignedTask />
                 </div>
             </div>
-            <div className="relative flex flex-col min-w-0 break-words w-full mb-8 shadow-lg rounded-lg bg-white text-blueGray-700">
+            <div className="relative flex flex-col min-w-0 break-words w-full mb-8 shadow-lg rounded-lg bg-white text-blueGray-700 pb-6">
                 <CustomTable headers={headers} columns={assignedTaskResults} />
             </div>
         </div>

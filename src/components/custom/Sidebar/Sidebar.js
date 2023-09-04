@@ -10,10 +10,11 @@ import {
   add_project,
   add_project_module,
   file_upload,
+  add_meeting_link,
 } from '../../../utils/Constant';
 import AddProject from '../../pages/mainManagement/AddProject';
 import { apiAction } from '../../../api/api';
-import { get_workspace } from '../../../api/urls';
+import { getMeetingLinkUrl, get_workspace } from '../../../api/urls';
 import { getWorkspaceInfo, setWorkspaceInfo } from '../../../config/cookiesInfo';
 import * as Actions from '../../../state/Actions'
 import { sidebarMenu } from '../../../config/routes';
@@ -23,7 +24,7 @@ import SidebarMenuItem from './SidebarMenuItem';
 import WorkspaceList from './WorkspaceList';
 
 
-const Sidebar = ({isSidebarOpen,setIsSidebarOpen, sideNavigationRef}) => {
+const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, sideNavigationRef }) => {
   const navigate = useNavigate();
   const location = useLocation();
   const state = Actions.getState(useContext)
@@ -49,11 +50,11 @@ const Sidebar = ({isSidebarOpen,setIsSidebarOpen, sideNavigationRef}) => {
   const [showModal, setShowModal] = React.useState(false);
 
   const navigateToPage = (item) => {
-    if(item.name === "Create New Project"){
+    if (item.name === "Create New Project") {
       setShowModal(add_project)
-    }else if(item.name === "Create New Module") {
+    } else if (item.name === "Create New Module") {
       setShowModal(add_project_module)
-    }else{
+    } else {
       setActiveItem(item.active)
       navigate(item.path)
     }
@@ -64,15 +65,15 @@ const Sidebar = ({isSidebarOpen,setIsSidebarOpen, sideNavigationRef}) => {
   // }, [])
 
   useEffect(() => {
-    if(workspace){
+    if (workspace) {
       const menuOptions = sidebarMenu(workspace.role)
-      const item = menuOptions.find((item, index) => {return item.name === activeItem})
-      if(!item){
+      const item = menuOptions.find((item, index) => { return item.name === activeItem })
+      if (!item) {
         setActiveItem("Dashboard")
         navigate("/dashboard")
       }
-        setNavigationUrl([...menuOptions])
-      }
+      setNavigationUrl([...menuOptions])
+    }
   }, [state.workspace])
 
   return (
@@ -95,12 +96,12 @@ const Sidebar = ({isSidebarOpen,setIsSidebarOpen, sideNavigationRef}) => {
             {navigationUrl.map((item, index) => {
               return (
                 <React.Fragment key={index}>
-                      
+
                   {
                     item.hasOwnProperty('childItem') ? (
 
-                      <ChildItemComponent item={item} isSidebarOpen={isSidebarOpen} activeItem={activeItem} setIsSidebarOpen={setIsSidebarOpen} setShowModal={setShowModal} navigate={navigate}/>
-                      
+                      <ChildItemComponent item={item} isSidebarOpen={isSidebarOpen} activeItem={activeItem} setIsSidebarOpen={setIsSidebarOpen} setShowModal={setShowModal} showModal={showModal} navigate={navigate} />
+
                     ) : (
                       <SidebarMenuItem isSidebarOpen={isSidebarOpen} onClick={navigateToPage} activeItem={activeItem} menuItem={item}></SidebarMenuItem>
                     )
@@ -110,18 +111,18 @@ const Sidebar = ({isSidebarOpen,setIsSidebarOpen, sideNavigationRef}) => {
             })}
           </ul>
         </nav>
-        
+
         <div className={`cursor-default border-dark-purple justify-center flex my-2`}>
           <ButtonWithImage className={'cursor-pointer w-8 h-8 rounded-full border-dark-purple justify-center flex p-0 m-0 group'} title={""} iconStyle={`mr-0`} disabled={false} onButtonClick={() => setIsSidebarOpen(!isSidebarOpen)}
             icon={<svg xmlns="http://www.w3.org/2000/svg" className={`w-8 h-8 p-[6px] align-baseline  fill-blue-600 rounded-full bg-blue-300 shadow-xl ${isSidebarOpen ? "rotate-180" : "rotate-0"}`} height="1em" viewBox="0 0 320 512">
-            <path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z"/></svg>}>
+              <path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z" /></svg>}>
           </ButtonWithImage>
           {/* <svg xmlns="http://www.w3.org/2000/svg" className={`w-8 h-8 p-[6px] align-baseline hidden md:block fill-blue-600 rounded-full bg-blue-300 shadow-xl ${isSidebarOpen ? "rotate-180" : "rotate-0"}`} height="1em" viewBox="0 0 320 512">
             <path d="M310.6 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L242.7 256 73.4 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z"/></svg> */}
         </div>
-      
-        </div>
-    <ModelComponent showModal={showModal} setShowModal={setShowModal} />
+
+      </div>
+      <ModelComponent showModal={showModal} setShowModal={setShowModal} />
 
     </>
 
@@ -132,12 +133,13 @@ const Sidebar = ({isSidebarOpen,setIsSidebarOpen, sideNavigationRef}) => {
 export default Sidebar;
 
 const ChildItemComponent = (props) => {
-  const { item, activeItem, isSidebarOpen, setIsSidebarOpen, setShowModal, navigate } = props;
+  const { item, activeItem, isSidebarOpen, setIsSidebarOpen, setShowModal, navigate ,showModal} = props;
   const { childItem } = item;
   const [workspaces, setWorkSpaces] = useState([])
-  const {work_id} = getWorkspaceInfo()
+  const [meetingLinkList, setMeetingLinkList] = useState([])
+  const { work_id } = getWorkspaceInfo()
   const dispatch = Actions.getDispatch(useContext);
-
+  const [isVisible,setModalVisible]=useState(false)
   const [collapse, setCollapse] = React.useState(false);
   const onClickedHandler = () => {
     setCollapse(!collapse)
@@ -152,14 +154,20 @@ const ChildItemComponent = (props) => {
 
   useEffect(() => {
     fetchWorkspaces()
-  },[])
+    fetchMeetingLinks()
+  }, [])
 
-  const fetchWorkspaces = async() => {
-    let response = await apiAction({url: get_workspace(), method: "get", data: null})
+  const fetchWorkspaces = async () => {
+    let response = await apiAction({ url: get_workspace(), method: "get", data: null })
     setWorkSpaces(response.result)
-    
+
   }
-  // const [showModal, setShowModal] = React.useState(false);
+  const fetchMeetingLinks = async () => {
+    let response = await apiAction({ url: getMeetingLinkUrl(work_id), method: "get", data: null })
+    setMeetingLinkList(response.result)
+
+
+  }
 
   const onItemInteraction = (workspace) => {
     setCollapse(!collapse)
@@ -171,10 +179,12 @@ const ChildItemComponent = (props) => {
   return (
 
     <React.Fragment>
+      <ModelComponent showModal={isVisible} setShowModal={setModalVisible}  onSuccess={()=>fetchMeetingLinks()}/>
+
       <li
         onClick={() => onClickedHandler()}
         title={isSidebarOpen ? '' : item.name}
-        className={` ${isSidebarOpen ? '' : 'justify-center'} ${activeItem === item.active ? 'bg-blue-600 font-bold text-white' : ''} p-5 text-sm text-gray-500 font-quicksand font-semibold border-gray-400 flex items-center rounded-md hover:${activeItem === item.active ? 'bg-blue-500': 'bg-blue-400'} hover:text-white`}
+        className={` ${isSidebarOpen ? '' : 'justify-center'} ${activeItem === item.active ? 'bg-blue-600 font-bold text-white' : ''} p-5 text-sm text-gray-500 font-quicksand font-semibold border-gray-400 flex items-center rounded-md hover:${activeItem === item.active ? 'bg-blue-500' : 'bg-blue-400'} hover:text-white`}
       >
         <span className="cursor-pointer">
           <i className={`${item.icon} mr-2`}></i>
@@ -194,10 +204,10 @@ const ChildItemComponent = (props) => {
             {childItem === 'hrms' &&
               <React.Fragment>
                 <li className='p-2 text-gray-500 font-quicksand font-semibold text-sm'>Select:</li>
-                <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm' onClick={() => {navigate(item.path)}}>
+                <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm' onClick={() => { navigate(item.path) }}>
                   Reports
                 </li>
-                <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm' onClick={() => {setShowModal(file_upload)}}>
+                <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm' onClick={() => { setShowModal(file_upload) }}>
                   <a class="collapse-item" target="_blank">Upload</a>
                 </li>
               </React.Fragment>
@@ -206,10 +216,14 @@ const ChildItemComponent = (props) => {
             {childItem === 'meeting' &&
               <React.Fragment>
                 <li className='p-2 text-gray-500 font-quicksand font-semibold text-sm'>Select Meeting:</li>
-                <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm'>
-                  <a class="collapse-item" href="https://meet.google.com/zbx-mkky-gux" target="_blank">Daily Standup</a>
-                </li>
-                <li className='p-2 text-sm cursor-pointer hover:bg-gray-200 rounded-md'><div className=" flex items-center"><i className="fa-solid fa-plus mr-1 font-semibold font-quicksand text-sm"></i>Add New Meeting</div></li>
+                {meetingLinkList.map((item) => (
+                  <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm'>
+                    <a class="collapse-item" href={`${item.meeting_link}`} target="_blank">{item.meeting_title}</a>
+                  </li>
+                )
+                )}
+
+                <li className='p-2 text-sm cursor-pointer hover:bg-gray-200 rounded-md' onClick={() => { setModalVisible(add_meeting_link) }}><div className=" flex items-center"><i className="fa-solid fa-plus mr-1 font-semibold font-quicksand text-sm"></i>Add New Meeting</div></li>
               </React.Fragment>
             }
 

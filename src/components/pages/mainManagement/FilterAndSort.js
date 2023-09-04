@@ -145,12 +145,12 @@ const FilterAndSort = (props) => {
                             <CustomLabel label={`Project`} className={'font-quicksand font-semibold text-sm mb-1'} />
                             <Dropdown disabled={false} placeholder={true} options={projectsResults} optionLabel={'project_name'} value={selectedProject ? selectedProject : { project_name: 'Select project' }} setValue={(value) => onProjectSelect(value)} />
                         </div>
-                        {
+                        {/* {
                             <div className="my-4 flex flex-col">
                                 <CustomLabel label={`Module`} className={'font-quicksand font-semibold text-sm mb-1'} />
                                 <Dropdown placeholder={true} disabled={moduleResults.length <= 1} options={moduleResults} optionLabel={'module_name'} value={selectedModule ? selectedModule : { module_name: 'Select module' }} setValue={(value) => onModuleChange(value)} />
                             </div>
-                        }
+                        } */}
 
                     </div>
 

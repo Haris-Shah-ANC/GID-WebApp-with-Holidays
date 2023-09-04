@@ -76,7 +76,7 @@ export default function AddProject(props) {
                         </div>
                         
 
-                        <div className="my-4 flex flex-col">
+                        {/* <div className="my-4 flex flex-col">
                             <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={"Project Description"} />
                                 <GidInput 
                                     inputType={"text"} 
@@ -90,7 +90,7 @@ export default function AddProject(props) {
                                 }}>
 
                                 </GidInput>
-                        </div>
+                        </div> */}
 
                     </div>
 

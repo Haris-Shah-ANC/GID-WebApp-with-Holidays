@@ -128,19 +128,22 @@ const Dashboard = () => {
             navigate: navigate,
             dispatch: dispatch,
         })
-        if (res.success) {
+        if (res) {
             selectUser(res.results.find((item, index) => item.id === user_id))
             setEmployees([{ employee_name: 'All' }, ...res.results])
         }
     }
 
     const onCategoryBtnClick = (index) => {
-        if (index === 0 || index === 3) {
+        if (index === 0) {
             setPostBody({ ...postBody, tasks: ["In-Progress", "On Hold"] })
         } else if (index === 1) {
             setPostBody({ ...postBody, tasks: ["Pending"] })
         } else if (index === 2) {
             setPostBody({ ...postBody, tasks: ["Completed"] })
+        }else if(index===3){
+            setPostBody({ ...postBody, tasks: ["In - Progress", "On Hold","Completed","Pending"] })
+
         }
         setTaskCategoryIndex(index)
     }
@@ -157,7 +160,7 @@ const Dashboard = () => {
     }
 
     const onTaskEditClick = (item) => {
-        // console.log("ITEM",item)
+        console.log("ITEM",item)
         setFormData({
             task: item.task_description,
             module_id: null,
@@ -166,7 +169,9 @@ const Dashboard = () => {
             task_id: item.id,
             project_id: item.project,
             on_hold_reason: item.on_hold_reason,
+            detailed_description: item.detailed_description,
             dead_line: moment(item.dead_line).format("YYYY-MM-DD HH:mm"),
+            description_link: item.description_link
         });
         setShowModal(add_task)
     }
@@ -205,7 +210,7 @@ const Dashboard = () => {
             module_id: null,
             project_id: null,
         })
-        setPostBody({ ...postBody, tasks: [btnLabelList[taskCategoryIndex].title], projects: [], workspace_id: work_id, })
+        setPostBody({ ...postBody, projects: [] })
     }
 
     const onFilterClick = () => {
@@ -218,7 +223,7 @@ const Dashboard = () => {
 
     return (
         <React.Fragment>
-            <ModelComponent showModal={showModal} setShowModal={setShowModal} data={formData} onFilterApply={onFilterApply} onFilterClear={onFilterClear} />
+            <ModelComponent showModal={showModal} setShowModal={setShowModal} data={formData} onFilterApply={onFilterApply} onFilterClear={onFilterClear} from={"dashboard"} />
             {/* <Filter
                 filters={filters}
                 setFilters={setFilters}
@@ -280,7 +285,7 @@ const Dashboard = () => {
                     // paddingRight: '0px !important',
                     // boxShadow: '1px 2px 4px rgba(0, 0, 0, 0.04)',
                 }}>
-                <div className=" mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 ">
+                <div className=" mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 pb-6 ">
                     {tasksResults.length > 0 && tasksResults.map((item, index) => {
                         return (
                             <DashboardCard {...item} onEditClick={onTaskEditClick} onTaskComplete={onTaskComplete} />
@@ -295,7 +300,7 @@ const Dashboard = () => {
                     objectPosition: 'bottom',
                     justifyContent: 'center',
                     alignItems: 'center',
-                    flexDirection:'row'
+                    flexDirection: 'row'
 
                 }}>
                     <Stack spacing={2}>
@@ -305,11 +310,11 @@ const Dashboard = () => {
                             onChange={(val, pageNumber) => onPaginationHandle(pageNumber)}
                         />
                     </Stack>
-                    <span style={{ textAlign: 'right', justifyContent: 'end' }}>
+                    {/* <span style={{ textAlign: 'right', justifyContent: 'end' }}>
                        page 1 of 1
-                    </span>
+                    </span> */}
                 </Box >
-               
+
             </div>
         </React.Fragment>
     )
@@ -345,7 +350,7 @@ const DashboardCard = (props) => {
         onEditClick, task_id, work_id, module_id, project_id, on_hold_reason, status, onTaskComplete, detailed_description, module_name, employee } = props;
     const [isChecked, setChecked] = useState(status === "Completed")
     let my_task = user_id === employee_id;
-
+    let projectStyle = []
     const completeTheTask = async (e) => {
         e.preventDefault();
         const formData = {
@@ -373,7 +378,7 @@ const DashboardCard = (props) => {
                 url: update_task(),
                 data: { ...formData, dead_line: formattedDeadline(formData.dead_line) },
             })
-            if (res.success) {
+            if (res) {
                 onTaskComplete()
                 notifySuccessMessage(res.status);
             } else {
@@ -385,26 +390,91 @@ const DashboardCard = (props) => {
             notifyErrorMessage(message)
         }
     };
+    const getProjectNameStyle = (projectName) => {
+        var randomColor = getRandomColor()
+        if (projectStyle != []) {
+            projectStyle.find((item, index) => {
+                if (item.projName == projectName) {
+                    return item.color
+                    // return `bg-[${item.color}] text-[${item.color}]`
+                } else if (index === projectStyle.length - 1) {
+                    projectStyle.push({ projName: projectName, color: randomColor })
+                    return randomColor
+                    // return `bg-[${randomColor}] text-[${randomColor}]`
+                }
+            })
+        } else {
+            projectStyle.push({ projName: projectName, color: randomColor })
+            return randomColor
+            // return `bg-[${randomColor}] text-[${randomColor}]`
+        }
+    }
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        // return "bg-[" + color + "]"
+        return color
+    }
 
+    console.log('===>description_link', description_link)
     return (
         // <React.Fragment>
-        //     <div className='bg-white flex flex-col px-5 py-2 rounded-lg h-full border-borderColor-0 shadow-md' >
-        //         <div class="flex flex-wrap">
-        //             <span class="inline-flex bg-blue-100 text-blue-800 text-xs font-medium mr-2 px-2.5 py-2 rounded-full dark:bg-blue-900 dark:text-blue-300"> {project_name}</span>
+        //     <div onClick={() => {
+        //         if (status !== "Completed" && user_id === employee) {
+        //             console.log(user_id, employee)
+        //             onEditClick(props)
+        //         }
+        //     }} className={`bg-white flex flex-col px-5 py-2 rounded-lg h-full border-borderColor-0 shadow-md ${(status !== "Completed" && user_id === employee) ? "cursor-pointer" : ""}`} >
+        //         {/* <div class="flex flex-wrap py-1">
+        //             <span class={`inline-flex  bg-opacity-1 text-xs font-medium mr-2 px-2.5 py-2 rounded-lg`} style={{
+        //                 backgroundColor: `${getRandomColor()}`
+        //             }}> {project_name}</span>
+        //         </div> */}
+        //         <div className='flex justify-between items-center'>
+        //         <div className='flex rounded-lg flex-wrap items-center'>
+        //             <img className='w-6 h-6 rounded-full' src={imagesList.employee_default_img.src} alt=''></img>
+        //             <div className='flex flex-col ml-3'>
+        //                 <p className='text-5 text-black text-sm font-quicksand font-semibold'>{employee_name}</p>
+        //             </div>
         //         </div>
 
+        //             <div className='ml-auto'>
+        //                 <span className="text-gray-500 ml-auto mt-1 text-xs font-quicksand font-semibold">{getTimeAgo(created_at)}</span>
+        //             </div>
+        //         </div>
+
+        //         <div className="flex justify-between items-center mt-4">
+        //             <div className='' >
+        //                 <span className="text-xs font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-md text-lightBlue-600 bg-lightBlue-200 last:mr-0 mr-1">
+        //                     {project_name}</span>
+        //                 {/* <span style={{ fontSize: '10px' }} className="font-semibold font-quicksand inline-block py-1">
+        //                     {module_name}</span> */}
+        //             </div>
+        //             <div className='mt-4'>
+        //                 <span className={`text-xs font-quicksand font-semibold inline-block py-1 px-0 rounded-full ${expiredCheck(dead_line) ? 'text-red-400' : 'text-green-400'} last:mr-0 mr-1`}>
+        //                     <i className="fa-solid fa-clock mr-1"></i> {moment(dead_line).format(DateFormatCard)}
+        //                 </span>
+        //             </div>
+
+        //         </div>
+
+
         //         <div className='flex'>
+                    
 
         //             <div className='flex flex-col w-full'>
         //                 <div className='max-h-14 align-top font-quicksand font-medium flex w-full'>
-        //                     <a href={description_link === null ? null : description_link}
-        //                         target="blank"
-        //                         className={`text-5 ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg line-clamp-2 text-ellipsis overflow-x-hidden`}>
+        //                     <a href={description_link === null ? null : `http://${description_link}`}
+        //                         target='_blank'
+        //                         className={`text-5 flex-wrap ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg truncate w-full`}>
         //                         {task_description}
         //                     </a>
         //                     {/* <p className={`text-5 ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg line-clamp-2`}></p> */}
         //                 </div>
-        //                 <span className="text-sm font-quicksand font-medium inline-block pb-1 text-blueGray-600 last:mr-0 mr-1 truncate text-ellipsis w-full">
+        //                 <span className="text-sm font-quicksand font-medium inline-block pb-1 text-blueGray-600 last:mr-0 mr-1 truncate w-full">
         //                     {detailed_description}
         //                 </span>
 
@@ -413,32 +483,17 @@ const DashboardCard = (props) => {
 
         //         </div>
 
-        //         <div onClick={() => {
-        //             if (status !== "Completed" && user_id === employee) {
-        //                 console.log(user_id, employee)
-        //                 onEditClick(props)
-        //             }
-        //         }} className={`${(status !== "Completed" && user_id === employee) ? "cursor-pointer" : ""}`}>
-        //             <div className='flex justify-between my-3'>
+        //         <div  className={`${(status !== "Completed" && user_id === employee) ? "cursor-pointer" : ""}`}>
+        //             {/* <div className='flex justify-between my-3'>
         //                 <span className="text-xs font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-md text-lightBlue-600 bg-lightBlue-200 last:mr-0 mr-1">
         //                     {project_name}</span>
         //                 <span className="text-xs font-semibold font-quicksand inline-block py-1">
         //                     {module_name}</span>
-        //             </div>
+        //             </div> */}
 
-        //             <div className="flex flex-wrap my-2">
-        //                 <div className='mr-auto'>
-        //                     <span className={`text-xs font-quicksand font-semibold inline-block py-1 px-0 rounded-full ${expiredCheck(dead_line) ? 'text-red-400' : 'text-green-400'} last:mr-0 mr-1`}>
-        //                         <i className="fa-solid fa-clock mr-1"></i> {moment(dead_line).format(DateFormatCard)}
-        //                     </span>
-        //                 </div>
 
-        //                 <div className='ml-auto'>
-        //                     <span className="text-gray-500 ml-auto mt-1 text-xs font-quicksand font-semibold">{getTimeAgo(created_at)}</span>
-        //                 </div>
-        //             </div>
 
-        //             <div className='flex flex-wrap justify-between items-center'>
+        //             <div className='flex flex-wrap justify-between '>
         //                 <span className="text-sm font-quicksand font-normal inline-block py-1 text-blueGray-600 last:mr-0 mr-1 self-center">
         //                     Assigned By: {assignee_name === employee_name ? <span className='font-quicksand font-semibold'>Self</span> : <span className='font-quicksand font-semibold'>{assignee_name}</span>}
         //                 </span>
@@ -459,12 +514,6 @@ const DashboardCard = (props) => {
         //             </div>
         //         }
 
-        //         <div className='flex rounded-lg flex-wrap mt-2 items-center'>
-        //             <img className='w-6 h-6 rounded-full' src={imagesList.employee_default_img.src} alt=''></img>
-        //             <div className='flex flex-col ml-3'>
-        //                 <p className='text-5 text-black text-sm font-quicksand font-semibold'>{employee_name}</p>
-        //             </div>
-        //         </div>
         //     </div>
         // </React.Fragment>
         <React.Fragment>

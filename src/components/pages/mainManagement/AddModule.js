@@ -114,21 +114,22 @@ export default function AddModule(props) {
                             </GidInput>
                         </div>
 
-                        <div className="my-4 flex flex-col">
-                            <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={<span><i className="fa-solid fa-calendar-days text-base mb-1 mr-1"></i>Deadline</span>} />
-                            <IconInput
-                                id={"module_deadline_datetime"}
-                                inputType={"datetime"}
-                                disable={false}
-                                className={``}
-                                value={formData.deadline ? formData.deadline : ""}
-                                onTextChange={(e) => setFormData((previous) => ({ ...previous, deadline: e.target.value }))}
-                                onBlurEvent={() => {}}
-                                placeholder={""}
-                                isRightIcon={true}
-                                >
-                            </IconInput>
-                        </div>
+                      <div className="my-4 flex flex-col">
+                          <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={<span><i className="fa-solid fa-calendar-days text-base mb-1 mr-1"></i>Deadline</span>} />
+                          <IconInput
+                              id={"task_end_datetime"}
+                              inputType={"datetime-local"}
+                              disable={false}
+                              className={``}
+                              value={formData.deadline ? formData.deadline : ""}
+                              onTextChange={(e) => setFormData((previous) => ({ ...previous, deadline: e.target.value }))}
+                              onBlurEvent={() => { }}
+                              placeholder={""}
+                              isRightIcon={true}
+                          >
+                          </IconInput>
+                      </div>
+                      
                     </div>
 
                     <div className="p-6 border-solid border-slate-200 rounded-b">

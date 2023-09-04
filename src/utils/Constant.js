@@ -18,7 +18,8 @@ export const filter_and_sort=`filter_and_sort`;
 export const add_project = `add_project`;
 export const add_project_module = `add_project_module`;
 export const file_upload = "file_upload";
-
+export const delete_notification = "delete_notification";
+export const add_meeting_link="add_meeting_link"
 export const ROLES = [
     {role: "Employee", short_name: "employee", id:1},
     {role: "Admin", short_name: "admin", id:2},

@@ -117,9 +117,9 @@ function MainLayout() {
       <audio ref={audioPlayer} src={NotificationSound} />
       <div className="flex w-screen h-screen bg-screenBackgroundColor relative overflow-hidden">
         <SidebarContainer></SidebarContainer>
-        <div className="w-full overflow-hidden flex-1">
+        <div className="w-full flex-1">
           <Navbar logOutClick={logOutFromTheApp}></Navbar>
-          <div className="p-2 overflow-auto" style={{height:'100%'}}>
+          <div className="p-2 overflow-auto" style={{ height: '100%' }}>
             <Routes>
               {
                 mainRoutes.map((route, index) =>

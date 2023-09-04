@@ -35,7 +35,7 @@ const Navbar = ({ logOutClick }) => {
         }
     };
     return (
-        <div className='overflow-hidden'>
+        <div className=''>
             <nav className="bg-white p-4 flex flex-col sm:flex-row items-center justify-between" >
                 <div className="flex items-center justify-between sm:justify-start w-full">
                     <div className="flex items-center space-x-4">
@@ -69,7 +69,7 @@ const Navbar = ({ logOutClick }) => {
                                 <span className="ml-2 text-gray-600 text-sm">{userInfo ? userInfo.name : ""}</span>
                                 <span className="ml-2 text-gray-600 text-sm">{workspace ? workspace.role : ""}</span>
                             </div>
-                            <div className='relative flex mr-5'>
+                            <div className='relative flex mr-5 cursor-pointer'>
                                 <img
                                     ref={imgRef}
                                     src={imagesList.profile.src}
@@ -85,7 +85,7 @@ const Navbar = ({ logOutClick }) => {
                                         <ul className='font-medium font-quicksand text-sm w-40 p-2'>
                                             {
                                                 MENU.map((menu) => (
-                                                    <li key={menu} className="p-2 rounded-md hover:bg-blue-50" >{menu}</li>
+                                                    <li key={menu} className="p-2 rounded-md hover:bg-blue-50 cursor-pointer" >{menu}</li>
                                                 ))
                                             }
                                         </ul>
