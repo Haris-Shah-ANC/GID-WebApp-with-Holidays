@@ -31,7 +31,7 @@ export default function CalendarView(props) {
     const [postBody, setPostBody] = useState({ "workspace_id": workspace.work_id, projects: [], "tasks": ["In-Progress", "On Hold"], "employees": [user_id] })
     const [listOfEmployees, setEmployees] = useState([])
     const [selectedUser, selectUser] = useState(null)
-
+    const [collapseItem,setCollapseItem]=useState(null)
     const [taskCategoryIndex, setTaskCategoryIndex] = useState(0)
     const [btnLabelList, setTaskCount] = useState([
         { index: 0, title: "In Progress", count: 0 },
@@ -47,13 +47,8 @@ export default function CalendarView(props) {
     useEffect(() => {
         getEmployeeResultsApi()
     }, [])
-    // useEffect(() => {
-    //     const weekDays = getCurrentWeekDays(weekNumber)
-    //     getTaskList(weekDays[0].day.format("YYYY-MM-DD"), weekDays[weekDays.length - 1].day.format("YYYY-MM-DD"), weekDays)
-    // }, [weekNumber])
 
     useEffect(() => {
-        // let getTasksUrl = get_task() + `?created_at__date__gte=&created_at__date__lte=&workspace=${work_id}&project__in=${postBody.projects.join(",")}&employee__in=${taskCategoryIndex === 3 ? "" : postBody.employees.join(",")}&status__in=${postBody.tasks.join(",")}`
         const weekDays = getCurrentWeekDays(weekNumber)
         let fromDate = weekDays[0].day.format("YYYY-MM-DD")
         let toDate = weekDays[weekDays.length - 1].day.format("YYYY-MM-DD")
@@ -177,8 +172,8 @@ export default function CalendarView(props) {
             setPostBody({ ...postBody, tasks: ["Pending"] })
         } else if (index === 2) {
             setPostBody({ ...postBody, tasks: ["Completed"] })
-        } else if (index === 3){
-            setPostBody({ ...postBody, tasks: ["In-Progress", "On Hold","Pending","Completed"] })
+        } else if (index === 3) {
+            setPostBody({ ...postBody, tasks: ["In-Progress", "On Hold", "Pending", "Completed"] })
         }
         setTaskCategoryIndex(index)
     }
@@ -230,7 +225,60 @@ export default function CalendarView(props) {
         })
         setPostBody({ ...postBody, projects: [], })
     }
+    const getInitialsOfEmployeeName = (name) => {
+        let nameArray = String(name).split(" ")
+        if (nameArray.length > 1 && nameArray[0] != " ") {
+            return nameArray[0][0] + nameArray[1][0]
+        } else {
+            return nameArray[0][0]
+        }
+    }
 
+    
+
+    const TaskItem = (props) => {
+        const { item, onTaskClick, onTaskStatusBtnClick, index } = props
+        return (
+            <div  className={`border-b py-2 flex items-center group hover:border-b-blue-300 ${item.id && 'cursor-pointer'}`} onClick={() => {
+                if (item.status && item.status != "Completed") {
+                    onTaskClick(item, index)
+                }
+            }} >
+
+                {item.id ?
+                    <>
+                        <div class="bg-blue-200 w-[28px] h-6 inline-flex items-center justify-center rounded-full text-xs p-1 uppercase tracking-wider text-blue-800" >
+                            {getInitialsOfEmployeeName(item.employee_name)}
+
+                        </div>
+                        <Tooltip text={item.employee_name} />
+
+                    </> :
+                    <div className='h-6'></div>
+                }
+                <span className={`px-1 w-full font-quicksand font-medium text-sm tracking-normal ${collapseItem==item.id ? "" : "truncate"} ${item.status === "Completed" ? "line-through decoration-gray-300" : ""}`}>{item.task_description}</span>
+                {
+                    item.status === "Completed" ? <svg onClick={() => alert("test")} className='self-end group-hover:fill-gray-500 fill-white' xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
+                        
+                        <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z" /></svg> :
+                        
+                        <svg onClick={(e) => {
+                            if(collapseItem==item.id){
+                                setCollapseItem(null)
+                            }else{
+                                setCollapseItem(item.id)
+                            }
+                            e.stopPropagation()
+                        }} viewBox="0 0 24 24" fill="currentColor" height="24px" width="24px" className='self-end group-hover:fill-gray-500 fill-white m-2'>
+                            <path d="M16.293 9.293L12 13.586 7.707 9.293l-1.414 1.414L12 16.414l5.707-5.707z" />
+                        </svg>
+                    // <svg onClick={() => alert("test")} className='self-end group-hover:fill-gray-500 fill-white' xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512"><path d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L369 209z"/></svg>
+                }
+
+            </div>
+        )
+
+    }
 
     return (
         <React.Fragment>
@@ -323,33 +371,12 @@ export default function CalendarView(props) {
                 </div>
 
             </div>
-            <ModelComponent showModal={showModal} setShowModal={setShowModal} data={formData} onFilterApply={onFilterApply} onFilterClear={onFilterClear} from={"calender_view"}/>
+            <ModelComponent showModal={showModal} setShowModal={setShowModal} data={formData} onFilterApply={onFilterApply} onFilterClear={onFilterClear} from={"calender_view"} />
             {isNetworkCallRunning && <Loader></Loader>}
         </React.Fragment>
     )
 }
 
 
-const TaskItem = (props) => {
-    const { item, onTaskClick, onTaskStatusBtnClick, index } = props
-    return (
-        <div className={`border-b py-2 flex items-center group hover:border-b-blue-300 ${item.id && 'cursor-pointer'}`} data-tooltip-target="tooltip-default" onClick={() => {
-            if (item.status && item.status != "Completed") {
-                onTaskClick(item, index)
-            }
-        }} >
-            {item.id &&
-                <Tooltip text={item.employee_name} />
-            }
 
-            <span className={`truncate px-1 h-5 w-full font-quicksand font-medium text-sm tracking-normal ${item.status === "Completed" ? "line-through decoration-gray-300" : ""}`}>{item.task_description}</span>
-            {
-                item.status === "Completed" ? <svg className='self-end group-hover:fill-gray-500 fill-white' xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
-                    <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z" /></svg> :
-                    <svg className='self-end group-hover:fill-gray-500 fill-white' xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512"><path d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L369 209z"
-                        onClick={() => { onTaskStatusBtnClick() }} /></svg>
-            }
-        </div>
-    )
 
-}

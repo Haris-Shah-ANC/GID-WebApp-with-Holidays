@@ -1,5 +1,6 @@
 import Cookies from 'js-cookie'
-
+import { routesName } from './routesName';
+import { history } from '../utils/Utils';
 ////////////////////////////access-token //////////////////////////////////
 export const setAccessToken = (token) => {
     Cookies.set('access-token', token);
@@ -13,18 +14,19 @@ export const setLoginDetails = (info) => {
     Cookies.set('login-detail', JSON.stringify(info));
 }
 export const getLoginDetails = () => {
-    return Cookies.get('login-detail') ? JSON.parse(Cookies.get('login-detail')) : null;
+    if (Cookies.get('login-detail')) {
+        return Cookies.get('login-detail') ? JSON.parse(Cookies.get('login-detail')) : null;
+    }
 }
-
 //////////////////////////////gid-loginStatus////////////////////////////////
 export const setLoginStatus = (info) => {
     Cookies.set('gid-loginStatus', info);
 }
 export const isAuthenticated = () => {
 
-    if (Cookies.get('gid-loginStatus') === "true"){
+    if (Cookies.get('gid-loginStatus') === "true") {
         return true;
-    }else{
+    } else {
         return false;
     }
 }
@@ -36,7 +38,7 @@ export const setWorkspaceInfo = (info) => {
 export const getWorkspaceInfo = () => {
     if (Cookies.get('workspace-info')) {
         return JSON.parse(Cookies.get('workspace-info'));
-    }
+    } 
 }
 
 

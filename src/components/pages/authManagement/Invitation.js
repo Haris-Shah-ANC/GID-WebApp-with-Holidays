@@ -23,20 +23,20 @@ export default function Invitation(props) {
     }, [query])
 
 
-  return (
-    <React.Fragment>
-        
-        { queryData && !queryData.isUserRegistered && <Card className={"p-5"} component={<InviteNewEmployee queryData={queryData} token={query.get("token")} />}></Card> }
+    return (
+        <React.Fragment>
 
-        { queryData && queryData.isUserRegistered && <Card className={"p-5"} component={<AddEmployee queryData={queryData} token={query.get("token")} />}></Card> }
+            {queryData && !queryData.isUserRegistered && <Card className={"p-5"} component={<InviteNewEmployee queryData={queryData} token={query.get("token")} />}></Card>}
 
-    </React.Fragment>
-  )
+            {queryData && queryData.isUserRegistered && <Card className={"p-5"} component={<AddEmployee queryData={queryData} token={query.get("token")} />}></Card>}
+
+        </React.Fragment>
+    )
 }
 
 
 const InviteNewEmployee = (props) => {
-    const {queryData, token} = props
+    const { queryData, token } = props
     const navigate = useNavigate()
     const initial_data = {
         email_id: null,
@@ -47,14 +47,13 @@ const InviteNewEmployee = (props) => {
         employee_name: null,
         token: token
     }
-    const [formData, setFormData] = useState({...initial_data})
+    const [formData, setFormData] = useState({ ...initial_data })
 
     useEffect(() => {
-        if(queryData){
-            setFormData({...formData, workspace_name: queryData.workspace_name, email_id: queryData.email_id})
+        if (queryData) {
+            setFormData({ ...formData, workspace_name: queryData.workspace_name, email_id: queryData.email_id })
         }
     }, [queryData])
-
     const createWorkspace = async () => {
         let validation_data = [
             { key: "first_name", message: `First name field left empty!` },
@@ -70,8 +69,7 @@ const InviteNewEmployee = (props) => {
                 url: getTheUserRegisterWithWorkspaceUrl(),
                 method: 'post',
                 navigate: navigate,
-                // dispatch: dispatch,
-                data: {...formData },
+                data: { ...formData },
             })
             if (res.success) {
                 setLoginDetails(res);
@@ -82,7 +80,6 @@ const InviteNewEmployee = (props) => {
                         url: get_workspace(),
                         method: 'get',
                         navigate: navigate,
-                        // dispatch: dispatch,
                     })
                     if (res_workspace.success) {
                         setLoginStatus("true");
@@ -121,86 +118,86 @@ const InviteNewEmployee = (props) => {
             <form>
                 <div className="relative w-full flex flex-col">
                     <CustomLabel label={`First Name`} />
-                    <GidInput 
-                        inputType={"text"} 
+                    <GidInput
+                        inputType={"text"}
                         id={"first_name"}
-                        disable={false} 
-                        className={""} 
-                        value={formData.first_name ? formData.first_name : ''} 
-                        onBlurEvent={() => {}}
-                        placeholderMsg = "Enter first name"
+                        disable={false}
+                        className={""}
+                        value={formData.first_name ? formData.first_name : ''}
+                        onBlurEvent={() => { }}
+                        placeholderMsg="Enter first name"
                         onTextChange={(event) => { setFormData({ ...formData, first_name: event.target.value }) }}>
                     </GidInput>
                 </div>
                 <div className="relative w-full flex flex-col mt-2">
                     <CustomLabel label={`Last Name`} />
-                    <GidInput 
-                        inputType={"text"} 
+                    <GidInput
+                        inputType={"text"}
                         id={"last_name"}
-                        disable={false} 
-                        className={""} 
-                        value={formData.last_name ? formData.last_name : ''} 
-                        onBlurEvent={() => {}}
-                        placeholderMsg = "Enter last name"
+                        disable={false}
+                        className={""}
+                        value={formData.last_name ? formData.last_name : ''}
+                        onBlurEvent={() => { }}
+                        placeholderMsg="Enter last name"
                         onTextChange={(event) => { setFormData({ ...formData, last_name: event.target.value }) }}>
                     </GidInput>
                 </div>
                 <div className="relative w-full flex flex-col mt-2">
                     <CustomLabel label={`Email`} />
-                    <GidInput 
-                        inputType={"email"} 
+                    <GidInput
+                        inputType={"email"}
                         id={"email-login"}
-                        disable={true} 
-                        className={"bg-blueGray-100 text-gray-500"} 
-                        value={formData.email_id ? formData.email_id : ''} 
-                        onBlurEvent={() => {}}
-                        placeholderMsg = "Enter Email"
+                        disable={true}
+                        className={"bg-blueGray-100 text-gray-500"}
+                        value={formData.email_id ? formData.email_id : ''}
+                        onBlurEvent={() => { }}
+                        placeholderMsg="Enter Email"
                         onTextChange={(event) => { setFormData({ ...formData, email_id: event.target.value }) }}>
                     </GidInput>
                 </div>
                 <div className="relative flex flex-col mt-2 w-full">
                     <CustomLabel label={`Password`} />
-                    <GidInput 
-                        inputType={"password"} 
+                    <GidInput
+                        inputType={"password"}
                         id={"password"}
-                        disable={false} 
-                        className={""} 
-                        value={formData.password ? formData.password : ''} 
-                        onBlurEvent={() => {}}
-                        placeholderMsg = "Enter Password"
+                        disable={false}
+                        className={""}
+                        value={formData.password ? formData.password : ''}
+                        onBlurEvent={() => { }}
+                        placeholderMsg="Enter Password"
                         onTextChange={(event) => { setFormData({ ...formData, password: event.target.value }) }}>
                     </GidInput>
                 </div>
                 <div className="relative flex flex-col mt-2 w-full">
                     <CustomLabel label={`Confirm Password`} />
-                    <GidInput 
-                        inputType={"password"} 
+                    <GidInput
+                        inputType={"password"}
                         id={"re-enter-password"}
-                        disable={false} 
-                        className={""} 
-                        value={formData.confirmPassword ? formData.confirmPassword : ''} 
-                        onBlurEvent={() => {}}
-                        placeholderMsg = "Enter Password"
+                        disable={false}
+                        className={""}
+                        value={formData.confirmPassword ? formData.confirmPassword : ''}
+                        onBlurEvent={() => { }}
+                        placeholderMsg="Enter Password"
                         onTextChange={(event) => { setFormData({ ...formData, confirmPassword: event.target.value }) }}>
                     </GidInput>
                 </div>
 
                 <div className="relative flex flex-col mt-2 w-full">
                     <CustomLabel label={`Workspace`} />
-                    <GidInput 
-                        inputType={"text"} 
+                    <GidInput
+                        inputType={"text"}
                         id={"workspace-name"}
-                        disable={true} 
-                        className={"bg-blueGray-100 text-gray-500"} 
-                        value={formData.workspace_name ? formData.workspace_name : ''} 
-                        onBlurEvent={() => {}}
-                        placeholderMsg = "Enter Password"
+                        disable={true}
+                        className={"bg-blueGray-100 text-gray-500"}
+                        value={formData.workspace_name ? formData.workspace_name : ''}
+                        onBlurEvent={() => { }}
+                        placeholderMsg="Enter Password"
                         onTextChange={(event) => { setFormData({ ...formData, confirmPassword: event.target.value }) }}>
                     </GidInput>
                 </div>
 
                 <PlainButton onButtonClick={createWorkspace} title={"Submit"} className={"w-full mt-5 bg-blue-600 hover:bg-blue-700"} ></PlainButton>
-                
+
             </form>
 
             <hr className="mt-6 border-b-1 border-blueGray-200" />
@@ -212,11 +209,11 @@ const InviteNewEmployee = (props) => {
 const AddEmployee = (props) => {
     const { queryData, token } = props
     const navigate = useNavigate()
-    const [formData, setFormData] = useState({workspace_name: "", password: null, email_id: null, token: token})
+    const [formData, setFormData] = useState({ workspace_name: "", password: null, email_id: null, token: token })
 
     useEffect(() => {
-        if(queryData){
-            setFormData({...formData, workspace_name: queryData.workspace_name, email_id: queryData.email_id})
+        if (queryData) {
+            setFormData({ ...formData, workspace_name: queryData.workspace_name, email_id: queryData.email_id })
         }
     }, [queryData])
 
@@ -284,46 +281,46 @@ const AddEmployee = (props) => {
             <form>
                 <div className="relative flex flex-col mt-2 w-full">
                     <CustomLabel label={`Workspace`} />
-                    <GidInput 
-                        inputType={"text"} 
+                    <GidInput
+                        inputType={"text"}
                         id={"workspace-name"}
-                        disable={true} 
-                        className={"bg-blueGray-100 text-gray-500"} 
-                        value={formData.workspace_name ? formData.workspace_name : ''} 
-                        onBlurEvent={() => {}}
-                        placeholderMsg = "Enter Password"
+                        disable={true}
+                        className={"bg-blueGray-100 text-gray-500"}
+                        value={formData.workspace_name ? formData.workspace_name : ''}
+                        onBlurEvent={() => { }}
+                        placeholderMsg="Enter Password"
                         onTextChange={(event) => { setFormData({ ...formData, workspace_name: event.target.value }) }}>
                     </GidInput>
                 </div>
                 <div className="relative w-full flex flex-col mt-2">
                     <CustomLabel label={`Email`} />
-                    <GidInput 
-                        inputType={"email"} 
+                    <GidInput
+                        inputType={"email"}
                         id={"email-login"}
-                        disable={true} 
-                        className={"bg-blueGray-100 text-gray-500"} 
-                        value={formData.email_id ? formData.email_id : ''} 
-                        onBlurEvent={() => {}}
-                        placeholderMsg = "Enter Email"
+                        disable={true}
+                        className={"bg-blueGray-100 text-gray-500"}
+                        value={formData.email_id ? formData.email_id : ''}
+                        onBlurEvent={() => { }}
+                        placeholderMsg="Enter Email"
                         onTextChange={(event) => { setFormData({ ...formData, email_id: event.target.value }) }}>
                     </GidInput>
                 </div>
                 <div className="relative flex flex-col mt-2 w-full">
                     <CustomLabel label={`Password`} />
-                    <GidInput 
-                        inputType={"password"} 
+                    <GidInput
+                        inputType={"password"}
                         id={"password"}
-                        disable={false} 
-                        className={""} 
-                        value={formData.password ? formData.password : ''} 
-                        onBlurEvent={() => {}}
-                        placeholderMsg = "Enter Password"
+                        disable={false}
+                        className={""}
+                        value={formData.password ? formData.password : ''}
+                        onBlurEvent={() => { }}
+                        placeholderMsg="Enter Password"
                         onTextChange={(event) => { setFormData({ ...formData, password: event.target.value }) }}>
                     </GidInput>
                 </div>
 
                 <PlainButton onButtonClick={createWorkspace} title={"Accept"} className={"w-full mt-5 bg-blue-600 hover:bg-blue-700"} ></PlainButton>
-                
+
             </form>
 
             <hr className="mt-6 border-b-1 border-blueGray-200" />

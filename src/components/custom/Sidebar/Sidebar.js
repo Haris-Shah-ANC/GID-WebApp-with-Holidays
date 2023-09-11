@@ -76,6 +76,14 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, sideNavigationRef }) => {
     }
   }, [state.workspace])
 
+  const getActiveRoute = () => {
+    if (activeItem == "Calender") {
+      return "calender_view"
+    } else {
+      return "dashboard"
+    }
+  }
+  
   return (
     <>
       <div className="flex flex-col h-full mx-2 bg-white" ref={sideNavigationRef}>
@@ -122,7 +130,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, sideNavigationRef }) => {
         </div>
 
       </div>
-      <ModelComponent showModal={showModal} setShowModal={setShowModal} />
+      <ModelComponent showModal={showModal} setShowModal={setShowModal} from={getActiveRoute()} />
 
     </>
 
@@ -133,13 +141,13 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, sideNavigationRef }) => {
 export default Sidebar;
 
 const ChildItemComponent = (props) => {
-  const { item, activeItem, isSidebarOpen, setIsSidebarOpen, setShowModal, navigate ,showModal} = props;
+  const { item, activeItem, isSidebarOpen, setIsSidebarOpen, setShowModal, navigate, showModal } = props;
   const { childItem } = item;
   const [workspaces, setWorkSpaces] = useState([])
   const [meetingLinkList, setMeetingLinkList] = useState([])
   const { work_id } = getWorkspaceInfo()
   const dispatch = Actions.getDispatch(useContext);
-  const [isVisible,setModalVisible]=useState(false)
+  const [isVisible, setModalVisible] = useState(false)
   const [collapse, setCollapse] = React.useState(false);
   const onClickedHandler = () => {
     setCollapse(!collapse)
@@ -179,7 +187,7 @@ const ChildItemComponent = (props) => {
   return (
 
     <React.Fragment>
-      <ModelComponent showModal={isVisible} setShowModal={setModalVisible}  onSuccess={()=>fetchMeetingLinks()}/>
+      <ModelComponent showModal={isVisible} setShowModal={setModalVisible} onSuccess={() => fetchMeetingLinks()} />
 
       <li
         onClick={() => onClickedHandler()}

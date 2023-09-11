@@ -126,12 +126,13 @@ export default function Analytics(props) {
 const AddNotification = (props) => {
     const { onNewPeriodicNotificationAdd } = props
     const { work_id } = getWorkspaceInfo();
+    const navigate = useNavigate();
     const { user_id } = getLoginDetails();
     const [listOfNotificationTypes, setNotificationTypes] = useState([])
     const [selectedNotificationType, selectNotificationType] = useState(null)
     const [timesList, setTimesList] = useState([{ time: "", hasInvalidTime: false }])
 
-    const navigate = useNavigate();
+   
     const dispatch = Actions.getDispatch(React.useContext);
 
     const initial_data = {

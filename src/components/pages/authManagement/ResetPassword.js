@@ -17,7 +17,9 @@ export default function ResetPassword(props) {
     const [queryData, setQueryData] = useState(null)
     
     useEffect(() => {
+        console.log("QUERY DATA", query.get("token"))
         let queryData = decodeToken(query.get("token"))
+     
         setFormData({...formData, token: query.get("token")})
         setQueryData(queryData)
     }, [query])
@@ -27,9 +29,9 @@ export default function ResetPassword(props) {
     const updatePassword = async () => {
         let validation_data = [
             { key: "new_password", message: `Enter Valid password` },
-            { key: "confirm_password", validation_data: formData.new_password != formData.confirm_password, message: `Password mismatch!` },
+            { key: "confirm_password", validation: formData.new_password !== formData.confirm_password, message: `Password mismatch!` },
         ]
-        const { isValid, message } = isFormValid(formData, validation_data);
+        const { isValid, message } = isFormValid(formData, validation_data);    
         if (isValid) {
             let res = await apiAction_social({
                 url: getTheUpdatePasswordUrl(),

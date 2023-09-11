@@ -83,7 +83,7 @@ export default function AttendanceReport(props) {
     }
 
     const showPrompt = () => {
-        const isOk = window.confirm("Are you sure! You want sync with razorpay data ? ")
+        const isOk = window.confirm("Are you sure! You want sync data with RazorPay? ")
         if (isOk) {
             syncAttendanceWithRazorPay()
         }

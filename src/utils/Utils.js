@@ -247,6 +247,7 @@ export const decodeToken = (token) => {
 
 export function useQuery() {
   const { search } = useLocation();
+  // console.log("URL DATA", new URLSearchParams(useLocation().search).get("token"), useMemo(() => new URLSearchParams(search), [search]))
   return useMemo(() => new URLSearchParams(search), [search]);
 }
 
@@ -254,3 +255,8 @@ export const socials = [
   { icon: "google", button: { href: "#pablo" } },
   { icon: "facebook", button: { href: "#pablo" } },
 ]
+
+export const history = {
+  navigate: null,
+  location: null
+};

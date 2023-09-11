@@ -25,7 +25,6 @@ function MainLayout() {
 
   const ProtectedRoute = ({ children }) => {
     // if (false) {
-
     if (!isAuthenticated()) {
       return <Navigate to={"/auth" + routesName.login.path} replace={true} />;
     } else {

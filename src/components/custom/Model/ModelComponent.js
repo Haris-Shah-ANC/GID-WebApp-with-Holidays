@@ -33,6 +33,9 @@ const ModelComponent = (props) => {
                     {showModal === add_task &&
                         <CreateNewTask setShowModal={setShowModal} data={data} from={from} />
                     }
+                    {showModal === add_project_module &&
+                        <AddModule setShowModal={setShowModal} data={data} onFilterApply={onFilterApply} onFilterClear={onFilterClear} />
+                    }
                     {showModal === filter_and_sort &&
                         <FilterAndSort setShowModal={setShowModal} data={data} onFilterApply={onFilterApply} onFilterClear={onFilterClear} />
                     }

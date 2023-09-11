@@ -100,7 +100,6 @@ const CreateNewTask = (props) => {
             { key: "dead_line", message: 'Deadline field left empty!' },
         ]
         const { isValid, message } = isFormValid(formData, validation_data);
-        console.log("IS VALID", isValid)
         if (isValid) {
             let res = await apiAction({
                 method: 'post',
@@ -117,11 +116,6 @@ const CreateNewTask = (props) => {
                 } else if (from === "dashboard") {
                     navigate(routesName.dashboard.path)
                 }
-                // if (formData.task_id) {
-                // navigate(routesName.timeLine.path);
-                // } else {
-                //     navigate(routesName.dashboard.path);
-                // }
             } else {
                 notifyErrorMessage(res.detail)
             }
@@ -129,7 +123,7 @@ const CreateNewTask = (props) => {
             notifyErrorMessage(message)
         }
     };
-
+console.log("FROM",from)
     return (
 
         <div className="relative my-6 w-full mx-2 sm:max-w-sm md:max-w-md overflow-y-auto overflow-x-auto">
@@ -146,7 +140,6 @@ const CreateNewTask = (props) => {
                 <form>
 
                     <div className="relative px-5 pt-2 flex-auto ">
-                        <div className='flex-row flex items-center justify-between'>
                             <div className="my-1 flex flex-col">
                                 <CustomLabel label={`Select  Project`} className={'font-quicksand font-semibold text-sm mb-1'} />
                                 <Dropdown disabled={formData.task_id ? true : false} placeholder={true} options={projectsResults} optionLabel={'project_name'} value={selectedProject ? selectedProject : { project_name: 'Select project' }} setValue={(value) => setFormData((previous) => ({ ...previous, project_id: value ? value.project_id : null }))} />
@@ -158,7 +151,6 @@ const CreateNewTask = (props) => {
                                     <Dropdown placeholder={true} options={moduleResults} optionLabel={'module_name'} value={selectedModule ? selectedModule : { module_name: 'Select project' }} setValue={(value) => setFormData((previous) => ({ ...previous, module_id: value ? value.module_id : null }))} />
                                 </div>
                             }
-                        </div>
 
 
                         <div className="mt-4 flex flex-col">

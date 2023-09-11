@@ -2,12 +2,12 @@ import React, { useContext, useEffect, useState } from 'react';
 import moment from 'moment';
 import Card from '../../custom/Cards/Card';
 import { apiAction } from '../../../api/api';
-import { json, useNavigate } from 'react-router-dom';
+import { json, useLocation, useNavigate } from 'react-router-dom';
 import * as Actions from '../../../state/Actions';
 import Dropdown from '../../custom/Dropdown/Dropdown';
 import { DateFormatCard, add_task, create_new_work_space, filter_and_sort, imagesList } from '../../../utils/Constant';
 import ModelComponent from '../../custom/Model/ModelComponent';
-import { isFormValid, notifyErrorMessage, notifySuccessMessage, formattedDeadline } from '../../../utils/Utils'
+import { isFormValid, notifyErrorMessage, notifySuccessMessage, formattedDeadline, history } from '../../../utils/Utils'
 
 import {
     get_task,
@@ -36,10 +36,12 @@ import { Box, Pagination, Stack } from '@mui/material';
 const Dashboard = () => {
     const navigate = useNavigate();
     const dispatch = Actions.getDispatch(React.useContext);
+    history.navigate = useNavigate();
+    history.location = useLocation();
 
-    const { user_id } = getLoginDetails();
+    const { user_id } = getLoginDetails(useNavigate());
     const state = Actions.getState(useContext)
-    const { work_id } = getWorkspaceInfo();
+    const { work_id } = getWorkspaceInfo(useNavigate());
     const [tasksResults, setTasksResults] = useState([]);
     const [taskCategoryIndex, setTaskCategoryIndex] = useState(0)
     const [listOfEmployees, setEmployees] = useState([])
@@ -111,7 +113,6 @@ const Dashboard = () => {
         }
 
     }
-
     // const getAllTaskList = async () => {
     //     let res = await apiAction({ url: get_task(work_id), method: 'get', navigate: navigate, dispatch: dispatch })
     //     if (res.success) {
@@ -340,7 +341,7 @@ const Filter = (props) => {
 }
 
 const DashboardCard = (props) => {
-    const { user_id } = getLoginDetails();
+    const { user_id } = getLoginDetails(useNavigate());
     const [popoverShow, setPopoverShow] = React.useState(false);
     const btnRef = React.createRef();
     const popoverRef = React.createRef();
