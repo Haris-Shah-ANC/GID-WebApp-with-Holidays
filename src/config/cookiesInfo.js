@@ -16,6 +16,10 @@ export const setLoginDetails = (info) => {
 export const getLoginDetails = () => {
     if (Cookies.get('login-detail')) {
         return Cookies.get('login-detail') ? JSON.parse(Cookies.get('login-detail')) : null;
+    } else {
+        window.location.reload()
+        // navigate("/auth" + routesName.login.path)
+
     }
 }
 //////////////////////////////gid-loginStatus////////////////////////////////
@@ -35,10 +39,13 @@ export const isAuthenticated = () => {
 export const setWorkspaceInfo = (info) => {
     Cookies.set('workspace-info', JSON.stringify(info));
 }
-export const getWorkspaceInfo = () => {
+export const getWorkspaceInfo = (navigate) => {
     if (Cookies.get('workspace-info')) {
         return JSON.parse(Cookies.get('workspace-info'));
-    } 
+    }else{
+        // navigate("/auth" + routesName.login.path)
+        window.location.reload()
+    }
 }
 
 

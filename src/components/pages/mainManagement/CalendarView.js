@@ -284,7 +284,7 @@ export default function CalendarView(props) {
         <React.Fragment>
             {/* <ModelComponent showModal={showModal} setShowModal={setShowModal} data={formData} onFilterApply={onFilterApply} onFilterClear={onFilterClear} /> */}
 
-            <div className='flex flex-col rounded-lg'>
+            <div className='rounded-lg'>
                 <div className="bg-white rounded-xl flex flex-col md:flex-row justify-between shadow overflow-auto">
                     <div className='flex-row flex'>
                         {btnLabelList.map((item, index) => {
@@ -347,9 +347,14 @@ export default function CalendarView(props) {
 
                 </div>
 
-                <div className='grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4 p-4 bg-white'>
+                <div style={{
+                    padding: '0px',
+                    overflowY: 'scroll',
+                    height: 'calc(100vh - 240px)',
+
+                }} className='grid grid-cols-1 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-6 gap-4 p-4 bg-white '>
                     {days.map((item, index) => {
-                        return <div className='flex flex-col space-x-0 p-2 space-y-2 w-full md:w-1/6 md:space-x-2 overflow-hidden'>
+                        return <div className='flex flex-col space-x-0 p-2 space-y-2 w-full md:w-1/6 md:space-x-2'>
 
 
                             <div className='flex justify-between'>

@@ -96,9 +96,26 @@ const SendPasswordResetLink = () => {
                             <div className="text-center text-2xl font-quicksand font-semibold mb-5 mt-1 text-yellow-400">
                                 <p>{`Password link sent to ${formData.send_to ? formData.send_to : ""} mail please check.`}</p>
                             </div>
-                            
+                                <div className="items-center flex">
+                                    <svg
+                                        fill="white"
+                                        viewBox="0 0 16 16"
+                                        height="1em"
+                                        width="1em"
+                                        className='mt-1'
+                                    >
+                                        <path
+                                            fillRule="evenodd"
+                                            d="M15 8a.5.5 0 00-.5-.5H2.707l3.147-3.146a.5.5 0 10-.708-.708l-4 4a.5.5 0 000 .708l4 4a.5.5 0 00.708-.708L2.707 8.5H14.5A.5.5 0 0015 8z"
+                                        />
+                                    </svg>
+                                    <Link to={'/auth' + routesName.login.path} className="text-white font-semibold hover:underline pl-2" onClick={() => navigate('/auth' + routesName.login.path)}>
+                                        <small>Back to Login</small>
+                                    </Link>
+                                </div>
                         </div>
                     </div>
+
                 </div>
             }
         </React.Fragment>

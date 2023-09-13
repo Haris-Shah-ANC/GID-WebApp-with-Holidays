@@ -39,9 +39,10 @@ const Dashboard = () => {
     history.navigate = useNavigate();
     history.location = useLocation();
 
-    const { user_id } = getLoginDetails(useNavigate());
+    const loginDetails = getLoginDetails();
+    const user_id = loginDetails.user_id
     const state = Actions.getState(useContext)
-    const { work_id } = getWorkspaceInfo(useNavigate());
+    const { work_id } = getWorkspaceInfo();
     const [tasksResults, setTasksResults] = useState([]);
     const [taskCategoryIndex, setTaskCategoryIndex] = useState(0)
     const [listOfEmployees, setEmployees] = useState([])
@@ -142,8 +143,8 @@ const Dashboard = () => {
             setPostBody({ ...postBody, tasks: ["Pending"] })
         } else if (index === 2) {
             setPostBody({ ...postBody, tasks: ["Completed"] })
-        }else if(index===3){
-            setPostBody({ ...postBody, tasks: ["In - Progress", "On Hold","Completed","Pending"] })
+        } else if (index === 3) {
+            setPostBody({ ...postBody, tasks: ["In - Progress", "On Hold", "Completed", "Pending"] })
 
         }
         setTaskCategoryIndex(index)
@@ -161,7 +162,7 @@ const Dashboard = () => {
     }
 
     const onTaskEditClick = (item) => {
-        console.log("ITEM",item)
+        console.log("ITEM", item)
         setFormData({
             task: item.task_description,
             module_id: null,
@@ -278,13 +279,8 @@ const Dashboard = () => {
                 style={{
                     padding: '0px',
                     overflowY: 'scroll',
-                    // background: '#FFFFFF',
                     height: 'calc(100vh - 215px)',
-                    // paddingBottom:'16px'
-                    // paddingLeft: '0px !important',
-                    // paddingTop: '16px !important',
-                    // paddingRight: '0px !important',
-                    // boxShadow: '1px 2px 4px rgba(0, 0, 0, 0.04)',
+                  
                 }}>
                 <div className=" mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 pb-6 ">
                     {tasksResults.length > 0 && tasksResults.map((item, index) => {
@@ -464,7 +460,7 @@ const DashboardCard = (props) => {
 
 
         //         <div className='flex'>
-                    
+
 
         //             <div className='flex flex-col w-full'>
         //                 <div className='max-h-14 align-top font-quicksand font-medium flex w-full'>
