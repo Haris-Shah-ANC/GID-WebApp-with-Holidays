@@ -17,7 +17,7 @@ import {
   useNavigate
 } from "react-router-dom";
 import SidebarContainer from "../../components/custom/Sidebar/SidebarContainer";
-import { fetchToken, onMessageListener } from "../../firebase";
+// import { fetchToken, onMessageListener } from "../../firebase";
 
 function MainLayout() {
 
@@ -45,12 +45,12 @@ function MainLayout() {
   function playAudio() {
     audioPlayer.current.play();
   }
-  onMessageListener().then(payload => {
-    playAudio()
-    setNotification({ title: payload.notification.title, body: JSON.parse(payload.notification.body).body })
-    setShow(true);
-    console.log("PAYLOAD", payload);
-  }).catch(err => console.log('failed: ', err));
+  // onMessageListener().then(payload => {
+  //   playAudio()
+  //   setNotification({ title: payload.notification.title, body: JSON.parse(payload.notification.body).body })
+  //   setShow(true);
+  //   console.log("PAYLOAD", payload);
+  // }).catch(err => console.log('failed: ', err));
 
   const onShowNotificationClicked = () => {
     setNotification({ title: "Notification", body: "This is a test notification" })
@@ -58,15 +58,15 @@ function MainLayout() {
   }
   useEffect(() => {
     dispatch(Actions.stateChange("workspace", getWorkspaceInfo()))
-    notifyMe2()
+    // notifyMe2()
   }, [])
 
   useEffect(() => {
   }, [dispatch.modalVisibility])
 
-  if (!isTokenFound) {
-    notifyMe()
-  }
+  // if (!isTokenFound) {
+  //   notifyMe()
+  // }
   const logOutFromTheApp = () => {
     clearCookie()
     navigate("/auth" + routesName.login.path)
@@ -77,7 +77,7 @@ function MainLayout() {
     Notification.requestPermission().then((permission) => {
 
       if (permission === "granted") {
-        fetchToken(setTokenFound);
+        // fetchToken(setTokenFound);
       }
     });
   }
