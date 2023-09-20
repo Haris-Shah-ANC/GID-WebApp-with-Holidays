@@ -177,7 +177,7 @@ export function formatTime(timeString, timeFormat, requireFormat) {
   return timeString === undefined || "" ? "" : moment(timeString, [timeFormat]).format(requireFormat)
 }
 
-export const startOfCurrentMonth = (requireFormat) => { return formatDate(moment().startOf("month"), requireFormat)}
+export const startOfCurrentMonth = (requireFormat) => { return formatDate(moment().startOf("month"), requireFormat) }
 
 export const endOfCurrentMonth = (requireFormat) => { return formatDate(moment().endOf("month"), requireFormat) }
 
@@ -186,10 +186,10 @@ export const startOfPrevMonth = (requireFormat) => { return moment(subtractByMon
 export const endOfPrevMonth = (requireFormat) => { return moment(subtractByMonth()).endOf('month').format(requireFormat) }
 
 export const getDateRange = (type, requireFormat, timeOn) => {
-  if(type === "previous month"){
-    return timeOn==="start" ? startOfPrevMonth(requireFormat) : endOfPrevMonth(requireFormat) 
-  }else if(type === "current month"){
-    return timeOn==="start" ? startOfCurrentMonth(requireFormat) : endOfCurrentMonth(requireFormat) 
+  if (type === "previous month") {
+    return timeOn === "start" ? startOfPrevMonth(requireFormat) : endOfPrevMonth(requireFormat)
+  } else if (type === "current month") {
+    return timeOn === "start" ? startOfCurrentMonth(requireFormat) : endOfCurrentMonth(requireFormat)
   }
 }
 
@@ -202,32 +202,32 @@ export const getCurrentWeekDays = (number) => {
   let weekStart = week.startOf("week")
   let days = []
 
-  if(isStartDaySunday()){
-      weekStart = moment(weekStart).add(1, 'days');
+  if (isStartDaySunday()) {
+    weekStart = moment(weekStart).add(1, 'days');
   }
 
   for (let i = 0; i <= 5; i++) {
-    days.push({day: moment(weekStart).add(i, 'days'), tasks: addEmptyTasks(10)});
+    days.push({ day: moment(weekStart).add(i, 'days'), tasks: addEmptyTasks(10) });
   }
   return days
 }
 
 const addEmptyTasks = (length) => {
   let emptyTaskList = []
-  for(let i=0; i < length; i++){
-      emptyTaskList.push({
-          "task_description": "",
-      })
+  for (let i = 0; i < length; i++) {
+    emptyTaskList.push({
+      "task_description": "",
+    })
   }
   return emptyTaskList
 }
 
 export const decodeToken = (token) => {
   var base64Url = token.split('.')[1];
-        var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function(c) {
-            return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-        }).join(''));
+  var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+  var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function (c) {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
   return JSON.parse(jsonPayload)
 }
 
@@ -238,7 +238,7 @@ export const decodeToken = (token) => {
 //   if(isStartDaySunday()){
 //       weekStart = moment(weekStart).add(1, 'days');
 //   }
-  
+
 //   for (let i = 0; i <= 5; i++) {
 //     days.push(moment(weekStart).add(i, 'days'));
 //   }
@@ -260,3 +260,202 @@ export const history = {
   navigate: null,
   location: null
 };
+
+export const getTimePeriods = () => {
+  // const currentYear = getCurrentFinancialYear(financial_year_last_day)
+  const previousYear = getPreviousYear()
+  const previousWeek = getPreviousWeek()
+  const previousMonth = getPreviousMonth()
+
+  return [
+    {
+      title: `Today`,
+      period: `(${moment().format("DD MMM")})`,
+      dates: {
+        from: moment().format("YYYY-MM-DD"),
+        to: moment().format("YYYY-MM-DD"),
+        previousFromDate: getYesterday(),
+        previousToDate: getYesterday()
+      }
+    },
+    {
+      title: "This Week",
+      period: `(${formatDate(getStartOf("week"), "DD MMM")} - ${formatDate(getEndOf("week"), "DD MMM")})`,
+      dates: {
+        from: getStartOf("week"),
+        to: getEndOf("week"),
+        previousFromDate: previousWeek.from,
+        previousToDate: previousWeek.to
+      }
+    },
+    {
+      title: "This Month",
+      period: `(${formatDate(getStartOf("month"), "DD MMM")} - ${formatDate(getEndOf("month"), "DD MMM")})`,
+      dates: {
+        from: getStartOf("month"),
+        to: getEndOf("month"),
+        previousFromDate: previousMonth.from,
+        previousToDate: previousMonth.to
+      }
+    },
+    {
+      title: "This Year",
+      period: `(${formatDate(getStartOf("year"), "DD MMM YY")} - ${formatDate(getEndOf("year"), "DD MMM YY")})`,
+      dates: {
+        from: getStartOf("year"),
+        to: getEndOf("year"),
+        previousFromDate: previousYear.from,
+        previousToDate: previousYear.to
+      }
+    },
+    // {
+    //     title: "Yesterday",
+    //     dates: {
+    //         from: getYesterday(),
+    //         to: getYesterday()
+    //     }
+    // },
+    // {
+    //     title: "Previous Week",
+    //     dates: {
+    //         from: previousWeek.from,
+    //         to: previousWeek.to
+    //     }
+    // },
+    // {
+    //     title: "Previous Month",
+    //     dates: {
+    //         from: previousMonth.from,
+    //         to: previousMonth.to
+    //     }
+    // },
+    // {
+    //     title: "Previous Year",
+    //     dates: {
+    //         from: previousYear.from,
+    //         to: previousYear.to
+    //     }
+    // },
+    // {
+    //     title: "Custom",
+    //     dates: {
+    //         from: null,
+    //         to: null
+    //     }
+
+    // },
+  ]
+}
+export const timePeriods = [
+  { name: "Daily", value: "daily" },
+  { name: "Weekly", value: "weekly" },
+  { name: "Monthly", value: "monthly" }
+]
+const getStartOf = (type) => {
+  return formatDate(moment().startOf(type), "YYYY-MM-DD")
+}
+
+const getEndOf = (type) => {
+  return formatDate(moment().endOf(type), "YYYY-MM-DD")
+}
+
+const getYesterday = () => {
+  return subtractByDays(1)
+}
+
+const subtractByDays = (numberOfDays) => {
+  return moment().subtract(numberOfDays, "day").format("YYYY-MM-DD")
+}
+
+const subtractByWeek = () => {
+  return moment().subtract(1, "week")
+}
+
+const subtractByYear = () => {
+  return moment().subtract(1, "year")
+}
+
+const getPreviousWeek = () => {
+  const startOfPrevWeek = moment(subtractByWeek()).startOf('week').format("YYYY-MM-DD")
+  const endOfPrevWeek = moment(subtractByWeek()).endOf('week').format("YYYY-MM-DD")
+  return { from: startOfPrevWeek, to: endOfPrevWeek }
+}
+
+const getPreviousMonth = () => {
+  const startOfPrevWeek = moment(subtractByMonth()).startOf('month').format("YYYY-MM-DD")
+  const endOfPrevWeek = moment(subtractByMonth()).endOf('month').format("YYYY-MM-DD")
+  return { from: startOfPrevWeek, to: endOfPrevWeek }
+}
+
+const getPreviousYear = () => {
+  const startOfPrevWeek = moment(subtractByYear()).startOf('year').format("YYYY-MM-DD")
+  const endOfPrevWeek = moment(subtractByYear()).endOf('year').format("YYYY-MM-DD")
+  return { from: startOfPrevWeek, to: endOfPrevWeek }
+}
+
+export const getCurrentFinancialYear = (financial_year_last_day) => {
+  const todaysDate = moment().format("YYYY-MM-DD")
+  const financialYearLastDate = financial_year_last_day
+  if (moment(todaysDate).isAfter(financialYearLastDate)) {
+    return { from: moment(financialYearLastDate).add(1, 'day').format("YYYY-MM-DD"), to: moment(financialYearLastDate).add(12, "months").format("YYYY-MM-DD") }
+  } else {
+    return { from: getFinancialYearFromDate(financialYearLastDate), to: financialYearLastDate }
+  }
+}
+
+const getFinancialYearFromDate = (financialYearLastDate) => {
+  return moment(subtractByMonths(financialYearLastDate, 12)).add(1, 'day').format("YYYY-MM-DD")
+}
+
+const subtractByMonths = (date, numberOfYears) => {
+  return moment(date).subtract(numberOfYears, 'months').format("YYYY-MM-DD")
+}
+
+export const getLabelColor = (incomeExpenseData, key) => {
+  if (!incomeExpenseData) {
+    return ""
+  }
+  const incomePercentageChange = parseInt(incomeExpenseData[key])
+  console.log(incomeExpenseData[key], key)
+  return incomePercentageChange > 0 ? "text-green-600" : incomePercentageChange === 0 ? "text-blueGray-600" : "text-red-600"
+}
+
+
+export const getIconStyle = (incomeExpenseData, key) => {
+  if (!incomeExpenseData) {
+    return ""
+  }
+  const value = parseFloat(incomeExpenseData[key])
+
+  return value > 0 ? "fill-green-600 rotate-0" : value === 0 ? "fill-black rotate-0" : "fill-red-600 rotate-180"
+}
+
+export const numberWithSuffix = (value) => {
+  const num = Number(value);
+  const suffixes = ['', 'K', 'M', 'B', 'T'];
+  const sign = num < 0 ? '-' : '';
+  const abs = Math.abs(num);
+  const index = Math.floor(Math.log10(abs) / 3);
+  const scaled = abs / Math.pow(10, index * 3);
+  const suffix = suffixes[index];
+  const formatted = scaled.toFixed(1).replace(/\.0$/, '');
+  return num === 0 ? '0' : sign + formatted + suffix;
+}
+
+export const amountFormatter = (amt) => {
+  let num = parseFloat(amt).toFixed(2)
+  if (isNumeric(num)) {
+    let input = parseFloat(num).toFixed(2);
+    var n1, n2;
+    num = num + '' || '';
+    // works for integer and floating as well
+    n1 = num.split('.');
+    n2 = n1[1] || parseFloat(0).toFixed(2).split(".")[1];
+    n1 = n1[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+    num = n2 ? n1 + '.' + n2 : n1;
+    return num
+  } else {
+    return 0
+  }
+}
+export const isNumeric = (num) => ((typeof (num) === 'number') || ((typeof (num) === "string") && (num.trim() !== ''))) && !isNaN(num);

@@ -75,15 +75,15 @@ export const routesName = {
         name: "HRMS",
         activeRoute: "Reports",
     },
-    incomeExpense: {
-        path: '/income-expense',
-        name: "Income Expense",
-        activeRoute: "Income Expense",
+    analysis: {
+        path: '/analysis',
+        name: "Analysis",
+        activeRoute: "Analysis",
     },
-    employeeRates: {
-        path: '/employee-rates',
-        name: "Employee Rates",
-        activeRoute: "Employee Rates",
+    budget: {
+        path: '/budget',
+        name: "Analysis",
+        activeRoute: "Budget",
     },
     analytics: {
         path: '/analytics',

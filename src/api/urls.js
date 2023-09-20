@@ -148,5 +148,21 @@ export const getTheCalendarViewTasksUrl = () => {
     // return HOST + APP_NAME + `/api/calendar_task_view/?dead_line__gte=${fromDate}&dead_line__lte=${endDate}&workspace=${work_id}`
 }
 
+//INCOME AND EXPENSE ANALYSIS RELATED API`S
+export const getIncomeExpenseDataWithComparison = () => {
+    return HOST + APP_NAME + `/income_expense_data/`
+}
+
+export const getIncomeExpenseChartsData = () => {
+    return HOST + APP_NAME + `/income_expense_chart_data/`
+}
+
+export const getIncomeExpensePieChartData = () => {
+    return HOST + APP_NAME + `/income_by_project_pie_chart/`
+}
+
+export const getTheTimeSheetUploadUrl = () => {
+    return HOST + APP_NAME + `/upload_working_data/`
+}
 
 
