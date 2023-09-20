@@ -75,6 +75,11 @@ export const routesName = {
         name: "HRMS",
         activeRoute: "Reports",
     },
+    tasks_time_sheet: {
+        path: "/tasks_time_sheet",
+        name: "Time Sheet",
+        activeRoute: "Time Sheet"
+    },
     incomeExpense: {
         path: '/income-expense',
         name: "Income Expense",

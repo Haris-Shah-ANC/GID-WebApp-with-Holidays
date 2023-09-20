@@ -20,6 +20,10 @@ export const add_project_module = `add_project_module`;
 export const file_upload = "file_upload";
 export const delete_notification = "delete_notification";
 export const add_meeting_link="add_meeting_link"
+export const TASK = "Task"
+export const DURATION = "Duration"
+export const START_TIME = "Start Time"
+export const END_TIME = "End Time"
 export const ROLES = [
     {role: "Employee", short_name: "employee", id:1},
     {role: "Admin", short_name: "admin", id:2},
