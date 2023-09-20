@@ -75,20 +75,16 @@ export const routesName = {
         name: "HRMS",
         activeRoute: "Reports",
     },
-    tasks_time_sheet: {
-        path: "/tasks_time_sheet",
-        name: "Time Sheet",
-        activeRoute: "Time Sheet"
+
+    analysis: {
+        path: '/analysis',
+        name: "Analysis",
+        activeRoute: "Analysis",
     },
-    incomeExpense: {
-        path: '/income-expense',
-        name: "Income Expense",
-        activeRoute: "Income Expense",
-    },
-    employeeRates: {
-        path: '/employee-rates',
-        name: "Employee Rates",
-        activeRoute: "Employee Rates",
+    budget: {
+        path: '/budget',
+        name: "Analysis",
+        activeRoute: "Budget",
     },
     analytics: {
         path: '/analytics',
@@ -99,6 +95,11 @@ export const routesName = {
         path: '/join-meeting',
         name: 'Join Meeting',
         activeRoute: 'Join Meeting',
+    },
+    tasks: {
+        path: '/tasks',
+        name: 'Tasks',
+        activeRoute: 'Tasks',
     },
 
 }

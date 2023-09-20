@@ -14,8 +14,9 @@ import CalendarView from "../components/pages/mainManagement/CalendarView";
 import CreateAccount from "../components/pages/authManagement/CreateAccount";
 import ResetPassword from "../components/pages/authManagement/ResetPassword";
 import Invitation from "../components/pages/authManagement/Invitation";
-import IncomeExpense from "../components/pages/mainManagement/income_expense/IncomeExpense";
-import EmployeeRates from "../components/pages/mainManagement/income_expense/EmployeeRates";
+import Budget from "../components/pages/mainManagement/income_expense/Budget";
+import Analysis from "../components/pages/mainManagement/income_expense/Analysis";
+import Tasks from "../components/pages/mainManagement/tasks/Tasks";
 
 export const authRoutes = [
     {
@@ -87,14 +88,20 @@ export const mainRoutes = [
         component: <CalendarView />,
     },
     {
-        path: routesName.incomeExpense.path,
-        name: routesName.incomeExpense.name,
-        component: <IncomeExpense />,
+        path: routesName.analysis.path,
+        name: routesName.analysis.name,
+        component: <Analysis />,
     },
     {
-        path: routesName.employeeRates.path,
-        name: routesName.employeeRates.name,
-        component: <EmployeeRates />,
+        path: routesName.budget.path,
+        name: routesName.budget.name,
+        component: <Budget />,
+    },
+
+    {
+        path: routesName.tasks.path,
+        name: routesName.tasks.name,
+        component: <Tasks />,
     },
 ];
 export const landingRoutes = [];
@@ -155,11 +162,11 @@ export const sidebarMenu = (isAdminMenu) => {
             childItem: 'hrms',
         },
         {
-            name: routesName.incomeExpense.name,
-            path: routesName.incomeExpense.path,
+            name: routesName.analysis.name,
+            path: routesName.analysis.path,
             icon: "fa-solid fa-file-invoice",
-            active: routesName.incomeExpense.activeRoute,
-            childItem: 'incomeExpense',
+            active: routesName.analysis.activeRoute,
+            childItem: 'analysis',
         },
 
         {

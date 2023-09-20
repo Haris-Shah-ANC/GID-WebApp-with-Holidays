@@ -1,4 +1,4 @@
-export default function EmployeeRates(props) {
+export default function Budget(props) {
 
     return (
         <div>
