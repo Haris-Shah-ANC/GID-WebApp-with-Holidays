@@ -1,5 +1,4 @@
 import React from 'react';
-import moment from 'moment';
 import { apiAction } from '../../../api/api';
 import { useNavigate } from 'react-router-dom';
 import * as Actions from '../../../state/Actions';
@@ -27,8 +26,6 @@ import {
 } from '../../../api/urls';
 import PlainButton from '../../custom/Elements/buttons/PlainButton';
 import GidInput from '../../custom/Elements/inputs/GidInput';
-import TextAreaInput from '../../custom/Elements/inputs/GIDTextArea';
-import GID_TextArea from '../../custom/Elements/inputs/GIDTextArea';
 import GIDTextArea from '../../custom/Elements/inputs/GIDTextArea';
 import IconInput from '../../custom/Elements/inputs/IconInput';
 
@@ -37,7 +34,6 @@ const CreateNewTask = (props) => {
     const { work_id } = getWorkspaceInfo();
     const navigate = useNavigate();
     const dispatch = Actions.getDispatch(React.useContext);
-
     const initial_data = {
         work_id: work_id,
         task: data ? data.task : null,
@@ -51,7 +47,6 @@ const CreateNewTask = (props) => {
         description_link: data ? data.description_link : null
     }
     const [formData, setFormData] = React.useState({ ...initial_data })
-
     const [projectsResults, setProjectsResults] = React.useState([{ project_name: 'Select project' }]);
     const [moduleResults, setModuleResults] = React.useState([{ module_name: 'Select module' }]);
     const getProjectsResultsApi = async (id) => {
@@ -99,6 +94,9 @@ const CreateNewTask = (props) => {
             { key: "task", message: `Description field left empty!` },
             { key: "dead_line", message: 'Deadline field left empty!' },
         ]
+        if(formData.status==="On Hold"){
+            validation_data.push({ key: "on_hold_reason", message: 'Please enter reason!' },)
+        }
         const { isValid, message } = isFormValid(formData, validation_data);
         if (isValid) {
             let res = await apiAction({
@@ -117,13 +115,13 @@ const CreateNewTask = (props) => {
                     navigate(routesName.dashboard.path)
                 }
             } else {
-                notifyErrorMessage(res.detail)
+                notifyErrorMessage(res.status)
             }
         } else {
             notifyErrorMessage(message)
         }
     };
-console.log("FROM",from)
+    
     return (
 
         <div className="relative my-6 w-full mx-2 sm:max-w-sm md:max-w-md overflow-y-auto overflow-x-auto">

@@ -57,7 +57,7 @@ const Login = () => {
                 data: { ...formData },
             })
             console.log("RESPONSE",login(),formData)
-            if (res.success) {
+            if (res && res.success) {
                 setLoginDetails(res);
                 setAccessToken(res.access);
 

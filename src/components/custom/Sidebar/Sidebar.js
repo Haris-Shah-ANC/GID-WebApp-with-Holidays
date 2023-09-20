@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { Children, useContext, useEffect, useRef, useState } from 'react';
 import ModelComponent from '../Model/ModelComponent';
 import { routesName } from '../../../config/routesName';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
@@ -83,7 +83,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, sideNavigationRef }) => {
       return "dashboard"
     }
   }
-  
+
   return (
     <>
       <div className="flex flex-col h-full mx-2 bg-white" ref={sideNavigationRef}>
@@ -232,6 +232,18 @@ const ChildItemComponent = (props) => {
                 )}
 
                 <li className='p-2 text-sm cursor-pointer hover:bg-gray-200 rounded-md' onClick={() => { setModalVisible(add_meeting_link) }}><div className=" flex items-center"><i className="fa-solid fa-plus mr-1 font-semibold font-quicksand text-sm"></i>Add New Meeting</div></li>
+              </React.Fragment>
+            }
+            {childItem === "incomeExpense" &&
+              <React.Fragment>
+                <li className='p-2 text-gray-500 font-quicksand font-semibold text-sm'>Select</li>
+
+                <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm' onClick={()=>{navigate(routesName.incomeExpense.path)}}>
+                  Analytics
+                </li>
+                <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm' onClick={() => { navigate(routesName.employeeRates.path) }}>
+                  Employee Rates
+                </li>
               </React.Fragment>
             }
 

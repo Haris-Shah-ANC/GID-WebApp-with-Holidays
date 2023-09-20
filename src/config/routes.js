@@ -14,6 +14,8 @@ import CalendarView from "../components/pages/mainManagement/CalendarView";
 import CreateAccount from "../components/pages/authManagement/CreateAccount";
 import ResetPassword from "../components/pages/authManagement/ResetPassword";
 import Invitation from "../components/pages/authManagement/Invitation";
+import IncomeExpense from "../components/pages/mainManagement/income_expense/IncomeExpense";
+import EmployeeRates from "../components/pages/mainManagement/income_expense/EmployeeRates";
 
 export const authRoutes = [
     {
@@ -84,6 +86,16 @@ export const mainRoutes = [
         name: routesName.calendar.name,
         component: <CalendarView />,
     },
+    {
+        path: routesName.incomeExpense.path,
+        name: routesName.incomeExpense.name,
+        component: <IncomeExpense />,
+    },
+    {
+        path: routesName.employeeRates.path,
+        name: routesName.employeeRates.name,
+        component: <EmployeeRates />,
+    },
 ];
 export const landingRoutes = [];
 
@@ -141,6 +153,13 @@ export const sidebarMenu = (isAdminMenu) => {
             icon: "fa-solid fa-file-invoice",
             active: routesName.reports.activeRoute,
             childItem: 'hrms',
+        },
+        {
+            name: routesName.incomeExpense.name,
+            path: routesName.incomeExpense.path,
+            icon: "fa-solid fa-file-invoice",
+            active: routesName.incomeExpense.activeRoute,
+            childItem: 'incomeExpense',
         },
 
         {
