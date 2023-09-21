@@ -131,12 +131,10 @@ export default function ColumnAndLineChart(props) {
                         </div>
                     </div>
                 </div>
-                <div className='pt-6 bg-red-200'>
-
+                <div className='pt-6'>
                     <HighchartsReact highcharts={Highcharts}
                         containerProps={{ style: {} }}
                         options={options}
-                        
                     />
 
                 </div>

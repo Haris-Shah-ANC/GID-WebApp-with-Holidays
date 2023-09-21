@@ -3,6 +3,7 @@ import queryString from 'query-string';
 import { useMemo } from 'react';
 import { useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { currencyData, locale_dict_currency } from './Constant';
 
 export const notifyInfoMessage = (message) => toast.info(message);
 export const notifyErrorMessage = (message) => toast.error(message);
@@ -442,20 +443,36 @@ export const numberWithSuffix = (value) => {
   return num === 0 ? '0' : sign + formatted + suffix;
 }
 
-export const amountFormatter = (amt) => {
-  let num = parseFloat(amt).toFixed(2)
-  if (isNumeric(num)) {
-    let input = parseFloat(num).toFixed(2);
-    var n1, n2;
-    num = num + '' || '';
-    // works for integer and floating as well
-    n1 = num.split('.');
-    n2 = n1[1] || parseFloat(0).toFixed(2).split(".")[1];
-    n1 = n1[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
-    num = n2 ? n1 + '.' + n2 : n1;
-    return num
-  } else {
-    return 0
-  }
-}
+// export const amountFormatter = (amt) => {
+//   let num = parseFloat(amt).toFixed(2)
+//   if (isNumeric(num)) {
+//     let input = parseFloat(num).toFixed(2);
+//     var n1, n2;
+//     num = num + '' || '';
+//     // works for integer and floating as well
+//     n1 = num.split('.');
+//     n2 = n1[1] || parseFloat(0).toFixed(2).split(".")[1];
+//     n1 = n1[0].replace(/(\d)(?=(\d\d)+\d$)/g, "$1,");
+//     num = n2 ? n1 + '.' + n2 : n1;
+//     return num
+//   } else {
+//     return 0
+//   }
+// }
 export const isNumeric = (num) => ((typeof (num) === 'number') || ((typeof (num) === "string") && (num.trim() !== ''))) && !isNaN(num);
+
+export const amountFormatter = (amount, currency_code) => {
+  let locale_currency_code = locale_dict_currency[currency_code] ? locale_dict_currency[currency_code] : 'en_IN';
+  let currencyInfo = currencyData.find((item) => item.currency_code === currency_code)
+  let currency_symbol = currencyInfo ? currencyInfo.symbol : ''
+
+  const formatterWithoutSymbol = new Intl.NumberFormat(
+    locale_currency_code.replace('_', '-'),
+    {
+      style: 'currency',
+      currencyDisplay: "code",
+      currency: currency_code,
+    });
+  let symbol = Number(amount) < 0 ? currency_symbol + ' ' : currency_symbol
+  return symbol + formatterWithoutSymbol.format(amount).replace(currency_code, "")
+}

@@ -5,7 +5,7 @@ import { apiAction } from '../../../api/api';
 import { json, useLocation, useNavigate } from 'react-router-dom';
 import * as Actions from '../../../state/Actions';
 import Dropdown from '../../custom/Dropdown/Dropdown';
-import { DateFormatCard, add_task, create_new_work_space, filter_and_sort, imagesList } from '../../../utils/Constant';
+import { DateFormatCard, add_task, add_time_sheet, create_new_work_space, filter_and_sort, imagesList } from '../../../utils/Constant';
 import ModelComponent from '../../custom/Model/ModelComponent';
 import { isFormValid, notifyErrorMessage, notifySuccessMessage, formattedDeadline, history } from '../../../utils/Utils'
 
@@ -31,8 +31,8 @@ import classNames from 'classnames';
 import PopUpMenu from '../../custom/popups/PopUpMenu';
 import Checkbox from '../../custom/Elements/buttons/Checkbox';
 import CustomLabel from '../../custom/Elements/CustomLabel';
-import { Box, Pagination, Stack } from '@mui/material';
-
+import { Box, Pagination, Stack, Tooltip } from '@mui/material';
+import NewModal from '../../custom/Model/NewModal';
 const Dashboard = () => {
     const navigate = useNavigate();
     const dispatch = Actions.getDispatch(React.useContext);
@@ -65,8 +65,6 @@ const Dashboard = () => {
 
 
     useEffect(() => {
-        // let getTasksUrl = get_task() + `?created_at__date__gte=&created_at__date__lte=&workspace=${work_id}&project__in=${postBody.projects.join(",")}&employee__in=${taskCategoryIndex === 3 ? "" : postBody.employees.join(",")}&status__in=${postBody.tasks.join(",")}`
-
         let getTasksUrl = get_task() + `?created_at__date__gte=&created_at__date__lte=&workspace=${work_id}`
 
         let taskCountUrl = get_task_count_url(work_id) + `&employee_id=${postBody.employees}&project_id=${postBody.projects}`
@@ -223,6 +221,280 @@ const Dashboard = () => {
         setPostBody({ ...postBody, pageNumber: pageNumber })
     }
 
+    const DashboardCard = (props) => {
+        const { user_id } = getLoginDetails(useNavigate());
+        const [popoverShow, setPopoverShow] = React.useState(false);
+        const btnRef = React.createRef();
+        const popoverRef = React.createRef();
+        const dispatch = Actions.getDispatch(React.useContext);
+        const [openOnHoldReason, showOnHoldReason] = useState(false)
+        const { assignee_name, dead_line, employee_name, project_name, employee_id, task_description, created_at, description_link,
+            onEditClick, task_id, work_id, module_id, project_id, on_hold_reason, status, onTaskComplete, detailed_description, module_name, employee } = props;
+        const [isChecked, setChecked] = useState(status === "Completed")
+        let my_task = user_id === employee_id;
+        let projectStyle = []
+        const completeTheTask = async (e) => {
+            e.preventDefault();
+            const formData = {
+                work_id: work_id,
+                task: task_description,
+                task_id: task_id,
+                module_id: module_id,
+                dead_line: dead_line,
+                project_id: project_id,
+                on_hold_reason: on_hold_reason,
+                status: "Completed",
+            }
+
+            let validation_data = [
+                { key: "project_id", message: 'Please select the project!' },
+                { key: "task", message: `Description field left empty!` },
+                { key: "dead_line", message: 'Deadline field left empty!' },
+            ]
+            const { isValid, message } = isFormValid(formData, validation_data);
+            if (isValid) {
+                let res = await apiAction({
+                    method: 'post',
+                    // navigate: navigate,
+                    dispatch: dispatch,
+                    url: update_task(),
+                    data: { ...formData, dead_line: formattedDeadline(formData.dead_line) },
+                })
+                if (res) {
+                    onTaskComplete()
+                    notifySuccessMessage(res.status);
+                } else {
+                    setChecked(false)
+                    notifyErrorMessage(res.detail)
+                }
+            } else {
+                setChecked(false)
+                notifyErrorMessage(message)
+            }
+        };
+        const getProjectNameStyle = (projectName) => {
+            var randomColor = getRandomColor()
+            if (projectStyle != []) {
+                projectStyle.find((item, index) => {
+                    if (item.projName == projectName) {
+                        return item.color
+                        // return `bg-[${item.color}] text-[${item.color}]`
+                    } else if (index === projectStyle.length - 1) {
+                        projectStyle.push({ projName: projectName, color: randomColor })
+                        return randomColor
+                        // return `bg-[${randomColor}] text-[${randomColor}]`
+                    }
+                })
+            } else {
+                projectStyle.push({ projName: projectName, color: randomColor })
+                return randomColor
+                // return `bg-[${randomColor}] text-[${randomColor}]`
+            }
+        }
+        function getRandomColor() {
+            var letters = '0123456789ABCDEF';
+            var color = '#';
+            for (var i = 0; i < 6; i++) {
+                color += letters[Math.floor(Math.random() * 16)];
+            }
+            // return "bg-[" + color + "]"
+            return color
+        }
+        const onAddTimeSheetClick = (item) => {
+            setShowModal(add_time_sheet)
+
+        }
+
+        console.log('===>description_link', description_link)
+        return (
+            // <React.Fragment>
+            //     <div onClick={() => {
+            //         if (status !== "Completed" && user_id === employee) {
+            //             console.log(user_id, employee)
+            //             onEditClick(props)
+            //         }
+            //     }} className={`bg-white flex flex-col px-5 py-2 rounded-lg h-full border-borderColor-0 shadow-md ${(status !== "Completed" && user_id === employee) ? "cursor-pointer" : ""}`} >
+            //         {/* <div class="flex flex-wrap py-1">
+            //             <span class={`inline-flex  bg-opacity-1 text-xs font-medium mr-2 px-2.5 py-2 rounded-lg`} style={{
+            //                 backgroundColor: `${getRandomColor()}`
+            //             }}> {project_name}</span>
+            //         </div> */}
+            //         <div className='flex justify-between items-center'>
+            //         <div className='flex rounded-lg flex-wrap items-center'>
+            //             <img className='w-6 h-6 rounded-full' src={imagesList.employee_default_img.src} alt=''></img>
+            //             <div className='flex flex-col ml-3'>
+            //                 <p className='text-5 text-black text-sm font-quicksand font-semibold'>{employee_name}</p>
+            //             </div>
+            //         </div>
+
+            //             <div className='ml-auto'>
+            //                 <span className="text-gray-500 ml-auto mt-1 text-xs font-quicksand font-semibold">{getTimeAgo(created_at)}</span>
+            //             </div>
+            //         </div>
+
+            //         <div className="flex justify-between items-center mt-4">
+            //             <div className='' >
+            //                 <span className="text-xs font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-md text-lightBlue-600 bg-lightBlue-200 last:mr-0 mr-1">
+            //                     {project_name}</span>
+            //                 {/* <span style={{ fontSize: '10px' }} className="font-semibold font-quicksand inline-block py-1">
+            //                     {module_name}</span> */}
+            //             </div>
+            //             <div className='mt-4'>
+            //                 <span className={`text-xs font-quicksand font-semibold inline-block py-1 px-0 rounded-full ${expiredCheck(dead_line) ? 'text-red-400' : 'text-green-400'} last:mr-0 mr-1`}>
+            //                     <i className="fa-solid fa-clock mr-1"></i> {moment(dead_line).format(DateFormatCard)}
+            //                 </span>
+            //             </div>
+
+            //         </div>
+
+
+            //         <div className='flex'>
+
+
+            //             <div className='flex flex-col w-full'>
+            //                 <div className='max-h-14 align-top font-quicksand font-medium flex w-full'>
+            //                     <a href={description_link === null ? null : `http://${description_link}`}
+            //                         target='_blank'
+            //                         className={`text-5 flex-wrap ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg truncate w-full`}>
+            //                         {task_description}
+            //                     </a>
+            //                     {/* <p className={`text-5 ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg line-clamp-2`}></p> */}
+            //                 </div>
+            //                 <span className="text-sm font-quicksand font-medium inline-block pb-1 text-blueGray-600 last:mr-0 mr-1 truncate w-full">
+            //                     {detailed_description}
+            //                 </span>
+
+
+            //             </div>
+
+            //         </div>
+
+            //         <div  className={`${(status !== "Completed" && user_id === employee) ? "cursor-pointer" : ""}`}>
+            //             {/* <div className='flex justify-between my-3'>
+            //                 <span className="text-xs font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-md text-lightBlue-600 bg-lightBlue-200 last:mr-0 mr-1">
+            //                     {project_name}</span>
+            //                 <span className="text-xs font-semibold font-quicksand inline-block py-1">
+            //                     {module_name}</span>
+            //             </div> */}
+
+
+
+            //             <div className='flex flex-wrap justify-between '>
+            //                 <span className="text-sm font-quicksand font-normal inline-block py-1 text-blueGray-600 last:mr-0 mr-1 self-center">
+            //                     Assigned By: {assignee_name === employee_name ? <span className='font-quicksand font-semibold'>Self</span> : <span className='font-quicksand font-semibold'>{assignee_name}</span>}
+            //                 </span>
+            //                 {props.status === "On Hold" &&
+            //                     <div className={`rounded-2xl bg-white pt-0 text-xs font-bold leading-none flex flex-col flex-wrap`}>
+            //                         <span className={`text-yellow-400`} onClick={() => { showOnHoldReason(!openOnHoldReason) }}>{props.status}</span>
+            //                     </div>
+            //                 }
+            //             </div>
+
+            //         </div>
+
+
+
+            //         {openOnHoldReason &&
+            //             <div className='border py-1 px-2 rounded-md'>
+            //                 <span className={`text-gray-500 text-sm font-quicksand font-medium my-2 py-4`}>{props.on_hold_reason}</span>
+            //             </div>
+            //         }
+
+            //     </div>
+            // </React.Fragment>
+            <React.Fragment>
+
+
+                <div className='bg-white flex flex-col px-5 py-2 rounded-lg h-full border-borderColor-0 shadow-md' >
+
+                    <div className='flex'>
+                        <div className='flex flex-col w-full'>
+
+                            <div className='max-h-14 align-top font-quicksand font-medium flex w-full'>
+                                <a href={description_link === null ? null : description_link}
+                                    target="blank"
+                                    className={`text-5 ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg line-clamp-2 text-ellipsis overflow-x-hidden`}>
+                                    {task_description}
+                                </a>
+                                {/* <p className={`text-5 ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg line-clamp-2`}></p> */}
+                            </div>
+                            <span className="text-sm font-quicksand font-medium inline-block pb-1 text-blueGray-600 last:mr-0 mr-1 truncate text-ellipsis w-full">
+                                {detailed_description}
+                            </span>
+
+
+                        </div>
+
+                    </div>
+
+                    <div onClick={() => {
+                        if (status !== "Completed" && user_id === employee) {
+                            console.log(user_id, employee)
+                            onEditClick(props)
+                        }
+                    }} className={`${(status !== "Completed" && user_id === employee) ? "cursor-pointer" : ""}`}>
+                        <div className='flex justify-between my-3'>
+                            <span className="text-xs font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-md text-lightBlue-600 bg-lightBlue-200 last:mr-0 mr-1">
+                                {project_name}</span>
+                            <span className="text-xs font-semibold font-quicksand inline-block py-1">
+                                {module_name}</span>
+                        </div>
+
+                        <div className="flex flex-wrap my-2">
+                            <div className='mr-auto'>
+                                <span className={`text-xs font-quicksand font-semibold inline-block py-1 px-0 rounded-full ${expiredCheck(dead_line) ? 'text-red-400' : 'text-green-400'} last:mr-0 mr-1`}>
+                                    <i className="fa-solid fa-clock mr-1"></i> {moment(dead_line).format(DateFormatCard)}
+                                </span>
+                            </div>
+
+                            <div className='ml-auto'>
+                                <span className="text-gray-500 ml-auto mt-1 text-xs font-quicksand font-semibold">{getTimeAgo(created_at)}</span>
+                            </div>
+                        </div>
+
+                        <div className='flex flex-wrap justify-between items-center'>
+                            <span className="text-sm font-quicksand font-normal inline-block py-1 text-blueGray-600 last:mr-0 mr-1 self-center">
+                                Assigned By: {assignee_name === employee_name ? <span className='font-quicksand font-semibold'>Self</span> : <span className='font-quicksand font-semibold'>{assignee_name}</span>}
+                            </span>
+                            {props.status === "On Hold" &&
+                                <div className={`rounded-2xl bg-white pt-0 text-xs font-bold leading-none flex flex-col flex-wrap`}>
+                                    <span className={`text-yellow-400`} onClick={() => { showOnHoldReason(!openOnHoldReason) }}>{props.status}</span>
+                                </div>
+                            }
+                        </div>
+
+                    </div>
+                    {openOnHoldReason &&
+                        <div className='border py-1 px-2 rounded-md'>
+                            <span className={`text-gray-500 text-sm font-quicksand font-medium my-2 py-4`}>{props.on_hold_reason}</span>
+                        </div>
+                    }
+
+                    <div className='flex rounded-lg flex-wrap mt-2 items-center'>
+                        <img className='w-6 h-6 rounded-full' src={imagesList.employee_default_img.src} alt=''></img>
+                        <div className='flex flex-row ml-3 items-center'>
+                            <p className='text-5 text-black text-sm font-quicksand font-semibold'>{employee_name}</p>
+
+                            {/* <div className='mx-2 cursor-pointer group flex relative' onClick={onAddTimeSheetClick}>
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="currentColor"
+                                    height="1em"
+                                    width="1em"
+                                >
+                                    <path d="M13 14h-2V8h2v6m2-13H9v2h6V1M5 13a6.995 6.995 0 0113.79-1.66l.6-.6c.32-.32.71-.53 1.11-.64a8.59 8.59 0 00-1.47-2.71l1.42-1.42c-.45-.51-.9-.97-1.41-1.41L17.62 6c-1.55-1.26-3.5-2-5.62-2a9 9 0 00-9 9c0 4.63 3.5 8.44 8 8.94v-2.02c-3.39-.49-6-3.39-6-6.92m8 6.96V22h2.04l6.13-6.12-2.04-2.05L13 19.96m9.85-6.49l-1.32-1.32c-.2-.2-.53-.2-.72 0l-.98.98 2.04 2.04.98-.98c.2-.19.2-.52 0-.72z" />
+                                </svg>
+                                <span className=" pointer-events-none group-hover:opacity-100 transition-opacity bg-gray-500 px-1 text-sm text-gray-100 rounded-md absolute left-1/2 
+    -translate-x-1/2 translate-y-full opacity-0 m-4 mx-auto w-max">Add efforts</span>
+                            </div> */}
+                        </div>
+                    </div>
+                </div>
+
+            </React.Fragment>
+
+        )
+    }
     return (
         <React.Fragment>
             <ModelComponent showModal={showModal} setShowModal={setShowModal} data={formData} onFilterApply={onFilterApply} onFilterClear={onFilterClear} from={"dashboard"} />
@@ -280,7 +552,7 @@ const Dashboard = () => {
                     padding: '0px',
                     overflowY: 'scroll',
                     height: 'calc(100vh - 215px)',
-                  
+
                 }}>
                 <div className=" mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 pb-6 ">
                     {tasksResults.length > 0 && tasksResults.map((item, index) => {
@@ -336,257 +608,5 @@ const Filter = (props) => {
     )
 }
 
-const DashboardCard = (props) => {
-    const { user_id } = getLoginDetails(useNavigate());
-    const [popoverShow, setPopoverShow] = React.useState(false);
-    const btnRef = React.createRef();
-    const popoverRef = React.createRef();
-    const dispatch = Actions.getDispatch(React.useContext);
-    const [openOnHoldReason, showOnHoldReason] = useState(false)
-    const { assignee_name, dead_line, employee_name, project_name, employee_id, task_description, created_at, description_link,
-        onEditClick, task_id, work_id, module_id, project_id, on_hold_reason, status, onTaskComplete, detailed_description, module_name, employee } = props;
-    const [isChecked, setChecked] = useState(status === "Completed")
-    let my_task = user_id === employee_id;
-    let projectStyle = []
-    const completeTheTask = async (e) => {
-        e.preventDefault();
-        const formData = {
-            work_id: work_id,
-            task: task_description,
-            task_id: task_id,
-            module_id: module_id,
-            dead_line: dead_line,
-            project_id: project_id,
-            on_hold_reason: on_hold_reason,
-            status: "Completed",
-        }
 
-        let validation_data = [
-            { key: "project_id", message: 'Please select the project!' },
-            { key: "task", message: `Description field left empty!` },
-            { key: "dead_line", message: 'Deadline field left empty!' },
-        ]
-        const { isValid, message } = isFormValid(formData, validation_data);
-        if (isValid) {
-            let res = await apiAction({
-                method: 'post',
-                // navigate: navigate,
-                dispatch: dispatch,
-                url: update_task(),
-                data: { ...formData, dead_line: formattedDeadline(formData.dead_line) },
-            })
-            if (res) {
-                onTaskComplete()
-                notifySuccessMessage(res.status);
-            } else {
-                setChecked(false)
-                notifyErrorMessage(res.detail)
-            }
-        } else {
-            setChecked(false)
-            notifyErrorMessage(message)
-        }
-    };
-    const getProjectNameStyle = (projectName) => {
-        var randomColor = getRandomColor()
-        if (projectStyle != []) {
-            projectStyle.find((item, index) => {
-                if (item.projName == projectName) {
-                    return item.color
-                    // return `bg-[${item.color}] text-[${item.color}]`
-                } else if (index === projectStyle.length - 1) {
-                    projectStyle.push({ projName: projectName, color: randomColor })
-                    return randomColor
-                    // return `bg-[${randomColor}] text-[${randomColor}]`
-                }
-            })
-        } else {
-            projectStyle.push({ projName: projectName, color: randomColor })
-            return randomColor
-            // return `bg-[${randomColor}] text-[${randomColor}]`
-        }
-    }
-    function getRandomColor() {
-        var letters = '0123456789ABCDEF';
-        var color = '#';
-        for (var i = 0; i < 6; i++) {
-            color += letters[Math.floor(Math.random() * 16)];
-        }
-        // return "bg-[" + color + "]"
-        return color
-    }
-
-    console.log('===>description_link', description_link)
-    return (
-        // <React.Fragment>
-        //     <div onClick={() => {
-        //         if (status !== "Completed" && user_id === employee) {
-        //             console.log(user_id, employee)
-        //             onEditClick(props)
-        //         }
-        //     }} className={`bg-white flex flex-col px-5 py-2 rounded-lg h-full border-borderColor-0 shadow-md ${(status !== "Completed" && user_id === employee) ? "cursor-pointer" : ""}`} >
-        //         {/* <div class="flex flex-wrap py-1">
-        //             <span class={`inline-flex  bg-opacity-1 text-xs font-medium mr-2 px-2.5 py-2 rounded-lg`} style={{
-        //                 backgroundColor: `${getRandomColor()}`
-        //             }}> {project_name}</span>
-        //         </div> */}
-        //         <div className='flex justify-between items-center'>
-        //         <div className='flex rounded-lg flex-wrap items-center'>
-        //             <img className='w-6 h-6 rounded-full' src={imagesList.employee_default_img.src} alt=''></img>
-        //             <div className='flex flex-col ml-3'>
-        //                 <p className='text-5 text-black text-sm font-quicksand font-semibold'>{employee_name}</p>
-        //             </div>
-        //         </div>
-
-        //             <div className='ml-auto'>
-        //                 <span className="text-gray-500 ml-auto mt-1 text-xs font-quicksand font-semibold">{getTimeAgo(created_at)}</span>
-        //             </div>
-        //         </div>
-
-        //         <div className="flex justify-between items-center mt-4">
-        //             <div className='' >
-        //                 <span className="text-xs font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-md text-lightBlue-600 bg-lightBlue-200 last:mr-0 mr-1">
-        //                     {project_name}</span>
-        //                 {/* <span style={{ fontSize: '10px' }} className="font-semibold font-quicksand inline-block py-1">
-        //                     {module_name}</span> */}
-        //             </div>
-        //             <div className='mt-4'>
-        //                 <span className={`text-xs font-quicksand font-semibold inline-block py-1 px-0 rounded-full ${expiredCheck(dead_line) ? 'text-red-400' : 'text-green-400'} last:mr-0 mr-1`}>
-        //                     <i className="fa-solid fa-clock mr-1"></i> {moment(dead_line).format(DateFormatCard)}
-        //                 </span>
-        //             </div>
-
-        //         </div>
-
-
-        //         <div className='flex'>
-
-
-        //             <div className='flex flex-col w-full'>
-        //                 <div className='max-h-14 align-top font-quicksand font-medium flex w-full'>
-        //                     <a href={description_link === null ? null : `http://${description_link}`}
-        //                         target='_blank'
-        //                         className={`text-5 flex-wrap ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg truncate w-full`}>
-        //                         {task_description}
-        //                     </a>
-        //                     {/* <p className={`text-5 ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg line-clamp-2`}></p> */}
-        //                 </div>
-        //                 <span className="text-sm font-quicksand font-medium inline-block pb-1 text-blueGray-600 last:mr-0 mr-1 truncate w-full">
-        //                     {detailed_description}
-        //                 </span>
-
-
-        //             </div>
-
-        //         </div>
-
-        //         <div  className={`${(status !== "Completed" && user_id === employee) ? "cursor-pointer" : ""}`}>
-        //             {/* <div className='flex justify-between my-3'>
-        //                 <span className="text-xs font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-md text-lightBlue-600 bg-lightBlue-200 last:mr-0 mr-1">
-        //                     {project_name}</span>
-        //                 <span className="text-xs font-semibold font-quicksand inline-block py-1">
-        //                     {module_name}</span>
-        //             </div> */}
-
-
-
-        //             <div className='flex flex-wrap justify-between '>
-        //                 <span className="text-sm font-quicksand font-normal inline-block py-1 text-blueGray-600 last:mr-0 mr-1 self-center">
-        //                     Assigned By: {assignee_name === employee_name ? <span className='font-quicksand font-semibold'>Self</span> : <span className='font-quicksand font-semibold'>{assignee_name}</span>}
-        //                 </span>
-        //                 {props.status === "On Hold" &&
-        //                     <div className={`rounded-2xl bg-white pt-0 text-xs font-bold leading-none flex flex-col flex-wrap`}>
-        //                         <span className={`text-yellow-400`} onClick={() => { showOnHoldReason(!openOnHoldReason) }}>{props.status}</span>
-        //                     </div>
-        //                 }
-        //             </div>
-
-        //         </div>
-
-
-
-        //         {openOnHoldReason &&
-        //             <div className='border py-1 px-2 rounded-md'>
-        //                 <span className={`text-gray-500 text-sm font-quicksand font-medium my-2 py-4`}>{props.on_hold_reason}</span>
-        //             </div>
-        //         }
-
-        //     </div>
-        // </React.Fragment>
-        <React.Fragment>
-            <div className='bg-white flex flex-col px-5 py-2 rounded-lg h-full border-borderColor-0 shadow-md' >
-
-                <div className='flex'>
-                    <div className='flex flex-col w-full'>
-                        <div className='max-h-14 align-top font-quicksand font-medium flex w-full'>
-                            <a href={description_link === null ? null : description_link}
-                                target="blank"
-                                className={`text-5 ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg line-clamp-2 text-ellipsis overflow-x-hidden`}>
-                                {task_description}
-                            </a>
-                            {/* <p className={`text-5 ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg line-clamp-2`}></p> */}
-                        </div>
-                        <span className="text-sm font-quicksand font-medium inline-block pb-1 text-blueGray-600 last:mr-0 mr-1 truncate text-ellipsis w-full">
-                            {detailed_description}
-                        </span>
-
-
-                    </div>
-
-                </div>
-
-                <div onClick={() => {
-                    if (status !== "Completed" && user_id === employee) {
-                        console.log(user_id, employee)
-                        onEditClick(props)
-                    }
-                }} className={`${(status !== "Completed" && user_id === employee) ? "cursor-pointer" : ""}`}>
-                    <div className='flex justify-between my-3'>
-                        <span className="text-xs font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-md text-lightBlue-600 bg-lightBlue-200 last:mr-0 mr-1">
-                            {project_name}</span>
-                        <span className="text-xs font-semibold font-quicksand inline-block py-1">
-                            {module_name}</span>
-                    </div>
-
-                    <div className="flex flex-wrap my-2">
-                        <div className='mr-auto'>
-                            <span className={`text-xs font-quicksand font-semibold inline-block py-1 px-0 rounded-full ${expiredCheck(dead_line) ? 'text-red-400' : 'text-green-400'} last:mr-0 mr-1`}>
-                                <i className="fa-solid fa-clock mr-1"></i> {moment(dead_line).format(DateFormatCard)}
-                            </span>
-                        </div>
-
-                        <div className='ml-auto'>
-                            <span className="text-gray-500 ml-auto mt-1 text-xs font-quicksand font-semibold">{getTimeAgo(created_at)}</span>
-                        </div>
-                    </div>
-
-                    <div className='flex flex-wrap justify-between items-center'>
-                        <span className="text-sm font-quicksand font-normal inline-block py-1 text-blueGray-600 last:mr-0 mr-1 self-center">
-                            Assigned By: {assignee_name === employee_name ? <span className='font-quicksand font-semibold'>Self</span> : <span className='font-quicksand font-semibold'>{assignee_name}</span>}
-                        </span>
-                        {props.status === "On Hold" &&
-                            <div className={`rounded-2xl bg-white pt-0 text-xs font-bold leading-none flex flex-col flex-wrap`}>
-                                <span className={`text-yellow-400`} onClick={() => { showOnHoldReason(!openOnHoldReason) }}>{props.status}</span>
-                            </div>
-                        }
-                    </div>
-
-                </div>
-                {openOnHoldReason &&
-                    <div className='border py-1 px-2 rounded-md'>
-                        <span className={`text-gray-500 text-sm font-quicksand font-medium my-2 py-4`}>{props.on_hold_reason}</span>
-                    </div>
-                }
-
-                <div className='flex rounded-lg flex-wrap mt-2 items-center'>
-                    <img className='w-6 h-6 rounded-full' src={imagesList.employee_default_img.src} alt=''></img>
-                    <div className='flex flex-col ml-3'>
-                        <p className='text-5 text-black text-sm font-quicksand font-semibold'>{employee_name}</p>
-                    </div>
-                </div>
-            </div>
-        </React.Fragment>
-
-    )
-}
 

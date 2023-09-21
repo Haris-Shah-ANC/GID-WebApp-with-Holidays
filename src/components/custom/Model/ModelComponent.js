@@ -7,6 +7,7 @@ import {
     add_project,
     add_project_module,
     add_task,
+    add_time_sheet,
     create_new_work_space,
     delete_notification,
     file_upload,
@@ -18,6 +19,7 @@ import AddModule from '../../pages/mainManagement/AddModule';
 import FileUpload from '../../pages/mainManagement/FileUpload';
 import DeleteNotificationModal from '../../pages/mainManagement/DeleteNotificationModal';
 import AddMeetingLinkModal from '../../pages/mainManagement/AddMeetingLinkModal';
+import AddTimeSheetModal from './AddTimeSheetModal';
 
 const ModelComponent = (props) => {
     const { showModal, setShowModal, data, onFilterApply, onFilterClear, from, onSuccess = () => "" } = props
@@ -50,8 +52,8 @@ const ModelComponent = (props) => {
                         <FileUpload setShowModal={setShowModal} data={data}></FileUpload>
                     }
                     {
-                        showModal === file_upload &&
-                        <FileUpload setShowModal={setShowModal} data={data}></FileUpload>
+                        showModal === add_time_sheet &&
+                        <AddTimeSheetModal setShowModal={setShowModal} data={data}></AddTimeSheetModal>
                     }
                     {
                         showModal === delete_notification &&

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { apiAction } from '../../../api/api';
 import { useNavigate } from 'react-router-dom';
 import * as Actions from '../../../state/Actions';
@@ -28,6 +28,7 @@ import PlainButton from '../../custom/Elements/buttons/PlainButton';
 import GidInput from '../../custom/Elements/inputs/GidInput';
 import GIDTextArea from '../../custom/Elements/inputs/GIDTextArea';
 import IconInput from '../../custom/Elements/inputs/IconInput';
+import EffortsComponent from '../../custom/EffortsComponent';
 
 const CreateNewTask = (props) => {
     const { setShowModal, data, from } = props;
@@ -49,6 +50,7 @@ const CreateNewTask = (props) => {
     const [formData, setFormData] = React.useState({ ...initial_data })
     const [projectsResults, setProjectsResults] = React.useState([{ project_name: 'Select project' }]);
     const [moduleResults, setModuleResults] = React.useState([{ module_name: 'Select module' }]);
+    const [isEffortsTableVisible, setEffortsTableVisible] = useState(false)
     const getProjectsResultsApi = async (id) => {
         let res = await apiAction({
             method: 'get',
@@ -94,7 +96,7 @@ const CreateNewTask = (props) => {
             { key: "task", message: `Description field left empty!` },
             { key: "dead_line", message: 'Deadline field left empty!' },
         ]
-        if(formData.status==="On Hold"){
+        if (formData.status === "On Hold") {
             validation_data.push({ key: "on_hold_reason", message: 'Please enter reason!' },)
         }
         const { isValid, message } = isFormValid(formData, validation_data);
@@ -121,10 +123,10 @@ const CreateNewTask = (props) => {
             notifyErrorMessage(message)
         }
     };
-    
+
     return (
 
-        <div className="relative my-6 w-full mx-2 sm:max-w-sm md:max-w-md overflow-y-auto overflow-x-auto">
+        <div className="relative my-6 w-full mx-2 sm:max-w-sm md:max-w-lg overflow-y-auto overflow-x-auto overflow-auto h-[80%] w-[80%]">
             <div className="w-full border-0 rounded-lg shadow-lg relative flex flex-col bg-white outline-none focus:outline-none">
                 {/* header */}
                 <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
@@ -138,17 +140,17 @@ const CreateNewTask = (props) => {
                 <form>
 
                     <div className="relative px-5 pt-2 flex-auto ">
-                            <div className="my-1 flex flex-col">
-                                <CustomLabel label={`Select  Project`} className={'font-quicksand font-semibold text-sm mb-1'} />
-                                <Dropdown disabled={formData.task_id ? true : false} placeholder={true} options={projectsResults} optionLabel={'project_name'} value={selectedProject ? selectedProject : { project_name: 'Select project' }} setValue={(value) => setFormData((previous) => ({ ...previous, project_id: value ? value.project_id : null }))} />
+                        <div className="my-1 flex flex-col">
+                            <CustomLabel label={`Select  Project`} className={'font-quicksand font-semibold text-sm mb-1'} />
+                            <Dropdown disabled={formData.task_id ? true : false} placeholder={true} options={projectsResults} optionLabel={'project_name'} value={selectedProject ? selectedProject : { project_name: 'Select project' }} setValue={(value) => setFormData((previous) => ({ ...previous, project_id: value ? value.project_id : null }))} />
+                        </div>
+                        {
+                            !formData.task_id &&
+                            <div className="my-4 flex flex-col">
+                                <CustomLabel label={`Select Module`} className={'font-quicksand font-semibold text-sm mb-1'} />
+                                <Dropdown placeholder={true} options={moduleResults} optionLabel={'module_name'} value={selectedModule ? selectedModule : { module_name: 'Select project' }} setValue={(value) => setFormData((previous) => ({ ...previous, module_id: value ? value.module_id : null }))} />
                             </div>
-                            {
-                                !formData.task_id &&
-                                <div className="my-4 flex flex-col">
-                                    <CustomLabel label={`Select Module`} className={'font-quicksand font-semibold text-sm mb-1'} />
-                                    <Dropdown placeholder={true} options={moduleResults} optionLabel={'module_name'} value={selectedModule ? selectedModule : { module_name: 'Select project' }} setValue={(value) => setFormData((previous) => ({ ...previous, module_id: value ? value.module_id : null }))} />
-                                </div>
-                            }
+                        }
 
 
                         <div className="mt-4 flex flex-col">
@@ -246,6 +248,25 @@ const CreateNewTask = (props) => {
                             >
                             </IconInput>
                         </div>
+
+                        <div className='flex flex-row items-center justify-between my-3 text-sm font-medium font-quicksand text-gray-800'>
+                            <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={<span>Efforts</span>} />
+                            <svg
+                                fill="currentColor"
+                                viewBox="0 0 16 16"
+                                height="1em"
+                                width="1em"
+                                className='cursor-pointer'
+                                onClick={() => setEffortsTableVisible(!isEffortsTableVisible)}
+                            >
+                                <path
+                                    fillRule="evenodd"
+                                    d="M1.646 4.646a.5.5 0 01.708 0L8 10.293l5.646-5.647a.5.5 0 01.708.708l-6 6a.5.5 0 01-.708 0l-6-6a.5.5 0 010-.708z"
+                                />
+                            </svg>
+                        </div>
+                        {isEffortsTableVisible && <EffortsComponent />}
+
 
                     </div>
 
