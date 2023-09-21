@@ -165,4 +165,6 @@ export const getTheTimeSheetUploadUrl = () => {
     return HOST + APP_NAME + `/upload_working_data/`
 }
 
-
+export const getTheAddTaskEffortsUrl = () => {
+    return HOST + APP_NAME + `/add_task_efforts/`
+}
