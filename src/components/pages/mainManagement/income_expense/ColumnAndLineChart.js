@@ -7,10 +7,12 @@ import { getIncomeExpenseChartsData } from '../../../../api/urls'
 import GroupButtons from '../../../custom/Elements/buttons/GroupButtons'
 import Dropdown from '../../../custom/Dropdown/Dropdown'
 import { apiAction } from '../../../../api/api'
+import { getWorkspaceInfo } from '../../../../config/cookiesInfo'
 
 
 export default function ColumnAndLineChart(props) {
     const { project, employee } = props
+    const { work_id } = getWorkspaceInfo();
     const [selectedTime, setTimePeriod] = useState(timePeriods[2])
     const [data, setData] = useState([])
     const [chartType, setChartType] = useState("Line Chart")
@@ -49,7 +51,7 @@ export default function ColumnAndLineChart(props) {
         tooltip: {
             formatter: function () {
                 var tooltip = selectedTime.value == "daily" ? `${formatDate(this.x.working_date, "DD MMM")}`.replace('<br/>', ' ') : selectedTime.value == "weekly" ? `${this.x.name}<br>${formatDate(this.x.from_date, "DD MMM")} - ${formatDate(this.x.to_date, "DD MMM")}` : `${formatDate(this.x.from_date, "DD MMM")} - ${formatDate(this.x.to_date, "DD MMM")}`.replace('<br/>', ' ');
-                tooltip += `<br><span style="font-family: 'Noto Sans';"><span style="color:${this.series.color}">${this.series.name} : </span>${amountFormatter(this.y)}</span>`;
+                tooltip += `<br><span style="font-family: 'Noto Sans';"><span style="color:${this.series.color}">${this.series.name} : </span>${amountFormatter(this.y,"INR")}</span>`;
                 return tooltip;
             }
         },
@@ -79,8 +81,9 @@ export default function ColumnAndLineChart(props) {
     useEffect(() => {
         getIncomeAndExpenseData({
             period: timePeriods[2].value,
-            project_id: project ? project.id : null,
-            employee_id: employee ? employee.id : null
+            project_id: project ? project.project_id : null,
+            employee_id: employee ? employee.id : null,
+            workspace_id:work_id
         })
     }, [project, employee])
 
@@ -126,7 +129,7 @@ export default function ColumnAndLineChart(props) {
                         <div className='md:w-60 max-w-sm w-32 flex '>
                             <Dropdown options={timePeriods} optionDescLabel={"period"} placeholder={true} optionLabel={'name'} value={selectedTime ? selectedTime : timePeriods[2]} setValue={(value) => {
                                 setTimePeriod(value)
-                                getIncomeAndExpenseData({ period: value.value })
+                                getIncomeAndExpenseData({ period: value.value, workspace_id: work_id})
                             }} />
                         </div>
                     </div>

@@ -177,6 +177,23 @@ export const getDeleteTaskEffortsUrl = () => {
     return HOST + APP_NAME + `/delete_task_efforts/`
 }
 
+
 export const getTasksUrl = () => {
     return HOST + APP_NAME + `/list_of_task_records_of_employee/`
+}
+
+export const getAddNewBudgetUrl = () => {
+    return HOST + APP_NAME + `/add_budget/`
+}
+
+export const getCurrencyUrl = (workspaceId) => {
+    return HOST + APP_NAME + `/list_currency/?workspace_id=${workspaceId}`
+}
+
+export const getUpdateBudgetUrl = () => {
+    return HOST + APP_NAME + `/update_budget/`
+}
+
+export const getBudgetListUrl = () => {
+    return HOST + APP_NAME + `/list_budget/`
 }
