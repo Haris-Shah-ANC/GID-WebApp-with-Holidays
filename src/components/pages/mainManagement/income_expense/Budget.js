@@ -1,9 +1,13 @@
+import { useState } from "react";
 import { DATE, EXPENSE, INCOME, NET_DIFFERENCE } from "../../../../utils/Constant";
 import Dropdown from "../../../custom/Dropdown/Dropdown";
 import FileUploadButton from "../../../custom/Elements/buttons/FileUploadButton";
+import PlainButton from "../../../custom/Elements/buttons/PlainButton";
+import GidInput from "../../../custom/Elements/inputs/GidInput";
+import BudgetForm from "./BudgetForm";
 
 export default function Budget(props) {
-
+    const [formVisibility, setFormVisibility] = useState(false)
     let sampleData = [
         {
             valid_from: "12/10/2023",
@@ -51,27 +55,32 @@ export default function Budget(props) {
     return (
         <div className="">
             <span className="mx-2 text-2xl">Budget</span>
-            <div className="bg-white flex flex-col md:flex-row shadow mx-2 my-2 py-5 px-5 rounded-md  ">
-                <div className='w-full flex flex-col md:flex-row space-y-2 md:space-x-3 md:space-y-0'>
-                    <div className='md:w-60 max-w-sm w-lg'>
-                        <Dropdown options={[]} optionLabel={'project_name'} value={{ name: 'All Project' }} setValue={(value) => {
-                           
-                        }} />
-                    </div>
-                    <div className='md:w-60 max-w-sm w-lg'>
-                        <Dropdown options={[]} optionLabel={'employee_name'} value={{ name: 'All Employees' }} setValue={(value) => {
-                            console.log("ON SELECT", value)
-                        }} />
+            <div className="bg-white flex flex-col shadow mx-2 my-2 py-5 px-5 rounded-md">
+                <div className="flex w-full flex-col md:flex-row">
+                    <div className='w-full flex flex-col md:flex-row space-y-2 md:space-x-3 md:space-y-0'>
+                        <div className='md:w-60 max-w-sm w-lg'>
+                            <Dropdown options={[]} optionLabel={'project_name'} value={{ name: 'All Project' }} setValue={(value) => {
+                            
+                            }} />
+                        </div>
+                        <div className='md:w-60 max-w-sm w-lg'>
+                            <Dropdown options={[]} optionLabel={'employee_name'} value={{ name: 'All Employees' }} setValue={(value) => {
+                                console.log("ON SELECT", value)
+                            }} />
+                        </div>
+
                     </div>
 
+                    <div className='flex justify-end max-w-sm w-full mt-2 md:mt-0'>
+                        <button className='border border-[#dddddf] rounded-lg items-center flex px-3 py-2' onClick={() => {setFormVisibility(true)}}>
+                            <i className="fa-solid fa-plus mr-2 text-[#75787b]" ></i>
+                            <p className='text-[#75787b] font-semibold font-quicksand text-sm'>Add New</p>
+                        </button>
+                    </div>
                 </div>
 
-                <div className='flex justify-end max-w-sm w-full mt-2 md:mt-0'>
-                    <button className='border border-[#dddddf] rounded-lg items-center flex px-3 py-2' onClick={() => {}}>
-                        <i className="fa-solid fa-plus mr-2 text-[#75787b]" ></i>
-                        <p className='text-[#75787b] font-semibold font-quicksand text-sm'>Add New</p>
-                    </button>
-                </div>
+                {formVisibility && <BudgetForm onFormClose={() => {setFormVisibility(!formVisibility)}}></BudgetForm>}
+
             </div>
             <div className="flex mx-2 rounded mt-5">
                 <table className=" bg-transparent border-collapse table-auto w-full rounded-lg">
