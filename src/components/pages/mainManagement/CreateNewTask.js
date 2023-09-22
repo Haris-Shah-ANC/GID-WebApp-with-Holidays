@@ -126,10 +126,10 @@ const CreateNewTask = (props) => {
 
     return (
 
-        <div className="relative my-6 w-full mx-2 sm:max-w-sm md:max-w-lg overflow-y-auto overflow-x-auto overflow-auto h-[80%] w-[80%]">
-            <div className="w-full border-0 rounded-lg shadow-lg relative flex flex-col bg-white outline-none focus:outline-none">
+        <div className="justify-center overflow-hidden  items-center flex fixed overflow-x-hidden  fixed inset-0 z-50 outline-none focus:outline-none">
+            <div className=" sm:w-[65vh] h-[80vh] overflow-hidden border-0 rounded-lg shadow-lg relative flex flex-col bg-white outline-none focus:outline-none">
                 {/* header */}
-                <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
+                <div className="flex items-center flex-row h-14  justify-between  border-solid border-slate-200 rounded-t text-black">
                     <h3 className="text-lg font-quicksand font-bold text-center w-full">{formData.task_id ? 'Update Task' : 'Add Task'}</h3>
                     <button
                         className="text-lg w-10 h-10 ml-auto rounded-full focus:outline-none hover:bg-gray-200 flex justify-center items-center"
@@ -137,9 +137,9 @@ const CreateNewTask = (props) => {
                         <i className="fa-solid fa-times"></i>
                     </button>
                 </div>
-                <form>
+                <form id={"last_div"} className='overflow-auto'>
 
-                    <div className="relative px-5 pt-2 flex-auto ">
+                    <div className="relative px-5 mt-2  flex-auto  ">
                         <div className="my-1 flex flex-col">
                             <CustomLabel label={`Select  Project`} className={'font-quicksand font-semibold text-sm mb-1'} />
                             <Dropdown disabled={formData.task_id ? true : false} placeholder={true} options={projectsResults} optionLabel={'project_name'} value={selectedProject ? selectedProject : { project_name: 'Select project' }} setValue={(value) => setFormData((previous) => ({ ...previous, project_id: value ? value.project_id : null }))} />
@@ -249,29 +249,36 @@ const CreateNewTask = (props) => {
                             </IconInput>
                         </div>
 
-                        <div className='flex flex-row items-center justify-between my-3 text-sm font-medium font-quicksand text-gray-800'>
-                            <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={<span>Efforts</span>} />
-                            <svg
-                                fill="currentColor"
-                                viewBox="0 0 16 16"
-                                height="1em"
-                                width="1em"
-                                className='cursor-pointer'
-                                onClick={() => setEffortsTableVisible(!isEffortsTableVisible)}
-                            >
-                                <path
-                                    fillRule="evenodd"
-                                    d="M1.646 4.646a.5.5 0 01.708 0L8 10.293l5.646-5.647a.5.5 0 01.708.708l-6 6a.5.5 0 01-.708 0l-6-6a.5.5 0 010-.708z"
-                                />
-                            </svg>
-                        </div>
-                        {isEffortsTableVisible && <EffortsComponent />}
-
+                        {formData.task_id &&
+                            <>
+                                <div className='flex flex-row items-center justify-between my-5 text-sm font-medium font-quicksand text-gray-800'>
+                                    <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={<span>Efforts</span>} />
+                                    <svg
+                                        fill="blue"
+                                        viewBox="0 0 16 16"
+                                        height="1em"
+                                        width="1em"
+                                        className='cursor-pointer hover:bg-blue-100 rounded-lg m-2'
+                                        onClick={() => {
+                                            const element = document.getElementById("last_div");
+                                            element.scrollTop = element.scrollHeight;
+                                            setEffortsTableVisible(!isEffortsTableVisible)
+                                        }}
+                                    >
+                                        <path
+                                            fillRule="evenodd"
+                                            d="M1.646 4.646a.5.5 0 01.708 0L8 10.293l5.646-5.647a.5.5 0 01.708.708l-6 6a.5.5 0 01-.708 0l-6-6a.5.5 0 010-.708z"
+                                        />
+                                    </svg>
+                                </div>
+                                {isEffortsTableVisible && <EffortsComponent data={initial_data} />}
+                            </>
+                        }
 
                     </div>
 
 
-                    <div className="p-6 border-solid border-slate-200 rounded-b">
+                    <div  className="p-6 border-solid border-slate-200 rounded-b">
                         <PlainButton title={"Save Changes"} className={"w-full"} onButtonClick={handleSaveChanges} disable={false}></PlainButton>
                     </div>
                 </form>

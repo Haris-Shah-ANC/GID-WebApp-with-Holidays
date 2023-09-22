@@ -497,6 +497,7 @@ const Dashboard = () => {
     }
     return (
         <React.Fragment>
+            <NewModal isVisible={false} />
             <ModelComponent showModal={showModal} setShowModal={setShowModal} data={formData} onFilterApply={onFilterApply} onFilterClear={onFilterClear} from={"dashboard"} />
             {/* <Filter
                 filters={filters}
@@ -504,6 +505,7 @@ const Dashboard = () => {
                 employeeResults={employeeResults}
                 projectsResults={projectsResults}
             /> */}
+           
             <div className="bg-white rounded-xl flex flex-col md:flex-row justify-between shadow overflow-auto">
                 <div className='flex-row flex'>
                     {btnLabelList.map((item, index) => {

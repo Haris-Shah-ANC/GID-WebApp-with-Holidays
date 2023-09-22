@@ -168,3 +168,11 @@ export const getTheTimeSheetUploadUrl = () => {
 export const getTheAddTaskEffortsUrl = () => {
     return HOST + APP_NAME + `/add_task_efforts/`
 }
+
+export const getTheListOfTaskEffortsUrl = (workspaceId, taskId) => {
+    return HOST + APP_NAME + `/list_of_task_efforts/?workspace_id=${workspaceId}&task_id=${taskId}`
+}
+
+export const getDeleteTaskEffortsUrl = () => {
+    return HOST + APP_NAME + `/delete_task_efforts/`
+}

@@ -17,6 +17,8 @@ export default function GidInput(props) {
       placeholder={placeholderMsg}
       ref={reference}
       autoComplete="new-password"
+      style={{WebkitAppearance:"none"}}
+    
     >
     </input>
   )
