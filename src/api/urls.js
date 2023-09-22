@@ -176,3 +176,7 @@ export const getTheListOfTaskEffortsUrl = (workspaceId, taskId) => {
 export const getDeleteTaskEffortsUrl = () => {
     return HOST + APP_NAME + `/delete_task_efforts/`
 }
+
+export const getTasksUrl = () => {
+    return HOST + APP_NAME + `/list_of_task_records_of_employee/`
+}
