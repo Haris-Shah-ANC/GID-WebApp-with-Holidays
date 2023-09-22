@@ -7,11 +7,13 @@ import { ChartTitle } from '../../../custom/Elements/ChartLable';
 import GroupButtons from '../../../custom/Elements/buttons/GroupButtons';
 import { getIncomeExpensePieChartData } from '../../../../api/urls';
 import Dropdown from '../../../custom/Dropdown/Dropdown';
+import { getWorkspaceInfo } from '../../../../config/cookiesInfo';
 
 
 export default function PieChartGraph(props) {
     const { project, employee, onFileUpload } = props
     let timePeriodList = getTimePeriods()
+    const { work_id } = getWorkspaceInfo();
     const [data, setData] = useState([])
     const [selectedTime, setTimePeriod] = useState(timePeriodList[2])
     const [isParentClicked, setParentClick] = useState(false)
@@ -22,6 +24,7 @@ export default function PieChartGraph(props) {
         setParentItem(incomeType === "Projects" ? `Project : ${parent.options.name}` : `Employee : ${parent.options.name}`)
         let parentId = incomeType === "Projects" ? parent.options.project_id : parent.options.employee_id
         getIncomeAndExpenseData({
+            workspace_id:work_id,
             from_date: selectedTime.dates.from,
             to_date: selectedTime.dates.to,
             project_id: incomeType === "Projects" ? parentId : null,
@@ -31,6 +34,7 @@ export default function PieChartGraph(props) {
     }
     const onPieChartBackClick = () => {
         getIncomeAndExpenseData({
+            workspace_id: work_id,
             from_date: selectedTime.dates.from,
             to_date: selectedTime.dates.to,
             project_id: null,
@@ -52,7 +56,7 @@ export default function PieChartGraph(props) {
         },
         tooltip: {
             formatter: function () {
-                return this.point.name + `: <b style="font-family: 'Noto Sans';">` + amountFormatter(this.y) + '</b>';
+                return this.point.name + `: <b style="font-family: 'Noto Sans';">` + amountFormatter(this.y,"INR") + '</b>';
             }
         },
 
@@ -101,6 +105,7 @@ export default function PieChartGraph(props) {
 
     useEffect(() => {
         getIncomeAndExpenseData({
+            workspace_id: work_id,
             from_date: timePeriodList[2].dates.from,
             to_date: timePeriodList[2].dates.to,
             project_id: null,
@@ -165,7 +170,7 @@ export default function PieChartGraph(props) {
                             <Dropdown options={getTimePeriods()} placeholder={true} optionLabel={'title'} value={selectedTime ? selectedTime : { title: 'All Project' }} setValue={(value) => {
                                 setTimePeriod(value)
                                 setParentClick(false)
-                                getIncomeAndExpenseData({ from_date: value.dates.from, to_date: value.dates.to, income_by: incomeType == "Projects" ? 'project' : "employees" })
+                                getIncomeAndExpenseData({  workspace_id:work_id, from_date: value.dates.from, to_date: value.dates.to, income_by: incomeType == "Projects" ? 'project' : "employees" })
                             }} />
                         </div>
                     </div>
