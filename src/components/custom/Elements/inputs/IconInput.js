@@ -20,7 +20,8 @@ export default function IconInput(props) {
         </input>
         
         {icon && <div className={tailwindIconCss}>
-            <i className={`${icon}`}></i>
+            {/* <i className={`${icon}`}></i> */}
+            {icon}
             </div>}
     </div>
   )

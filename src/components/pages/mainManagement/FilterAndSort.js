@@ -64,8 +64,10 @@ const FilterAndSort = (props) => {
 
     const getEmployeeList = async () => {
         let res = await apiAction({ url: employee(work_id), method: 'get', navigate: navigate, dispatch: dispatch })
-        if (res.success) {
-            setEmployeeList([{ employee_name: 'Select employee' }, ...res.results])
+        if(res){
+            if (res.success) {
+                setEmployeeList([{ employee_name: 'Select employee' }, ...res.results])
+            }
         }
     }
     const getProjectsResultsApi = async (id) => {

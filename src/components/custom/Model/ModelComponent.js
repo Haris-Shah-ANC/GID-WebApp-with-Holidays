@@ -3,6 +3,7 @@ import CreateNewTask from '../../pages/mainManagement/CreateNewTask';
 import CreateNewWorkspace from '../../pages/mainManagement/CreateNewWorkspace';
 
 import {
+    add_effort,
     add_meeting_link,
     add_project,
     add_project_module,
@@ -20,6 +21,7 @@ import FileUpload from '../../pages/mainManagement/FileUpload';
 import DeleteNotificationModal from '../../pages/mainManagement/DeleteNotificationModal';
 import AddMeetingLinkModal from '../../pages/mainManagement/AddMeetingLinkModal';
 import AddTimeSheetModal from './AddTimeSheetModal';
+import EffortsComponent from '../EffortsComponent';
 
 const ModelComponent = (props) => {
     const { showModal, setShowModal, data, onFilterApply, onFilterClear, from, onSuccess = () => "" } = props
@@ -58,6 +60,11 @@ const ModelComponent = (props) => {
                     {
                         showModal === delete_notification &&
                         <DeleteNotificationModal setShowModal={setShowModal} data={data}></DeleteNotificationModal>
+                    }
+
+                    {
+                        showModal === add_effort &&
+                        <EffortsComponent setShowModal={setShowModal} data={data}></EffortsComponent>
                     }
                 </div>
                 {/* </div> */}

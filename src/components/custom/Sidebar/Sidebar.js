@@ -167,12 +167,14 @@ const ChildItemComponent = (props) => {
 
   const fetchWorkspaces = async () => {
     let response = await apiAction({ url: get_workspace(), method: "get", data: null })
-    setWorkSpaces(response.result)
+    if(response)
+      setWorkSpaces(response.result)
 
   }
   const fetchMeetingLinks = async () => {
     let response = await apiAction({ url: getMeetingLinkUrl(work_id), method: "get", data: null })
-    setMeetingLinkList(response.result)
+    if(response)
+      setMeetingLinkList(response.result)
 
 
   }

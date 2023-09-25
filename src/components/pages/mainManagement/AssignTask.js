@@ -244,9 +244,10 @@ const AssignedTask = () => {
             dispatch: dispatch,
             url: get_all_project(id),
         })
-        if (res.success) {
-            setProjectsResults([{ project_name: 'Select project' }, ...res.result])
-        }
+        if(res)
+            if (res.success) {
+                setProjectsResults([{ project_name: 'Select project' }, ...res.result])
+            }
     }
     const getModuleResultsApi = async (w_id, p_id) => {
         let res = await apiAction({
@@ -255,9 +256,10 @@ const AssignedTask = () => {
             dispatch: dispatch,
             url: get_project_module(w_id, p_id),
         })
-        if (res.success) {
-            setModuleResults([{ module_name: 'Select module' }, ...res.project_module_list])
-        }
+        if(res)
+            if (res.success) {
+                setModuleResults([{ module_name: 'Select module' }, ...res.project_module_list])
+            }
     }
     const getEmployeeResultsApi = async (id) => {
         let res = await apiAction({
@@ -266,10 +268,11 @@ const AssignedTask = () => {
             navigate: navigate,
             dispatch: dispatch,
         })
-        if (res.success) {
-            let filterResults = res.results.filter((item) => item.id !== user_id)
-            setEmployeeResults([{ employee_name: 'Select Employee' }, ...filterResults])
-        }
+        if(res)
+            if (res.success) {
+                let filterResults = res.results.filter((item) => item.id !== user_id)
+                setEmployeeResults([{ employee_name: 'Select Employee' }, ...filterResults])
+            }
     }
     React.useEffect(() => {
         if (work_id && formData.project_id) {
@@ -306,12 +309,15 @@ const AssignedTask = () => {
                 url: assign_task(),
                 data: { ...formData, dead_line: formattedDeadline(formData.dead_line) },
             })
-            if (res.success) {
-                notifySuccessMessage(res.status);
-                navigate(routesName.assignTask.path);
-            } else {
-                notifyErrorMessage(res.detail)
+            if(res){
+                if (res.success) {
+                    notifySuccessMessage(res.status);
+                    navigate(routesName.assignTask.path);
+                } else {
+                    notifyErrorMessage(res.detail)
+                }
             }
+            
         } else {
             notifyErrorMessage(message)
         }
