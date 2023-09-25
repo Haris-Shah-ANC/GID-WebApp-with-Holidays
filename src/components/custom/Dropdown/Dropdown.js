@@ -12,7 +12,7 @@ const Dropdown = (props) => {
 
 
   return (
-    <div className={"w-full relative"}>
+    <div className={"w-full"}>
       <select
         disabled={disabled}
         onChange={handleSelectChange}
