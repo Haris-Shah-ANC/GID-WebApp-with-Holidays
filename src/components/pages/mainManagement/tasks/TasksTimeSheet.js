@@ -1,14 +1,32 @@
 import React from 'react'
 import { DATE, DURATION, END_TIME, MODULE, PROJECT, START_TIME, TASK, svgIcons } from '../../../../utils/Constant'
-import { formatDate } from '../../../../utils/Utils'
+import { formatDate, notifyErrorMessage, notifySuccessMessage } from '../../../../utils/Utils'
 import { twMerge } from 'tailwind-merge'
+import { getDeleteTaskEffortsUrl } from '../../../../api/urls'
+import { apiAction } from '../../../../api/api'
+import { useNavigate } from 'react-router-dom'
 
 export default function TasksTimeSheet(props) {
-    const { tasks, onAddEffortClick, onItemClick } = props
+    const { tasks, onAddEffortClick, onItemClick, onDeleteEffort } = props
+    const navigate = useNavigate()
 
     const calculateDuration = (item) => {
         return item.list_task_record.reduce((total, currentValue) => total = total + currentValue.working_duration, 0)
     }
+
+    const deleteTaskEfforts = async (data, workspace_id, effortIndex, taskIndex) => {
+        onDeleteEffort(taskIndex, effortIndex, data)
+        // let res = await apiAction({ url: getDeleteTaskEffortsUrl(), method: 'post', data: { task_record_id: data.id, workspace_id: workspace_id }, navigate: navigate })
+        // if (res) {
+        //     if(res.success){
+        //         notifySuccessMessage(res.status);
+        //         onDeleteEffort(taskIndex, effortIndex)
+        //     }else{
+        //         notifyErrorMessage(res.status)
+        //     }
+        //     // getEmployeeTaskEfforts()
+        // }
+      }
 
     return (
         <table className=" bg-transparent w-full">
@@ -25,7 +43,7 @@ export default function TasksTimeSheet(props) {
             <tbody className=" divide-y divide-gray-200 table-fixed">
                 {
                     tasks.map((item, index) => {
-                        return <TableRow onAddEffortClick={onAddEffortClick} onItemClick={onItemClick} item={item} index={index}></TableRow>
+                        return <TableRow onAddEffortClick={onAddEffortClick} onItemClick={onItemClick} item={item} index={index} deleteTaskEfforts={deleteTaskEfforts}></TableRow>
                     })
                 }
             </tbody>
@@ -44,7 +62,7 @@ function TableHeader(props) {
 }
 
 function TableRow(props) {
-    const { onAddEffortClick, onItemClick, item, index } = props
+    const { onAddEffortClick, onItemClick, item, index, deleteTaskEfforts } = props
 
     const calculateDuration = (item) => {
         return item.list_task_record.reduce((total, currentValue) => total = total + currentValue.working_duration, 0)
@@ -100,27 +118,38 @@ function TableRow(props) {
 
                                     <th
                                         key={DURATION}
-                                        className={`text-sm p-3 text-center text-blueGray-500 font-interVar font-bold`}>
+                                        className={`text-sm p-3 text-right text-blueGray-500 font-interVar font-bold`}>
                                         {DURATION}
                                     </th>
-
+                                    <th
+                                        key={""}
+                                        className={`text-sm p-3 text-center text-blueGray-500 font-interVar font-bold w-10`}>
+                                        {}
+                                    </th>
                                 </tr>
                             </thead>
                             <tbody className=" divide-y divide-gray-200 table-fixed">
                                 {
-                                    item.list_task_record.map((workDetails, index) => {
+                                    item.list_task_record.map((workDetails, effortIndex) => {
                                         return <tr className='h-10'>
-                                            <th
+                                            <td
                                                 // key={TASK}
                                                 className={`text-sm p-3 text-left text-blueGray-500 font-interVar font-bold`}>
                                                 {formatDate(workDetails.working_date, "D-MMM-YYYY")}
-                                            </th>
+                                            </td>
 
-                                            <th
+                                            <td
                                                 // key={}
-                                                className={`text-sm p-3 text-center text-blueGray-500 font-interVar font-bold`}>
+                                                className={`text-sm p-3 text-right text-blueGray-500 font-interVar font-bold`}>
                                                 {workDetails.working_duration} hrs.
-                                            </th>
+                                            </td>
+                                            <td
+                                                // key={}
+                                                className={`text-sm p-3 text-center text-blueGray-500 font-interVar font-bold w-10`}>
+                                                <div onClick={() => {deleteTaskEfforts(workDetails, item.workspace_id, effortIndex, index)}}>
+                                                    {svgIcons("cursor-pointer fill-red-600", "delete")}
+                                                </div>
+                                            </td>
                                         </tr>
                                     })
                                 }

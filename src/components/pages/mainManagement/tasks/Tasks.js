@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import * as Actions from '../../../../state/Actions';
 import { DATE, DURATION, END_TIME, MODULE, PROJECT, START_TIME, TASK, add_effort, svgIcons } from '../../../../utils/Constant';
 import PlainButton from '../../../custom/Elements/buttons/PlainButton';
-import { getTasksUrl, getTheAddTaskEffortsUrl, get_all_project, get_task } from '../../../../api/urls';
+import { getDeleteTaskEffortsUrl, getTasksUrl, getTheAddTaskEffortsUrl, get_all_project, get_task } from '../../../../api/urls';
 import { getLoginDetails, getWorkspaceInfo } from '../../../../config/cookiesInfo';
-import { getTimePeriods } from '../../../../utils/Utils';
+import { getTimePeriods, notifyErrorMessage, notifySuccessMessage } from '../../../../utils/Utils';
 import Dropdown from '../../../custom/Dropdown/Dropdown';
 import IconInput from '../../../custom/Elements/inputs/IconInput';
 import EffortsPopup from './EffortsPopup';
@@ -46,7 +46,7 @@ export default function Tasks() {
   const getTaskList = async (URL) => {
     const payload = {
       workspace_id: work_id,
-      project_id: selectedProject ? selectedProject.project_id : null,
+      project_id: selectedProject ? selectedProject.project_id ? selectedProject.project_id : null : null,
       from_date: selectedDuration ? selectedDuration.dates.from : null,
       to_date: selectedDuration ? selectedDuration.dates.to : null,
       task_description: searchText
@@ -86,6 +86,14 @@ export default function Tasks() {
     //   }
   }
 
+  const deleteTaskEfforts = async (data, index) => {
+    // let res = await apiAction({ url: getDeleteTaskEffortsUrl(), method: 'post', data: { task_record_id: id, workspace_id: work_id }, navigate: navigate, dispatch: dispatch })
+    // if (res) {
+    //     notifySuccessMessage(res.status);
+    //     getEmployeeTaskEfforts()
+    // }
+  }
+
   const calculateDuration = (item) => {
     return item.list_task_record.reduce((total, currentValue) => total = total + currentValue.working_duration, 0)
   }
@@ -105,6 +113,21 @@ export default function Tasks() {
   const onItemClick = (item, index) => {
     tasks[index].is_selected = !tasks[index].is_selected
     setTasks([...tasks])
+  }
+
+  const onDeleteEffort = async(taskIndex, effortIndex, data) => {
+    let res = await apiAction({ url: getDeleteTaskEffortsUrl(), method: 'post', data: { task_record_id: data.id, workspace_id: work_id }, navigate: navigate })
+        if (res) {
+            if(res.success){
+                notifySuccessMessage(res.status);
+                tasks[taskIndex].list_task_record.splice(effortIndex, 1)
+                setTasks([...tasks])
+            }else{
+                notifyErrorMessage(res.status)
+            }
+            // getEmployeeTaskEfforts()
+        }
+    
   }
 
 
@@ -142,7 +165,7 @@ export default function Tasks() {
         <div>
           {
             tasks.length > 0 &&
-            <TasksTimeSheet tasks={tasks} onAddEffortClick={onAddEffortClick} onItemClick={onItemClick}></TasksTimeSheet>
+            <TasksTimeSheet tasks={tasks} onAddEffortClick={onAddEffortClick} onItemClick={onItemClick} onDeleteEffort={onDeleteEffort}></TasksTimeSheet>
           }
 
         </div>
