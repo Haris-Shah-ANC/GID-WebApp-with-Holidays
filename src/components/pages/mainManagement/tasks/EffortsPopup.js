@@ -6,8 +6,9 @@ import { getTheAddTaskEffortsUrl, getTheListOfTaskEffortsUrl } from '../../../..
 import { notifyErrorMessage, notifySuccessMessage } from '../../../../utils/Utils'
 import { useNavigate } from 'react-router-dom'
 import ButtonWithImage from '../../../custom/Elements/buttons/ButtonWithImage'
+import moment from 'moment/moment'
 
-export default function EffortDatePopup(props) {
+export default function EffortsPopup(props) {
   const navigate = useNavigate()
   const { setState, onSuccessCreate, data } = props
   const [effortFormData, setFormData] = useState({ working_date: "", working_duration: "" })
@@ -73,6 +74,7 @@ export default function EffortDatePopup(props) {
                 className={"w-full"}
                 value={effortFormData.working_date}
                 onBlurEvent={(e) => {}}
+                max={moment().format("YYYY-MM-DD")}
                 onTextChange={(e) => setFormData((previous) => ({ ...previous, working_date: e.target.value }))}></GidInput>
 
               <GidInput
