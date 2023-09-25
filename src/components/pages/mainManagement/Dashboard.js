@@ -305,7 +305,6 @@ const Dashboard = () => {
 
         }
 
-        console.log('===>description_link', description_link)
         return (
             // <React.Fragment>
             //     <div onClick={() => {

@@ -35,6 +35,7 @@ export default function Analysis() {
 
     useEffect(() => {
         fetchIncomeAndExpense()
+
     }, [selectedProject, selectedTime, selectedEmployee])
 
     const getPostBody = () => {
@@ -44,7 +45,7 @@ export default function Analysis() {
             to_date: selectedTime.dates.to,
             previous_from_date: selectedTime.dates.previousFromDate,
             previous_to_date: selectedTime.dates.previousToDate,
-            project_id: selectedProject ? selectedProject.id : null,
+            project_id: selectedProject ? selectedProject.project_id : null,
             employee_id: selectedEmployee ? selectedEmployee.id : null
         }
     }
@@ -126,7 +127,7 @@ export default function Analysis() {
                 <div className='flex w-full pb-2'>
                     <div className='flex flex-col w-full p-5 m-2 bg-white shadow rounded-md items-center'>
                         <p className={`text-sm  text-center text-blueGray-500 font-interVar font-bold `}>{INCOME}</p>
-                        <p className='flex text-2xl text-center items-center'>{incomeExpenseData ? "₹ " + amountFormatter(incomeExpenseData.income_amount,"INR") : "-"}
+                        <p className='flex text-2xl text-center items-center'>{incomeExpenseData ? amountFormatter(incomeExpenseData.income_amount,"INR") : "-"}
                             {svgIcons(`w-4 h-3 ml-2 ${getIconStyle(incomeExpenseData, "difference_in_percent_for_income")}`, "arrow")}
                             <span className={`text-sm ${getLabelColor(incomeExpenseData, "difference_in_percent_for_income")}`} >{`${incomeExpenseData ? amountFormatter(incomeExpenseData.difference_in_percent_for_income,"INR") : ""}%`}</span>
                         </p>
@@ -134,7 +135,7 @@ export default function Analysis() {
 
                     <div className='flex flex-col w-full p-5 m-2 bg-white shadow rounded-md items-center'>
                         <p className={`text-sm  text-center text-blueGray-500 font-interVar font-bold `}>{EXPENSE}</p>
-                        <p className='flex text-2xl text-center items-center'>{incomeExpenseData ? "₹ " + amountFormatter(incomeExpenseData.expense_amount,"INR") : "-"}
+                        <p className='flex text-2xl text-center items-center'>{incomeExpenseData ? amountFormatter(incomeExpenseData.expense_amount,"INR") : "-"}
                             {svgIcons(`w-4 h-3 ml-2 ${getIconStyle(incomeExpenseData, "difference_in_percent_for_expense")}`, "arrow")}
                             <span className={`text-sm ${getLabelColor(incomeExpenseData, "difference_in_percent_for_expense")}`} >{`${incomeExpenseData ? amountFormatter(incomeExpenseData.difference_in_percent_for_expense,"INR") : ""}%`}</span>
                         </p>
@@ -142,7 +143,7 @@ export default function Analysis() {
 
                     <div className='flex flex-col w-full p-5 m-2 bg-white shadow rounded-md items-center'>
                         <p className={`text-sm text-center text-blueGray-500 font-interVar font-bold `}>{NET_DIFFERENCE}</p>
-                        <p className='flex text-2xl text-center items-center'>{incomeExpenseData ? "₹ " + amountFormatter(incomeExpenseData.net_difference,"INR") : "-"}
+                        <p className='flex text-2xl text-center items-center'>{incomeExpenseData ? amountFormatter(incomeExpenseData.net_difference,"INR") : "-"}
                             {svgIcons(`w-4 h-3 ml-2  ${getIconStyle(incomeExpenseData, "difference_in_net_difference")}`, "arrow")}
                             <span className={`text-sm ${getLabelColor(incomeExpenseData, "difference_in_net_difference")}`} >{`${incomeExpenseData ? amountFormatter(incomeExpenseData.difference_in_net_difference,"INR") : ""}%`}</span>
                         </p>

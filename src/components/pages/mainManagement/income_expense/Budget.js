@@ -95,7 +95,7 @@ export default function Budget(props) {
                         <div className='md:w-60 max-w-sm w-lg'>
                             <Dropdown options={[{ project_name: "All Projects" }, ...listOfProjects]} optionLabel={'project_name'} value={selectedProject != null ? selectedProject : { name: 'All Project' }} setValue={(value) => {
                                 setProject(value)
-                                setPostBody({ ...postBody, project_id: value.id })
+                                setPostBody({ ...postBody, project_id: value.project_id })
                             }} />
                         </div>
                         <div className='md:w-60 max-w-sm w-lg'>
@@ -129,6 +129,11 @@ export default function Budget(props) {
                 <table className=" bg-transparent border-collapse table-auto w-full rounded-lg">
                     <thead className='bg-gray-200 px-10 justify-center items-center'>
                         <tr className='justify-between h-10'>
+                            {/* <th
+                                key={"valid_from"}
+                                className={`text-sm p-3 text-left text-blueGray-500 font-interVar font-bold w-1/4 font-quicksand font-bold`}>
+                                Sr/No
+                            </th> */}
                             <th
                                 key={"valid_from"}
                                 className={`text-sm p-3 text-left text-blueGray-500 font-interVar font-bold w-1/4 font-quicksand font-bold`}>
