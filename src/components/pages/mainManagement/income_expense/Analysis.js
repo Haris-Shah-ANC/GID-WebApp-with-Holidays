@@ -11,6 +11,8 @@ import { json, useLocation, useNavigate } from 'react-router-dom';
 import * as Actions from '../../../../state/Actions';
 import { getLoginDetails, getWorkspaceInfo } from '../../../../config/cookiesInfo';
 import Dropdown from '../../../custom/Dropdown/Dropdown';
+import EffortDatePopup from '../tasks/EffortDatePopup';
+import CheckRatePopup from './CheckRatePopup';
 
 const timePeriodsList = getTimePeriods()
 export default function Analysis() {
@@ -27,7 +29,8 @@ export default function Analysis() {
     const [projects, setProjectList] = useState([])
     const [incomeExpenseData, setIncomeExpenseData] = useState(null)
     const [fileUploaded, setFileUploadStatus] = useState(null)
-
+    const [rateModalVisibility, setRateModalVisibility] = useState(false)
+    const [tempBudgetList, setTempBudgetList] = useState(null)
     useEffect(() => {
         getProjects()
         getEmployees()
@@ -67,10 +70,15 @@ export default function Analysis() {
         if (response) {
             if (response.success) {
                 setIncomeExpenseData(response.result)
+                let totalIncome = 0
+                response.result.budget_data.map(item => {
+                    totalIncome += (Number(item.amount) * Number(item.exchange_rate) * item.hour)
+                })
+                console.log("TOTAL INCOME", totalIncome)
             }
         }
         function onError(err) {
-            console.log("UPLOAD ERROR", err)
+            // console.log("UPLOAD ERROR", err)
         }
     }
 
@@ -93,9 +101,56 @@ export default function Analysis() {
         setFileUploadStatus(fileData.file)
     }
 
+    const onRateChanged = (budgetList) => {
+        changeRateTemporary(budgetList)
+    }
+    function search(budgetId, budgetList) {
+        for (let i = 0; i < budgetList.length; i++) {
+            if (budgetList[i].id === budgetId) {
+                return budgetList[i];
+            }
+        }
+    }
+    const getDifferencePercentage = (current, previous) => {
+        if (current == 0 && previous == 0) {
+            return 0
+        } else if (previous == 0) {
+            return 0
+        } else {
+            return ((current - previous) / previous) * 100
+        }
+    }
 
+    const changeRateTemporary = (budgetList = []) => {
+        setTempBudgetList(budgetList)
+        const allBudgets = budgetList
+        let originalIncomeExpenseData = incomeExpenseData
+
+        let incomeAmount = 0
+        let expenseAmount = Number(originalIncomeExpenseData.expense_amount)
+        for (const obj of originalIncomeExpenseData.budget_data) {
+            let searchedItem = search(obj.budget_id, allBudgets)
+            if (searchedItem) {
+                incomeAmount += (Number(searchedItem.new_rate) * Number(searchedItem.exchange_rate)) * Number(obj.hour)
+            }
+        }
+        const netDifference = incomeAmount - Number(originalIncomeExpenseData.expense_amount)
+        const differenceInPercentageOfIncome = getDifferencePercentage(incomeAmount, Number(originalIncomeExpenseData.previous_income_amount))
+        const differenceInPercentageOfExpense = getDifferencePercentage(expenseAmount, Number(originalIncomeExpenseData.previous_expense_amount))
+        const differenceInNetDifferencePercentage = getDifferencePercentage(netDifference, Number(originalIncomeExpenseData.previous_net_difference))
+        setIncomeExpenseData({
+            ...incomeExpenseData, income_amount: incomeAmount,
+            net_difference: netDifference,
+            difference_in_net_difference: differenceInNetDifferencePercentage,
+            difference_in_percent_for_expense: differenceInPercentageOfExpense,
+            difference_in_percent_for_income: differenceInPercentageOfIncome
+        })
+
+
+    }
     return (
         <div className='flex flex-col mb-16'>
+
             <div className="bg-white flex flex-col md:flex-row shadow mx-2 my-2 py-5 px-5 rounded-md  ">
                 <div className='w-full flex flex-col md:flex-row space-y-2 md:space-x-3 md:space-y-0'>
                     <div className='md:w-60 max-w-sm w-full'>
@@ -105,7 +160,6 @@ export default function Analysis() {
                     </div>
                     <div className='md:w-60 max-w-sm w-full'>
                         <Dropdown options={employees} optionLabel={'employee_name'} value={selectedEmployee ? selectedEmployee : { name: 'All Employees' }} setValue={(value) => {
-                            console.log("ON SELECT", value)
                             selectEmployee(value)
                         }} />
                     </div>
@@ -118,34 +172,43 @@ export default function Analysis() {
             </div>
 
             <div className='px-5 pt-4 grid sm:grid-cols-1 xs:grid-cols-1 bg-[#fafafa] gap-4 mt-2 shadow rounded-md mx-2'>
-                <div className='md:w-60 max-w-sm w-full flex pb-0'>
-                    <Dropdown options={timePeriodsList} optionDescLabel={"period"} placeholder={true} optionLabel={'title'} value={selectedTime ? selectedTime : { title: 'All Project' }} setValue={(value) => {
-                        setTimePeriod(value)
-                    }} />
+                <div className='flex flex-row justify-between'>
+                    <div className='md:w-60 max-w-sm flex  pb-0'>
+                        <Dropdown options={timePeriodsList} optionDescLabel={"period"} placeholder={true} optionLabel={'title'} value={selectedTime ? selectedTime : { title: 'All Project' }} setValue={(value) => {
+                            setTimePeriod(value)
+                        }} />
+                    </div>
+                    <div className=''>
+                        <span className='text-[#120fbf] cursor-pointer' onClick={() => setRateModalVisibility(!rateModalVisibility)}>Check Rate</span>
+
+                        {rateModalVisibility && <CheckRatePopup tempBudgetList={tempBudgetList} onRateChanged={onRateChanged} project={selectedProject} employee={selectedEmployee} setState={setRateModalVisibility} data={{}} onSuccessCreate={() => ""} />}
+                    </div>
+
                 </div>
+
 
                 <div className='flex w-full pb-2'>
                     <div className='flex flex-col w-full p-5 m-2 bg-white shadow rounded-md items-center'>
                         <p className={`text-sm  text-center text-blueGray-500 font-interVar font-bold `}>{INCOME}</p>
-                        <p className='flex text-2xl text-center items-center'>{incomeExpenseData ? amountFormatter(incomeExpenseData.income_amount,"INR") : "-"}
+                        <p className='flex text-2xl text-center items-center'>{incomeExpenseData ? amountFormatter(incomeExpenseData.income_amount, "INR") : "-"}
                             {svgIcons(`w-4 h-3 ml-2 ${getIconStyle(incomeExpenseData, "difference_in_percent_for_income")}`, "arrow")}
-                            <span className={`text-sm ${getLabelColor(incomeExpenseData, "difference_in_percent_for_income")}`} >{`${incomeExpenseData ? amountFormatter(incomeExpenseData.difference_in_percent_for_income,"INR") : ""}%`}</span>
+                            <span className={`text-sm ${getLabelColor(incomeExpenseData, "difference_in_percent_for_income")}`} >{`${incomeExpenseData ? amountFormatter(incomeExpenseData.difference_in_percent_for_income, "INR") : ""}%`}</span>
                         </p>
                     </div>
 
                     <div className='flex flex-col w-full p-5 m-2 bg-white shadow rounded-md items-center'>
                         <p className={`text-sm  text-center text-blueGray-500 font-interVar font-bold `}>{EXPENSE}</p>
-                        <p className='flex text-2xl text-center items-center'>{incomeExpenseData ? amountFormatter(incomeExpenseData.expense_amount,"INR") : "-"}
+                        <p className='flex text-2xl text-center items-center'>{incomeExpenseData ? amountFormatter(incomeExpenseData.expense_amount, "INR") : "-"}
                             {svgIcons(`w-4 h-3 ml-2 ${getIconStyle(incomeExpenseData, "difference_in_percent_for_expense")}`, "arrow")}
-                            <span className={`text-sm ${getLabelColor(incomeExpenseData, "difference_in_percent_for_expense")}`} >{`${incomeExpenseData ? amountFormatter(incomeExpenseData.difference_in_percent_for_expense,"INR") : ""}%`}</span>
+                            <span className={`text-sm ${getLabelColor(incomeExpenseData, "difference_in_percent_for_expense")}`} >{`${incomeExpenseData ? amountFormatter(incomeExpenseData.difference_in_percent_for_expense, "INR") : ""}%`}</span>
                         </p>
                     </div>
 
                     <div className='flex flex-col w-full p-5 m-2 bg-white shadow rounded-md items-center'>
                         <p className={`text-sm text-center text-blueGray-500 font-interVar font-bold `}>{NET_DIFFERENCE}</p>
-                        <p className='flex text-2xl text-center items-center'>{incomeExpenseData ? amountFormatter(incomeExpenseData.net_difference,"INR") : "-"}
+                        <p className='flex text-2xl text-center items-center'>{incomeExpenseData ? amountFormatter(incomeExpenseData.net_difference, "INR") : "-"}
                             {svgIcons(`w-4 h-3 ml-2  ${getIconStyle(incomeExpenseData, "difference_in_net_difference")}`, "arrow")}
-                            <span className={`text-sm ${getLabelColor(incomeExpenseData, "difference_in_net_difference")}`} >{`${incomeExpenseData ? amountFormatter(incomeExpenseData.difference_in_net_difference,"INR") : ""}%`}</span>
+                            <span className={`text-sm ${getLabelColor(incomeExpenseData, "difference_in_net_difference")}`} >{`${incomeExpenseData ? amountFormatter(incomeExpenseData.difference_in_net_difference, "INR") : ""}%`}</span>
                         </p>
                     </div>
                 </div>
