@@ -11,7 +11,6 @@ import { json, useLocation, useNavigate } from 'react-router-dom';
 import * as Actions from '../../../../state/Actions';
 import { getLoginDetails, getWorkspaceInfo } from '../../../../config/cookiesInfo';
 import Dropdown from '../../../custom/Dropdown/Dropdown';
-import EffortDatePopup from '../tasks/EffortDatePopup';
 import CheckRatePopup from './CheckRatePopup';
 
 const timePeriodsList = getTimePeriods()
