@@ -30,6 +30,7 @@ export default function Analysis() {
     const [incomeExpenseData, setIncomeExpenseData] = useState(null)
     const [fileUploaded, setFileUploadStatus] = useState(null)
     const [rateModalVisibility, setRateModalVisibility] = useState(false)
+    const [tempBudgetList, setTempBudgetList] = useState(null)
     useEffect(() => {
         getProjects()
         getEmployees()
@@ -69,10 +70,15 @@ export default function Analysis() {
         if (response) {
             if (response.success) {
                 setIncomeExpenseData(response.result)
+                let totalIncome = 0
+                response.result.budget_data.map(item => {
+                    totalIncome += (Number(item.amount) * Number(item.exchange_rate) * item.hour)
+                })
+                console.log("TOTAL INCOME", totalIncome)
             }
         }
         function onError(err) {
-            console.log("UPLOAD ERROR", err)
+            // console.log("UPLOAD ERROR", err)
         }
     }
 
@@ -95,7 +101,53 @@ export default function Analysis() {
         setFileUploadStatus(fileData.file)
     }
 
+    const onRateChanged = (budgetList) => {
+        changeRateTemporary(budgetList)
+    }
+    function search(budgetId, budgetList) {
+        for (let i = 0; i < budgetList.length; i++) {
+            if (budgetList[i].id === budgetId) {
+                return budgetList[i];
+            }
+        }
+    }
+    const getDifferencePercentage = (current, previous) => {
+        if (current == 0 && previous == 0) {
+            return 0
+        } else if (previous == 0) {
+            return 0
+        } else {
+            return ((current - previous) / previous) * 100
+        }
+    }
 
+    const changeRateTemporary = (budgetList = []) => {
+        setTempBudgetList(budgetList)
+        const allBudgets = budgetList
+        let originalIncomeExpenseData = incomeExpenseData
+
+        let incomeAmount = 0
+        let expenseAmount = Number(originalIncomeExpenseData.expense_amount)
+        for (const obj of originalIncomeExpenseData.budget_data) {
+            let searchedItem = search(obj.budget_id, allBudgets)
+            if (searchedItem) {
+                incomeAmount += (Number(searchedItem.new_rate) * Number(searchedItem.exchange_rate)) * Number(obj.hour)
+            }
+        }
+        const netDifference = incomeAmount - Number(originalIncomeExpenseData.expense_amount)
+        const differenceInPercentageOfIncome = getDifferencePercentage(incomeAmount, Number(originalIncomeExpenseData.previous_income_amount))
+        const differenceInPercentageOfExpense = getDifferencePercentage(expenseAmount, Number(originalIncomeExpenseData.previous_expense_amount))
+        const differenceInNetDifferencePercentage = getDifferencePercentage(netDifference, Number(originalIncomeExpenseData.previous_net_difference))
+        setIncomeExpenseData({
+            ...incomeExpenseData, income_amount: incomeAmount,
+            net_difference: netDifference,
+            difference_in_net_difference: differenceInNetDifferencePercentage,
+            difference_in_percent_for_expense: differenceInPercentageOfExpense,
+            difference_in_percent_for_income: differenceInPercentageOfIncome
+        })
+
+
+    }
     return (
         <div className='flex flex-col mb-16'>
 
@@ -108,7 +160,6 @@ export default function Analysis() {
                     </div>
                     <div className='md:w-60 max-w-sm w-full'>
                         <Dropdown options={employees} optionLabel={'employee_name'} value={selectedEmployee ? selectedEmployee : { name: 'All Employees' }} setValue={(value) => {
-                            console.log("ON SELECT", value)
                             selectEmployee(value)
                         }} />
                     </div>
@@ -130,7 +181,7 @@ export default function Analysis() {
                     <div className=''>
                         <span className='text-[#120fbf] cursor-pointer' onClick={() => setRateModalVisibility(!rateModalVisibility)}>Check Rate</span>
 
-                        {rateModalVisibility && <CheckRatePopup project={selectedProject} employee={selectedEmployee} setState={setRateModalVisibility} data={{}} onSuccessCreate={() => ""} />}
+                        {rateModalVisibility && <CheckRatePopup tempBudgetList={tempBudgetList} onRateChanged={onRateChanged} project={selectedProject} employee={selectedEmployee} setState={setRateModalVisibility} data={{}} onSuccessCreate={() => ""} />}
                     </div>
 
                 </div>

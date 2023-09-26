@@ -24,7 +24,7 @@ export default function PieChartGraph(props) {
         setParentItem(incomeType === "Projects" ? `Project : ${parent.options.name}` : `Employee : ${parent.options.name}`)
         let parentId = incomeType === "Projects" ? parent.options.project_id : parent.options.employee_id
         getIncomeAndExpenseData({
-            workspace_id:work_id,
+            workspace_id: work_id,
             from_date: selectedTime.dates.from,
             to_date: selectedTime.dates.to,
             project_id: incomeType === "Projects" ? parentId : null,
@@ -56,7 +56,7 @@ export default function PieChartGraph(props) {
         },
         tooltip: {
             formatter: function () {
-                return this.point.name + `: <b style="font-family: 'Noto Sans';">` + amountFormatter(this.y,"INR") + '</b>';
+                return this.point.name + `: <b style="font-family: 'Noto Sans';">` + amountFormatter(this.y, "INR") + '</b>';
             }
         },
 
@@ -170,7 +170,7 @@ export default function PieChartGraph(props) {
                             <Dropdown options={getTimePeriods()} placeholder={true} optionLabel={'title'} value={selectedTime ? selectedTime : { title: 'All Project' }} setValue={(value) => {
                                 setTimePeriod(value)
                                 setParentClick(false)
-                                getIncomeAndExpenseData({  workspace_id:work_id, from_date: value.dates.from, to_date: value.dates.to, income_by: incomeType == "Projects" ? 'project' : "employees" })
+                                getIncomeAndExpenseData({ workspace_id: work_id, from_date: value.dates.from, to_date: value.dates.to, income_by: incomeType == "Projects" ? 'project' : "employees" })
                             }} />
                         </div>
                     </div>
@@ -194,16 +194,11 @@ export default function PieChartGraph(props) {
                         : null}
                 </div>
                 <div className='capitalize text-center text-gray-500 h-7 '>
-                    {parentItem}
+                    {isParentClicked && parentItem}
                 </div>
                 <div className=' pt-6'>
                     <PieChart highcharts={Highcharts} options={options} containerProps={{ style: {} }} />
                 </div>
-                {/* <div className='flex flex-row bg-blue-100 justify-between px-12'>
-                <ChartLable style={{}} labelStyle={'text-[#049735]'} amount={20000} label={"Total Income"} />
-                <ChartLable style={{}} labelStyle={'text-[#ED0F1C]'} amount={10000} label={"Total Expense"} />
-
-            </div> */}
             </div >
         </div>
     )

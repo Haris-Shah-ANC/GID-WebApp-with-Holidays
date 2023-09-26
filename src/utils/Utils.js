@@ -417,7 +417,7 @@ export const getLabelColor = (incomeExpenseData, key) => {
     return ""
   }
   const incomePercentageChange = parseInt(incomeExpenseData[key])
-  console.log(incomeExpenseData[key], key)
+  // console.log(incomeExpenseData[key], key)
   return incomePercentageChange > 0 ? "text-green-600" : incomePercentageChange === 0 ? "text-blueGray-600" : "text-red-600"
 }
 

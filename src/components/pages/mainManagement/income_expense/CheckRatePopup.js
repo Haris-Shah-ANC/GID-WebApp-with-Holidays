@@ -12,7 +12,7 @@ import * as Actions from '../../../../state/Actions';
 export default function CheckRatePopup(props) {
     const navigate = useNavigate()
     const { work_id } = getWorkspaceInfo();
-    const { setState, project, employee } = props
+    const { setState, project, employee, onRateChanged, tempBudgetList } = props
     const [listOfBudgets, setListOfBudgets] = useState([])
 
     const dispatch = Actions.getDispatch(useContext);
@@ -23,7 +23,12 @@ export default function CheckRatePopup(props) {
             employee_id: employee ? employee.id : null,
             project_id: project ? project.project_id : null
         }
-        getBudgetsList(pBody)
+        if (tempBudgetList != null) {
+            setListOfBudgets(tempBudgetList)
+        } else {
+            getBudgetsList(pBody)
+        }
+
     }, [project, employee])
 
     const getBudgetsList = async (postBody) => {
@@ -34,24 +39,32 @@ export default function CheckRatePopup(props) {
             url: getBudgetListUrl(),
             data: postBody
         }).then((response) => {
-            setListOfBudgets(response.result)
+            let budgets = response.result
+
+            for (const obj of budgets) {
+                obj["new_rate"] = obj.amount;
+            }
+            setListOfBudgets(budgets)
+
         })
             .catch(error => {
 
             })
     }
     const onCheckClick = () => {
-
+        onRateChanged(listOfBudgets)
+        setState(false)
     }
 
     return (
         <>
 
 
-            <div className="justify-end mt-[22vh] flex overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none mr-5">
-                <div className="relative my-6 mx-2 w-1/3 overflow-x-auto">
-                    <div className="w-full border-0 rounded-lg shadow-lg relative flex flex-col bg-white outline-none focus:outline-none p-5">
-                        <div className="flex items-center justify-between border-solid border-slate-200 rounded-t text-black">
+            <div className="justify-end overflow-auto mt-[22vh] flex overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none mr-5">
+                <div className="overflow-hidden relative my-6 mx-2 w-1/3 overflow-x-auto ">
+
+                    <div className="w-full border-0 rounded-lg shadow-lg relative flex flex-col bg-white outline-none focus:outline-none p-5 overflow-auto">
+                        <div className="overflow-auto flex items-center justify-between border-solid border-slate-200 rounded-t text-black">
                             <h3 className="text-lg font-quicksand font-bold text-center w-full">{'Check Rate'}</h3>
                             <ButtonWithImage
                                 onButtonClick={() => { setState(false) }}
@@ -60,7 +73,8 @@ export default function CheckRatePopup(props) {
                                 icon={<i className="fa-solid fa-times text text-black self-center" color='black'></i>}
                             ></ButtonWithImage>
                         </div>
-                        <div className="flex mx-2 rounded mt-5">
+
+                        <div className=" mx-2 rounded mt-5 overflow-y-scroll h-[50vh]">
                             <table className=" bg-transparent border-collapse table-auto w-full rounded-lg">
                                 <thead className='bg-gray-200 px-10 justify-center items-center'>
                                     <tr className='justify-between h-10'>
@@ -114,12 +128,13 @@ export default function CheckRatePopup(props) {
                                                     disable={false}
                                                     placeholderMsg={"HH:MM"}
                                                     className={"w-24"}
-                                                    value={item.amount}
+                                                    value={item.new_rate}
                                                     onBlurEvent={(e) => {
 
                                                     }}
                                                     onTextChange={(e) => {
-
+                                                        listOfBudgets[index]["new_rate"] = e.target.value
+                                                        setListOfBudgets([...listOfBudgets])
 
                                                     }}></GidInput>
                                             </td>
