@@ -7,7 +7,7 @@ import { apiAction } from '../../../../api/api'
 import { useNavigate } from 'react-router-dom'
 
 export default function TasksTimeSheet(props) {
-    const { tasks, onAddEffortClick, onItemClick, onDeleteEffort } = props
+    const { tasks, onAddEffortClick, onItemClick, onDeleteEffort, onEffortItemClick } = props
     const navigate = useNavigate()
 
     const calculateDuration = (item) => {
@@ -16,17 +16,11 @@ export default function TasksTimeSheet(props) {
 
     const deleteTaskEfforts = async (data, workspace_id, effortIndex, taskIndex) => {
         onDeleteEffort(taskIndex, effortIndex, data)
-        // let res = await apiAction({ url: getDeleteTaskEffortsUrl(), method: 'post', data: { task_record_id: data.id, workspace_id: workspace_id }, navigate: navigate })
-        // if (res) {
-        //     if(res.success){
-        //         notifySuccessMessage(res.status);
-        //         onDeleteEffort(taskIndex, effortIndex)
-        //     }else{
-        //         notifyErrorMessage(res.status)
-        //     }
-        //     // getEmployeeTaskEfforts()
-        // }
       }
+
+    const onEffortEditClick = (data, taskIndex, effortIndex) => {
+        onEffortItemClick(data, taskIndex, effortIndex)
+    }
 
     return (
         <table className=" bg-transparent w-full">
@@ -43,7 +37,7 @@ export default function TasksTimeSheet(props) {
             <tbody className=" divide-y divide-gray-200 table-fixed">
                 {
                     tasks.map((item, index) => {
-                        return <TableRow onAddEffortClick={onAddEffortClick} onItemClick={onItemClick} item={item} index={index} deleteTaskEfforts={deleteTaskEfforts}></TableRow>
+                        return <TableRow onAddEffortClick={onAddEffortClick} onItemClick={onItemClick} item={item} index={index} deleteTaskEfforts={deleteTaskEfforts} onEffortEditClick={onEffortEditClick}></TableRow>
                     })
                 }
             </tbody>
@@ -62,7 +56,7 @@ function TableHeader(props) {
 }
 
 function TableRow(props) {
-    const { onAddEffortClick, onItemClick, item, index, deleteTaskEfforts } = props
+    const { onAddEffortClick, onItemClick, item, index, deleteTaskEfforts, onEffortEditClick } = props
 
     const calculateDuration = (item) => {
         return item.list_task_record.reduce((total, currentValue) => total = total + currentValue.working_duration, 0)
@@ -134,8 +128,10 @@ function TableRow(props) {
                                         return <tr className='h-10'>
                                             <td
                                                 // key={TASK}
-                                                className={`text-sm p-3 text-left text-blueGray-500 font-interVar font-bold`}>
+                                                className={`flex text-sm p-3 text-left text-blue-500 font-interVar font-bold`}>
+                                                <div className='cursor-pointer' onClick={() => {onEffortEditClick(workDetails, index, effortIndex)}}>
                                                 {formatDate(workDetails.working_date, "D-MMM-YYYY")}
+                                                </div>
                                             </td>
 
                                             <td
@@ -146,7 +142,11 @@ function TableRow(props) {
                                             <td
                                                 // key={}
                                                 className={`text-sm p-3 text-center text-blueGray-500 font-interVar font-bold w-10`}>
-                                                <div onClick={() => {deleteTaskEfforts(workDetails, item.workspace_id, effortIndex, index)}}>
+                                                <div onClick={() => {
+                                                    const result = window.confirm('Are you sure you want to delete this efforts?')
+                                                    if(result)
+                                                        deleteTaskEfforts(workDetails, item.workspace_id, effortIndex, index)
+                                                }}>
                                                     {svgIcons("cursor-pointer fill-red-600", "delete")}
                                                 </div>
                                             </td>

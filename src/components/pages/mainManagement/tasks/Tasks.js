@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import * as Actions from '../../../../state/Actions';
 import { DATE, DURATION, END_TIME, MODULE, PROJECT, START_TIME, TASK, add_effort, svgIcons } from '../../../../utils/Constant';
 import PlainButton from '../../../custom/Elements/buttons/PlainButton';
-import { getDeleteTaskEffortsUrl, getTasksUrl, getTheAddTaskEffortsUrl, get_all_project, get_task } from '../../../../api/urls';
+import { getDeleteTaskEffortsUrl, getTasksUrl, getTheAddTaskEffortsUrl, getTheUpdateTaskEffortsUrl, get_all_project, get_task } from '../../../../api/urls';
 import { getLoginDetails, getWorkspaceInfo } from '../../../../config/cookiesInfo';
 import { getTimePeriods, notifyErrorMessage, notifySuccessMessage } from '../../../../utils/Utils';
 import Dropdown from '../../../custom/Dropdown/Dropdown';
@@ -25,7 +25,7 @@ export default function Tasks() {
   const loginDetails = getLoginDetails();
   const [selectedDuration, selectDuration] = useState(timePeriods[1])
   const user_id = loginDetails.user_id
-  const [itemDetails, setItemDetails] = useState({ details: null, index: 0 })
+  const [itemDetails, setItemDetails] = useState({ details: null, index: 0, editDetails: null })
 
   const [modalVisibility, setModalVisibility] = useState(false)
   const [searchText, setSearchText] = useState("")
@@ -106,7 +106,7 @@ export default function Tasks() {
   }
 
   const onAddEffortClick = (item, index) => {
-    setItemDetails({ ...itemDetails, details: item, index: index })
+    setItemDetails({ ...itemDetails, details: item, index: index, editDetails: null })
     setModalVisibility(true)
   }
 
@@ -128,6 +128,11 @@ export default function Tasks() {
             // getEmployeeTaskEfforts()
         }
     
+  }
+
+  const onEffortItemClick = async(data, taskIndex, effortIndex) => {
+    setItemDetails({...itemDetails, details: tasks[taskIndex], index: taskIndex, editDetails: data})
+    setModalVisibility(true)
   }
 
 
@@ -165,7 +170,7 @@ export default function Tasks() {
         <div>
           {
             tasks.length > 0 &&
-            <TasksTimeSheet tasks={tasks} onAddEffortClick={onAddEffortClick} onItemClick={onItemClick} onDeleteEffort={onDeleteEffort}></TasksTimeSheet>
+            <TasksTimeSheet tasks={tasks} onAddEffortClick={onAddEffortClick} onItemClick={onItemClick} onDeleteEffort={onDeleteEffort} onEffortItemClick={onEffortItemClick}></TasksTimeSheet>
           }
 
         </div>
