@@ -12,6 +12,7 @@ import { getWorkspaceInfo } from "../../../../config/cookiesInfo";
 import { useNavigate } from "react-router-dom";
 import * as Actions from '../../../../state/Actions';
 import { amountFormatter, formatDate } from "../../../../utils/Utils";
+import { routesName } from "../../../../config/routesName";
 
 export default function Budget(props) {
     const { work_id } = getWorkspaceInfo();
@@ -86,6 +87,10 @@ export default function Budget(props) {
         getBudgetsList()
     }
 
+    const onAnalysisClick = (item) => {
+        navigate(routesName.analysis.path, { state: item })
+        // alert("OK")
+    }
     return (
         <div className="">
             <span className="mx-2 text-2xl">Budget</span>
@@ -119,7 +124,7 @@ export default function Budget(props) {
                 {formVisibility &&
                     <>
                         <Divider className="pt-5"></Divider>
-                    <BudgetForm setData={selectBudget} data={selectedBudget} onFormClose={() => { setFormVisibility(!formVisibility) }} employeeList={listOfEmployees} projectList={listOfProjects} onNewBudgetAdded={onNewBudgetAdded}></BudgetForm>
+                        <BudgetForm setData={selectBudget} data={selectedBudget} onFormClose={() => { setFormVisibility(!formVisibility) }} employeeList={listOfEmployees} projectList={listOfProjects} onNewBudgetAdded={onNewBudgetAdded}></BudgetForm>
                     </>
                 }
 
@@ -156,13 +161,13 @@ export default function Budget(props) {
                             </th>
                             <th
                                 key={"rate"}
-                                className={`text-sm pr-8 text-left text-blueGray-500 font-interVar font-bold w-1/4 font-quicksand font-bold`}>
+                                className={`text-sm  text-left text-blueGray-500 font-interVar font-bold w-1/4 font-quicksand font-bold`}>
                                 Rate/hr
                             </th>
                             <th
                                 key={"action"}
                                 className={`text-sm pr-3 text-left text-blueGray-500 font-interVar font-bold w-1/4 font-quicksand font-bold`}>
-                                Action
+                                Analysis
                             </th>
                         </tr>
                     </thead>
@@ -171,7 +176,7 @@ export default function Budget(props) {
                             <tr key={index} className={`bg-white `} onClick={() => { }}>
                                 <td className="p-4">
                                     <p className='text-md text-left font-quicksand'>
-                                        {formatDate(item.valid_from,"DD/MM/YYYY")}
+                                        {formatDate(item.valid_from, "DD/MM/YYYY")}
                                     </p>
                                 </td>
                                 <td className="py-4">
@@ -190,20 +195,21 @@ export default function Budget(props) {
                                     </p>
                                 </td>
                                 <td className="py-4">
-                                    <p className='text-md text-left font-quicksand'>
+                                    <p className='text-md pr-3 text-right font-quicksand'>
                                         {amountFormatter(item.amount, item.currency.currency_code)}
                                     </p>
                                 </td>
-                                <td className="py-4">
+                                <td className="pl-4">
                                     <svg
-                                        viewBox="0 0 1024 1024"
-                                        fill="red"
-                                        height="2em"
+                                        viewBox="0 0 24 24"
+                                        fill="currentColor"
+                                        height="1em"
                                         width="1em"
-                                        className="ml-4 cursor-pointer "
-                                        onClick={() => ""}
+                                        className="cursor-pointer hover:fill-blue-500"
+                                        onClick={() => onAnalysisClick(item)}
                                     >
-                                        <path d="M360 184h-8c4.4 0 8-3.6 8-8v8h304v-8c0 4.4 3.6 8 8 8h-8v72h72v-80c0-35.3-28.7-64-64-64H352c-35.3 0-64 28.7-64 64v80h72v-72zm504 72H160c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h60.4l24.7 523c1.6 34.1 29.8 61 63.9 61h454c34.2 0 62.3-26.8 63.9-61l24.7-523H888c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zM731.3 840H292.7l-24.2-512h487l-24.2 512z" />
+                                        <path fill="none" d="M0 0h24v24H0z" />
+                                        <path d="M5 3v16h16v2H3V3h2zm15.293 3.293l1.414 1.414L16 13.414l-3-2.999-4.293 4.292-1.414-1.414L13 7.586l3 2.999 4.293-4.292z" />
                                     </svg>
                                 </td>
                             </tr>

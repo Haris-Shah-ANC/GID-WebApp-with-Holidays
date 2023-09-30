@@ -70,8 +70,13 @@ export const update_task = () => {
 }
 
 
-export const employee = (work_id) => {
-    return HOST + APP_NAME + `/employee/?work_id=${work_id}`
+export const employee = (work_id, projectId) => {
+    if (projectId) {
+        return HOST + APP_NAME + `/employee/?work_id=${work_id}&project_id=${projectId}`
+    } else {
+        return HOST + APP_NAME + `/employee/?work_id=${work_id}`
+    }
+
 }
 
 export const get_all_project = (work_id) => {
@@ -139,8 +144,8 @@ export const getTheModuleProgressPeriodicTasksUrl = () => {
     return HOST + APP_NAME + `/schedule_module_progress_periodic_tasks/`
 }
 
-export const getTheAttendanceSyncWithRazorPayUrl = (workId, fromDate, toDate) => {
-    return HOST + APP_NAME + `/sync_attendance_with_razorpay/?work_id=${workId}&from_date=${fromDate}&to_date=${toDate}`
+export const getTheAttendanceSyncWithRazorPayUrl = () => {
+    return HOST + APP_NAME + `/sync_attendance_with_razorpay/`
 }
 
 export const getTheCalendarViewTasksUrl = () => {
@@ -148,6 +153,15 @@ export const getTheCalendarViewTasksUrl = () => {
     // return HOST + APP_NAME + `/api/calendar_task_view/?dead_line__gte=${fromDate}&dead_line__lte=${endDate}&workspace=${work_id}`
 }
 
+//COMMENT RELATED URLS
+
+export const getAddCommentUrl = () => {
+    return HOST + APP_NAME + `/add_comment/`
+}
+
+export const getCommentListUrl = () => {
+    return HOST + APP_NAME + `/list_comment/`
+}
 //INCOME AND EXPENSE ANALYSIS RELATED API`S
 export const getIncomeExpenseDataWithComparison = () => {
     return HOST + APP_NAME + `/income_expense_data/`

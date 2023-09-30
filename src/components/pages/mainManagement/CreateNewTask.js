@@ -15,6 +15,7 @@ import {
 } from '../../../utils/Utils';
 
 import {
+    getLoginDetails,
     getWorkspaceInfo,
 } from '../../../config/cookiesInfo';
 
@@ -23,17 +24,21 @@ import {
     update_task,
     get_all_project,
     get_project_module,
+    employee,
 } from '../../../api/urls';
 import PlainButton from '../../custom/Elements/buttons/PlainButton';
 import GidInput from '../../custom/Elements/inputs/GidInput';
 import GIDTextArea from '../../custom/Elements/inputs/GIDTextArea';
 import IconInput from '../../custom/Elements/inputs/IconInput';
 import EffortsComponent from '../../custom/EffortsComponent';
+import moment from 'moment';
 
 const CreateNewTask = (props) => {
     const { setShowModal, data, from } = props;
     const { work_id } = getWorkspaceInfo();
     const navigate = useNavigate();
+    const loginDetails = getLoginDetails();
+    const user_id = loginDetails.user_id
     const dispatch = Actions.getDispatch(React.useContext);
     const initial_data = {
         work_id: work_id,
@@ -45,12 +50,16 @@ const CreateNewTask = (props) => {
         on_hold_reason: data ? data.on_hold_reason : null,
         status: data ? data.status : 'In-Progress',
         detailed_description: data ? data.detailed_description : null,
-        description_link: data ? data.description_link : null
+        description_link: data ? data.description_link : null,
+        assign_to_id: data ? data.assignee_id : user_id,
+        employee: data ? data.employee : null
     }
     const [formData, setFormData] = React.useState({ ...initial_data })
     const [projectsResults, setProjectsResults] = React.useState([{ project_name: 'Select project' }]);
     const [moduleResults, setModuleResults] = React.useState([{ module_name: 'Select module' }]);
+    const [employeeList, setEmployeeList] = React.useState([{ employee_name: 'Self' }]);
     const [isEffortsTableVisible, setEffortsTableVisible] = useState(false)
+
     const getProjectsResultsApi = async (id) => {
         let res = await apiAction({
             method: 'get',
@@ -73,8 +82,25 @@ const CreateNewTask = (props) => {
             setModuleResults([{ module_name: 'Select module' }, ...res.project_module_list])
         }
     }
+    const getEmployeeList = async () => {
+        let res = await apiAction({
+            method: 'get',
+            navigate: navigate,
+            dispatch: dispatch,
+            url: employee(work_id),
+        })
+        if (res.success) {
+            let employeeData = res.results
+            for (let index in employeeData) {
+                if (employeeData[index].id == user_id) {
+                    employeeData.splice(index, 1)
+                }
+            }
+            setEmployeeList([{ employee_name: "Self" }, ...employeeData])
+        }
+    }
     React.useEffect(() => {
-        if (work_id && formData.project_id) {
+        if (formData.project_id && formData.module_id) {
             getModuleResultsApi(work_id, formData.project_id)
         }
     }, [work_id, formData.project_id])
@@ -82,12 +108,14 @@ const CreateNewTask = (props) => {
     React.useEffect(() => {
         if (work_id) {
             getProjectsResultsApi(work_id);
+            getEmployeeList()
         }
 
     }, [work_id])
 
     let selectedProject = projectsResults.find((item) => item.project_id === formData.project_id);
     let selectedModule = moduleResults.find((item) => item.module_id === formData.module_id);
+    let selectedAssignee = employeeList.find((item) => item.id === formData.assign_to_id);
 
     const handleSaveChanges = async (e) => {
         e.preventDefault();
@@ -123,12 +151,22 @@ const CreateNewTask = (props) => {
             notifyErrorMessage(message)
         }
     };
+    const onLinkTextClick = (btnTitle) => {
+        const tomorrow = moment().add(1, 'days');
+        const today = moment()
+        let tomorrowDate = tomorrow.format('YYYY-MM-DD') + "T20:00"
+        let todayDate = today.format('YYYY-MM-DD') + "T20:00"
+        if (btnTitle === "Today") {
+            setFormData((previous) => ({ ...previous, dead_line: todayDate }))
+        } else {
+            setFormData((previous) => ({ ...previous, dead_line: tomorrowDate }))
+        }
+    }
 
     return (
 
         <div className="justify-center overflow-hidden  items-center flex fixed overflow-x-hidden  fixed inset-0 z-50 outline-none focus:outline-none">
             <div className=" sm:w-[65vh] h-[80vh] overflow-hidden border-0 rounded-lg shadow-lg relative flex flex-col bg-white outline-none focus:outline-none">
-                {/* header */}
                 <div className="flex items-center flex-row h-14  justify-between  border-solid border-slate-200 rounded-t text-black">
                     <h3 className="text-lg font-quicksand font-bold text-center w-full">{formData.task_id ? 'Update Task' : 'Add Task'}</h3>
                     <button
@@ -137,13 +175,19 @@ const CreateNewTask = (props) => {
                         <i className="fa-solid fa-times"></i>
                     </button>
                 </div>
-                <form id={"last_div"} className='overflow-auto'>
+                <form id={"last_div"} className='overflow-auto' style={{ height: 'calc(100vh - 180px)' }}>
 
-                    <div className="relative px-5 mt-2  flex-auto  ">
+                    <div className="relative px-5 mt-2  flex-auto" >
                         <div className="my-1 flex flex-col">
                             <CustomLabel label={`Select  Project`} className={'font-quicksand font-semibold text-sm mb-1'} />
                             <Dropdown disabled={formData.task_id ? true : false} placeholder={true} options={projectsResults} optionLabel={'project_name'} value={selectedProject ? selectedProject : { project_name: 'Select project' }} setValue={(value) => setFormData((previous) => ({ ...previous, project_id: value ? value.project_id : null }))} />
                         </div>
+                        {!formData.task_id &&
+                            <div className="mt-4 my-1 flex flex-col">
+                                <CustomLabel label={`Assign To`} className={'font-quicksand font-semibold text-sm mb-1'} />
+                                <Dropdown disabled={false} placeholder={true} options={employeeList} optionLabel={'employee_name'} value={selectedAssignee ? selectedAssignee : { employee_name: 'Self' }} setValue={(value) => setFormData((previous) => ({ ...previous, assign_to_id: value ? value.id : null }))} />
+                            </div>
+                        }
                         {
                             !formData.task_id &&
                             <div className="my-4 flex flex-col">
@@ -241,12 +285,22 @@ const CreateNewTask = (props) => {
                                 disable={false}
                                 className={``}
                                 value={formData.dead_line ? formData.dead_line : ""}
-                                onTextChange={(e) => setFormData((previous) => ({ ...previous, dead_line: e.target.value }))}
+                                onTextChange={(e) => {
+                                    console.log(e.target.value)
+                                    setFormData((previous) => ({ ...previous, dead_line: e.target.value }))
+                                }}
                                 onBlurEvent={() => { }}
                                 placeholder={""}
                                 isRightIcon={true}
                             >
                             </IconInput>
+                            { }
+                            <div className='flex flex-row'>
+                                <LinkText title={"Today"} onClick={onLinkTextClick}></LinkText>
+                                <LinkText title={"Tomorrow"} onClick={onLinkTextClick}></LinkText>
+
+                            </div>
+
                         </div>
 
                         {formData.task_id &&
@@ -278,14 +332,20 @@ const CreateNewTask = (props) => {
                     </div>
 
 
-                    <div  className="p-6 border-solid border-slate-200 rounded-b">
-                        <PlainButton title={"Save Changes"} className={"w-full"} onButtonClick={handleSaveChanges} disable={false}></PlainButton>
-                    </div>
-                </form>
 
+                </form>
+                <div className="p-6 border-solid border-slate-200 rounded-b">
+                    <PlainButton title={"Save Changes"} className={"w-full"} onButtonClick={handleSaveChanges} disable={user_id == formData.employee ? false : true}></PlainButton>
+                </div>
 
             </div>
         </div>
+    )
+}
+
+const LinkText = ({ title, onClick }) => {
+    return (
+        <p className='pr-4 text-blue-700 text-sm font-quicksand pt-1 cursor-pointer' onClick={() => onClick(title)}>{title}</p>
     )
 }
 

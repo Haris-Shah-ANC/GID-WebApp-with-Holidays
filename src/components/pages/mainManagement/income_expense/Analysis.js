@@ -14,8 +14,10 @@ import Dropdown from '../../../custom/Dropdown/Dropdown';
 import CheckRatePopup from './CheckRatePopup';
 
 const timePeriodsList = getTimePeriods()
-export default function Analysis() {
+export default function Analysis(props) {
     const navigate = useNavigate();
+    const location = useLocation()
+    const paramsData = location.state
     const dispatch = Actions.getDispatch(React.useContext);
     const loginDetails = getLoginDetails();
     const user_id = loginDetails.user_id
@@ -24,7 +26,7 @@ export default function Analysis() {
     const [selectedProject, setProject] = useState(null)
     const [selectedTime, setTimePeriod] = useState(timePeriodsList[0])
     const [selectedEmployee, selectEmployee] = useState(null)
-    const [employees, setEmployeeList] = useState([])
+    const [employees, setEmployeeList] = useState([{ employee_name: "All Employee" }])
     const [projects, setProjectList] = useState([])
     const [incomeExpenseData, setIncomeExpenseData] = useState(null)
     const [fileUploaded, setFileUploadStatus] = useState(null)
@@ -32,7 +34,7 @@ export default function Analysis() {
     const [tempBudgetList, setTempBudgetList] = useState(null)
     useEffect(() => {
         getProjects()
-        getEmployees()
+        // getEmployees()
     }, [])
 
     useEffect(() => {
@@ -51,16 +53,18 @@ export default function Analysis() {
             employee_id: selectedEmployee ? selectedEmployee.id : null
         }
     }
-    const getEmployees = async () => {
+    const getEmployees = async (projectId) => {
         let response = await apiAction({
-            url: employee(work_id),
+            url: employee(work_id, projectId),
             method: 'get',
             navigate: navigate,
             dispatch: dispatch,
         })
         if (response) {
-
             setEmployeeList([{ employee_name: "All Employee" }, ...response.results])
+            if (paramsData && paramsData.employee_id) {
+                selectEmployee(response.results.find((item) => item.id == paramsData.employee_id))
+            }
         }
     }
 
@@ -73,7 +77,7 @@ export default function Analysis() {
                 response.result.budget_data.map(item => {
                     totalIncome += (Number(item.amount) * Number(item.exchange_rate) * item.hour)
                 })
-                console.log("TOTAL INCOME", totalIncome)
+                setTempBudgetList(null)
             }
         }
         function onError(err) {
@@ -88,10 +92,20 @@ export default function Analysis() {
             // navigate: navigate,
             dispatch: dispatch,
             url: get_all_project(work_id),
-        })
-        if (response.success) {
-            setProjectList([{ project_name: "All Project" }, ...response.result])
+        }).then((res) => {
+            if (res.success) {
+                setProjectList([{ project_name: "All Project" }, ...res.result])
+                if (paramsData && paramsData.employee_id) {
+                    let selectedProject = res.result.find((item) => item.project_id == paramsData.project_id)
+                    setProject(selectedProject)
+                    getEmployees(selectedProject.project_id)
+                }
+            }
         }
+        )
+            .catch((e) => {
+                console.log(e)
+            })
     }
 
     const onSuccessFileUpload = (fileData) => {
@@ -140,9 +154,9 @@ export default function Analysis() {
         setIncomeExpenseData({
             ...incomeExpenseData, income_amount: incomeAmount,
             net_difference: netDifference,
-            difference_in_net_difference: differenceInNetDifferencePercentage,
-            difference_in_percent_for_expense: differenceInPercentageOfExpense,
-            difference_in_percent_for_income: differenceInPercentageOfIncome
+            difference_in_net_difference: parseFloat(differenceInNetDifferencePercentage).toFixed(2),
+            difference_in_percent_for_expense: parseFloat(differenceInPercentageOfExpense).toFixed(2),
+            difference_in_percent_for_income: parseFloat(differenceInPercentageOfIncome).toFixed(2)
         })
 
 
@@ -155,6 +169,7 @@ export default function Analysis() {
                     <div className='md:w-60 max-w-sm w-full'>
                         <Dropdown options={projects} optionLabel={'project_name'} value={selectedProject ? selectedProject : { name: 'All Project' }} setValue={(value) => {
                             setProject(value)
+                            getEmployees(value.project_id)
                         }} />
                     </div>
                     <div className='md:w-60 max-w-sm w-full'>
@@ -178,7 +193,7 @@ export default function Analysis() {
                         }} />
                     </div>
                     <div className=''>
-                        <span className='text-[#120fbf] cursor-pointer' onClick={() => setRateModalVisibility(!rateModalVisibility)}>Check Rate</span>
+                        <span className='text-[#120fbf] cursor-pointer hover:underline' onClick={() => setRateModalVisibility(!rateModalVisibility)}>Check Rate</span>
 
                         {rateModalVisibility && <CheckRatePopup tempBudgetList={tempBudgetList} onRateChanged={onRateChanged} project={selectedProject} employee={selectedEmployee} setState={setRateModalVisibility} data={{}} onSuccessCreate={() => ""} />}
                     </div>
@@ -191,7 +206,7 @@ export default function Analysis() {
                         <p className={`text-sm  text-center text-blueGray-500 font-interVar font-bold `}>{INCOME}</p>
                         <p className='flex text-2xl text-center items-center'>{incomeExpenseData ? amountFormatter(incomeExpenseData.income_amount, "INR") : "-"}
                             {svgIcons(`w-4 h-3 ml-2 ${getIconStyle(incomeExpenseData, "difference_in_percent_for_income")}`, "arrow")}
-                            <span className={`text-sm ${getLabelColor(incomeExpenseData, "difference_in_percent_for_income")}`} >{`${incomeExpenseData ? amountFormatter(incomeExpenseData.difference_in_percent_for_income, "INR") : ""}%`}</span>
+                            <span className={`text-sm ${getLabelColor(incomeExpenseData, "difference_in_percent_for_income")}`} >{`${incomeExpenseData ? incomeExpenseData.difference_in_percent_for_income : ""}%`}</span>
                         </p>
                     </div>
 
@@ -199,7 +214,7 @@ export default function Analysis() {
                         <p className={`text-sm  text-center text-blueGray-500 font-interVar font-bold `}>{EXPENSE}</p>
                         <p className='flex text-2xl text-center items-center'>{incomeExpenseData ? amountFormatter(incomeExpenseData.expense_amount, "INR") : "-"}
                             {svgIcons(`w-4 h-3 ml-2 ${getIconStyle(incomeExpenseData, "difference_in_percent_for_expense")}`, "arrow")}
-                            <span className={`text-sm ${getLabelColor(incomeExpenseData, "difference_in_percent_for_expense")}`} >{`${incomeExpenseData ? amountFormatter(incomeExpenseData.difference_in_percent_for_expense, "INR") : ""}%`}</span>
+                            <span className={`text-sm ${getLabelColor(incomeExpenseData, "difference_in_percent_for_expense")}`} >{`${incomeExpenseData ? incomeExpenseData.difference_in_percent_for_expense : ""}%`}</span>
                         </p>
                     </div>
 
@@ -207,7 +222,7 @@ export default function Analysis() {
                         <p className={`text-sm text-center text-blueGray-500 font-interVar font-bold `}>{NET_DIFFERENCE}</p>
                         <p className='flex text-2xl text-center items-center'>{incomeExpenseData ? amountFormatter(incomeExpenseData.net_difference, "INR") : "-"}
                             {svgIcons(`w-4 h-3 ml-2  ${getIconStyle(incomeExpenseData, "difference_in_net_difference")}`, "arrow")}
-                            <span className={`text-sm ${getLabelColor(incomeExpenseData, "difference_in_net_difference")}`} >{`${incomeExpenseData ? amountFormatter(incomeExpenseData.difference_in_net_difference, "INR") : ""}%`}</span>
+                            <span className={`text-sm ${getLabelColor(incomeExpenseData, "difference_in_net_difference")}`} >{`${incomeExpenseData ? incomeExpenseData.difference_in_net_difference : ""}%`}</span>
                         </p>
                     </div>
                 </div>
@@ -215,7 +230,7 @@ export default function Analysis() {
             </div>
 
             <div className='px-2 py-2 grid sm:grid-cols-1 xs:grid-cols-1 bg-[#fafafa] gap-4 mt-2 overflow-hidden'>
-                <ColumnAndLineChart project={selectedProject} employee={selectedEmployee} onFileUpload={fileUploaded} />
+                <ColumnAndLineChart project={selectedProject} employee={selectedEmployee} onFileUpload={fileUploaded} period={selectedTime} />
 
                 <PieChartGraph project={selectedProject} employee={selectedEmployee} onFileUpload={fileUploaded} />
             </div>

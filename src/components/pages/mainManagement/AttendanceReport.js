@@ -90,27 +90,28 @@ export default function AttendanceReport(props) {
     }
 
     const syncAttendanceWithRazorPay = async () => {
-        // let validation_data = [
-        //     { key: "work_id", message: 'Workspace field left empty!' },
-        //     { key: "from_date", message: `Description field left empty!` },
-        //     { key: "to_date", message: 'Deadline field left empty!' },
-        // ]
-        // const { isValid, message } = isFormValid(postData, validation_data);
-        // if (isValid) {
-        //     let res = await apiAction({
-        //         method: 'get',
-        //         // navigate: navigate,
-        //         // dispatch: dispatch,
-        //         url: getTheAttendanceSyncWithRazorPayUrl(workspace.work_id, postData.to_date, workspace.work_id),
-        //     })
-        //     if (res.success) {
-        //         notifySuccessMessage(res.detail)
-        //     } else {
-        //         notifyErrorMessage(res.detail)
-        //     }
-        // } else {
-        //     notifyErrorMessage(message)
-        // }
+        let validation_data = [
+            { key: "work_id", message: 'Workspace field left empty!' },
+            { key: "from_date", message: `Description field left empty!` },
+            { key: "to_date", message: 'Deadline field left empty!' },
+        ]
+        const { isValid, message } = isFormValid(postData, validation_data);
+        if (isValid) {
+            let res = await apiAction({
+                method: 'post',
+                // navigate: navigate,
+                // dispatch: dispatch,
+                data: { workspace_id: workspace.work_id, from_date: postData.from_date, to_date: postData.to_date },
+                url: getTheAttendanceSyncWithRazorPayUrl(),
+            })
+            if (res.success) {
+                notifySuccessMessage(res.detail)
+            } else {
+                notifyErrorMessage(res.detail)
+            }
+        } else {
+            notifyErrorMessage(message)
+        }
     }
 
     const hasFromDateAndToDate = () => {
@@ -156,7 +157,7 @@ export default function AttendanceReport(props) {
         }
     }
     return (
-        <div className=' h-full overflow-hidden w-auto pb-32' style={{  }}>
+        <div className=' h-full overflow-hidden w-auto pb-32' style={{}}>
             <div className="bg-white rounded-xl flex shadow p-3 flex-wrap justify-between md:space-x-0 ">
                 <div className='flex flex-wrap md:space-x-2 md:space-y-0'>
                     <select

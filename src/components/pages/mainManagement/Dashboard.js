@@ -33,6 +33,7 @@ import Checkbox from '../../custom/Elements/buttons/Checkbox';
 import CustomLabel from '../../custom/Elements/CustomLabel';
 import { Box, Pagination, Stack, Tooltip } from '@mui/material';
 import NewModal from '../../custom/Model/NewModal';
+import RightSideBar from '../../custom/Model/RigthSideBar';
 const Dashboard = () => {
     const navigate = useNavigate();
     const dispatch = Actions.getDispatch(React.useContext);
@@ -53,8 +54,9 @@ const Dashboard = () => {
         { index: 2, title: "Completed", count: 0 },
         { index: 3, title: "All", count: 0 },
     ])
+    const [showModal, setShowModal] = useState(false)
     const [postBody, setPostBody] = useState({ "workspace_id": work_id, projects: [], "tasks": ["In-Progress", "On Hold"], "employees": [user_id] })
-    const [showModal, setShowModal] = useState(false);
+    const [showCommentSideBar, setCommentSideBarVisibility] = useState(false);
     const [formData, setFormData] = useState({});
     const [paginationData, setPaginationData] = useState(0)
     const [filters, setFilters] = useState({
@@ -62,6 +64,8 @@ const Dashboard = () => {
         module_id: null,
         project_id: null,
     })
+    const [selectedTask, setSelectedTask] = useState(false);
+
 
 
     useEffect(() => {
@@ -171,13 +175,15 @@ const Dashboard = () => {
             on_hold_reason: item.on_hold_reason,
             detailed_description: item.detailed_description,
             dead_line: moment(item.dead_line).format("YYYY-MM-DD HH:mm"),
-            description_link: item.description_link
+            description_link: item.description_link,
+            assignee_id: item.assignee_id,
+            employee: item.employee
         });
         setShowModal(add_task)
     }
 
     const onNewTaskAddClick = (item) => {
-        // setFormData();
+        setFormData();
         setShowModal(add_task)
     }
 
@@ -469,10 +475,11 @@ const Dashboard = () => {
                         </div>
                     }
 
-                    <div className='flex rounded-lg flex-wrap mt-2 items-center'>
-                        <img className='w-6 h-6 rounded-full' src={imagesList.employee_default_img.src} alt=''></img>
-                        <div className='flex flex-row ml-3 items-center'>
-                            <p className='text-5 text-black text-sm font-quicksand font-semibold'>{employee_name}</p>
+                    <div className='flex flex-row rounded-lg flex-wrap mt-2 items-center justify-between'>
+
+                        <div className='flex flex-row ml-0 items-center justify-between '>
+                            <img className='w-6 h-6 rounded-full' src={imagesList.employee_default_img.src} alt=''></img>
+                            <p className='text-5 ml-3 text-black text-sm font-quicksand font-semibold'>{employee_name}</p>
 
                             {/* <div className='mx-2 cursor-pointer group flex relative' onClick={onAddTimeSheetClick}>
                                 <svg
@@ -486,7 +493,22 @@ const Dashboard = () => {
                                 <span className=" pointer-events-none group-hover:opacity-100 transition-opacity bg-gray-500 px-1 text-sm text-gray-100 rounded-md absolute left-1/2 
     -translate-x-1/2 translate-y-full opacity-0 m-4 mx-auto w-max">Add efforts</span>
                             </div> */}
+
                         </div>
+                        <svg
+                            viewBox="0 0 24 24"
+                            fill="#727273"
+                            height="1em"
+                            width="1em"
+                            className='cursor-pointer hover:fill-blue-500'
+                            onClick={() => {
+                                setSelectedTask(props)
+                                setCommentSideBarVisibility(true)
+                            }}
+
+                        >
+                            <path d="M19 8h-1V5a3 3 0 00-3-3H5a3 3 0 00-3 3v12a1 1 0 00.62.92A.84.84 0 003 18a1 1 0 00.71-.29l2.81-2.82H8v1.44a3 3 0 003 3h6.92l2.37 2.38A1 1 0 0021 22a.84.84 0 00.38-.08A1 1 0 0022 21V11a3 3 0 00-3-3zM8 11v1.89H6.11a1 1 0 00-.71.29L4 14.59V5a1 1 0 011-1h10a1 1 0 011 1v3h-5a3 3 0 00-3 3zm12 7.59l-1-1a1 1 0 00-.71-.3H11a1 1 0 01-1-1V11a1 1 0 011-1h8a1 1 0 011 1z" />
+                        </svg>
                     </div>
                 </div>
 
@@ -496,7 +518,12 @@ const Dashboard = () => {
     }
     return (
         <React.Fragment>
-            <NewModal isVisible={false} />
+            {showCommentSideBar &&
+
+                <RightSideBar showModal={showCommentSideBar} setShowModal={setCommentSideBarVisibility} taskData={selectedTask} />
+            }
+
+            {/* <NewModal isVisible={false} /> */}
             <ModelComponent showModal={showModal} setShowModal={setShowModal} data={formData} onFilterApply={onFilterApply} onFilterClear={onFilterClear} from={"dashboard"} />
             {/* <Filter
                 filters={filters}
@@ -504,7 +531,7 @@ const Dashboard = () => {
                 employeeResults={employeeResults}
                 projectsResults={projectsResults}
             /> */}
-           
+
             <div className="bg-white rounded-xl flex flex-col md:flex-row justify-between shadow overflow-auto">
                 <div className='flex-row flex'>
                     {btnLabelList.map((item, index) => {

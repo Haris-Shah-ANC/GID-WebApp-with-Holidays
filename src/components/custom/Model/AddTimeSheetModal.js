@@ -44,7 +44,8 @@ const AddTimeSheetModal = (props) => {
         on_hold_reason: data ? data.on_hold_reason : null,
         status: data ? data.status : 'In-Progress',
         detailed_description: data ? data.detailed_description : null,
-        description_link: data ? data.description_link : null
+        description_link: data ? data.description_link : null,
+        assignee_id: data ? data.assignee_id : null
     }
     const [formData, setFormData] = React.useState({ ...initial_data })
     const [projectsResults, setProjectsResults] = React.useState([{ project_name: 'Select project' }]);
@@ -121,7 +122,7 @@ const AddTimeSheetModal = (props) => {
             notifyErrorMessage(message)
         }
     };
-let sampleData=[{date:"12/12/2023",working_hr:"7"}]
+    let sampleData = [{ date: "12/12/2023", working_hr: "7" }]
     return (
 
         <div className="relative my-6 w-full mx-2 sm:max-w-sm md:max-w-md overflow-y-auto overflow-x-auto">
@@ -156,7 +157,7 @@ let sampleData=[{date:"12/12/2023",working_hr:"7"}]
                                         className={`text-sm pr-2 text-right text-blueGray-500 font-interVar font-bold w-1/4 font-quicksand font-bold`}>
                                         Action
                                     </th>
-                                 
+
                                 </tr>
                             </thead>
                             <tbody className=" divide-y divide-gray-200 table-fixed">
@@ -172,7 +173,7 @@ let sampleData=[{date:"12/12/2023",working_hr:"7"}]
                                                 {item.working_hr}
                                             </p>
                                         </td>
-                                       
+
                                     </tr>
                                 ))}
 

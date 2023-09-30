@@ -1,7 +1,7 @@
 import React from "react";
 
 const Dropdown = (props) => {
-  const {disabled=false, placeholder = false, optionLabel, value, setValue, options = [] } = props;
+  const { disabled = false, placeholder = false, optionLabel, value, setValue, options = [], optionDescLabel } = props;
 
   const handleSelectChange = (event) => {
     const selectedValue = JSON.parse(event.target.value);
@@ -25,11 +25,11 @@ const Dropdown = (props) => {
               {
                 placeholder && index === 0 ?
                   <option value={JSON.stringify(item)} className="placeholder-blueGray-200 cursor-pointer font-quicksand font-medium ">
-                    {item[optionLabel]}
+                    {`${item[optionLabel]} ${optionDescLabel ?  item[optionDescLabel]:""}`}
                   </option>
                   :
                   <option value={JSON.stringify(item)} className="text-gray-600 cursor-pointer font-quicksand font-medium ">
-                    {item[optionLabel]}
+                    {`${item[optionLabel]} ${optionDescLabel ? item[optionDescLabel] :''}`}
                   </option>
               }
             </React.Fragment>

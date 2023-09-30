@@ -71,7 +71,7 @@ const Login = () => {
                     if (res_workspace.success) {
                         setLoginStatus("true");
                         setWorkspaceInfo(res_workspace.result[0]);
-                        navigate(routesName.dashboard.path);
+                        navigate(routesName.alerts.path);
                         notifySuccessMessage(`Login Successfully!`)
                     }
                 }
