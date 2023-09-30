@@ -128,13 +128,7 @@ export const sidebarMenu = (isAdminMenu) => {
             active: routesName.dashboard.activeRoute,
 
         },
-        {
-            name: routesName.alerts.name,
-            path: routesName.alerts.path,
-            icon: "fa-solid fa-bell",
-            active: routesName.alerts.activeRoute,
-
-        },
+       
         {
             name: routesName.calendar.name,
             path: routesName.calendar.path,
@@ -174,13 +168,7 @@ export const sidebarMenu = (isAdminMenu) => {
             active: routesName.reports.activeRoute,
             childItem: 'hrms',
         },
-        {
-            name: routesName.analysis.name,
-            path: routesName.analysis.path,
-            icon: "fa-solid fa-file-invoice",
-            active: routesName.analysis.activeRoute,
-            childItem: 'analysis',
-        },
+      
 
         {
             name: routesName.analytics.name,
@@ -197,8 +185,12 @@ export const sidebarMenu = (isAdminMenu) => {
             childItem: 'meeting',
         },
 
+     
+
     ] :
         [
+           
+           
             {
                 name: routesName.workSpace.name,
                 path: routesName.workSpace.path,
@@ -214,6 +206,14 @@ export const sidebarMenu = (isAdminMenu) => {
 
             },
             {
+                name: routesName.alerts.name,
+                path: routesName.alerts.path,
+                icon: "fa-solid fa-bell",
+                active: routesName.alerts.activeRoute,
+
+            },
+           
+            {
                 name: routesName.calendar.name,
                 path: routesName.calendar.path,
                 icon: "fa-solid fa-calendar-days",
@@ -227,6 +227,13 @@ export const sidebarMenu = (isAdminMenu) => {
             //     active: routesName.reports.activeRoute,
             //     childItem: 'hrms',
             // },
+            {
+                name: routesName.analysis.name,
+                path: routesName.analysis.path,
+                icon: "fa-solid fa-file-invoice",
+                active: routesName.analysis.activeRoute,
+                childItem: 'analysis',
+            },
             {
                 name: routesName.assignTask.name,
                 path: routesName.assignTask.path,

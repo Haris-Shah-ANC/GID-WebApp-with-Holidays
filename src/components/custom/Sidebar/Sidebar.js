@@ -149,6 +149,7 @@ const ChildItemComponent = (props) => {
   const dispatch = Actions.getDispatch(useContext);
   const [isVisible, setModalVisible] = useState(false)
   const [collapse, setCollapse] = React.useState(false);
+  let workspace = getWorkspaceInfo(navigate)
   const onClickedHandler = () => {
     setCollapse(!collapse)
     // setIsSidebarOpen(true)
@@ -167,13 +168,13 @@ const ChildItemComponent = (props) => {
 
   const fetchWorkspaces = async () => {
     let response = await apiAction({ url: get_workspace(), method: "get", data: null })
-    if(response)
+    if (response)
       setWorkSpaces(response.result)
 
   }
   const fetchMeetingLinks = async () => {
     let response = await apiAction({ url: getMeetingLinkUrl(work_id), method: "get", data: null })
-    if(response)
+    if (response)
       setMeetingLinkList(response.result)
 
 
@@ -240,15 +241,22 @@ const ChildItemComponent = (props) => {
               <React.Fragment>
                 <li className='p-2 text-gray-500 font-quicksand font-semibold text-sm'>Select</li>
 
-                <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm' onClick={()=>{navigate(routesName.analysis.path)}}>
-                  Analysis
-                </li>
+
                 <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm' onClick={() => { navigate(routesName.tasks.path) }}>
                   Tasks
                 </li>
-                <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm' onClick={() => { navigate(routesName.budget.path) }}>
-                  Budget
-                </li>
+                {
+                  workspace.role == "Admin" &&
+                  <>
+                    <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm' onClick={() => { navigate(routesName.analysis.path) }}>
+                      Analysis
+                    </li>
+                    <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm' onClick={() => { navigate(routesName.budget.path) }}>
+                      Budget
+                    </li>
+                  </>
+                }
+
               </React.Fragment>
             }
 
