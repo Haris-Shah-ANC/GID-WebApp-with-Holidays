@@ -113,7 +113,7 @@ function MainLayout() {
   }
   return (
     <React.Fragment>
-      <audio ref={audioPlayer} src={NotificationSound} />
+      {/* <audio ref={audioPlayer} src={NotificationSound} /> */}
       <div className="flex w-screen h-screen bg-screenBackgroundColor relative overflow-hidden">
         <SidebarContainer></SidebarContainer>
         <div className="w-full flex-1">

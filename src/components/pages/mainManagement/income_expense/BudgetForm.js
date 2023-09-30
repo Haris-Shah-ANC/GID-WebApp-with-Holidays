@@ -29,7 +29,9 @@ export default function BudgetForm(props) {
         valid_upto: null,
         amount: null,
         currency_id: null,
-        exchange_rate: 1
+        exchange_rate: 1,
+        capacity: null
+
     })
 
     useEffect(() => {
@@ -48,7 +50,8 @@ export default function BudgetForm(props) {
                 valid_upto: data.valid_upto ? data.valid_upto : null,
                 amount: data.amount ? data.amount : null,
                 currency_id: data.currency ? data.currency.id : null,
-                exchange_rate: data.exchange_rate ? data.exchange_rate : 1
+                exchange_rate: data.exchange_rate ? data.exchange_rate : 1,
+                capacity: data.capacity ? data.capacity : null
             })
         }
     }, [data])
@@ -114,6 +117,7 @@ export default function BudgetForm(props) {
             { key: "exchange_rate", message: 'Exchange rate field left empty!' },
             { key: "valid_from", message: 'Budget start date field left empty!' },
             { key: "valid_upto", message: 'Budget end date field left empty!' },
+            { key: "capacity", message: 'Capacity field left empty!' },
         ]
 
         const { isValid, message } = isFormValid(budgetData, validation_data);
@@ -142,7 +146,7 @@ export default function BudgetForm(props) {
                             <div className='flex-col '>
                                 <div className="my-0 flex flex-col">
                                     <CustomLabel label={`Project`} className={'font-quicksand font-semibold text-sm mb-1'} />
-                                    <Dropdown disabled={false} placeholder={true} options={[{ project_name: "Select Project", project_id: null }, ...projectList]} optionLabel={'project_name'} value={selectedProject != null ? selectedProject : ""} setValue={(value) => {
+                                    <Dropdown disabled={data.id ? true : false} placeholder={true} options={[{ project_name: "Select Project", project_id: null }, ...projectList]} optionLabel={'project_name'} value={selectedProject != null ? selectedProject : ""} setValue={(value) => {
                                         selectProject(value)
                                         setBudgetData({ ...budgetData, project_id: value.project_id })
                                     }} />
@@ -156,13 +160,13 @@ export default function BudgetForm(props) {
                                 }
                                 } />
                             </div>
-                           
+
                         </div>
                         <div className='flex flex-col'>
                             <div className='w-full max-w-sm w-lg'>
                                 <div className="my-0 flex flex-col">
                                     <CustomLabel label={`Employee`} className={'font-quicksand font-semibold text-sm mb-1'} />
-                                    <Dropdown disabled={false} placeholder={true} options={[{ employee_name: "Select Employee", id: null }, ...employeeList]} optionLabel={'employee_name'} value={selectedEmployee != null ? selectedEmployee : ""} setValue={(value) => {
+                                    <Dropdown disabled={data.id ? true : false} placeholder={true} options={[{ employee_name: "Select Employee", id: null }, ...employeeList]} optionLabel={'employee_name'} value={selectedEmployee != null ? selectedEmployee : ""} setValue={(value) => {
                                         selectEmployee(value)
                                         setBudgetData({ ...budgetData, employee_id: value.id })
                                     }} />
@@ -198,7 +202,7 @@ export default function BudgetForm(props) {
                                         onTextChange={(e) => {
                                             setBudgetData({ ...budgetData, valid_from: e.target.value })
                                         }}></GidInput>
-                                   
+
                                 </div>
                             </div>
                             <div className="mt-5 flex flex-col">
@@ -211,6 +215,7 @@ export default function BudgetForm(props) {
                                     className={""}
                                     value={budgetData.amount}
                                     onBlurEvent={() => { }}
+                                    maxDate={null}
                                     onTextChange={(e) => {
                                         setBudgetData({ ...budgetData, amount: e.target.value })
                                     }}></GidInput>
@@ -229,6 +234,21 @@ export default function BudgetForm(props) {
                                     onBlurEvent={() => { }}
                                     onTextChange={(e) => {
                                         setBudgetData({ ...budgetData, valid_upto: e.target.value })
+                                    }}></GidInput>
+                            </div>
+                            <div className="mt-5 flex flex-col">
+                                <CustomLabel label={`Capacity`} className={'font-quicksand font-semibold text-sm mb-1'} />
+                                <GidInput
+                                    inputType={"number"}
+                                    id='link_description'
+                                    disable={false}
+                                    placeholderMsg={"Enter capacity"}
+                                    className={""}
+                                    value={budgetData.capacity}
+                                    onBlurEvent={() => { }}
+                                    maxDate={null}
+                                    onTextChange={(e) => {
+                                        setBudgetData({ ...budgetData, capacity: e.target.value })
                                     }}></GidInput>
                             </div>
                         </div>

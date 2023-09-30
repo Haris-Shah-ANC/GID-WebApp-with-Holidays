@@ -31,7 +31,7 @@ export default function CalendarView(props) {
     const [postBody, setPostBody] = useState({ "workspace_id": workspace.work_id, projects: [], "tasks": ["In-Progress", "On Hold"], "employees": [user_id] })
     const [listOfEmployees, setEmployees] = useState([])
     const [selectedUser, selectUser] = useState(null)
-    const [collapseItem,setCollapseItem]=useState(null)
+    const [collapseItem, setCollapseItem] = useState(null)
     const [taskCategoryIndex, setTaskCategoryIndex] = useState(0)
     const [btnLabelList, setTaskCount] = useState([
         { index: 0, title: "In Progress", count: 0 },
@@ -161,6 +161,8 @@ export default function CalendarView(props) {
             description_link: item.description_link,
             detailed_description: item.detailed_description,
             dead_line: moment(item.dead_line).format("YYYY-MM-DD HH:mm"),
+            assignee_id: item.assignee_id,
+            employee: item.employee
         });
         setShowModal(add_task)
     }
@@ -234,12 +236,12 @@ export default function CalendarView(props) {
         }
     }
 
-    
+
 
     const TaskItem = (props) => {
         const { item, onTaskClick, onTaskStatusBtnClick, index } = props
         return (
-            <div  className={`border-b py-2 flex items-center group hover:border-b-blue-300 ${item.id && 'cursor-pointer'}`} onClick={() => {
+            <div className={`border-b py-2 flex items-center group hover:border-b-blue-300 ${item.id && 'cursor-pointer'}`} onClick={() => {
                 if (item.status && item.status != "Completed") {
                     onTaskClick(item, index)
                 }
@@ -256,24 +258,34 @@ export default function CalendarView(props) {
                     </> :
                     <div className='h-6'></div>
                 }
-                <span className={`px-1 w-full font-quicksand font-medium text-sm tracking-normal ${collapseItem==item.id ? "" : "truncate"} ${item.status === "Completed" ? "line-through decoration-gray-300" : ""}`}>{item.task_description}</span>
-                {
-                    item.status === "Completed" ? <svg onClick={() => alert("test")} className='self-end group-hover:fill-gray-500 fill-white' xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
-                        
-                        <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z" /></svg> :
-                        
+                <span className={`px-1 w-full font-quicksand font-medium text-sm tracking-normal ${collapseItem == item.id ? "" : "truncate"}`}>{item.task_description}</span>
+                <svg onClick={(e) => {
+                    if (collapseItem == item.id) {
+                        setCollapseItem(null)
+                    } else {
+                        setCollapseItem(item.id)
+                    }
+                    e.stopPropagation()
+                }} viewBox="0 0 24 24" fill="currentColor" height="24px" width="24px" className='self-end group-hover:fill-gray-500 fill-white m-2'>
+                    <path d="M16.293 9.293L12 13.586 7.707 9.293l-1.414 1.414L12 16.414l5.707-5.707z" />
+                </svg>
+                {/* {
+                    item.status === "Completed" ?
+                        <svg onClick={() => alert("test")} className='self-end group-hover:fill-gray-500 fill-white' xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512">
+                            <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209L241 337c-9.4 9.4-24.6 9.4-33.9 0l-64-64c-9.4-9.4-9.4-24.6 0-33.9s24.6-9.4 33.9 0l47 47L335 175c9.4-9.4 24.6-9.4 33.9 0s9.4 24.6 0 33.9z" /></svg>
+                        :
+
                         <svg onClick={(e) => {
-                            if(collapseItem==item.id){
+                            if (collapseItem == item.id) {
                                 setCollapseItem(null)
-                            }else{
+                            } else {
                                 setCollapseItem(item.id)
                             }
                             e.stopPropagation()
                         }} viewBox="0 0 24 24" fill="currentColor" height="24px" width="24px" className='self-end group-hover:fill-gray-500 fill-white m-2'>
                             <path d="M16.293 9.293L12 13.586 7.707 9.293l-1.414 1.414L12 16.414l5.707-5.707z" />
                         </svg>
-                    // <svg onClick={() => alert("test")} className='self-end group-hover:fill-gray-500 fill-white' xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512"><path d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM369 209c9.4-9.4 9.4-24.6 0-33.9s-24.6-9.4-33.9 0l-111 111-47-47c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l64 64c9.4 9.4 24.6 9.4 33.9 0L369 209z"/></svg>
-                }
+                } */}
 
             </div>
         )

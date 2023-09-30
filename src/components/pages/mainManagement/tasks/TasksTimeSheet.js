@@ -1,14 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { DATE, DURATION, END_TIME, MODULE, PROJECT, START_TIME, TASK, svgIcons } from '../../../../utils/Constant'
 import { formatDate, notifyErrorMessage, notifySuccessMessage } from '../../../../utils/Utils'
 import { twMerge } from 'tailwind-merge'
 import { getDeleteTaskEffortsUrl } from '../../../../api/urls'
 import { apiAction } from '../../../../api/api'
 import { useNavigate } from 'react-router-dom'
+import EffortsComponent from '../../../custom/EffortsComponent'
 
 export default function TasksTimeSheet(props) {
-    const { tasks, onAddEffortClick, onItemClick, onDeleteEffort, onEffortItemClick } = props
+    const { tasks, onAddEffortClick, onItemClick, onDeleteEffort, onEffortItemClick, onEffortUpdate } = props
     const navigate = useNavigate()
+    const [isEffortsTableVisible, setEffortsTableVisible] = useState(false)
+    const [selectedTask, selectTask] = useState(null)
 
     const calculateDuration = (item) => {
         return item.list_task_record.reduce((total, currentValue) => total = total + currentValue.working_duration, 0)
@@ -16,7 +19,7 @@ export default function TasksTimeSheet(props) {
 
     const deleteTaskEfforts = async (data, workspace_id, effortIndex, taskIndex) => {
         onDeleteEffort(taskIndex, effortIndex, data)
-      }
+    }
 
     const onEffortEditClick = (data, taskIndex, effortIndex) => {
         onEffortItemClick(data, taskIndex, effortIndex)
@@ -37,13 +40,16 @@ export default function TasksTimeSheet(props) {
             <tbody className=" divide-y divide-gray-200 table-fixed">
                 {
                     tasks.map((item, index) => {
-                        return <TableRow onAddEffortClick={onAddEffortClick} onItemClick={onItemClick} item={item} index={index} deleteTaskEfforts={deleteTaskEfforts} onEffortEditClick={onEffortEditClick}></TableRow>
+                        if (parseFloat(item.total_working_duration) == 0) {
+                            return <TableRow onEffortUpdate={onEffortUpdate} onAddEffortClick={onAddEffortClick} onItemClick={onItemClick} item={item} index={index} deleteTaskEfforts={deleteTaskEfforts} onEffortEditClick={onEffortEditClick}></TableRow>
+                        }
                     })
                 }
             </tbody>
         </table>
     )
 }
+
 
 function TableHeader(props) {
     const { title, className } = props
@@ -56,20 +62,18 @@ function TableHeader(props) {
 }
 
 function TableRow(props) {
-    const { onAddEffortClick, onItemClick, item, index, deleteTaskEfforts, onEffortEditClick } = props
+    const { onAddEffortClick, item, index, deleteTaskEfforts, onEffortEditClick, onEffortUpdate, onItemClick } = props
 
     const calculateDuration = (item) => {
-        return item.list_task_record.reduce((total, currentValue) => total = total + currentValue.working_duration, 0)
+        return item.list_task_record.reduce((total, currentValue) => total = parseFloat(total) + parseFloat(currentValue.working_duration), 0)
     }
 
     return <>
-        <tr key={1} className={`bg-white`} >
+
+        <tr key={1} className={`${item.is_selected ? "bg-blue-100" : "bg-white"}`} >
             <td className="p-3" >
-                <div className='flex bg items-center' >
-                    <div onClick={() => { onAddEffortClick(item, index) }}>
-                        {svgIcons("fill-black w-4 h-4 mr-2 cursor-pointer", "timer")}
-                    </div>
-                    <p className='text-sm text-left break-words line-clamp-2 min-w-[320px] font-quicksand w-full cursor-pointer hover:font-semibold' onClick={() => {
+                <div className='flex  items-center' >
+                    <p className={`text-sm text-left break-words line-clamp-2 min-w-[320px] font-quicksand w-full cursor-pointer  ${item.is_selected ? 'font-semibold' : 'hover:font-semibold'}`} onClick={() => {
                         onItemClick(item, index)
                     }}>{item.task_description}
                     </p>
@@ -80,7 +84,7 @@ function TableRow(props) {
                 </p>
             </td>
             <td className="py-3">
-                <p className='text-sm text-center w-36 truncate mx-1 font-quicksand'>{item.module_name}
+                <p className='text-sm text-center w-36 truncate mx-1 font-quicksand'>{item.module_name ? item.module_name : "-"}
                 </p>
             </td>
             <td className="py-3">
@@ -92,77 +96,26 @@ function TableRow(props) {
                 </p>
             </td>
             <td className="py-3">
-                <p className='text-sm text-center w-32 truncate mx-1 font-quicksand font-bold'>{`${calculateDuration(item)}hrs.`}
+
+                <p className='text-sm text-center w-32 truncate mx-1 font-quicksand font-bold'>{`${item.total_working_duration} hrs.`}
                 </p>
             </td>
+
+
         </tr>
 
-        {item.is_selected && <tr>
-            <td colSpan={6}>
-                {item.list_task_record.length > 0 ?
-                    <div className='justify-center items-center flex my-2'>
-                        <table className=" bg-transparent table-fixed w-full md:w-1/2">
-                            <thead className='bg-gray-200 px-10 justify-center items-center'>
-                                <tr className='h-10'>
-                                    <th
-                                        key={DATE}
-                                        className={`text-sm p-3 text-left text-blueGray-500 font-interVar font-bold`}>
-                                        {DATE}
-                                    </th>
+        {item.is_selected &&
+            <div className=''>
+                {/* <tr className='bg-red-100 w-full' key={2}> */}
+                {/* <td className=' '> */}
+                <div className='w-[45vh] py-3'>
+                    <EffortsComponent data={item} onEffortUpdate={(total) => onEffortUpdate(total)} />
+                </div>
+                {/* </td> */}
+                {/* </tr > */}
+            </div>
+        }
 
-                                    <th
-                                        key={DURATION}
-                                        className={`text-sm p-3 text-right text-blueGray-500 font-interVar font-bold`}>
-                                        {DURATION}
-                                    </th>
-                                    <th
-                                        key={""}
-                                        className={`text-sm p-3 text-center text-blueGray-500 font-interVar font-bold w-10`}>
-                                        {}
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody className=" divide-y divide-gray-200 table-fixed">
-                                {
-                                    item.list_task_record.map((workDetails, effortIndex) => {
-                                        return <tr className='h-10'>
-                                            <td
-                                                // key={TASK}
-                                                className={`flex text-sm p-3 text-left text-blue-500 font-interVar font-bold`}>
-                                                <div className='cursor-pointer' onClick={() => {onEffortEditClick(workDetails, index, effortIndex)}}>
-                                                {formatDate(workDetails.working_date, "D-MMM-YYYY")}
-                                                </div>
-                                            </td>
 
-                                            <td
-                                                // key={}
-                                                className={`text-sm p-3 text-right text-blueGray-500 font-interVar font-bold`}>
-                                                {workDetails.working_duration} hrs.
-                                            </td>
-                                            <td
-                                                // key={}
-                                                className={`text-sm p-3 text-center text-blueGray-500 font-interVar font-bold w-10`}>
-                                                <div onClick={() => {
-                                                    const result = window.confirm('Are you sure you want to delete this efforts?')
-                                                    if(result)
-                                                        deleteTaskEfforts(workDetails, item.workspace_id, effortIndex, index)
-                                                }}>
-                                                    {svgIcons("cursor-pointer fill-red-600", "delete")}
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    })
-                                }
-                            </tbody>
-                        </table>
-                    </div> :
-                    <div className='flex justify-center'>
-                        <p className='text-sm font-quicksand font-semibold p-3'>No efforts were added.</p>
-                    </div>
-                }
-
-            </td>
-
-        </tr>}
     </>
 }

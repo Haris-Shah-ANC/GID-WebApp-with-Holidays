@@ -5,10 +5,10 @@ import { useLocation } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { currencyData, locale_dict_currency } from './Constant';
 
-export const notifyInfoMessage = (message) => toast.info(message);
-export const notifyErrorMessage = (message) => toast.error(message);
-export const notifySuccessMessage = (message) => toast.success(message);
-export const notifyWarningMessage = (message) => toast.warning(message);
+export const notifyInfoMessage = (message) => toast.info(message, { autoClose: 2000, hideProgressBar: true, closeButton: false });
+export const notifyErrorMessage = (message) => toast.error(message, { autoClose: 2000, hideProgressBar: true, closeButton: false });
+export const notifySuccessMessage = (message) => toast.success(message, { autoClose: 2000, hideProgressBar: true, closeButton: false });
+export const notifyWarningMessage = (message) => toast.warning(message, { autoClose: 2000, hideProgressBar: true, closeButton: false });
 
 
 export const cloneData = (data) => {
@@ -271,6 +271,7 @@ export const getTimePeriods = () => {
   return [
     {
       title: `Today`,
+      subTitle:"daily",
       period: `(${moment().format("DD MMM")})`,
       dates: {
         from: moment().format("YYYY-MM-DD"),
@@ -281,6 +282,7 @@ export const getTimePeriods = () => {
     },
     {
       title: "This Week",
+      subTitle: "weekly",
       period: `(${formatDate(getStartOf("week"), "DD MMM")} - ${formatDate(getEndOf("week"), "DD MMM")})`,
       dates: {
         from: getStartOf("week"),
@@ -291,6 +293,7 @@ export const getTimePeriods = () => {
     },
     {
       title: "This Month",
+      subTitle: "monthly",
       period: `(${formatDate(getStartOf("month"), "DD MMM")} - ${formatDate(getEndOf("month"), "DD MMM")})`,
       dates: {
         from: getStartOf("month"),
@@ -301,6 +304,7 @@ export const getTimePeriods = () => {
     },
     {
       title: "This Year",
+      subTitle: "yearly",
       period: `(${formatDate(getStartOf("year"), "DD MMM YY")} - ${formatDate(getEndOf("year"), "DD MMM YY")})`,
       dates: {
         from: getStartOf("year"),

@@ -135,7 +135,7 @@ const CustomTable = (props) => {
                                     getFilteredTask(e.target.value)
                                 }}
                                 onBlurEvent={() => {}}
-                                icon={'fa-solid fa-magnifying-glass'}
+                                icon={<i className="fa-solid fa-magnifying-glass"></i>}
                                 placeholderMsg={"Search with Employee Name"}
                                 isRightIcon={true}
                                 >

@@ -9,14 +9,14 @@
 .border-left-success {
     border-left: 4px solid #4ADE80;
     border-radius: 4px;
-  }
+}
 
-  .border-left-blue {
+.border-left-blue {
     border-left: 4px solid #3b82f6;
     border-radius: 4px;
-  }
+}
 
-  @layer components {
+@layer components {
     .font_family_smibold {
         @apply font-quicksand font-semibold
     }
@@ -38,7 +38,7 @@
     }
 
     .font_family_light {
-        @apply font-quicksand font-light    
+        @apply font-quicksand font-light
     }
 
     .font_family_xtra_light {
@@ -50,10 +50,93 @@
     }
 
     .button-submit {
-        @apply bg-blue-500 text-white active:bg-blue-600 w-full rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150
+        @apply bg-blue-500 text-white active: bg-blue-600 w-full rounded shadow hover:shadow-lg outline-none focus:outline-none ease-linear transition-all duration-150
     }
 
     .base_btn {
         @apply text-sm font-quicksand font-bold py-2.5 px-5
+    }
+
+    .custom-modal-dialog {
+        padding: 8px;
+        background-color: rgb(223, 220, 220);
+        position: fixed;
+        display: block;
+        top: 10vh;
+        right: -416px;
+        height: 85vh;
+        width: 415px;
+        border-radius: 4px;
+        -webkit-transition: opacity 0.3s linear, right 0.3s ease-out;
+        -moz-transition: opacity 0.3s linear, right 0.3s ease-out;
+        -o-transition: opacity 0.3s linear, right 0.3s ease-out;
+        transition: opacity 0.3s linear, right 0.3s ease-out;
+     
+    }
+
+    .custom-modal-dialog::-webkit-scrollbar {
+        display: none;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .custom-modal-dialog.show {
+        right: 10px;
+        -webkit-transition: opacity 0.3s linear, right 0.5s ease-out;
+        -moz-transition: opacity 0.3s linear, right 0.5s ease-out;
+        -o-transition: opacity 0.3s linear, right 0.5s ease-out;
+        transition: opacity 0.3s linear, right 0.5s ease-out;
+    }
+
+    .bubble {
+        position: relative;
+        background: white;
+        height: auto;
+        /* width: auto; */
+        max-width: 370px;
+        margin-left: 6px;
+        border-radius: 2px;
+        border-radius: 5px;
+        padding-top: 2px;
+        margin-top: 5px;
+        padding-bottom: 2px;
+        margin-right: 4px;
+    }
+
+    .bubble:after {
+        content: '';
+        position: absolute;
+        border: 10px solid transparent;
+        border-top: 10px solid white;
+        top: 0px;
+        left: -10px;
+    }
+
+    .bubble2 {
+        position: relative;
+        background: rgb(220, 238, 241);
+        height: auto;
+        /* width:auto; */
+        max-width: 390px;
+        margin-left: 6px;
+        border-radius: 2px;
+        border-radius: 5px;
+        padding-top: 5px;
+        padding-bottom: 2px;
+        margin-top: 5px;
+        padding-right: 3px;
+        margin-right: 5px;
+
+    }
+
+    .bubble2:after {
+        content: '';
+        position: absolute;
+        border: 10px solid transparent;
+        border-top: 10px solid rgb(220, 238, 241);
+        top: 0px;
+        right: -10px;
     }
 }

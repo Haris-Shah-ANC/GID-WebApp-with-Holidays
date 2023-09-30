@@ -12,6 +12,7 @@ import IconInput from '../../../custom/Elements/inputs/IconInput';
 import EffortsPopup from './EffortsPopup';
 import TasksTimeSheet from './TasksTimeSheet';
 import Loader from '../../../custom/Loaders/Loader'
+import EffortsComponent from '../../../custom/EffortsComponent';
 
 const timePeriods = getTimePeriods()
 
@@ -30,7 +31,7 @@ export default function Tasks() {
   const [modalVisibility, setModalVisibility] = useState(false)
   const [searchText, setSearchText] = useState("")
   const [netWorkCallStatus, setNetworkCallStatus] = useState(false)
-
+  const [selectedTask, selectTask] = useState({ item: null, index: 0 })
 
   useEffect(() => {
     let URL = getTasksUrl()
@@ -72,26 +73,9 @@ export default function Tasks() {
     })
     if (res)
       if (res.success) {
-        setProjects([{ project_name: 'Select project' }, ...res.result])
+        setProjects([{ project_name: 'All Projects' }, ...res.result])
         // selectProject(res.result[0])
       }
-  }
-
-  const updateDuration = async (index) => {
-    // const payload = {workspace_id: work_id, task_id: tasks[index].id, hour: "", working_date: ""}
-    // let res = await apiAction({ url: getTheAddTaskEffortsUrl(), method: 'post', data: payload,navigate: navigate, dispatch: dispatch })
-    //   console.log("RESULTS", res)
-    //   if (res) {
-    //       setTasks(res.results)
-    //   }
-  }
-
-  const deleteTaskEfforts = async (data, index) => {
-    // let res = await apiAction({ url: getDeleteTaskEffortsUrl(), method: 'post', data: { task_record_id: id, workspace_id: work_id }, navigate: navigate, dispatch: dispatch })
-    // if (res) {
-    //     notifySuccessMessage(res.status);
-    //     getEmployeeTaskEfforts()
-    // }
   }
 
   const calculateDuration = (item) => {
@@ -112,27 +96,36 @@ export default function Tasks() {
 
   const onItemClick = (item, index) => {
     tasks[index].is_selected = !tasks[index].is_selected
+    selectTask({ item: item, index: index })
     setTasks([...tasks])
+
   }
 
-  const onDeleteEffort = async(taskIndex, effortIndex, data) => {
+  const onDeleteEffort = async (taskIndex, effortIndex, data) => {
     let res = await apiAction({ url: getDeleteTaskEffortsUrl(), method: 'post', data: { task_record_id: data.id, workspace_id: work_id }, navigate: navigate })
-        if (res) {
-            if(res.success){
-                notifySuccessMessage(res.status);
-                tasks[taskIndex].list_task_record.splice(effortIndex, 1)
-                setTasks([...tasks])
-            }else{
-                notifyErrorMessage(res.status)
-            }
-            // getEmployeeTaskEfforts()
-        }
-    
+    if (res) {
+      if (res.success) {
+        notifySuccessMessage(res.status);
+        tasks[taskIndex].list_task_record.splice(effortIndex, 1)
+        setTasks([...tasks])
+      } else {
+        notifyErrorMessage(res.status)
+      }
+      // getEmployeeTaskEfforts()
+    }
+
   }
 
-  const onEffortItemClick = async(data, taskIndex, effortIndex) => {
-    setItemDetails({...itemDetails, details: tasks[taskIndex], index: taskIndex, editDetails: data})
+  const onEffortItemClick = async (data, taskIndex, effortIndex) => {
+    setItemDetails({ ...itemDetails, details: tasks[taskIndex], index: taskIndex, editDetails: data })
     setModalVisibility(true)
+  }
+  const onEffortUpdate = (totalTaskDuration) => {
+    // const is_selected = tasks[selectedTask.index].is_selected
+    // tasks[selectedTask.index].is_selected = is_selected
+    tasks[selectedTask.index]['total_working_duration'] = totalTaskDuration
+    setTasks([...tasks])
+
   }
 
 
@@ -142,7 +135,7 @@ export default function Tasks() {
         {modalVisibility && <EffortsPopup setState={setModalVisibility} data={itemDetails} onSuccessCreate={onSuccessCreate} />}
         <div className='flex w-full space-x-0 space-y-2 flex-col md:flex-row md:space-x-3 md:space-y-0 mb-3'>
           <div className='md:w-64'>
-            <Dropdown options={projects} optionLabel="project_name" value={selectedProject ? selectedProject : { employee_name: 'All Projects' }} setValue={(value) => {
+            <Dropdown options={projects} optionLabel="project_name" value={selectedProject ? selectedProject : { project_name: 'All Projects' }} setValue={(value) => {
               selectProject(value)
             }} />
           </div>
@@ -169,8 +162,12 @@ export default function Tasks() {
         </div>
         <div>
           {
-            tasks.length > 0 &&
-            <TasksTimeSheet tasks={tasks} onAddEffortClick={onAddEffortClick} onItemClick={onItemClick} onDeleteEffort={onDeleteEffort} onEffortItemClick={onEffortItemClick}></TasksTimeSheet>
+            tasks.length > 0 ?
+              <TasksTimeSheet tasks={tasks} onEffortUpdate={onEffortUpdate} onAddEffortClick={onAddEffortClick} onItemClick={onItemClick} onDeleteEffort={onDeleteEffort} onEffortItemClick={onEffortItemClick}></TasksTimeSheet>
+              :
+              <div className='text-center items-center justify-center flex h-[70vh]'>
+                No task found.
+              </div>
           }
 
         </div>

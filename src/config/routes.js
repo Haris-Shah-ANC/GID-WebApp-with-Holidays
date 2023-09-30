@@ -17,6 +17,7 @@ import Invitation from "../components/pages/authManagement/Invitation";
 import Budget from "../components/pages/mainManagement/income_expense/Budget";
 import Analysis from "../components/pages/mainManagement/income_expense/Analysis";
 import Tasks from "../components/pages/mainManagement/tasks/Tasks";
+import Alerts from "../components/pages/mainManagement/Alerts";
 
 export const authRoutes = [
     {
@@ -103,6 +104,11 @@ export const mainRoutes = [
         name: routesName.tasks.name,
         component: <Tasks />,
     },
+    {
+        path: routesName.alerts.path,
+        name: routesName.alerts.name,
+        component: <Alerts />,
+    },
 ];
 export const landingRoutes = [];
 
@@ -120,6 +126,13 @@ export const sidebarMenu = (isAdminMenu) => {
             path: routesName.dashboard.path,
             icon: "fa-solid fa-gauge-simple-high",
             active: routesName.dashboard.activeRoute,
+
+        },
+        {
+            name: routesName.alerts.name,
+            path: routesName.alerts.path,
+            icon: "fa-solid fa-bell",
+            active: routesName.alerts.activeRoute,
 
         },
         {

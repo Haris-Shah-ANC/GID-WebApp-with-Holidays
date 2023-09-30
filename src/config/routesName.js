@@ -101,6 +101,11 @@ export const routesName = {
         name: 'Tasks',
         activeRoute: 'Tasks',
     },
+    alerts: {
+        path: '/alerts',
+        name: 'Alerts',
+        activeRoute: 'Alerts',
+    },
 
 }
 

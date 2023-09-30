@@ -145,7 +145,7 @@ export default function CheckRatePopup(props) {
                             </table>
                         </div>
                         <div className='flex gap-3 mt-5'>
-                            <PlainButton onButtonClick={onCheckClick} title={"Check"} className={"w-full border"}></PlainButton>
+                            <PlainButton onButtonClick={onCheckClick} title={"Apply Changes"} className={"w-full border"}></PlainButton>
                         </div>
                     </div>
                 </div>

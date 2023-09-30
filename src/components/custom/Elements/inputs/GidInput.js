@@ -19,7 +19,7 @@ export default function GidInput(props) {
       ref={reference}
       autoComplete="new-password"
       style={{WebkitAppearance:"none"}}
-      max={maxDate ? maxDate : moment().format("YYYY-MM-DD")}
+      max={maxDate==null ? maxDate : moment().format("YYYY-MM-DD")}
     >
     </input>
   )

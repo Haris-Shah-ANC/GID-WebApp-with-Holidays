@@ -5,16 +5,22 @@ import { getDeleteTaskEffortsUrl, getTheAddTaskEffortsUrl, getTheListOfTaskEffor
 import { useNavigate } from 'react-router-dom';
 import * as Actions from '../../state/Actions';
 import { apiAction } from "../../api/api"
+import { getWorkspaceInfo } from "../../config/cookiesInfo";
 
 export default function EffortsComponent(props) {
-    const { data } = props
+    const { data, onEffortUpdate=()=>{} } = props
+    const { work_id } = getWorkspaceInfo();
     const [listOfTaskEfforts, setListOfEfforts] = useState([])
     const navigate = useNavigate();
     const dispatch = Actions.getDispatch(useContext);
     const [editItem, setEditItem] = useState()
+    const [totalEfforts, setTotalEfforts] = useState(0)
     useEffect(() => {
         getEmployeeTaskEfforts()
     }, [])
+    useEffect(() => {
+        onEffortUpdate(totalEfforts)
+    }, [totalEfforts])
 
     const onEditClick = (item, index) => {
         setEditItem(item)
@@ -32,8 +38,11 @@ export default function EffortsComponent(props) {
         // listOfTaskEfforts[index].action = "edit"
         // setListOfEfforts([...listOfTaskEfforts])
     }
+    const getTotalTaskEfforts = (item) => {
+        return item.reduce((total, currentValue) => total = parseFloat(total) + parseFloat(currentValue.working_duration), 0)
+    }
     const addEmployeeTaskEfforts = async (index) => {
-        const payload = { workspace_id: data.work_id, task_id: data.task_id, hour: listOfTaskEfforts[index].working_duration, working_date: listOfTaskEfforts[index].working_date }
+        const payload = { workspace_id: work_id, task_id: data.task_id ? data.task_id : data.id, hour: listOfTaskEfforts[index].working_duration, working_date: listOfTaskEfforts[index].working_date }
         let res = await apiAction({ url: getTheAddTaskEffortsUrl(), method: 'post', data: payload, navigate: navigate, dispatch: dispatch })
         if (res) {
             if (res.success) {
@@ -46,13 +55,23 @@ export default function EffortsComponent(props) {
         }
     }
     const getEmployeeTaskEfforts = async () => {
-        let res = await apiAction({ url: getTheListOfTaskEffortsUrl(data.work_id, data.task_id), method: 'get', data: {}, navigate: navigate, dispatch: dispatch })
-        if (res) {
-            setListOfEfforts(res.result.list_task_record)
-        }
+        let res = await apiAction({ url: getTheListOfTaskEffortsUrl(work_id, data.task_id ? data.task_id : data.id), method: 'get', data: {}, navigate: navigate, dispatch: dispatch })
+            .then((response) => {
+                if (response) {
+                    setListOfEfforts(response.result.list_task_record)
+                    onEffortUpdate(response.result.total_task_duration)
+                    if (response.result.list_task_record.length == 0) {
+                        onAddItemLineClick()
+                    }
+                }
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+
     }
     const deleteTaskEfforts = async (id) => {
-        let res = await apiAction({ url: getDeleteTaskEffortsUrl(), method: 'post', data: { task_record_id: id, workspace_id: data.work_id }, navigate: navigate, dispatch: dispatch })
+        let res = await apiAction({ url: getDeleteTaskEffortsUrl(), method: 'post', data: { task_record_id: id, workspace_id: work_id }, navigate: navigate, dispatch: dispatch })
         if (res) {
             notifySuccessMessage(res.status);
             getEmployeeTaskEfforts()
@@ -73,23 +92,25 @@ export default function EffortsComponent(props) {
         }
     }
     const onDeleteItem = (index) => {
-        deleteTaskEfforts(listOfTaskEfforts[index].id)
+        const result = window.confirm('Are you sure you want to delete this efforts?')
+        if (result)
+            deleteTaskEfforts(listOfTaskEfforts[index].id)
     }
     const onCancelEdit = () => {
         setEditItem(false)
     }
     const onUpdateEfforts = (index, item) => {
-        updateEfforts({ workspace_id: data.work_id, working_date: item.working_date, hour: editItem.working_duration, task_record_id: item.id })
+        updateEfforts({ workspace_id: work_id, working_date: item.working_date, hour: editItem.working_duration, task_record_id: item.id })
 
     }
     return (
-        <div className="relative flex-auto  ">
-            <table className=" bg-transparent border-collapse table-auto  rounded-lg w-full">
+        <div className="relative flex-col flex justify-center ">
+            <table className=" bg-transparent border-collapse table-auto  rounded-lg w-auto ">
                 <thead className='bg-gray-200 justify-center items-center'>
                     <tr className='justify-center h-10'>
                         <th
                             key={"valid_from"}
-                            className={`text-sm pl-2 text-left text-blueGray-500 font-interVar font-bold w-1/4 font-quicksand font-bold`}>
+                            className={`text-sm pl-3 text-left text-blueGray-500 font-interVar font-bold w-1/4 font-quicksand font-bold`}>
                             Date
                         </th>
                         <th
@@ -108,7 +129,7 @@ export default function EffortsComponent(props) {
                 <tbody className=" divide-y divide-gray-200 table-fixed">
                     {listOfTaskEfforts.map((item, index) => (
                         <tr key={index} className={`bg-white `} onClick={() => { }}>
-                            <td className="">
+                            <td className="pl-3">
                                 {item.working_date != "" && item.working_duration != "" && item.id ?
                                     <p className=' text-left text-md font-quicksand'>
                                         {formatDate(item.working_date, "DD/MM/YYYY")}
@@ -130,7 +151,7 @@ export default function EffortsComponent(props) {
                                 }
                             </td>
 
-                            <td className="py-4">
+                            <td className="py-4 ">
                                 {item.working_duration != "" && item.working_date != "" && item.id ?
                                     <div className="justify-center items-center flex flex-row">
                                         {editItem && editItem.id == item.id ?
@@ -239,7 +260,7 @@ export default function EffortsComponent(props) {
 
                 </tbody>
             </table>
-            <span className="text-sm text-blue-500 cursor-pointer" onClick={onAddItemLineClick}>Add row</span>
+            <span className="text-sm text-blue-500 cursor-pointer bg-white pl-3 pb-2" onClick={onAddItemLineClick}>Add row</span>
         </div>
     )
 }

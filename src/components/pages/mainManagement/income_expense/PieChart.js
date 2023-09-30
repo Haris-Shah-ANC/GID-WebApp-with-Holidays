@@ -106,15 +106,15 @@ export default function PieChartGraph(props) {
     useEffect(() => {
         getIncomeAndExpenseData({
             workspace_id: work_id,
-            from_date: timePeriodList[2].dates.from,
-            to_date: timePeriodList[2].dates.to,
+            from_date: selectedTime.dates.from,
+            to_date: selectedTime.dates.to,
             project_id: null,
             employee_id: null,
             income_by: incomeType == "Projects" ? "project" : "employee"
         })
         setParentClick(false)
         setParentItem("")
-    }, [incomeType, onFileUpload])
+    }, [incomeType, onFileUpload, selectedTime])
 
     const getIncomeAndExpenseData = async (pBody, isParentClick = false) => {
 
@@ -154,6 +154,7 @@ export default function PieChartGraph(props) {
 
             }
         }
+
         setData(resultArray)
     }
     return (
@@ -197,7 +198,10 @@ export default function PieChartGraph(props) {
                     {isParentClicked && parentItem}
                 </div>
                 <div className=' pt-6'>
-                    <PieChart highcharts={Highcharts} options={options} containerProps={{ style: {} }} />
+                    {data.length > 0 ?
+                        <PieChart highcharts={Highcharts} options={options} containerProps={{ style: {} }} />
+                        : <div className='text-center my-32 justify-center '>No data found.</div>
+                    }
                 </div>
             </div >
         </div>
