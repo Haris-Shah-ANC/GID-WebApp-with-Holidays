@@ -335,7 +335,7 @@ const CreateNewTask = (props) => {
 
                 </form>
                 <div className="p-6 border-solid border-slate-200 rounded-b">
-                    <PlainButton title={"Save Changes"} className={"w-full"} onButtonClick={handleSaveChanges} disable={user_id == formData.employee ? false : true}></PlainButton>
+                    <PlainButton title={"Save Changes"} className={"w-full"} onButtonClick={handleSaveChanges} disable={formData.task_id ? user_id == formData.employee ? false : true:false}></PlainButton>
                 </div>
 
             </div>

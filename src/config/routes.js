@@ -128,6 +128,13 @@ export const sidebarMenu = (isAdminMenu) => {
             active: routesName.dashboard.activeRoute,
 
         },
+        {
+            name: routesName.analysis.name,
+            path: routesName.analysis.path,
+            icon: "fa-solid fa-file-invoice",
+            active: routesName.analysis.activeRoute,
+            childItem: 'analysis',
+        },
        
         {
             name: routesName.calendar.name,
@@ -206,6 +213,13 @@ export const sidebarMenu = (isAdminMenu) => {
 
             },
             {
+                name: routesName.analysis.name,
+                path: routesName.analysis.path,
+                icon: "fa-solid fa-file-invoice",
+                active: routesName.analysis.activeRoute,
+                childItem: 'analysis',
+            },
+            {
                 name: routesName.alerts.name,
                 path: routesName.alerts.path,
                 icon: "fa-solid fa-bell",
@@ -227,13 +241,7 @@ export const sidebarMenu = (isAdminMenu) => {
             //     active: routesName.reports.activeRoute,
             //     childItem: 'hrms',
             // },
-            {
-                name: routesName.analysis.name,
-                path: routesName.analysis.path,
-                icon: "fa-solid fa-file-invoice",
-                active: routesName.analysis.activeRoute,
-                childItem: 'analysis',
-            },
+           
             {
                 name: routesName.assignTask.name,
                 path: routesName.assignTask.path,
