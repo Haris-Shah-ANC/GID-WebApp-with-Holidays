@@ -52,7 +52,7 @@ export default function FileUpload(props) {
       } else {
         setFile(file)
         setFileData({ ...fileUploadData, fileupload: { ...fileUploadData.fileupload, file: file } })
-        // uploadFile()
+        uploadFile()
         // onFileUpload(event.target.files[0],{file:file, size: fileSize + "MB",extension:extension.toUpperCase(),name: file.name.replace(("." + extension), "")})
       }
 
