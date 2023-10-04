@@ -51,7 +51,7 @@ const CreateNewTask = (props) => {
         status: data ? data.status : 'In-Progress',
         detailed_description: data ? data.detailed_description : null,
         description_link: data ? data.description_link : null,
-        assign_to_id: data ? data.assignee_id : user_id,
+        assign_to_id: data ? data.assignee_id : null,
         employee: data ? data.employee : null
     }
     const [formData, setFormData] = React.useState({ ...initial_data })
@@ -100,7 +100,7 @@ const CreateNewTask = (props) => {
         }
     }
     React.useEffect(() => {
-        if (formData.project_id && formData.module_id) {
+        if (formData.project_id) {
             getModuleResultsApi(work_id, formData.project_id)
         }
     }, [work_id, formData.project_id])
@@ -129,12 +129,16 @@ const CreateNewTask = (props) => {
         }
         const { isValid, message } = isFormValid(formData, validation_data);
         if (isValid) {
+            let postData = formData
+            if (!postData.assign_to_id) {
+                delete postData['assign_to_id']
+            }
             let res = await apiAction({
                 method: 'post',
                 navigate: navigate,
                 dispatch: dispatch,
                 url: formData.task_id ? update_task() : post_task(),
-                data: { ...formData, dead_line: formattedDeadline(formData.dead_line) },
+                data: { ...postData, dead_line: formattedDeadline(postData.dead_line) },
             })
             if (res.success) {
                 setShowModal(false);
@@ -335,7 +339,7 @@ const CreateNewTask = (props) => {
 
                 </form>
                 <div className="p-6 border-solid border-slate-200 rounded-b">
-                    <PlainButton title={"Save Changes"} className={"w-full"} onButtonClick={handleSaveChanges} disable={formData.task_id ? user_id == formData.employee ? false : true:false}></PlainButton>
+                    <PlainButton title={"Save Changes"} className={"w-full"} onButtonClick={handleSaveChanges} disable={formData.task_id ? user_id == formData.employee ? false : true : false}></PlainButton>
                 </div>
 
             </div>

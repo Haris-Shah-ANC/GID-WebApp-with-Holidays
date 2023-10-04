@@ -271,7 +271,7 @@ export const getTimePeriods = () => {
   return [
     {
       title: `Today`,
-      subTitle:"daily",
+      subTitle: "daily",
       period: `(${moment().format("DD MMM")})`,
       dates: {
         from: moment().format("YYYY-MM-DD"),
@@ -311,6 +311,17 @@ export const getTimePeriods = () => {
         to: getEndOf("year"),
         previousFromDate: previousYear.from,
         previousToDate: previousYear.to
+      }
+    },
+    {
+      title: "Custom",
+      subTitle: "custom",
+      period: ``,
+      dates: {
+        from: moment().format("YYYY-MM-DD"),
+        to: moment().format("YYYY-MM-DD"),
+        previousFromDate: getYesterday(),
+        previousToDate: getYesterday()
       }
     },
     // {

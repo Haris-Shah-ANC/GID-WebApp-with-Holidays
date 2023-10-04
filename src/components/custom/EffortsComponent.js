@@ -8,7 +8,7 @@ import { apiAction } from "../../api/api"
 import { getWorkspaceInfo } from "../../config/cookiesInfo";
 
 export default function EffortsComponent(props) {
-    const { data, onEffortUpdate=()=>{} } = props
+    const { data, onEffortUpdate = () => { } } = props
     const { work_id } = getWorkspaceInfo();
     const [listOfTaskEfforts, setListOfEfforts] = useState([])
     const navigate = useNavigate();
@@ -100,7 +100,11 @@ export default function EffortsComponent(props) {
         setEditItem(false)
     }
     const onUpdateEfforts = (index, item) => {
-        updateEfforts({ workspace_id: work_id, working_date: item.working_date, hour: editItem.working_duration, task_record_id: item.id })
+        if (editItem.working_duration>0){
+            updateEfforts({ workspace_id: work_id, working_date: item.working_date, hour: editItem.working_duration, task_record_id: item.id })
+        }else{
+            notifyInfoMessage("Hours must be a positive number.") 
+        }
 
     }
     return (
@@ -234,6 +238,7 @@ export default function EffortsComponent(props) {
                                         if (listOfTaskEfforts[index].working_date != "" && listOfTaskEfforts[index].working_duration != "") {
                                             onUpdateEfforts(index, item)
                                         }
+
                                     }
                                     }>Update</span> :
                                     <svg

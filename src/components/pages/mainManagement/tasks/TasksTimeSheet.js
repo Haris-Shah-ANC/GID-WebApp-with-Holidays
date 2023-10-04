@@ -1,15 +1,20 @@
 import React, { useState } from 'react'
-import { DATE, DURATION, END_TIME, MODULE, PROJECT, START_TIME, TASK, svgIcons } from '../../../../utils/Constant'
+import { DATE, DURATION, EMPLOYEE, END_TIME, MODULE, PROJECT, START_TIME, TASK, svgIcons } from '../../../../utils/Constant'
 import { formatDate, notifyErrorMessage, notifySuccessMessage } from '../../../../utils/Utils'
 import { twMerge } from 'tailwind-merge'
 import { getDeleteTaskEffortsUrl } from '../../../../api/urls'
 import { apiAction } from '../../../../api/api'
 import { useNavigate } from 'react-router-dom'
 import EffortsComponent from '../../../custom/EffortsComponent'
+import { getLoginDetails } from '../../../../config/cookiesInfo'
 
 export default function TasksTimeSheet(props) {
-    const { tasks, onAddEffortClick, onItemClick, onDeleteEffort, onEffortItemClick, onEffortUpdate } = props
+    const { tasks, onAddEffortClick, onItemClick, onDeleteEffort, onEffortItemClick, onEffortUpdate, fromAlerts, isAllEmployeeFilter } = props
     const navigate = useNavigate()
+    const loginDetails = getLoginDetails();
+
+    const user_id = loginDetails.user_id
+
     const [isEffortsTableVisible, setEffortsTableVisible] = useState(false)
     const [selectedTask, selectTask] = useState(null)
 
@@ -28,8 +33,9 @@ export default function TasksTimeSheet(props) {
     return (
         <table className=" bg-transparent w-full">
             <thead className='bg-gray-200 px-10 justify-center items-center'>
-                <tr className='h-10'>
-                    <TableHeader className={`text-left w-full`} title={TASK}></TableHeader>
+                <tr className='h-10 flex-auto w-full'>
+                    <TableHeader className={`text-left w-auto`} title={TASK}></TableHeader>
+                   <TableHeader className={`text-center w-36`} title={EMPLOYEE}></TableHeader>
                     <TableHeader className={`text-center w-36`} title={PROJECT}></TableHeader>
                     <TableHeader className={`text-center w-36`} title={MODULE}></TableHeader>
                     <TableHeader className={`text-center w-32`} title={START_TIME}></TableHeader>
@@ -40,9 +46,13 @@ export default function TasksTimeSheet(props) {
             <tbody className=" divide-y divide-gray-200 table-fixed">
                 {
                     tasks.map((item, index) => {
-                        if (parseFloat(item.total_working_duration) == 0) {
-                            return <TableRow onEffortUpdate={onEffortUpdate} onAddEffortClick={onAddEffortClick} onItemClick={onItemClick} item={item} index={index} deleteTaskEfforts={deleteTaskEfforts} onEffortEditClick={onEffortEditClick}></TableRow>
-                        }
+                        return <TableRow loggedInUserId={user_id} onEffortUpdate={onEffortUpdate} onAddEffortClick={onAddEffortClick} onItemClick={onItemClick} item={item} index={index} deleteTaskEfforts={deleteTaskEfforts} onEffortEditClick={onEffortEditClick}></TableRow>
+                        // if (fromAlerts) {
+                        //     if (parseFloat(item.total_working_duration) == 0)
+                        //         return <TableRow isAllEmployeeFilter={isAllEmployeeFilter} loggedInUserId={user_id} onEffortUpdate={onEffortUpdate} onAddEffortClick={onAddEffortClick} onItemClick={onItemClick} item={item} index={index} deleteTaskEfforts={deleteTaskEfforts} onEffortEditClick={onEffortEditClick}></TableRow>
+                        // } else {
+                        //     return <TableRow loggedInUserId={user_id} onEffortUpdate={onEffortUpdate} onAddEffortClick={onAddEffortClick} onItemClick={onItemClick} item={item} index={index} deleteTaskEfforts={deleteTaskEfforts} onEffortEditClick={onEffortEditClick}></TableRow>
+                        // }
                     })
                 }
             </tbody>
@@ -62,7 +72,7 @@ function TableHeader(props) {
 }
 
 function TableRow(props) {
-    const { onAddEffortClick, item, index, deleteTaskEfforts, onEffortEditClick, onEffortUpdate, onItemClick } = props
+    const { onAddEffortClick, item, index, deleteTaskEfforts, onEffortEditClick, onEffortUpdate, onItemClick, loggedInUserId, isAllEmployeeFilter } = props
 
     const calculateDuration = (item) => {
         return item.list_task_record.reduce((total, currentValue) => total = parseFloat(total) + parseFloat(currentValue.working_duration), 0)
@@ -73,16 +83,27 @@ function TableRow(props) {
         <tr key={1} className={`${item.is_selected ? "bg-blue-100" : "bg-white"}`} >
             <td className="p-3" >
                 <div className='flex  items-center' >
-                    <p className={`text-sm text-left break-words line-clamp-2 min-w-[320px] font-quicksand w-full cursor-pointer  ${item.is_selected ? 'font-semibold' : 'hover:font-semibold'}`} onClick={() => {
-                        onItemClick(item, index)
+                    <p className={`text-sm text-left break-words line-clamp-2 min-w-[320px] ${item.employee_id == loggedInUserId ? item.is_selected ? 'font-semibold' : 'hover:font-semibold cursor-pointer' : ''} font-quicksand w-full   `} onClick={() => {
+                        if (loggedInUserId == item.employee_id) {
+                            onItemClick(item, index)
+                        }
+
                     }}>{item.task_description}
                     </p>
                 </div>
             </td>
+           
+                <td className="py-3" >
+                    <p className='text-center text-sm  w-36 truncate mx-1 font-quicksand'>{item.employee_name}
+                    </p>
+                </td>
+            
+
             <td className="py-3">
                 <p className='text-center text-sm w-36 truncate mx-1 font-quicksand'>{item.project_name}
                 </p>
             </td>
+
             <td className="py-3">
                 <p className='text-sm text-center w-36 truncate mx-1 font-quicksand'>{item.module_name ? item.module_name : "-"}
                 </p>
@@ -97,7 +118,7 @@ function TableRow(props) {
             </td>
             <td className="py-3">
 
-                <p className='text-sm text-center w-32 truncate mx-1 font-quicksand font-bold'>{`${item.total_working_duration} hrs.`}
+                <p className={`text-sm text-center w-32 truncate mx-1 font-quicksand font-bold ${item.total_working_duration == 0 ? 'text-orange-400' : ""}`}>{`${item.total_working_duration} hrs.`}
                 </p>
             </td>
 

@@ -2,9 +2,9 @@ import React, { useEffect, useState } from 'react'
 import { apiAction } from '../../../../api/api'
 import { useNavigate } from 'react-router-dom';
 import * as Actions from '../../../../state/Actions';
-import { DATE, DURATION, END_TIME, MODULE, PROJECT, START_TIME, TASK, add_effort, svgIcons } from '../../../../utils/Constant';
+import { ALERTS, DATE, DURATION, END_TIME, MODULE, PROJECT, START_TIME, TASK, add_effort, svgIcons } from '../../../../utils/Constant';
 import PlainButton from '../../../custom/Elements/buttons/PlainButton';
-import { getDeleteTaskEffortsUrl, getTasksUrl, getTheAddTaskEffortsUrl, getTheUpdateTaskEffortsUrl, get_all_project, get_task } from '../../../../api/urls';
+import { employee, getDeleteTaskEffortsUrl, getTasksUrl, getTheAddTaskEffortsUrl, getTheUpdateTaskEffortsUrl, get_all_project, get_task } from '../../../../api/urls';
 import { getLoginDetails, getWorkspaceInfo } from '../../../../config/cookiesInfo';
 import { getTimePeriods, notifyErrorMessage, notifySuccessMessage } from '../../../../utils/Utils';
 import Dropdown from '../../../custom/Dropdown/Dropdown';
@@ -12,12 +12,14 @@ import IconInput from '../../../custom/Elements/inputs/IconInput';
 import EffortsPopup from './EffortsPopup';
 import TasksTimeSheet from './TasksTimeSheet';
 import Loader from '../../../custom/Loaders/Loader'
-import EffortsComponent from '../../../custom/EffortsComponent';
+import moment from 'moment';
+import CustomDateRengePicker from '../../../custom/Elements/CustomDateRengePicker';
 
 const timePeriods = getTimePeriods()
 
-export default function Tasks() {
+export default function Tasks(props) {
   const navigate = useNavigate();
+  let workspace = getWorkspaceInfo(navigate)
   const dispatch = Actions.getDispatch(React.useContext);
   const [tasks, setTasks] = useState([])
   const [projects, setProjects] = useState([])
@@ -27,34 +29,50 @@ export default function Tasks() {
   const [selectedDuration, selectDuration] = useState(timePeriods[1])
   const user_id = loginDetails.user_id
   const [itemDetails, setItemDetails] = useState({ details: null, index: 0, editDetails: null })
-
   const [modalVisibility, setModalVisibility] = useState(false)
   const [searchText, setSearchText] = useState("")
   const [netWorkCallStatus, setNetworkCallStatus] = useState(false)
   const [selectedTask, selectTask] = useState({ item: null, index: 0 })
-
+  const [employeeList, setEmployeeList] = useState([{ employee_name: "All Employee" }])
+  const [selectedEmployee, selectEmployee] = useState({ employee_name: "All Employee" })
+  const [customPeriod, setCustomPeriod] = useState({ fromDate: moment().format("YYYY-MM-DD"), toDate: moment().format("YYYY-MM-DD") })
   useEffect(() => {
     let URL = getTasksUrl()
     getTaskList(URL)
-    console.log("DATA", selectedDuration)
-  }, [selectedProject, selectedDuration, searchText])
+  }, [selectedProject, selectedDuration, searchText, selectedEmployee, customPeriod])
 
   useEffect(() => {
     getProjects()
-  }, [])
+    getEmployees()
 
+  }, [])
+  const [value, setValue] = useState({
+    startDate: new Date(),
+    endDate: new Date().setMonth(11)
+  });
+
+  const handleValueChange = newValue => {
+    console.log("newValue:", newValue);
+    setValue(newValue);
+  };
 
   const getTaskList = async (URL) => {
     const payload = {
       workspace_id: work_id,
       project_id: selectedProject ? selectedProject.project_id ? selectedProject.project_id : null : null,
-      from_date: selectedDuration ? selectedDuration.dates.from : null,
-      to_date: selectedDuration ? selectedDuration.dates.to : null,
-      task_description: searchText
+      task_description: searchText,
+      employee_id: selectedEmployee && selectedEmployee.id
     }
+    if (selectedDuration.title == "Custom") {
+      payload.from_date = customPeriod.fromDate
+      payload.to_date = customPeriod.toDate
+    } else {
+      payload.from_date = selectedDuration ? selectedDuration.dates.from : null
+      payload.to_date = selectedDuration ? selectedDuration.dates.to : null
+    }
+
     setNetworkCallStatus(true)
     let res = await apiAction({ url: URL, method: 'post', data: payload, navigate: navigate, dispatch: dispatch })
-    console.log("RESULTS", res)
     setNetworkCallStatus(false)
     if (res) {
       if (res.success)
@@ -76,6 +94,18 @@ export default function Tasks() {
         setProjects([{ project_name: 'All Projects' }, ...res.result])
         // selectProject(res.result[0])
       }
+  }
+  const getEmployees = async () => {
+    let response = await apiAction({
+      url: employee(work_id),
+      method: 'get',
+      navigate: navigate,
+      dispatch: dispatch,
+    })
+    if (response) {
+      setEmployeeList([{ employee_name: "All Employee" }, ...response.results])
+      selectEmployee(response.results.find((item) => item.id == user_id))
+    }
   }
 
   const calculateDuration = (item) => {
@@ -127,13 +157,20 @@ export default function Tasks() {
     setTasks([...tasks])
 
   }
+  const onCustomPeriodChange = (date, type) => {
+    if (type === "from") {
+      setCustomPeriod({ ...customPeriod, fromDate: date })
+    } else {
+      setCustomPeriod({ ...customPeriod, toDate: date })
+    }
+  }
 
 
   return (
     <React.Fragment>
-      <div className="bg-screenBackgroundColor flex flex-col justify-between overflow-auto w-full p-1">
+      <div className="bg-screenBackgroundColor flex flex-col justify-between overflow-auto w-full p-1 overflow-hidden">
         {modalVisibility && <EffortsPopup setState={setModalVisibility} data={itemDetails} onSuccessCreate={onSuccessCreate} />}
-        <div className='flex w-full space-x-0 space-y-2 flex-col md:flex-row md:space-x-3 md:space-y-0 mb-3'>
+        <div className='flex w-full space-x-0 space-y-2 flex-col md:flex-row md:space-x-3 md:space-y-0 mb-3 '>
           <div className='md:w-64'>
             <Dropdown options={projects} optionLabel="project_name" value={selectedProject ? selectedProject : { project_name: 'All Projects' }} setValue={(value) => {
               selectProject(value)
@@ -142,8 +179,21 @@ export default function Tasks() {
           <div className='md:w-64'>
             <Dropdown options={timePeriods} optionLabel="title" value={selectedDuration ? selectedDuration : { title: 'Select Option' }} setValue={(value) => {
               selectDuration(value)
+
             }} />
           </div>
+          {selectedDuration.title == "Custom" &&
+            <CustomDateRengePicker fromDate={customPeriod.fromDate} toDate={customPeriod.toDate} setDate={onCustomPeriodChange} />
+          }
+          {workspace.role == "Admin" &&
+            <div className='md:w-64'>
+              <Dropdown options={employeeList} optionLabel="employee_name" value={selectedEmployee ? selectedEmployee : { name: 'All Employees' }} setValue={(value) => {
+                selectEmployee(value)
+              }} />
+            </div>
+          }
+
+
           <div className='flex flex-col md:w-64'>
             <IconInput
               id={"search_task_input"}
@@ -160,10 +210,10 @@ export default function Tasks() {
             </IconInput>
           </div>
         </div>
-        <div>
+        <div className='overflow-auto' style={{ height: 'calc(100vh - 170px)', }}>
           {
             tasks.length > 0 ?
-              <TasksTimeSheet tasks={tasks} onEffortUpdate={onEffortUpdate} onAddEffortClick={onAddEffortClick} onItemClick={onItemClick} onDeleteEffort={onDeleteEffort} onEffortItemClick={onEffortItemClick}></TasksTimeSheet>
+              <TasksTimeSheet isAllEmployeeFilter={selectedEmployee.employee_name == "All Employee"} fromAlerts={props && props.from == ALERTS} tasks={tasks} onEffortUpdate={onEffortUpdate} onAddEffortClick={onAddEffortClick} onItemClick={onItemClick} onDeleteEffort={onDeleteEffort} onEffortItemClick={onEffortItemClick}></TasksTimeSheet>
               :
               <div className='text-center items-center justify-center flex h-[70vh]'>
                 No task found.
@@ -176,3 +226,5 @@ export default function Tasks() {
     </React.Fragment>
   )
 }
+
+

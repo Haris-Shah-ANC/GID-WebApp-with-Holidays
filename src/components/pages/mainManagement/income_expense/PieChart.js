@@ -8,6 +8,8 @@ import GroupButtons from '../../../custom/Elements/buttons/GroupButtons';
 import { getIncomeExpensePieChartData } from '../../../../api/urls';
 import Dropdown from '../../../custom/Dropdown/Dropdown';
 import { getWorkspaceInfo } from '../../../../config/cookiesInfo';
+import CustomDateRengePicker from '../../../custom/Elements/CustomDateRengePicker';
+import moment from 'moment';
 
 
 export default function PieChartGraph(props) {
@@ -19,6 +21,7 @@ export default function PieChartGraph(props) {
     const [isParentClicked, setParentClick] = useState(false)
     const [incomeType, setIncomeType] = useState("Projects")
     const [parentItem, setParentItem] = useState("")
+    const [customPeriod, setCustomPeriod] = useState({ fromDate: moment().format("YYYY-MM-DD"), toDate: moment().format("YYYY-MM-DD") })
 
     const handleDrillDown = (parent) => {
         setParentItem(incomeType === "Projects" ? `Project : ${parent.options.name}` : `Employee : ${parent.options.name}`)
@@ -106,15 +109,15 @@ export default function PieChartGraph(props) {
     useEffect(() => {
         getIncomeAndExpenseData({
             workspace_id: work_id,
-            from_date: selectedTime.dates.from,
-            to_date: selectedTime.dates.to,
+            from_date: selectedTime.title == "Custom" ? customPeriod.fromDate : selectedTime.dates.from,
+            to_date: selectedTime.title == "Custom" ? customPeriod.toDate : selectedTime.dates.to,
             project_id: null,
             employee_id: null,
             income_by: incomeType == "Projects" ? "project" : "employee"
         })
         setParentClick(false)
         setParentItem("")
-    }, [incomeType, onFileUpload, selectedTime])
+    }, [incomeType, onFileUpload, selectedTime, customPeriod])
 
     const getIncomeAndExpenseData = async (pBody, isParentClick = false) => {
 
@@ -157,6 +160,13 @@ export default function PieChartGraph(props) {
 
         setData(resultArray)
     }
+    const onCustomPeriodChange = (date, type) => {
+        if (type === "from") {
+            setCustomPeriod({ ...customPeriod, fromDate: date })
+        } else {
+            setCustomPeriod({ ...customPeriod, toDate: date })
+        }
+    }
     return (
         <div className={`justify-center items-center p-10 rounded-md bg-white shadow-md`}>
             <div className={`flex-col`}>
@@ -171,9 +181,14 @@ export default function PieChartGraph(props) {
                             <Dropdown options={getTimePeriods()} placeholder={true} optionLabel={'title'} value={selectedTime ? selectedTime : { title: 'All Project' }} setValue={(value) => {
                                 setTimePeriod(value)
                                 setParentClick(false)
-                                getIncomeAndExpenseData({ workspace_id: work_id, from_date: value.dates.from, to_date: value.dates.to, income_by: incomeType == "Projects" ? 'project' : "employees" })
+                                // getIncomeAndExpenseData({ workspace_id: work_id, from_date: value.dates.from, to_date: value.dates.to, income_by: incomeType == "Projects" ? 'project' : "employees" })
                             }} />
                         </div>
+                        {selectedTime.title == "Custom" &&
+                            <div className='px-8'>
+                                <CustomDateRengePicker fromDate={customPeriod.fromDate} toDate={customPeriod.toDate} setDate={onCustomPeriodChange} />
+                            </div>
+                        }
                     </div>
                 </div>
                 <div className='h-8'>

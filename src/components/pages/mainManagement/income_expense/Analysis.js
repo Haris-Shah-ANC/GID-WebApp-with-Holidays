@@ -32,9 +32,11 @@ export default function Analysis(props) {
     const [fileUploaded, setFileUploadStatus] = useState(null)
     const [rateModalVisibility, setRateModalVisibility] = useState(false)
     const [tempBudgetList, setTempBudgetList] = useState(null)
+
     useEffect(() => {
         getProjects()
-        // getEmployees()
+        getEmployees()
+        timePeriodsList.splice(4, 1) //REMOVED THE CUSTOM OPTION FROM ANALYSIS.BCOZ CHART REQUIRED THE OPTIONS LIKE daily,weekly,monthly and yearly.
     }, [])
 
     useEffect(() => {
@@ -61,7 +63,8 @@ export default function Analysis(props) {
             dispatch: dispatch,
         })
         if (response) {
-            setEmployeeList([{ employee_name: "All Employee" }, ...response.results])
+            var sorted = response.results.sort((a, b) => a.employee_name.localeCompare(b.employee_name, undefined, {}));
+            setEmployeeList([{ employee_name: "All Employee" }, ...sorted])
             if (paramsData && paramsData.employee_id) {
                 selectEmployee(response.results.find((item) => item.id == paramsData.employee_id))
             }
@@ -94,7 +97,8 @@ export default function Analysis(props) {
             url: get_all_project(work_id),
         }).then((res) => {
             if (res.success) {
-                setProjectList([{ project_name: "All Project" }, ...res.result])
+                var sorted = res.result.sort((a, b) => a.project_name.localeCompare(b.project_name, undefined, {}));
+                setProjectList([{ project_name: "All Project" }, ...sorted])
                 if (paramsData && paramsData.employee_id) {
                     let selectedProject = res.result.find((item) => item.project_id == paramsData.project_id)
                     setProject(selectedProject)
@@ -161,6 +165,10 @@ export default function Analysis(props) {
 
 
     }
+    const onChange = (event) => {
+        console.log("ON PERIOD CHANGE", event)
+
+    }
     return (
         <div className='flex flex-col mb-16'>
 
@@ -177,6 +185,7 @@ export default function Analysis(props) {
                             selectEmployee(value)
                         }} />
                     </div>
+
 
                 </div>
 

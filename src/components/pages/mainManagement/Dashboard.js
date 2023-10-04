@@ -410,7 +410,12 @@ const Dashboard = () => {
             <React.Fragment>
 
 
-                <div className='bg-white flex flex-col px-5 py-2 rounded-lg h-full border-borderColor-0 shadow-md' >
+                <div className={`bg-white flex flex-col px-5 py-2 rounded-lg h-full border-borderColor-0 shadow-md ${(user_id === employee) ? "cursor-pointer" : ""}`}  onClick={() => {
+                        if (user_id === employee) {
+                            // console.log(user_id, employee)
+                            onEditClick(props)
+                        }
+                    }}>
 
                     <div className='flex'>
                         <div className='flex flex-col w-full'>
@@ -433,11 +438,11 @@ const Dashboard = () => {
                     </div>
 
                     <div onClick={() => {
-                        if (status !== "Completed" && user_id === employee) {
+                        if (user_id === employee) {
                             console.log(user_id, employee)
                             onEditClick(props)
                         }
-                    }} className={`${(status !== "Completed" && user_id === employee) ? "cursor-pointer" : ""}`}>
+                    }} className={`${(user_id === employee) ? "cursor-pointer" : ""}`}>
                         <div className='flex justify-between my-3'>
                             <span className="text-xs font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-md text-lightBlue-600 bg-lightBlue-200 last:mr-0 mr-1">
                                 {project_name}</span>

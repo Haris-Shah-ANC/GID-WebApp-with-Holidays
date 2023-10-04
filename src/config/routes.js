@@ -129,18 +129,26 @@ export const sidebarMenu = (isAdminMenu) => {
 
         },
         {
-            name: routesName.analysis.name,
-            path: routesName.analysis.path,
-            icon: "fa-solid fa-file-invoice",
-            active: routesName.analysis.activeRoute,
-            childItem: 'analysis',
+            name: routesName.alerts.name,
+            path: routesName.alerts.path,
+            icon: "fa-solid fa-bell",
+            active: routesName.alerts.activeRoute,
+
         },
+     
        
         {
             name: routesName.calendar.name,
             path: routesName.calendar.path,
             icon: "fa-solid fa-calendar-days",
             active: routesName.calendar.activeRoute,
+        },
+        {
+            name: routesName.analysis.name,
+            path: routesName.analysis.path,
+            icon: "fa-solid fa-file-invoice",
+            active: routesName.analysis.activeRoute,
+            childItem: 'analysis',
         },
         {
             name: routesName.assignTask.name,
@@ -212,13 +220,7 @@ export const sidebarMenu = (isAdminMenu) => {
                 active: routesName.dashboard.activeRoute,
 
             },
-            {
-                name: routesName.analysis.name,
-                path: routesName.analysis.path,
-                icon: "fa-solid fa-file-invoice",
-                active: routesName.analysis.activeRoute,
-                childItem: 'analysis',
-            },
+           
             {
                 name: routesName.alerts.name,
                 path: routesName.alerts.path,
@@ -233,6 +235,13 @@ export const sidebarMenu = (isAdminMenu) => {
                 icon: "fa-solid fa-calendar-days",
                 active: routesName.calendar.activeRoute,
                 accessibleToEmployee: false
+            },
+            {
+                name: routesName.analysis.name,
+                path: routesName.analysis.path,
+                icon: "fa-solid fa-file-invoice",
+                active: routesName.analysis.activeRoute,
+                childItem: 'analysis',
             },
             // {
             //     name: routesName.reports.name,

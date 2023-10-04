@@ -27,7 +27,9 @@ export const DURATION = "Duration"
 export const START_TIME = "Start Time"
 export const END_TIME = "End Time"
 export const PROJECT = "Project"
+export const EMPLOYEE = "Employee"
 export const MODULE = "Module"
+export const ALERTS="Alerts"
 export const ROLES = [
     {role: "Employee", short_name: "employee", id:1},
     {role: "Admin", short_name: "admin", id:2},

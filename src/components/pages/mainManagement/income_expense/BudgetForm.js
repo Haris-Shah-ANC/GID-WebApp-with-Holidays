@@ -138,8 +138,9 @@ export default function BudgetForm(props) {
 
     return (
         <div className='transition-all duration-1000 ease-in delay-1000'>
+            <p className='text-xl px-5 pt-4'>Budget Details</p>
             <form className="flex flex-row ">
-                {/* <p className='text-center text-xl'>Budget Details</p>  */}
+
                 <div className=' pt-5 md:w-full '>
                     <div className='md:flex md:flex-row md:w-full sm:flex-col space-x-12 mx-5'>
                         <div className='sm:flex md:flex  md:flex-col'>
@@ -183,7 +184,9 @@ export default function BudgetForm(props) {
                                     value={budgetData.exchange_rate}
                                     onBlurEvent={() => { }}
                                     onTextChange={(e) => {
-                                        setBudgetData({ ...budgetData, exchange_rate: e.target.value })
+                                        if (e.target.value >= 0) {
+                                            setBudgetData({ ...budgetData, exchange_rate: e.target.value })
+                                        }
                                     }}></GidInput>
                             </div>
                         </div>
@@ -200,6 +203,7 @@ export default function BudgetForm(props) {
                                         value={budgetData.valid_from}
                                         onBlurEvent={() => { }}
                                         onTextChange={(e) => {
+
                                             setBudgetData({ ...budgetData, valid_from: e.target.value })
                                         }}></GidInput>
 
@@ -217,7 +221,10 @@ export default function BudgetForm(props) {
                                     onBlurEvent={() => { }}
                                     maxDate={null}
                                     onTextChange={(e) => {
-                                        setBudgetData({ ...budgetData, amount: e.target.value })
+                                        if (e.target.value >= 0) {
+                                            setBudgetData({ ...budgetData, amount: e.target.value })
+                                        }
+
                                     }}></GidInput>
                             </div>
                         </div>
@@ -248,7 +255,9 @@ export default function BudgetForm(props) {
                                     onBlurEvent={() => { }}
                                     maxDate={null}
                                     onTextChange={(e) => {
-                                        setBudgetData({ ...budgetData, capacity: e.target.value })
+                                        if (e.target.value >= 0) {
+                                            setBudgetData({ ...budgetData, capacity: e.target.value })
+                                        }
                                     }}></GidInput>
                             </div>
                         </div>

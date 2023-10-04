@@ -240,11 +240,6 @@ const ChildItemComponent = (props) => {
             {childItem === "analysis" &&
               <React.Fragment>
                 <li className='p-2 text-gray-500 font-quicksand font-semibold text-sm'>Select</li>
-
-
-                <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm' onClick={() => { navigate(routesName.tasks.path) }}>
-                  Tasks
-                </li>
                 {
                   workspace.role == "Admin" &&
                   <>
@@ -256,6 +251,11 @@ const ChildItemComponent = (props) => {
                     </li>
                   </>
                 }
+
+                <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm' onClick={() => { navigate(routesName.tasks.path) }}>
+                  Tasks
+                </li>
+               
 
               </React.Fragment>
             }

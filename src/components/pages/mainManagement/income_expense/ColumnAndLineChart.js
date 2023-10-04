@@ -68,7 +68,7 @@ export default function ColumnAndLineChart(props) {
                 color: '#185eb5',
                 width: 1.5,
                 zIndex: 4,
-                label: { text: capacityData.capacity > 0 && `Capacity - ${amountFormatter(capacityData.capacity, "INR")} &nbsp &nbsp  Hours - ${parseFloat(capacityData.hours).toFixed(2)}` }
+                label: { text: capacityData.capacity > 0 ? `Capacity - ${amountFormatter(capacityData.capacity, "INR")} &nbsp &nbsp  Hours - ${parseFloat(capacityData.hours).toFixed(2)}`:"" }
             }]
         },
         tooltip: {
