@@ -51,7 +51,7 @@ const ModelComponent = (props) => {
                     }
                     {
                         showModal === file_upload &&
-                        <FileUpload setShowModal={setShowModal} data={data}></FileUpload>
+                        <FileUpload setShowModal={setShowModal} data={data} onSuccess={(val) => onSuccess(val)}></FileUpload>
                     }
                     {
                         showModal === add_time_sheet &&

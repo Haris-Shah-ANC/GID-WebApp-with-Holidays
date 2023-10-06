@@ -14,6 +14,7 @@ import TasksTimeSheet from './TasksTimeSheet';
 import Loader from '../../../custom/Loaders/Loader'
 import moment from 'moment';
 import CustomDateRengePicker from '../../../custom/Elements/CustomDateRengePicker';
+import CustomDatePicker from '../../../custom/Elements/CustomDatePicker';
 
 const timePeriods = getTimePeriods()
 
@@ -73,13 +74,21 @@ export default function Tasks(props) {
 
     setNetworkCallStatus(true)
     let res = await apiAction({ url: URL, method: 'post', data: payload, navigate: navigate, dispatch: dispatch })
+      .then((response) => {
+        if (response) {
+          if (response.success)
+            // if(res.result.length > 0){
+            // var sorted ;= response.results.sort((a, b) => a.employee_name.localeCompare(b.employee_name, undefined, {}));
+
+            setTasks(res.result)
+          // }
+        }
+      })
+      .catch((error) => {
+        console.log("ERROR", error)
+      })
     setNetworkCallStatus(false)
-    if (res) {
-      if (res.success)
-        // if(res.result.length > 0){
-        setTasks(res.result)
-      // }
-    }
+  
   }
 
   const getProjects = async () => {
@@ -185,13 +194,13 @@ export default function Tasks(props) {
           {selectedDuration.title == "Custom" &&
             <CustomDateRengePicker fromDate={customPeriod.fromDate} toDate={customPeriod.toDate} setDate={onCustomPeriodChange} />
           }
-          {workspace.role == "Admin" &&
-            <div className='md:w-64'>
-              <Dropdown options={employeeList} optionLabel="employee_name" value={selectedEmployee ? selectedEmployee : { name: 'All Employees' }} setValue={(value) => {
-                selectEmployee(value)
-              }} />
-            </div>
-          }
+
+          <div className='md:w-64'>
+            <Dropdown options={employeeList} optionLabel="employee_name" value={selectedEmployee ? selectedEmployee : { name: 'All Employees' }} setValue={(value) => {
+              selectEmployee(value)
+            }} />
+          </div>
+
 
 
           <div className='flex flex-col md:w-64'>
@@ -209,6 +218,9 @@ export default function Tasks(props) {
             >
             </IconInput>
           </div>
+          {/* <div className='w-1/2 '>
+            <CustomDatePicker />
+          </div> */}
         </div>
         <div className='overflow-auto' style={{ height: 'calc(100vh - 170px)', }}>
           {

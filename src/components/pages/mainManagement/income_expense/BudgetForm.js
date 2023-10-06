@@ -244,7 +244,7 @@ export default function BudgetForm(props) {
                                     }}></GidInput>
                             </div>
                             <div className="mt-5 flex flex-col">
-                                <CustomLabel label={`Capacity`} className={'font-quicksand font-semibold text-sm mb-1'} />
+                                <CustomLabel label={`Capacity (hr)`} className={'font-quicksand font-semibold text-sm mb-1'} />
                                 <GidInput
                                     inputType={"number"}
                                     id='link_description'

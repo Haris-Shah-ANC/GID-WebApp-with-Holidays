@@ -161,13 +161,18 @@ export default function Budget(props) {
                             </th>
                             <th
                                 key={"project"}
-                                className={`text-sm  text-left text-blueGray-500 font-interVar font-bold w-1/5 font-quicksand font-bold`}>
+                                className={`text-sm  text-left text-blueGray-500 font-interVar font-bold w-1/6 font-quicksand font-bold`}>
                                 Project
                             </th>
                             <th
                                 key={"rate"}
-                                className={`text-sm  text-left text-blueGray-500 font-interVar font-bold w-1/6 font-quicksand font-bold`}>
+                                className={`text-sm  text-left text-blueGray-500 font-interVar font-bold w-1/7 font-quicksand font-bold`}>
                                 Rate/hr
+                            </th>
+                            <th
+                                key={"rate"}
+                                className={`text-sm  text-center text-blueGray-500 font-interVar font-bold w-1/6 font-quicksand font-bold`}>
+                                Capacity (hr)
                             </th>
                             <th
                                 key={"analysis"}
@@ -207,6 +212,11 @@ export default function Budget(props) {
                                 <td className="py-4">
                                     <p className='text-md  text-left font-quicksand'>
                                         {amountFormatter(item.amount, item.currency.currency_code)}
+                                    </p>
+                                </td>
+                                <td className="py-4">
+                                    <p className='text-md  text-center font-quicksand'>
+                                        {item.capacity}
                                     </p>
                                 </td>
                                 <td className="py-4 flex justify-center">

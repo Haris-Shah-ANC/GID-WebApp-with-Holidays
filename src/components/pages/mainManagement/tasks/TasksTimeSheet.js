@@ -35,7 +35,7 @@ export default function TasksTimeSheet(props) {
             <thead className='bg-gray-200 px-10 justify-center items-center'>
                 <tr className='h-10 flex-auto w-full'>
                     <TableHeader className={`text-left w-auto`} title={TASK}></TableHeader>
-                   <TableHeader className={`text-center w-36`} title={EMPLOYEE}></TableHeader>
+                    <TableHeader className={`text-center w-36`} title={EMPLOYEE}></TableHeader>
                     <TableHeader className={`text-center w-36`} title={PROJECT}></TableHeader>
                     <TableHeader className={`text-center w-36`} title={MODULE}></TableHeader>
                     <TableHeader className={`text-center w-32`} title={START_TIME}></TableHeader>
@@ -92,12 +92,12 @@ function TableRow(props) {
                     </p>
                 </div>
             </td>
-           
-                <td className="py-3" >
-                    <p className='text-center text-sm  w-36 truncate mx-1 font-quicksand'>{item.employee_name}
-                    </p>
-                </td>
-            
+
+            <td className="py-3" >
+                <p className='text-center text-sm  w-36 truncate mx-1 font-quicksand'>{item.employee_name}
+                </p>
+            </td>
+
 
             <td className="py-3">
                 <p className='text-center text-sm w-36 truncate mx-1 font-quicksand'>{item.project_name}
@@ -130,7 +130,7 @@ function TableRow(props) {
                 {/* <tr className='bg-red-100 w-full' key={2}> */}
                 {/* <td className=' '> */}
                 <div className='w-[45vh] py-3'>
-                    <EffortsComponent data={item} onEffortUpdate={(total) => onEffortUpdate(total)} />
+                    <EffortsComponent data={item} onEffortUpdate={(total) => onEffortUpdate(total)} isVisible={item.is_selected} setUpdateEffortsStatus={() => { }} />
                 </div>
                 {/* </td> */}
                 {/* </tr > */}

@@ -59,7 +59,7 @@ const CreateNewTask = (props) => {
     const [moduleResults, setModuleResults] = React.useState([{ module_name: 'Select module' }]);
     const [employeeList, setEmployeeList] = React.useState([{ employee_name: 'Self' }]);
     const [isEffortsTableVisible, setEffortsTableVisible] = useState(false)
-
+    const [updateEffortsStatus, setUpdateEffortsStatus] = useState(false)
     const getProjectsResultsApi = async (id) => {
         let res = await apiAction({
             method: 'get',
@@ -117,8 +117,8 @@ const CreateNewTask = (props) => {
     let selectedModule = moduleResults.find((item) => item.module_id === formData.module_id);
     let selectedAssignee = employeeList.find((item) => item.id === formData.assign_to_id);
 
-    const handleSaveChanges = async (e) => {
-        e.preventDefault();
+    const updateOrAddTask = async () => {
+
         let validation_data = [
             { key: "project_id", message: 'Please select the project!' },
             { key: "task", message: `Description field left empty!` },
@@ -155,6 +155,17 @@ const CreateNewTask = (props) => {
             notifyErrorMessage(message)
         }
     };
+    const onSaveChangesBtnClick = (e) => {
+        e.preventDefault();
+        setUpdateEffortsStatus(true)
+
+    }
+    const onEffortsAddedSuccess = () => {
+        setUpdateEffortsStatus(false)
+        updateOrAddTask()
+        console.log("ON EFFORTS CREATED SUCCESSFULLY")
+    }
+
     const onLinkTextClick = (btnTitle) => {
         const tomorrow = moment().add(1, 'days');
         const today = moment()
@@ -309,7 +320,12 @@ const CreateNewTask = (props) => {
 
                         {formData.task_id &&
                             <>
-                                <div className='flex flex-row items-center justify-between my-5 text-sm font-medium font-quicksand text-gray-800'>
+                                <div className='flex flex-row items-center justify-between my-5 text-sm font-medium font-quicksand text-gray-800 hover:bg-blue-50 cursor-pointer'
+                                    onClick={() => {
+                                        const element = document.getElementById("last_div");
+                                        element.scrollTop = element.scrollHeight;
+                                        setEffortsTableVisible(!isEffortsTableVisible)
+                                    }}>
                                     <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={<span>Efforts</span>} />
                                     <svg
                                         fill="blue"
@@ -317,11 +333,6 @@ const CreateNewTask = (props) => {
                                         height="1em"
                                         width="1em"
                                         className='cursor-pointer hover:bg-blue-100 rounded-lg m-2'
-                                        onClick={() => {
-                                            const element = document.getElementById("last_div");
-                                            element.scrollTop = element.scrollHeight;
-                                            setEffortsTableVisible(!isEffortsTableVisible)
-                                        }}
                                     >
                                         <path
                                             fillRule="evenodd"
@@ -329,7 +340,8 @@ const CreateNewTask = (props) => {
                                         />
                                     </svg>
                                 </div>
-                                {isEffortsTableVisible && <EffortsComponent data={initial_data} />}
+                                <EffortsComponent data={initial_data} isVisible={isEffortsTableVisible} onEffortsAddedSuccess={onEffortsAddedSuccess} updateEffortsStatus={updateEffortsStatus} setUpdateEffortsStatus={setUpdateEffortsStatus
+                                }/>
                             </>
                         }
 
@@ -339,7 +351,7 @@ const CreateNewTask = (props) => {
 
                 </form>
                 <div className="p-6 border-solid border-slate-200 rounded-b">
-                    <PlainButton title={"Save Changes"} className={"w-full"} onButtonClick={handleSaveChanges} disable={formData.task_id ? user_id == formData.employee ? false : true : false}></PlainButton>
+                    <PlainButton title={"Save Changes"} className={"w-full"} onButtonClick={onSaveChangesBtnClick} disable={formData.task_id ? user_id == formData.employee ? false : true : false}></PlainButton>
                 </div>
 
             </div>

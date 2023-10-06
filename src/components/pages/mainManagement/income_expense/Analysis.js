@@ -12,6 +12,7 @@ import * as Actions from '../../../../state/Actions';
 import { getLoginDetails, getWorkspaceInfo } from '../../../../config/cookiesInfo';
 import Dropdown from '../../../custom/Dropdown/Dropdown';
 import CheckRatePopup from './CheckRatePopup';
+import CustomDatePicker from '../../../custom/Elements/CustomDatePicker';
 
 const timePeriodsList = getTimePeriods()
 export default function Analysis(props) {
@@ -40,39 +41,58 @@ export default function Analysis(props) {
     }, [])
 
     useEffect(() => {
-        fetchIncomeAndExpense()
-
-    }, [selectedProject, selectedTime, selectedEmployee])
+        fetchIncomeAndExpense(selectedProject, selectedEmployee)
+    }, [selectedTime])
 
     const getPostBody = () => {
-        return {
+        let pBody = {
             workspace_id: work_id,
             from_date: selectedTime.dates.from,
             to_date: selectedTime.dates.to,
             previous_from_date: selectedTime.dates.previousFromDate,
             previous_to_date: selectedTime.dates.previousToDate,
-            project_id: selectedProject ? selectedProject.project_id : null,
-            employee_id: selectedEmployee ? selectedEmployee.id : null
         }
+
+        return pBody
     }
-    const getEmployees = async (projectId) => {
-        let response = await apiAction({
-            url: employee(work_id, projectId),
+    const getEmployees = async (project) => {
+        let res = await apiAction({
+            url: employee(work_id, project && project.project_id),
             method: 'get',
             navigate: navigate,
             dispatch: dispatch,
-        })
-        if (response) {
-            var sorted = response.results.sort((a, b) => a.employee_name.localeCompare(b.employee_name, undefined, {}));
-            setEmployeeList([{ employee_name: "All Employee" }, ...sorted])
-            if (paramsData && paramsData.employee_id) {
-                selectEmployee(response.results.find((item) => item.id == paramsData.employee_id))
+        }).then((response) => {
+            if (response) {
+                var sorted = response.results.sort((a, b) => a.employee_name.localeCompare(b.employee_name, undefined, {}));
+                setEmployeeList([{ employee_name: "All Employee", }, ...sorted])
+
+                let found = sorted.find(function (element) {
+                    if (selectedEmployee != null) {
+                        return element.id == selectedEmployee.id;
+                    }
+
+                });
+                if (!found) {
+                    selectEmployee(null)
+                    fetchIncomeAndExpense(project, undefined)
+                } else {
+                    fetchIncomeAndExpense(project, found)
+                }
+                if (paramsData && paramsData.employee_id) {
+                    selectEmployee(response.results.find((item) => item.id == paramsData.employee_id))
+                }
             }
         }
+        )
+            .catch((error) => {
+                console.log("ERROR", error)
+            })
+
     }
 
-    const fetchIncomeAndExpense = async () => {
-        let response = await apiAction({ url: getIncomeExpenseDataWithComparison(), method: 'post', data: getPostBody() }, onError)
+    const fetchIncomeAndExpense = async (project, employee) => {
+        console.log("EMPLOYEE", employee)
+        let response = await apiAction({ url: getIncomeExpenseDataWithComparison(), method: 'post', data: { employee_id: employee ? employee.id : null, project_id: project ? project.project_id : null, ...getPostBody() } }, onError)
         if (response) {
             if (response.success) {
                 setIncomeExpenseData(response.result)
@@ -102,7 +122,6 @@ export default function Analysis(props) {
                 if (paramsData && paramsData.employee_id) {
                     let selectedProject = res.result.find((item) => item.project_id == paramsData.project_id)
                     setProject(selectedProject)
-                    getEmployees(selectedProject.project_id)
                 }
             }
         }
@@ -115,7 +134,7 @@ export default function Analysis(props) {
     const onSuccessFileUpload = (fileData) => {
         fetchIncomeAndExpense()
         console.log(fileData)
-        setFileUploadStatus(fileData.file)
+        setFileUploadStatus(fileData)
     }
 
     const onRateChanged = (budgetList) => {
@@ -171,18 +190,18 @@ export default function Analysis(props) {
     }
     return (
         <div className='flex flex-col mb-16'>
-
             <div className="bg-white flex flex-col md:flex-row shadow mx-2 my-2 py-5 px-5 rounded-md  ">
                 <div className='w-full flex flex-col md:flex-row space-y-2 md:space-x-3 md:space-y-0'>
                     <div className='md:w-60 max-w-sm w-full'>
                         <Dropdown options={projects} optionLabel={'project_name'} value={selectedProject ? selectedProject : { name: 'All Project' }} setValue={(value) => {
                             setProject(value)
-                            getEmployees(value.project_id)
+                            getEmployees(value)
                         }} />
                     </div>
                     <div className='md:w-60 max-w-sm w-full'>
                         <Dropdown options={employees} optionLabel={'employee_name'} value={selectedEmployee ? selectedEmployee : { name: 'All Employees' }} setValue={(value) => {
                             selectEmployee(value)
+                            fetchIncomeAndExpense(selectedProject, value)
                         }} />
                     </div>
 

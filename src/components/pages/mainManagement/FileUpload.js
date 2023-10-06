@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import { apiActionFormData } from '../../../api/api'
 import { getWorkspaceInfo } from '../../../config/cookiesInfo'
-import { isFormValid, notifyErrorMessage, notifySuccessMessage } from '../../../utils/Utils'
-import { getTheAttendanceReportUploadUrl } from '../../../api/urls'
+import { isFormValid, notifyErrorMessage, notifyInfoMessage, notifySuccessMessage } from '../../../utils/Utils'
+import { getTheAttendanceReportUploadUrl, getTheTimeSheetUploadUrl } from '../../../api/urls'
 import PlainButton from '../../custom/Elements/buttons/PlainButton'
 import GidInput from '../../custom/Elements/inputs/GidInput'
 
 export default function FileUpload(props) {
-  const { setShowModal } = props
+  const { setShowModal, data = {}, onSuccess = () => { } } = props
   const { work_id } = getWorkspaceInfo()
   const [file, setFile] = useState(null)
   const [fileUploadData, setFileData] = useState({ work_id: work_id, fileupload: null, year: "" })
@@ -34,15 +34,30 @@ export default function FileUpload(props) {
     } else {
       notifyErrorMessage("File field left empty!")
     }
-
-
-    // if(response.success){
-
-    // }
   }
-
+  const uploadTimeSheet = async () => {
+    let response = await apiActionFormData({ url: getTheTimeSheetUploadUrl(), method: 'post', data: { "file": file, workspace_id: work_id } }, onError)
+    if (response) {
+      if (response.success) {
+        onSuccess(file)
+        setShowModal(false)
+        notifySuccessMessage(response.status)
+      } else {
+        notifyInfoMessage(response.status)
+      }
+    }
+    function onError(err) {
+      console.log("UPLOAD ERROR", err)
+    }
+  }
+  const onBtnClick = () => {
+    if (data && data.from == "timesheet") {
+      uploadTimeSheet()
+    } else {
+      uploadFile()
+    }
+  }
   const onFileEvent = (event) => {
-    // console.log("FILE SELECT", event.target.files[0].name)
     if (event.target.files && event.target.files.length) {
       let file = event.target.files[0]
       const extension = file.name.split('.').pop();
@@ -52,7 +67,7 @@ export default function FileUpload(props) {
       } else {
         setFile(file)
         setFileData({ ...fileUploadData, fileupload: { ...fileUploadData.fileupload, file: file } })
-        uploadFile()
+        // uploadFile()
         // onFileUpload(event.target.files[0],{file:file, size: fileSize + "MB",extension:extension.toUpperCase(),name: file.name.replace(("." + extension), "")})
       }
 
@@ -64,7 +79,6 @@ export default function FileUpload(props) {
       className="justify-center  items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
       <div className="relative my-6 max-w-sm">
         <div className="w-full border-0 rounded-lg shadow-lg relative flex flex-col bg-white outline-none focus:outline-none">
-          {/* header */}
           <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
             <h3 className="text-lg font-quicksand font-bold text-center w-full">{'Upload File'}</h3>
             <button
@@ -78,7 +92,7 @@ export default function FileUpload(props) {
           <div className='px-3 py-5 w-full flex flex-col'>
             <div className='flex-row flex items-center'>
               <input
-                accept=".xls,"
+                accept=".csv,.xls,.xlsx"
                 id="input-file"
                 type="file"
                 className='border w-full p-1 rounded-md cursor-pointer'
@@ -87,33 +101,37 @@ export default function FileUpload(props) {
                   e.target.value = null
                 }}
               />
-              <h3 className='ml-28 mr-10 text-black font-quicksand font-semibold absolute truncate w-full'>{fileUploadData.fileupload && fileUploadData.fileupload.file ? fileUploadData.fileupload.file.name : null}</h3>
+              {/* <h3 className='ml-28 mr-10 text-black font-quicksand font-semibold absolute truncate w-full flex'>{fileUploadData.fileupload && fileUploadData.fileupload.file ? fileUploadData.fileupload.file.name : null}</h3> */}
 
 
             </div>
 
-            <label className='mt-3 text-gray-600 font-quicksand font-semibold'>Year</label>
-            <GidInput
-              inputType={"number"}
-              id={"year"}
-              disable={false}
-              className={""}
-              value={fileUploadData.year}
-              onBlurEvent={() => { }}
-              placeholderMsg="e.g 2023"
-              onTextChange={(event) => {
-                let value = event.target.value
-                if (String(value).length <= 1) {
-                  let year = new Date().getFullYear()
-                  setFileData({ ...fileUploadData, year: year })
-                } else {
-                  setFileData({ ...fileUploadData, year: value })
-                }
-              }}
-            >
-            </GidInput>
+            {data ? data.from != "timesheet" &&
+              <>
+                <label className='mt-3 text-gray-600 font-quicksand font-semibold'>Year</label>
+                <GidInput
+                  inputType={"number"}
+                  id={"year"}
+                  disable={false}
+                  className={""}
+                  value={fileUploadData.year}
+                  onBlurEvent={() => { }}
+                  placeholderMsg="e.g 2023"
+                  onTextChange={(event) => {
+                    let value = event.target.value
+                    if (String(value).length <= 1) {
+                      let year = new Date().getFullYear()
+                      setFileData({ ...fileUploadData, year: year })
+                    } else {
+                      setFileData({ ...fileUploadData, year: value })
+                    }
+                  }}
+                >
+                </GidInput>
+              </>
+              : null}
 
-            <PlainButton title={"Upload"} className={"mt-10"} onButtonClick={uploadFile} disable={false}></PlainButton>
+            <PlainButton title={"Upload"} className={"mt-10"} onButtonClick={onBtnClick} disable={false}></PlainButton>
           </div>
         </div>
       </div>
