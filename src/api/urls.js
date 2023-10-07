@@ -215,3 +215,7 @@ export const getUpdateBudgetUrl = () => {
 export const getBudgetListUrl = () => {
     return HOST + APP_NAME + `/list_budget/`
 }
+
+export const getEffortAlertsStatus = () => {
+    return HOST + APP_NAME + `/task_effort_alert/`
+}

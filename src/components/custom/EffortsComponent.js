@@ -6,6 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import * as Actions from '../../state/Actions';
 import { apiAction } from "../../api/api"
 import { getWorkspaceInfo } from "../../config/cookiesInfo";
+import CustomDatePicker from "./Elements/CustomDatePicker";
+import moment from "moment";
 
 export default function EffortsComponent(props) {
     const { data, onEffortUpdate = () => { }, isVisible, updateEffortsStatus, onEffortsAddedSuccess, setUpdateEffortsStatus } = props
@@ -14,9 +16,11 @@ export default function EffortsComponent(props) {
     const navigate = useNavigate();
     const dispatch = Actions.getDispatch(useContext);
     const [editItem, setEditItem] = useState()
+
     let validation_data = [
         { key: "working_duration", message: `Duration field left empty!` },
         { key: "working_date", message: `Date field left empty!` },]
+
 
     useEffect(() => {
         getEmployeeTaskEfforts()
@@ -25,8 +29,7 @@ export default function EffortsComponent(props) {
     useEffect(() => {
         if (updateEffortsStatus) {
             onSubmitClick()
-        }
-
+        } 
     }, [updateEffortsStatus])
 
     const onEditClick = (item, index) => {
@@ -60,7 +63,6 @@ export default function EffortsComponent(props) {
         let res = await apiAction({ url: getTheAddTaskEffortsUrl(), method: 'post', data: payload, navigate: navigate, dispatch: dispatch })
         if (res) {
             if (res.success) {
-
                 getEmployeeTaskEfforts()
                 if (updateEffortsStatus) {
                     onEffortsAddedSuccess()
@@ -139,6 +141,7 @@ export default function EffortsComponent(props) {
                 if (isValid) {
                     currentAddedEffortsList.push({ hour: listOfTaskEfforts[i].working_duration, ...listOfTaskEfforts[i] })
                 } else {
+                    setUpdateEffortsStatus(false)
                     notifyErrorMessage(message)
                     return
                 }
@@ -149,12 +152,15 @@ export default function EffortsComponent(props) {
             if (isValid) {
                 updateEfforts({ workspace_id: work_id, working_date: editItem.working_date, hour: editItem.working_duration, task_record_id: editItem.id })
             } else {
+                setUpdateEffortsStatus(false)
                 notifyErrorMessage(message)
                 return
             }
         }
         if (currentAddedEffortsList.length > 0) {
             addEmployeeTaskEfforts(currentAddedEffortsList)
+        } else {
+            onEffortsAddedSuccess()
         }
 
     }
@@ -163,22 +169,22 @@ export default function EffortsComponent(props) {
             {isVisible &&
 
                 <div className="relative flex-col flex justify-center ">
-                    <table className=" bg-transparent border-collapse table-auto  rounded-lg w-auto ">
+                    <table className=" bg-transparent border-collapse table-auto  rounded-lg ">
                         <thead className='bg-gray-200 justify-center items-center'>
                             <tr className='justify-center h-10'>
                                 <th
                                     key={"valid_from"}
-                                    className={`text-sm pl-3 text-left text-blueGray-500 font-interVar font-bold w-1/4 font-quicksand font-bold`}>
+                                    className={`text-sm pl-3 text-left text-blueGray-500 font-interVar font-bold w-1/2 font-quicksand font-bold`}>
                                     Date
                                 </th>
                                 <th
                                     key={"valid_upto"}
-                                    className={`text-sm  text-center text-blueGray-500 font-interVar font-bold w-1/4 font-quicksand font-bold`}>
+                                    className={`text-sm  text-center text-blueGray-500 font-interVar font-bold w-1/2 font-quicksand font-bold`}>
                                     {'Duration (Hr)'}
                                 </th>
                                 <th
                                     key={"valid_upto"}
-                                    className={`text-sm pr-2 text-right text-blueGray-500 font-interVar font-bold w-1/4 font-quicksand font-bold`}>
+                                    className={`text-sm pr-2 text-right text-blueGray-500 font-interVar font-bold w-1/2 font-quicksand font-bold`}>
                                     Action
                                 </th>
 
@@ -193,7 +199,7 @@ export default function EffortsComponent(props) {
                                                 {formatDate(item.working_date, "DD/MM/YYYY")}
                                             </p>
                                             :
-                                            <GidInput
+                                            <CustomDatePicker
                                                 inputType={"date"}
                                                 id={`date` + index}
                                                 disable={false}
@@ -201,11 +207,11 @@ export default function EffortsComponent(props) {
                                                 className={"w-25 flex "}
                                                 value={item.working_date}
                                                 onBlurEvent={() => { }}
-                                                onTextChange={(e) => {
-                                                    console.log("SELECTED DATE", e.target.value)
-                                                    listOfTaskEfforts[index].working_date = e.target.value
+                                                maxDate={formatDate(new Date, "YYYY-MM-DD")}
+                                                onDateChange={(date) => {
+                                                    listOfTaskEfforts[index].working_date = date
                                                     setListOfEfforts([...listOfTaskEfforts])
-                                                }}></GidInput>
+                                                }}></CustomDatePicker>
                                         }
                                     </td>
 
@@ -217,8 +223,8 @@ export default function EffortsComponent(props) {
                                                         inputType={"number"}
                                                         id='link_description'
                                                         disable={false}
-                                                        placeholderMsg={"HH:MM"}
-                                                        className={"w-20 flex"}
+                                                        placeholderMsg={"HH.MM"}
+                                                        className={"flex"}
                                                         value={editItem.working_duration}
                                                         onBlurEvent={(e) => {
 
@@ -266,7 +272,7 @@ export default function EffortsComponent(props) {
                                                     id='link_description'
                                                     disable={false}
                                                     placeholderMsg={"HH:MM"}
-                                                    className={"w-20 flex"}
+                                                    className={"w-1/2 flex"}
                                                     value={item.working_duration}
                                                     onBlurEvent={(e) => {
 
@@ -327,6 +333,7 @@ export default function EffortsComponent(props) {
                         </tbody>
                     </table>
                     <span className="text-sm text-blue-500 cursor-pointer w-fit pl-3 pb-2" onClick={onAddItemLineClick}>Add row</span>
+
 
                 </div>
 

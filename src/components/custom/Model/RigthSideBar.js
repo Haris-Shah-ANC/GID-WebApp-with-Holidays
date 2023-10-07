@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState, useContext, useLayoutEffect, useRef } from "react";
 import { getAddCommentUrl, getCommentListUrl } from "../../../api/urls";
 import { useNavigate } from "react-router-dom";
 import * as Actions from '../../../state/Actions';
@@ -6,8 +6,9 @@ import { apiAction } from "../../../api/api";
 import { getLoginDetails, getWorkspaceInfo } from "../../../config/cookiesInfo";
 import moment from "moment";
 import { formatDate } from "../../../utils/Utils";
+import { Typography } from "@mui/material";
 
-export default function RightSideBar(props) {
+export default function CommentsSideBar(props) {
     const { showModal, setShowModal, taskData } = props;
     const [msgData, setMsgData] = useState({ reply: "" })
     const [chatList, setChatData] = useState([])
@@ -15,6 +16,20 @@ export default function RightSideBar(props) {
     const dispatch = Actions.getDispatch(useContext);
     const { work_id } = getWorkspaceInfo();
     const { user_id } = getLoginDetails(useNavigate());
+
+    let MIN_TEXTAREA_HEIGHT = 50;
+    const textFieldRef = useRef(null)
+
+    useLayoutEffect(() => {
+        // Reset height - important to shrink on delete
+        textFieldRef.current.style.height = "50px";
+        // Set height
+        console.log("Text area height ", textFieldRef.current.scrollHeight)
+        textFieldRef.current.style.height = `${Math.max(
+            textFieldRef.current.scrollHeight,
+            MIN_TEXTAREA_HEIGHT
+        )}px`;
+    }, [msgData.reply]);
 
     useEffect(() => {
         getCommentList()
@@ -68,14 +83,14 @@ export default function RightSideBar(props) {
 
                         <div class="bubble">
                             <span className="text-sm px-2 font-medium text-gray-500">{chatData.comment_by_name}</span>
-                            <p className="px-2 text-sm">{chatData.comment}</p>
+                            <p className="px-2 text-sm overflow-hidden break-words">{chatData.comment}</p>
                             <span className="flex justify-end text-xs text-gray-500 pr-3">{moment(chatData.created_at).format("HH:MM A")}</span>
                         </div>
                     </div>
                     :
                     <div className="flex flex-row justify-end">
                         <div class="bubble2">
-                            <p className="px-2 text-sm ">{chatData.comment}</p>
+                            <p className="px-2 text-sm  break-words">{chatData.comment}</p>
                             <span className="flex justify-end text-xs text-gray-500 pr-2">{moment(chatData.created_at).format("HH:MM A")}</span>
                         </div>
                     </div>
@@ -85,7 +100,7 @@ export default function RightSideBar(props) {
         )
     }
     return (
-        <div className={`custom-modal-dialog ${showModal ?'show':''}`} role="document">
+        <div className={`custom-modal-dialog ${showModal ? 'show' : ''}`} role="document">
             <div className="">
                 <div className="flex flex-row justify-between">
                     <span className="text-xl">#Comments</span>
@@ -110,7 +125,7 @@ export default function RightSideBar(props) {
             <div className="absolute bottom-2 right-2 left-2 "  >
                 <div className="flex flex-row justify-between items-between w-full">
                     <div className="flex w-full">
-                        <input
+                        {/* <input
                             type={'text'}
                             id={"replyInputBox"}
                             disabled={false}
@@ -128,7 +143,53 @@ export default function RightSideBar(props) {
                                 }
                             }}
                         >
-                        </input>
+                        </input> */}
+                        <textarea
+                            value={msgData.reply}
+                            id={"replyInputBox"}
+                            ref={textFieldRef}
+                            className={' text-justify w-full rounded-md border-transparent no-scrollbar '}
+                            placeholder="Write your comment..."
+                            type="text"
+                            // multiple
+                            onChange={e => {
+                                console.log("nativeEvent", e.nativeEvent);
+
+                                // Destructure and update msgData
+                                setMsgData({ ...msgData, reply: e.target.value });
+
+                                // Check for the condition
+                                if (e.target.value.includes("/") && e.nativeEvent.inputType === "insertFromPaste") {
+                                    console.log("IN IF");
+                                    // setInputValue("");
+                                    textFieldRef.current.value = null;
+                                    // onType();
+                                } else {
+                                    console.log("IN ELSE");
+                                    // setInputValue(e.target.value);
+                                    // onType();
+                                }
+                            }}
+
+                            // onChange={(e) => { setMsgData({ ...msgData, reply: e.target.value }) }}
+                            style={{
+                                maxHeight: 120,
+                                minHeight: MIN_TEXTAREA_HEIGHT,
+                                resize: "none",
+                                verticalAlign:'center'
+
+                            }}
+
+                            onKeyDown={(e) => {
+                                if (e.key == 'Enter' && e.target.value) {
+                                    onSendMsgClick()                                    // 
+                                    setTimeout(() => {
+                                        textFieldRef.current.style.height = "32px";
+                                        textFieldRef.current.value = "";
+                                    }, 50)
+                                }
+                            }}
+                        />
                     </div>
                     {msgData.reply !== "" &&
                         <div className="flex justify-center text-center items-center pl-2">

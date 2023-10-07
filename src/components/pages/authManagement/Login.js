@@ -3,7 +3,7 @@ import * as Actions from '../../../state/Actions';
 import { Link, useNavigate } from 'react-router-dom';
 import Checkbox from '../../custom/Elements/buttons/Checkbox';
 import { routesName } from '../../../config/routesName';
-import { login, get_workspace } from '../../../api/urls';
+import { login, get_workspace, getEffortAlertsStatus } from '../../../api/urls';
 import CustomLabel from '../../custom/Elements/CustomLabel';
 import CustomButton from '../../custom/Elements/CustomButton';
 import GidInput from '../../custom/Elements/inputs/GidInput'
@@ -56,7 +56,7 @@ const Login = () => {
                 dispatch: dispatch,
                 data: { ...formData },
             })
-            console.log("RESPONSE",login(),formData)
+            console.log("RESPONSE", login(), formData)
             if (res && res.success) {
                 setLoginDetails(res);
                 setAccessToken(res.access);
@@ -71,7 +71,7 @@ const Login = () => {
                     if (res_workspace.success) {
                         setLoginStatus("true");
                         setWorkspaceInfo(res_workspace.result[0]);
-                        navigate(routesName.alerts.path);
+                        fetchAlertsStatus(res_workspace.result[0])
                         notifySuccessMessage(`Login Successfully!`)
                     }
                 }
@@ -82,7 +82,23 @@ const Login = () => {
             notifyErrorMessage(message)
         }
     }
+    const fetchAlertsStatus = async (workspace) => {
+        console.log("WORKSPACE",workspace)
+        let res = await apiAction({ url: getEffortAlertsStatus(), method: "post", data: { workspace_id: workspace.work_id } })
+            .then((response) => {
+                if (response) {
+                    if (response.result.length > 0) {
+                        navigate(routesName.alerts.path, { state: response.result })
+                    } else {
+                        navigate(routesName.dashboard.path)
+                    }
+                }
+            })
+            .catch((error) => {
+                console.log("ERROR", error)
+            })
 
+    }
     return (
         <React.Fragment>
             <div className="relative flex flex-col w-full mb-6 shadow-lg rounded-lg bg-white">
@@ -112,27 +128,27 @@ const Login = () => {
                     <form>
                         <div className="relative w-full flex flex-col">
                             <CustomLabel label={`Email`} />
-                            <GidInput 
-                                inputType={"email"} 
+                            <GidInput
+                                inputType={"email"}
                                 id={"email-login"}
-                                disable={false} 
-                                className={""} 
-                                value={formData.email ? formData.email : ''} 
-                                onBlurEvent={() => {}}
-                                placeholderMsg = "Enter Email"
+                                disable={false}
+                                className={""}
+                                value={formData.email ? formData.email : ''}
+                                onBlurEvent={() => { }}
+                                placeholderMsg="Enter Email"
                                 onTextChange={(event) => { setFormData({ ...formData, email: event.target.value }) }}>
                             </GidInput>
                         </div>
                         <div className="relative flex flex-col mt-2 w-full">
                             <CustomLabel label={`Password`} />
-                            <GidInput 
-                                inputType={"password"} 
+                            <GidInput
+                                inputType={"password"}
                                 id={"password"}
-                                disable={false} 
-                                className={""} 
-                                value={formData.password ? formData.password : ''} 
-                                onBlurEvent={() => {}}
-                                placeholderMsg = "Enter Password"
+                                disable={false}
+                                className={""}
+                                value={formData.password ? formData.password : ''}
+                                onBlurEvent={() => { }}
+                                placeholderMsg="Enter Password"
                                 onTextChange={(event) => { setFormData({ ...formData, password: event.target.value }) }}>
                             </GidInput>
                         </div>
@@ -140,7 +156,7 @@ const Login = () => {
                         <div className="mt-2 inline-block">
                             <Checkbox label={'Remember me'} />
                         </div>
-                        
+
                         <PlainButton onButtonClick={handleSubmit} title={SIGN_IN} className={"w-full mt-5 bg-blue-600 hover:bg-blue-700"} ></PlainButton>
                         {/* <div className="text-center mt-5">
                             <CustomButton fullWidth={true} color="facebook" onClick={handleSubmit} >

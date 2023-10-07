@@ -32,6 +32,9 @@ import GIDTextArea from '../../custom/Elements/inputs/GIDTextArea';
 import IconInput from '../../custom/Elements/inputs/IconInput';
 import EffortsComponent from '../../custom/EffortsComponent';
 import moment from 'moment';
+import CustomDatePicker from '../../custom/Elements/CustomDatePicker';
+import CustomDateTimePicker from '../../custom/Elements/CustomDateTimePicker';
+import dayjs from 'dayjs';
 
 const CreateNewTask = (props) => {
     const { setShowModal, data, from } = props;
@@ -129,6 +132,7 @@ const CreateNewTask = (props) => {
         }
         const { isValid, message } = isFormValid(formData, validation_data);
         if (isValid) {
+            console.log("FORM DATA", formData)
             let postData = formData
             if (!postData.assign_to_id) {
                 delete postData['assign_to_id']
@@ -157,8 +161,11 @@ const CreateNewTask = (props) => {
     };
     const onSaveChangesBtnClick = (e) => {
         e.preventDefault();
-        setUpdateEffortsStatus(true)
-
+        if (formData.task_id && isEffortsTableVisible) {
+            setUpdateEffortsStatus(true)
+        } else {
+            updateOrAddTask()
+        }
     }
     const onEffortsAddedSuccess = () => {
         setUpdateEffortsStatus(false)
@@ -180,182 +187,186 @@ const CreateNewTask = (props) => {
 
     return (
 
-        <div className="justify-center overflow-hidden  items-center flex fixed overflow-x-hidden  fixed inset-0 z-50 outline-none focus:outline-none">
-            <div className=" sm:w-[65vh] h-[80vh] overflow-hidden border-0 rounded-lg shadow-lg relative flex flex-col bg-white outline-none focus:outline-none">
-                <div className="flex items-center flex-row h-14  justify-between  border-solid border-slate-200 rounded-t text-black">
-                    <h3 className="text-lg font-quicksand font-bold text-center w-full">{formData.task_id ? 'Update Task' : 'Add Task'}</h3>
-                    <button
-                        className="text-lg w-10 h-10 ml-auto rounded-full focus:outline-none hover:bg-gray-200 flex justify-center items-center"
-                        onClick={() => setShowModal(false)}>
-                        <i className="fa-solid fa-times"></i>
-                    </button>
-                </div>
-                <form id={"last_div"} className='overflow-auto' style={{ height: 'calc(100vh - 180px)' }}>
+        // <div className="justify-center overflow-hidden  items-center flex fixed overflow-x-hidden  fixed inset-0 z-50 outline-none focus:outline-none">
+        //     <div className=" sm:w-[65vh] h-[80vh] overflow-hidden border-0 rounded-lg shadow-lg relative flex flex-col bg-white outline-none focus:outline-none">
+        //         <div className="flex items-center flex-row h-14  justify-between  border-solid border-slate-200 rounded-t text-black">
+        //             <h3 className="text-lg font-quicksand font-bold text-center w-full">{formData.task_id ? 'Update Task' : 'Add Task'}</h3>
+        //             <button
+        //                 className="text-lg w-10 h-10 ml-auto rounded-full focus:outline-none hover:bg-gray-200 flex justify-center items-center"
+        //                 onClick={() => setShowModal(false)}>
+        //                 <i className="fa-solid fa-times"></i>
+        //             </button>
+        //         </div>
+        <>
+            <div className="flex items-center flex-row h-14  justify-between  border-solid border-slate-200 rounded-t text-black">
+                <h3 className="text-lg font-quicksand font-bold text-center w-full">{formData.task_id ? 'Update Task' : 'Add Task'}</h3>
+                <button
+                    className="text-lg w-10 h-10 ml-auto rounded-full focus:outline-none hover:bg-gray-200 flex justify-center items-center"
+                    onClick={() => setShowModal(false)}>
+                    <i className="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <form id={"last_div"} className='overflow-auto relative     ' style={{ height: 'calc(100vh - 180px)', }} >
 
-                    <div className="relative px-5 mt-2  flex-auto" >
-                        <div className="my-1 flex flex-col">
-                            <CustomLabel label={`Select  Project`} className={'font-quicksand font-semibold text-sm mb-1'} />
-                            <Dropdown disabled={formData.task_id ? true : false} placeholder={true} options={projectsResults} optionLabel={'project_name'} value={selectedProject ? selectedProject : { project_name: 'Select project' }} setValue={(value) => setFormData((previous) => ({ ...previous, project_id: value ? value.project_id : null }))} />
+                <div className="relative mt-2  flex-auto p-4" >
+                    <div className="my-1 flex flex-col">
+                        <CustomLabel label={`Select  Project`} className={'font-quicksand font-semibold text-sm mb-1'} />
+                        <Dropdown disabled={formData.task_id ? true : false} placeholder={true} options={projectsResults} optionLabel={'project_name'} value={selectedProject ? selectedProject : { project_name: 'Select project' }} setValue={(value) => setFormData((previous) => ({ ...previous, project_id: value ? value.project_id : null }))} />
+                    </div>
+                    {!formData.task_id &&
+                        <div className="mt-4 my-1 flex flex-col">
+                            <CustomLabel label={`Assign To`} className={'font-quicksand font-semibold text-sm mb-1'} />
+                            <Dropdown disabled={false} placeholder={true} options={employeeList} optionLabel={'employee_name'} value={selectedAssignee ? selectedAssignee : { employee_name: 'Self' }} setValue={(value) => setFormData((previous) => ({ ...previous, assign_to_id: value ? value.id : null }))} />
                         </div>
-                        {!formData.task_id &&
-                            <div className="mt-4 my-1 flex flex-col">
-                                <CustomLabel label={`Assign To`} className={'font-quicksand font-semibold text-sm mb-1'} />
-                                <Dropdown disabled={false} placeholder={true} options={employeeList} optionLabel={'employee_name'} value={selectedAssignee ? selectedAssignee : { employee_name: 'Self' }} setValue={(value) => setFormData((previous) => ({ ...previous, assign_to_id: value ? value.id : null }))} />
-                            </div>
-                        }
-                        {
-                            !formData.task_id &&
-                            <div className="my-4 flex flex-col">
-                                <CustomLabel label={`Select Module`} className={'font-quicksand font-semibold text-sm mb-1'} />
-                                <Dropdown placeholder={true} options={moduleResults} optionLabel={'module_name'} value={selectedModule ? selectedModule : { module_name: 'Select project' }} setValue={(value) => setFormData((previous) => ({ ...previous, module_id: value ? value.module_id : null }))} />
-                            </div>
-                        }
-
-
-                        <div className="mt-4 flex flex-col">
-                            <CustomLabel label={`Task Description`} className={'font-quicksand font-semibold text-sm mb-1'} />
-                            <GIDTextArea
-                                id={"task_description"} disable={false} className={"h-20"} value={formData.task}
-                                onBlurEvent={() => { }}
-                                placeholderMsg={"Add the task description"}
-                                onTextChange={(event) => { setFormData({ ...formData, task: event.target.value }) }}>
-                            </GIDTextArea>
-                        </div>
-                        <div className="mt-4 flex flex-col">
-                            <CustomLabel label={`Detailed Description`} className={'font-quicksand font-semibold text-sm mb-1'} />
-                            <GIDTextArea
-                                id={"task_detailed_description"} disable={false} className={"h-20"} value={formData.detailed_description}
-                                onBlurEvent={() => { }}
-                                placeholderMsg={"Add the detailed task description"}
-                                onTextChange={(event) => setFormData((previous) => ({ ...previous, detailed_description: event.target.value }))}>
-                            </GIDTextArea>
-                        </div>
-
-                        <div className="mt-4 flex flex-col">
-                            <CustomLabel label={`Description Link`} className={'font-quicksand font-semibold text-sm mb-1'} />
-                            <GidInput
-                                inputType={"text"}
-                                id='link_description'
-                                disable={false}
-                                placeholderMsg={"Enter link"}
-                                className={""}
-                                value={formData.description_link ? formData.description_link : ''}
-                                onBlurEvent={() => { }}
-                                onTextChange={(e) => {
-                                    setFormData((previous) => ({ ...previous, description_link: e.target.value }))
-                                }}></GidInput>
-                        </div>
-
-                        <CustomLabel label={`Status`} className={'font-quicksand text-sm flex mt-2 mb-1'} />
-                        <div className='grid grid-cols-2 gap-2 font-quicksand font-semibold text-sm'>
-                            <Checkbox
-                                value="In-Progress"
-                                checked={formData.status === 'In-Progress'}
-                                label={'In Progress'}
-                                onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
-                            />
-                            <Checkbox
-                                value="Pending"
-                                checked={formData.status === 'Pending'}
-                                label={'Pending'}
-                                onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
-                            />
-                            {
-                                formData.task_id &&
-                                <Checkbox
-                                    value="Completed"
-                                    checked={formData.status === 'Completed'}
-                                    label={'Completed'}
-                                    onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
-                                />
-                            }
-                            {data && data.task ?
-                                <Checkbox
-                                    value="On Hold"
-                                    checked={formData.status === 'On Hold'}
-                                    label={'On Hold'}
-                                    onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
-                                />
-                                : null}
-                        </div>
-
-                        {formData.status === "On Hold" &&
-                            <div className="mt-4 flex flex-col">
-                                <CustomLabel label={`Reason`} className={'font-quicksand font-semibold text-sm'} />
-
-                                <GIDTextArea
-                                    id={"on_hold_reason_text_input"} disable={false} className={"h-20"} value={formData.on_hold_reason}
-                                    onBlurEvent={() => { }}
-                                    placeholderMsg={"Add the task on hold reason"}
-                                    onTextChange={(e) => setFormData((previous) => ({ ...previous, on_hold_reason: e.target.value }))}>
-                                </GIDTextArea>
-                            </div>
-                        }
-
+                    }
+                    {
+                        !formData.task_id &&
                         <div className="my-4 flex flex-col">
-                            <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={<span><i className="fa-solid fa-calendar-days text-base mb-1 mr-1"></i>Deadline</span>} />
-                            <IconInput
-                                id={"task_end_datetime"}
-                                inputType={"datetime-local"}
-                                disable={false}
-                                className={``}
-                                value={formData.dead_line ? formData.dead_line : ""}
-                                onTextChange={(e) => {
-                                    console.log(e.target.value)
-                                    setFormData((previous) => ({ ...previous, dead_line: e.target.value }))
-                                }}
-                                onBlurEvent={() => { }}
-                                placeholder={""}
-                                isRightIcon={true}
-                            >
-                            </IconInput>
-                            { }
-                            <div className='flex flex-row'>
-                                <LinkText title={"Today"} onClick={onLinkTextClick}></LinkText>
-                                <LinkText title={"Tomorrow"} onClick={onLinkTextClick}></LinkText>
+                            <CustomLabel label={`Select Module`} className={'font-quicksand font-semibold text-sm mb-1'} />
+                            <Dropdown placeholder={true} options={moduleResults} optionLabel={'module_name'} value={selectedModule ? selectedModule : { module_name: 'Select project' }} setValue={(value) => setFormData((previous) => ({ ...previous, module_id: value ? value.module_id : null }))} />
+                        </div>
+                    }
 
-                            </div>
+
+                    <div className="mt-4 flex flex-col">
+                        <CustomLabel label={`Task Description`} className={'font-quicksand font-semibold text-sm mb-1'} />
+                        <GIDTextArea
+                            id={"task_description"} disable={false} className={"h-20"} value={formData.task}
+                            onBlurEvent={() => { }}
+                            placeholderMsg={"Add the task description"}
+                            onTextChange={(event) => { setFormData({ ...formData, task: event.target.value }) }}>
+                        </GIDTextArea>
+                    </div>
+                    <div className="mt-4 flex flex-col">
+                        <CustomLabel label={`Detailed Description`} className={'font-quicksand font-semibold text-sm mb-1'} />
+                        <GIDTextArea
+                            id={"task_detailed_description"} disable={false} className={"h-20"} value={formData.detailed_description}
+                            onBlurEvent={() => { }}
+                            placeholderMsg={"Add the detailed task description"}
+                            onTextChange={(event) => setFormData((previous) => ({ ...previous, detailed_description: event.target.value }))}>
+                        </GIDTextArea>
+                    </div>
+
+                    <div className="mt-4 flex flex-col">
+                        <CustomLabel label={`Description Link`} className={'font-quicksand font-semibold text-sm mb-1'} />
+                        <GidInput
+                            inputType={"text"}
+                            id='link_description'
+                            disable={false}
+                            placeholderMsg={"Enter link"}
+                            className={""}
+                            value={formData.description_link ? formData.description_link : ''}
+                            onBlurEvent={() => { }}
+                            onTextChange={(e) => {
+                                setFormData((previous) => ({ ...previous, description_link: e.target.value }))
+                            }}></GidInput>
+                    </div>
+
+                    <CustomLabel label={`Status`} className={'font-quicksand text-sm flex mt-2 mb-1'} />
+                    <div className='grid grid-cols-2 gap-2 font-quicksand font-semibold text-sm'>
+                        <Checkbox
+                            value="In-Progress"
+                            checked={formData.status === 'In-Progress'}
+                            label={'In Progress'}
+                            onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
+                        />
+                        <Checkbox
+                            value="Pending"
+                            checked={formData.status === 'Pending'}
+                            label={'Pending'}
+                            onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
+                        />
+                        {
+                            formData.task_id &&
+                            <Checkbox
+                                value="Completed"
+                                checked={formData.status === 'Completed'}
+                                label={'Completed'}
+                                onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
+                            />
+                        }
+                        {data && data.task ?
+                            <Checkbox
+                                value="On Hold"
+                                checked={formData.status === 'On Hold'}
+                                label={'On Hold'}
+                                onChange={(e) => setFormData((previous) => ({ ...previous, status: e.target.value }))}
+                            />
+                            : null}
+                    </div>
+
+                    {formData.status === "On Hold" &&
+                        <div className="mt-4 flex flex-col">
+                            <CustomLabel label={`Reason`} className={'font-quicksand font-semibold text-sm'} />
+
+                            <GIDTextArea
+                                id={"on_hold_reason_text_input"} disable={false} className={"h-20"} value={formData.on_hold_reason}
+                                onBlurEvent={() => { }}
+                                placeholderMsg={"Add the task on hold reason"}
+                                onTextChange={(e) => setFormData((previous) => ({ ...previous, on_hold_reason: e.target.value }))}>
+                            </GIDTextArea>
+                        </div>
+                    }
+
+                    <div className="my-4 flex flex-col">
+                        <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={<span><i className="fa-solid fa-calendar-days text-base mb-1 mr-1"></i>Deadline</span>} />
+                        <CustomDateTimePicker
+                            id={"task_end_datetime"}
+                            inputType={"datetime-local"}
+                            disable={false}
+                            className={`w-full`}
+                            value={formData.dead_line ? formData.dead_line : ""}
+                            onDateChange={(val) => {
+                                setFormData((previous) => ({ ...previous, dead_line: dayjs(val).toJSON() }))
+                            }}
+                            onBlurEvent={() => { }}
+                            placeholder={""}
+                            isRightIcon={true}
+                        >
+                        </CustomDateTimePicker>
+                        { }
+                        <div className='flex flex-row'>
+                            <LinkText title={"Today"} onClick={onLinkTextClick}></LinkText>
+                            <LinkText title={"Tomorrow"} onClick={onLinkTextClick}></LinkText>
 
                         </div>
-
-                        {formData.task_id &&
-                            <>
-                                <div className='flex flex-row items-center justify-between my-5 text-sm font-medium font-quicksand text-gray-800 hover:bg-blue-50 cursor-pointer'
-                                    onClick={() => {
-                                        const element = document.getElementById("last_div");
-                                        element.scrollTop = element.scrollHeight;
-                                        setEffortsTableVisible(!isEffortsTableVisible)
-                                    }}>
-                                    <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={<span>Efforts</span>} />
-                                    <svg
-                                        fill="blue"
-                                        viewBox="0 0 16 16"
-                                        height="1em"
-                                        width="1em"
-                                        className='cursor-pointer hover:bg-blue-100 rounded-lg m-2'
-                                    >
-                                        <path
-                                            fillRule="evenodd"
-                                            d="M1.646 4.646a.5.5 0 01.708 0L8 10.293l5.646-5.647a.5.5 0 01.708.708l-6 6a.5.5 0 01-.708 0l-6-6a.5.5 0 010-.708z"
-                                        />
-                                    </svg>
-                                </div>
-                                <EffortsComponent data={initial_data} isVisible={isEffortsTableVisible} onEffortsAddedSuccess={onEffortsAddedSuccess} updateEffortsStatus={updateEffortsStatus} setUpdateEffortsStatus={setUpdateEffortsStatus
-                                }/>
-                            </>
-                        }
 
                     </div>
 
+                    {formData.task_id &&
+                        <>
+                            <div className='px-1 flex flex-row items-center justify-between my-5 text-sm font-medium font-quicksand text-gray-800 hover:bg-blue-50 cursor-pointer'
+                                onClick={() => {
+                                    const element = document.getElementById("last_div");
+                                    element.scrollTop = element.scrollHeight;
+                                    setEffortsTableVisible(!isEffortsTableVisible)
+                                }}>
+                                <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={<span>Efforts</span>} />
 
+                                {isEffortsTableVisible ?
+                                    <i class="fa-solid fa-chevron-up" style={{ color: "#1463eb" }}></i>
+                                    :
+                                    <i class="fa-solid fa-chevron-down" style={{ color: "#1463eb" }}></i>
+                                }
+                            </div>
+                            <EffortsComponent data={initial_data} isVisible={isEffortsTableVisible} onEffortsAddedSuccess={onEffortsAddedSuccess} updateEffortsStatus={updateEffortsStatus} setUpdateEffortsStatus={setUpdateEffortsStatus} />
+                        </>
+                    }
 
-                </form>
-                <div className="p-6 border-solid border-slate-200 rounded-b">
-                    <PlainButton title={"Save Changes"} className={"w-full"} onButtonClick={onSaveChangesBtnClick} disable={formData.task_id ? user_id == formData.employee ? false : true : false}></PlainButton>
                 </div>
 
-            </div>
-        </div>
+                <div className='m-4'>
+                    <PlainButton title={"Save Changes"} className={"w-full  "} onButtonClick={onSaveChangesBtnClick} disable={formData.task_id ? user_id == formData.employee ? false : true : false}></PlainButton>
+                </div>
+            </form>
+            {/* <div className="p-6 border-solid border-slate-200 rounded-b">
+                <PlainButton title={"Save Changes"} className={"w-full"} onButtonClick={onSaveChangesBtnClick} disable={formData.task_id ? user_id == formData.employee ? false : true : false}></PlainButton>
+            </div> */}
+
+        </>
+
+        //     </div>
+        // </div>
     )
 }
 

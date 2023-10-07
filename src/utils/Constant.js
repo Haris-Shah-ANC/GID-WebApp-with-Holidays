@@ -10,7 +10,7 @@ export const imagesList = {
 
 
 ///////////////////////////////////////////////////////////////Date Formate/////////////////////////////////////////////////////////////////////////////
-export const DateFormatCard = 'MMMM D, YYYY, h A';
+export const DateFormatCard = 'MMMM D, YYYY, h:mm A';
 
 export const add_task=`add_task`; 
 export const create_new_work_space=`create_new_work_space`; 
@@ -24,6 +24,7 @@ export const add_meeting_link="add_meeting_link"
 export const add_effort = "add_efforts"
 export const TASK = "Task"
 export const DURATION = "Duration"
+export const STATUS="Status"
 export const START_TIME = "Start Time"
 export const END_TIME = "End Time"
 export const PROJECT = "Project"

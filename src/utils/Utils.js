@@ -375,7 +375,7 @@ const getEndOf = (type) => {
   return formatDate(moment().endOf(type), "YYYY-MM-DD")
 }
 
-const getYesterday = () => {
+export const getYesterday = () => {
   return subtractByDays(1)
 }
 

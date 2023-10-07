@@ -14,7 +14,7 @@ import {
 } from '../../../utils/Constant';
 import AddProject from '../../pages/mainManagement/AddProject';
 import { apiAction } from '../../../api/api';
-import { getMeetingLinkUrl, get_workspace } from '../../../api/urls';
+import { getEffortAlertsStatus, getMeetingLinkUrl, get_workspace } from '../../../api/urls';
 import { getWorkspaceInfo, setWorkspaceInfo } from '../../../config/cookiesInfo';
 import * as Actions from '../../../state/Actions'
 import { sidebarMenu } from '../../../config/routes';
@@ -31,7 +31,6 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, sideNavigationRef }) => {
   const dispatch = Actions.getDispatch(useContext)
   const workspace = getWorkspaceInfo()
   const [navigationUrl, setNavigationUrl] = useState([])
-
   // const sideNavigationRef= useRef()
 
   const [activeItem, setActiveItem] = useState(routesName.dashboard.activeRoute);
@@ -60,10 +59,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, sideNavigationRef }) => {
     }
   }
 
-  // useEffect(() => {
-  //   setNavigationUrl(sidebarMenu(workspace.role))
-  // }, [])
-
+ 
   useEffect(() => {
     if (workspace) {
       const menuOptions = sidebarMenu(workspace.role)
@@ -83,6 +79,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, sideNavigationRef }) => {
       return "dashboard"
     }
   }
+  
 
   return (
     <>
@@ -111,7 +108,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, sideNavigationRef }) => {
                       <ChildItemComponent item={item} isSidebarOpen={isSidebarOpen} activeItem={activeItem} setIsSidebarOpen={setIsSidebarOpen} setShowModal={setShowModal} showModal={showModal} navigate={navigate} />
 
                     ) : (
-                      <SidebarMenuItem isSidebarOpen={isSidebarOpen} onClick={navigateToPage} activeItem={activeItem} menuItem={item}></SidebarMenuItem>
+                      <SidebarMenuItem isSidebarOpen={isSidebarOpen} onClick={navigateToPage} activeItem={activeItem} menuItem={item} ></SidebarMenuItem>
                     )
                   }
                 </React.Fragment>
@@ -164,6 +161,7 @@ const ChildItemComponent = (props) => {
   useEffect(() => {
     fetchWorkspaces()
     fetchMeetingLinks()
+
   }, [])
 
   const fetchWorkspaces = async () => {
@@ -255,7 +253,7 @@ const ChildItemComponent = (props) => {
                 <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm' onClick={() => { navigate(routesName.tasks.path) }}>
                   Tasks
                 </li>
-               
+
 
               </React.Fragment>
             }

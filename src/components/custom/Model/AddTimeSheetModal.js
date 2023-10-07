@@ -125,8 +125,9 @@ const AddTimeSheetModal = (props) => {
     let sampleData = [{ date: "12/12/2023", working_hr: "7" }]
     return (
 
-        <div className="relative my-6 w-full mx-2 sm:max-w-sm md:max-w-md overflow-y-auto overflow-x-auto">
-            <div className="w-full border-0 rounded-lg shadow-lg relative flex flex-col bg-white outline-none focus:outline-none">
+        // <div className="relative my-6 w-full mx-2 sm:max-w-sm md:max-w-md overflow-y-auto overflow-x-auto">
+        //     <div className="w-full border-0 rounded-lg shadow-lg relative flex flex-col bg-white outline-none focus:outline-none">
+        <>
                 {/* header */}
                 <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
                     <h3 className="text-lg font-quicksand font-bold text-center w-full">Add Efforts</h3>
@@ -203,9 +204,9 @@ const AddTimeSheetModal = (props) => {
                     </div>
                 </form>
 
-
-            </div>
-        </div>
+        </>
+        //     </div>
+        // </div>
     )
 }
 

@@ -31,9 +31,9 @@ import classNames from 'classnames';
 import PopUpMenu from '../../custom/popups/PopUpMenu';
 import Checkbox from '../../custom/Elements/buttons/Checkbox';
 import CustomLabel from '../../custom/Elements/CustomLabel';
-import { Box, Pagination, Stack, Tooltip } from '@mui/material';
+import { Box, Modal, Pagination, Stack, Tooltip, Typography } from '@mui/material';
 import NewModal from '../../custom/Model/NewModal';
-import RightSideBar from '../../custom/Model/RigthSideBar';
+import CommentsSideBar from '../../custom/Model/RigthSideBar';
 const Dashboard = () => {
     const navigate = useNavigate();
     const dispatch = Actions.getDispatch(React.useContext);
@@ -65,7 +65,8 @@ const Dashboard = () => {
         project_id: null,
     })
     const [selectedTask, setSelectedTask] = useState(false);
-
+    const [open, setOpen] = useState(false)
+    const [onHoldReason,setOnHoldReason]=useState('')
 
 
     useEffect(() => {
@@ -227,6 +228,10 @@ const Dashboard = () => {
         setPostBody({ ...postBody, pageNumber: pageNumber })
     }
 
+
+    const onHoldClick = () => {
+        setOpen(true)
+    }
     const DashboardCard = (props) => {
         const { user_id } = getLoginDetails(useNavigate());
         const [popoverShow, setPopoverShow] = React.useState(false);
@@ -235,7 +240,7 @@ const Dashboard = () => {
         const dispatch = Actions.getDispatch(React.useContext);
         const [openOnHoldReason, showOnHoldReason] = useState(false)
         const { assignee_name, dead_line, employee_name, project_name, employee_id, task_description, created_at, description_link,
-            onEditClick, task_id, work_id, module_id, project_id, on_hold_reason, status, onTaskComplete, detailed_description, module_name, employee } = props;
+            onEditClick, task_id, work_id, module_id, project_id, on_hold_reason, status, onTaskComplete, detailed_description, module_name, employee, onHoldClick } = props;
         const [isChecked, setChecked] = useState(status === "Completed")
         let my_task = user_id === employee_id;
         let projectStyle = []
@@ -311,120 +316,28 @@ const Dashboard = () => {
 
         }
 
+
         return (
-            // <React.Fragment>
-            //     <div onClick={() => {
-            //         if (status !== "Completed" && user_id === employee) {
-            //             console.log(user_id, employee)
-            //             onEditClick(props)
-            //         }
-            //     }} className={`bg-white flex flex-col px-5 py-2 rounded-lg h-full border-borderColor-0 shadow-md ${(status !== "Completed" && user_id === employee) ? "cursor-pointer" : ""}`} >
-            //         {/* <div class="flex flex-wrap py-1">
-            //             <span class={`inline-flex  bg-opacity-1 text-xs font-medium mr-2 px-2.5 py-2 rounded-lg`} style={{
-            //                 backgroundColor: `${getRandomColor()}`
-            //             }}> {project_name}</span>
-            //         </div> */}
-            //         <div className='flex justify-between items-center'>
-            //         <div className='flex rounded-lg flex-wrap items-center'>
-            //             <img className='w-6 h-6 rounded-full' src={imagesList.employee_default_img.src} alt=''></img>
-            //             <div className='flex flex-col ml-3'>
-            //                 <p className='text-5 text-black text-sm font-quicksand font-semibold'>{employee_name}</p>
-            //             </div>
-            //         </div>
-
-            //             <div className='ml-auto'>
-            //                 <span className="text-gray-500 ml-auto mt-1 text-xs font-quicksand font-semibold">{getTimeAgo(created_at)}</span>
-            //             </div>
-            //         </div>
-
-            //         <div className="flex justify-between items-center mt-4">
-            //             <div className='' >
-            //                 <span className="text-xs font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-md text-lightBlue-600 bg-lightBlue-200 last:mr-0 mr-1">
-            //                     {project_name}</span>
-            //                 {/* <span style={{ fontSize: '10px' }} className="font-semibold font-quicksand inline-block py-1">
-            //                     {module_name}</span> */}
-            //             </div>
-            //             <div className='mt-4'>
-            //                 <span className={`text-xs font-quicksand font-semibold inline-block py-1 px-0 rounded-full ${expiredCheck(dead_line) ? 'text-red-400' : 'text-green-400'} last:mr-0 mr-1`}>
-            //                     <i className="fa-solid fa-clock mr-1"></i> {moment(dead_line).format(DateFormatCard)}
-            //                 </span>
-            //             </div>
-
-            //         </div>
-
-
-            //         <div className='flex'>
-
-
-            //             <div className='flex flex-col w-full'>
-            //                 <div className='max-h-14 align-top font-quicksand font-medium flex w-full'>
-            //                     <a href={description_link === null ? null : `http://${description_link}`}
-            //                         target='_blank'
-            //                         className={`text-5 flex-wrap ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg truncate w-full`}>
-            //                         {task_description}
-            //                     </a>
-            //                     {/* <p className={`text-5 ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg line-clamp-2`}></p> */}
-            //                 </div>
-            //                 <span className="text-sm font-quicksand font-medium inline-block pb-1 text-blueGray-600 last:mr-0 mr-1 truncate w-full">
-            //                     {detailed_description}
-            //                 </span>
-
-
-            //             </div>
-
-            //         </div>
-
-            //         <div  className={`${(status !== "Completed" && user_id === employee) ? "cursor-pointer" : ""}`}>
-            //             {/* <div className='flex justify-between my-3'>
-            //                 <span className="text-xs font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-md text-lightBlue-600 bg-lightBlue-200 last:mr-0 mr-1">
-            //                     {project_name}</span>
-            //                 <span className="text-xs font-semibold font-quicksand inline-block py-1">
-            //                     {module_name}</span>
-            //             </div> */}
-
-
-
-            //             <div className='flex flex-wrap justify-between '>
-            //                 <span className="text-sm font-quicksand font-normal inline-block py-1 text-blueGray-600 last:mr-0 mr-1 self-center">
-            //                     Assigned By: {assignee_name === employee_name ? <span className='font-quicksand font-semibold'>Self</span> : <span className='font-quicksand font-semibold'>{assignee_name}</span>}
-            //                 </span>
-            //                 {props.status === "On Hold" &&
-            //                     <div className={`rounded-2xl bg-white pt-0 text-xs font-bold leading-none flex flex-col flex-wrap`}>
-            //                         <span className={`text-yellow-400`} onClick={() => { showOnHoldReason(!openOnHoldReason) }}>{props.status}</span>
-            //                     </div>
-            //                 }
-            //             </div>
-
-            //         </div>
-
-
-
-            //         {openOnHoldReason &&
-            //             <div className='border py-1 px-2 rounded-md'>
-            //                 <span className={`text-gray-500 text-sm font-quicksand font-medium my-2 py-4`}>{props.on_hold_reason}</span>
-            //             </div>
-            //         }
-
-            //     </div>
-            // </React.Fragment>
             <React.Fragment>
 
 
-                <div className={`bg-white flex flex-col px-5 py-2 rounded-lg h-full border-borderColor-0 shadow-md ${(user_id === employee) ? "cursor-pointer" : ""}`}  onClick={() => {
-                        if (user_id === employee) {
-                            // console.log(user_id, employee)
-                            onEditClick(props)
-                        }
-                    }}>
+                <div className={`bg-white flex flex-col px-5 py-2 rounded-lg h-full border-borderColor-0 shadow-md `} onClick={(e) => {
+                    // e.preventDefault()
+                    // if (user_id === employee) {
+                    //     onEditClick(props)
+                    // }
+                }}>
 
                     <div className='flex'>
                         <div className='flex flex-col w-full'>
 
-                            <div className='max-h-14 align-top font-quicksand font-medium flex w-full'>
+                            <div className={`max-h-14 align-top font-quicksand font-medium flex w-full  `} >
                                 <a href={description_link === null ? null : description_link}
                                     target="blank"
-                                    className={`text-5 ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg line-clamp-2 text-ellipsis overflow-x-hidden`}>
+                                    className={`text-5  ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 "} font-quicksand font-bold text-lg line-clamp-2 text-ellipsis overflow-x-hidden`}
+                                >
                                     {task_description}
+
                                 </a>
                                 {/* <p className={`text-5 ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg line-clamp-2`}></p> */}
                             </div>
@@ -442,7 +355,7 @@ const Dashboard = () => {
                             console.log(user_id, employee)
                             onEditClick(props)
                         }
-                    }} className={`${(user_id === employee) ? "cursor-pointer" : ""}`}>
+                    }} className={` ${(user_id === employee) ? "cursor-pointer" : ""}`}>
                         <div className='flex justify-between my-3'>
                             <span className="text-xs font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-md text-lightBlue-600 bg-lightBlue-200 last:mr-0 mr-1">
                                 {project_name}</span>
@@ -462,17 +375,23 @@ const Dashboard = () => {
                             </div>
                         </div>
 
-                        <div className='flex flex-wrap justify-between items-center'>
-                            <span className="text-sm font-quicksand font-normal inline-block py-1 text-blueGray-600 last:mr-0 mr-1 self-center">
-                                Assigned By: {assignee_name === employee_name ? <span className='font-quicksand font-semibold'>Self</span> : <span className='font-quicksand font-semibold'>{assignee_name}</span>}
-                            </span>
-                            {props.status === "On Hold" &&
-                                <div className={`rounded-2xl bg-white pt-0 text-xs font-bold leading-none flex flex-col flex-wrap`}>
-                                    <span className={`text-yellow-400`} onClick={() => { showOnHoldReason(!openOnHoldReason) }}>{props.status}</span>
-                                </div>
-                            }
-                        </div>
 
+
+                    </div>
+                    <div className='flex flex-wrap justify-between items-center'>
+                        <span className="text-sm font-quicksand font-normal inline-block py-1 text-blueGray-600 last:mr-0 mr-1 self-center">
+                            Assigned By: {assignee_name === employee_name ? <span className='font-quicksand font-semibold'>Self</span> : <span className='font-quicksand font-semibold'>{assignee_name}</span>}
+                        </span>
+                        {props.status === "On Hold" &&
+                            <div className={`rounded-2xl bg-white pt-0 text-xs font-bold leading-none flex flex-col flex-wrap cursor-pointer`}>
+                                <span className={`text-yellow-400 hover:text-yellow-600`} onMouseDown={(e) => {
+
+                                    // showOnHoldReason(!openOnHoldReason)
+                                    setOnHoldReason(on_hold_reason)
+                                    onHoldClick(true)
+                                }}>{props.status}</span>
+                            </div>
+                        }
                     </div>
                     {openOnHoldReason &&
                         <div className='border py-1 px-2 rounded-md'>
@@ -505,8 +424,9 @@ const Dashboard = () => {
                             fill="#727273"
                             height="1em"
                             width="1em"
-                            className='cursor-pointer hover:fill-blue-500'
-                            onClick={() => {
+                            className='cursor-pointer hover:fill-blue-500 '
+                            onMouseDown={(e) => {
+                                e.preventDefault();
                                 setSelectedTask(props)
                                 setCommentSideBarVisibility(true)
                             }}
@@ -525,7 +445,7 @@ const Dashboard = () => {
         <React.Fragment>
             {showCommentSideBar &&
 
-                <RightSideBar showModal={showCommentSideBar} setShowModal={setCommentSideBarVisibility} taskData={selectedTask} />
+                <CommentsSideBar showModal={showCommentSideBar} setShowModal={setCommentSideBarVisibility} taskData={selectedTask} />
             }
 
             {/* <NewModal isVisible={false} /> */}
@@ -590,7 +510,7 @@ const Dashboard = () => {
                 <div className=" mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 pb-6 ">
                     {tasksResults.length > 0 && tasksResults.map((item, index) => {
                         return (
-                            <DashboardCard {...item} onEditClick={onTaskEditClick} onTaskComplete={onTaskComplete} />
+                            <DashboardCard {...item} onEditClick={onTaskEditClick} onTaskComplete={onTaskComplete} onHoldClick={onHoldClick} />
                         )
                     })}
                 </div>
@@ -616,7 +536,7 @@ const Dashboard = () => {
                        page 1 of 1
                     </span> */}
                 </Box >
-
+                <ReasonModal open={open} handleClose={() => setOpen(!open)} reason={onHoldReason} />
             </div>
         </React.Fragment>
     )
@@ -624,6 +544,38 @@ const Dashboard = () => {
 
 export default Dashboard;
 
+const ReasonModal = (props) => {
+    const { open, handleClose, reason } = props
+
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '50%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        boxShadow: 24,
+        borderRadius: 1,
+        p:2
+    };
+    return (
+        <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+        >
+            <Box sx={style}>
+                <Typography id="modal-modal-title" variant="h6" component="h2" className='font-quicksand'>
+                    Reason
+                </Typography>
+                <Typography id="modal-modal-description" sx={{ mt: 2 }} className='text-gray-800 font-quicksand'>
+                    {reason}
+                </Typography>
+            </Box>
+        </Modal>
+    )
+}
 const Filter = (props) => {
     const { employeeResults, projectsResults, filters, setFilters } = props;
 

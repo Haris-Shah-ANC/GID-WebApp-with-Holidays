@@ -91,18 +91,23 @@ export default function Analysis(props) {
     }
 
     const fetchIncomeAndExpense = async (project, employee) => {
-        console.log("EMPLOYEE", employee)
-        let response = await apiAction({ url: getIncomeExpenseDataWithComparison(), method: 'post', data: { employee_id: employee ? employee.id : null, project_id: project ? project.project_id : null, ...getPostBody() } }, onError)
-        if (response) {
-            if (response.success) {
-                setIncomeExpenseData(response.result)
-                let totalIncome = 0
-                response.result.budget_data.map(item => {
-                    totalIncome += (Number(item.amount) * Number(item.exchange_rate) * item.hour)
-                })
-                setTempBudgetList(null)
-            }
-        }
+        let res = await apiAction({ url: getIncomeExpenseDataWithComparison(), method: 'post', data: { employee_id: employee ? employee.id : null, project_id: project ? project.project_id : null, ...getPostBody() } }, onError)
+            .then((response) => {
+                if (response) {
+                    if (response.success) {
+                        setIncomeExpenseData(response.result)
+                        let totalIncome = 0
+                        response.result.budget_data.map(item => {
+                            totalIncome += (Number(item.amount) * Number(item.exchange_rate) * item.hour)
+                        })
+                        setTempBudgetList(null)
+                    }
+                }
+            })
+            .then((error) => {
+                console.log("ERROR", error)
+            })
+
         function onError(err) {
             // console.log("UPLOAD ERROR", err)
         }

@@ -121,12 +121,18 @@ export default function PieChartGraph(props) {
 
     const getIncomeAndExpenseData = async (pBody, isParentClick = false) => {
 
-        let response = await apiAction({ url: getIncomeExpensePieChartData(), method: 'post', data: pBody }, onError)
-        if (response) {
-            if (response.success) {
-                setApiData(response.result, isParentClick)
-            }
-        }
+        let res = await apiAction({ url: getIncomeExpensePieChartData(), method: 'post', data: pBody }, onError)
+            .then((response) => {
+                if (response) {
+                    if (response.success) {
+                        setApiData(response.result, isParentClick)
+                    }
+                }
+            })
+            .catch((error) => {
+                console.log("ERROR", error)
+            })
+
         function onError(err) {
             console.log("UPLOAD ERROR", err)
         }

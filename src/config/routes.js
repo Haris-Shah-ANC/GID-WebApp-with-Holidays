@@ -128,13 +128,13 @@ export const sidebarMenu = (isAdminMenu) => {
             active: routesName.dashboard.activeRoute,
 
         },
-        {
-            name: routesName.alerts.name,
-            path: routesName.alerts.path,
-            icon: "fa-solid fa-bell",
-            active: routesName.alerts.activeRoute,
+        // {
+        //     name: routesName.alerts.name,
+        //     path: routesName.alerts.path,
+        //     icon: "fa-solid fa-bell",
+        //     active: routesName.alerts.activeRoute,
 
-        },
+        // },
      
        
         {

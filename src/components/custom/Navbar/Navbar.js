@@ -1,25 +1,33 @@
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { MENU, imagesList } from '../../../utils/Constant';
 import { clearCookie, getWorkspaceInfo } from '../../../config/cookiesInfo';
 import { getLoginDetails } from '../../../config/cookiesInfo';
 import Sidebar from '../Sidebar/Sidebar';
+import { getEffortAlertsStatus } from '../../../api/urls';
+import { useNavigate } from 'react-router-dom';
+import { apiAction } from '../../../api/api';
+import { routesName } from '../../../config/routesName';
 
 const Navbar = ({ logOutClick }) => {
-    const bellCount = 3;
-    const messageCount = 5;
+    const navigate = useNavigate();
+    const bellCount = 2;
+    const messageCount = 0;
     const workspace = getWorkspaceInfo()
     const userInfo = getLoginDetails()
     const [isPopupMenuVisible, setPopupMenuVisibility] = useState(false)
     const menuRef = useRef()
     const imgRef = useRef()
+    const [alertCount, setAlertCount] = useState(0)
+    const sideNavigationRef = useRef()
 
-    const sideNavigationRef= useRef()
-    
+    useEffect(() => {
+        fetchAlertsStatus()
+    }, [])
 
     window.addEventListener('click', (e) => {
         if (e.target !== menuRef.current && e.target !== imgRef.current) {
             setPopupMenuVisibility(false)
-        }else if(e.target === sideNavigationRef.current){
+        } else if (e.target === sideNavigationRef.current) {
             setSidebarShow("-translate-x-full");
         }
     })
@@ -34,6 +42,21 @@ const Navbar = ({ logOutClick }) => {
             setSidebarShow("");
         }
     };
+    const fetchAlertsStatus = async () => {
+        let res = await apiAction({ url: getEffortAlertsStatus(), method: "post", data: { workspace_id: workspace.work_id } })
+            .then((response) => {
+                if (response) {
+                    if (response.result.length > 0) {
+                        setAlertCount(response.result.length)
+                        navigate(routesName.alerts.path, { state: response.result })
+                    }
+                }
+            })
+            .catch((error) => {
+                console.log("ERROR", error)
+            })
+
+    }
     return (
         <div className=''>
             <nav className="bg-white p-4 flex flex-col sm:flex-row items-center justify-between" >
@@ -48,11 +71,11 @@ const Navbar = ({ logOutClick }) => {
                         </div>
                     </div>
                     <div className="flex ml-auto items-center space-x-4">
-                        <div className="relative">
+                        <div className="relative cursor-pointer" onClick={() => navigate(routesName.alerts.path)}>
                             <i className="fa-solid fa-bell text-gray-600 text-xl"></i>
-                            {bellCount > 0 && (
-                                <span className="absolute top-[-8px] right-[-6px] bg-red-500 text-white rounded-full h-4 w-4 flex items-center justify-center text-xs">
-                                    {bellCount}
+                            {alertCount > 0 && (
+                                <span className=" absolute top-[-8px] right-[-6px] bg-red-500 text-white rounded-full h-4 w-4 flex items-center justify-center text-xs">
+                                    {alertCount}
                                 </span>
                             )}
                         </div>
@@ -100,8 +123,8 @@ const Navbar = ({ logOutClick }) => {
             </nav>
             {/* <div className={`bg-white text-white sm:hidden absolute top-0 bottom-0 w-64 shadow-xl flex-row flex-nowrap md:z-10 z-9999 transition-all duration-300 ease-in-out transform md:translate-x-0 ${sidebarShow}`}> */}
             <div className={`bg-white text-white sm:hidden top-0 bottom-0 absolute transition-all duration-300 md:z-10 z-9999 w-72 ${sidebarShow}`}>
-                    <Sidebar isSidebarOpen={true} setIsSidebarOpen={(value) => handleDrawerClick()}></Sidebar>
-                </div>
+                <Sidebar isSidebarOpen={true} setIsSidebarOpen={(value) => handleDrawerClick()}></Sidebar>
+            </div>
         </div>
     )
 }

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { DATE, DURATION, EMPLOYEE, END_TIME, MODULE, PROJECT, START_TIME, TASK, svgIcons } from '../../../../utils/Constant'
+import { DATE, DURATION, EMPLOYEE, END_TIME, MODULE, PROJECT, START_TIME, STATUS, TASK, svgIcons } from '../../../../utils/Constant'
 import { formatDate, notifyErrorMessage, notifySuccessMessage } from '../../../../utils/Utils'
 import { twMerge } from 'tailwind-merge'
 import { getDeleteTaskEffortsUrl } from '../../../../api/urls'
@@ -7,6 +7,7 @@ import { apiAction } from '../../../../api/api'
 import { useNavigate } from 'react-router-dom'
 import EffortsComponent from '../../../custom/EffortsComponent'
 import { getLoginDetails } from '../../../../config/cookiesInfo'
+import TaskStatusLabel from '../../../custom/TaskStatusLabel'
 
 export default function TasksTimeSheet(props) {
     const { tasks, onAddEffortClick, onItemClick, onDeleteEffort, onEffortItemClick, onEffortUpdate, fromAlerts, isAllEmployeeFilter } = props
@@ -17,7 +18,6 @@ export default function TasksTimeSheet(props) {
 
     const [isEffortsTableVisible, setEffortsTableVisible] = useState(false)
     const [selectedTask, selectTask] = useState(null)
-
     const calculateDuration = (item) => {
         return item.list_task_record.reduce((total, currentValue) => total = total + currentValue.working_duration, 0)
     }
@@ -34,8 +34,12 @@ export default function TasksTimeSheet(props) {
         <table className=" bg-transparent w-full">
             <thead className='bg-gray-200 px-10 justify-center items-center'>
                 <tr className='h-10 flex-auto w-full'>
+                    <TableHeader className={`text-left w-auto`} title={STATUS}></TableHeader>
                     <TableHeader className={`text-left w-auto`} title={TASK}></TableHeader>
-                    <TableHeader className={`text-center w-36`} title={EMPLOYEE}></TableHeader>
+                    {isAllEmployeeFilter ?
+                        <TableHeader className={`text-center w-36`} title={EMPLOYEE}></TableHeader>
+                        : ''
+                    }
                     <TableHeader className={`text-center w-36`} title={PROJECT}></TableHeader>
                     <TableHeader className={`text-center w-36`} title={MODULE}></TableHeader>
                     <TableHeader className={`text-center w-32`} title={START_TIME}></TableHeader>
@@ -46,7 +50,7 @@ export default function TasksTimeSheet(props) {
             <tbody className=" divide-y divide-gray-200 table-fixed">
                 {
                     tasks.map((item, index) => {
-                        return <TableRow loggedInUserId={user_id} onEffortUpdate={onEffortUpdate} onAddEffortClick={onAddEffortClick} onItemClick={onItemClick} item={item} index={index} deleteTaskEfforts={deleteTaskEfforts} onEffortEditClick={onEffortEditClick}></TableRow>
+                        return <TableRow loggedInUserId={user_id} isAllEmployeeFilter={isAllEmployeeFilter} onEffortUpdate={onEffortUpdate} onAddEffortClick={onAddEffortClick} onItemClick={onItemClick} item={item} index={index} deleteTaskEfforts={deleteTaskEfforts} onEffortEditClick={onEffortEditClick} />
                         // if (fromAlerts) {
                         //     if (parseFloat(item.total_working_duration) == 0)
                         //         return <TableRow isAllEmployeeFilter={isAllEmployeeFilter} loggedInUserId={user_id} onEffortUpdate={onEffortUpdate} onAddEffortClick={onAddEffortClick} onItemClick={onItemClick} item={item} index={index} deleteTaskEfforts={deleteTaskEfforts} onEffortEditClick={onEffortEditClick}></TableRow>
@@ -81,6 +85,10 @@ function TableRow(props) {
     return <>
 
         <tr key={1} className={`${item.is_selected ? "bg-blue-100" : "bg-white"}`} >
+            <td className="py-3" >
+                <TaskStatusLabel status={item.status} />
+
+            </td>
             <td className="p-3" >
                 <div className='flex  items-center' >
                     <p className={`text-sm text-left break-words line-clamp-2 min-w-[320px] ${item.employee_id == loggedInUserId ? item.is_selected ? 'font-semibold' : 'hover:font-semibold cursor-pointer' : ''} font-quicksand w-full   `} onClick={() => {
@@ -93,10 +101,13 @@ function TableRow(props) {
                 </div>
             </td>
 
-            <td className="py-3" >
-                <p className='text-center text-sm  w-36 truncate mx-1 font-quicksand'>{item.employee_name}
-                </p>
-            </td>
+            {isAllEmployeeFilter ?
+                <td className="py-3" >
+                    <p className='text-center text-sm  w-36 truncate mx-1 font-quicksand'>{item.employee_name}
+                    </p>
+                </td>
+                : null
+            }
 
 
             <td className="py-3">
@@ -117,7 +128,6 @@ function TableRow(props) {
                 </p>
             </td>
             <td className="py-3">
-
                 <p className={`text-sm text-center w-32 truncate mx-1 font-quicksand font-bold ${item.total_working_duration == 0 ? 'text-orange-400' : ""}`}>{`${item.total_working_duration} hrs.`}
                 </p>
             </td>
@@ -126,15 +136,16 @@ function TableRow(props) {
         </tr>
 
         {item.is_selected &&
-            <div className=''>
-                {/* <tr className='bg-red-100 w-full' key={2}> */}
-                {/* <td className=' '> */}
-                <div className='w-[45vh] py-3'>
-                    <EffortsComponent data={item} onEffortUpdate={(total) => onEffortUpdate(total)} isVisible={item.is_selected} setUpdateEffortsStatus={() => { }} />
-                </div>
-                {/* </td> */}
-                {/* </tr > */}
-            </div>
+            <tr>
+                <td colSpan={12}>
+                    <div className=''>
+                        <div className='w-[45vh] py-3'>
+                            <EffortsComponent data={item} onEffortUpdate={(total) => onEffortUpdate(total)} isVisible={item.is_selected} setUpdateEffortsStatus={() => { }} />
+                        </div>
+
+                    </div>
+                </td>
+            </tr>
         }
 
 

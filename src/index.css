@@ -140,3 +140,12 @@
         right: -10px;
     }
 }
+/* YourDatePicker.css */
+.custom-date-picker .MuiSvgIcon-root:focus,
+.custom-date-picker .MuiSvgIcon-root:active {
+    border: none !important;
+    /* Remove the border when the calendar icon is focused or active */
+}
+.MuiButtonBase-root {
+    border: none !important;
+}

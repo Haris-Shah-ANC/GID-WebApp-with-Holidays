@@ -193,37 +193,41 @@ export default function ColumnAndLineChart(props) {
     }, [period])
 
     const getIncomeAndExpenseData = async (pBody) => {
-        let response = await apiAction({ url: getIncomeExpenseChartsData(), method: 'post', data: pBody }, onError)
-        if (response) {
-            let resultArray = []
-            if (response.success) {
-                if (response.period === "monthly") {
-                    response.result.map((item) => {
-                        resultArray.push({ "name": formatDate(item.from_date, "MMM YY"), "from_date": item.from_date, "to_date": item.to_date, "income_amount": parseFloat(item.income_amount), "expense_amount": parseFloat(item.expense_amount), "capacity_in_amount": parseFloat(item.capacity_in_amount), "capacity_in_hour": item.capacity_in_hour, working_hours: item.working_hour })
-                    })
-                } else if (response.period === "weekly") {
-                    response.result.map((item, index) => {
-                        resultArray.push({ "name": `Week ${index + 1}`, "from_date": item.from_date, "to_date": item.to_date, "income_amount": parseFloat(item.income_amount), "expense_amount": parseFloat(item.expense_amount), "capacity_in_amount": parseFloat(item.capacity_in_amount), "capacity_in_hour": item.capacity_in_hour, working_hours: item.working_hour })
-                    })
-                } else if (response.period === "daily") {
-                    response.result.map((item) => {
-                        resultArray.push({ "name": formatDate(item.working_date, "DD MMM"), "working_date": item.working_date, "from_date": item.from_date, "to_date": item.to_date, "income_amount": parseFloat(item.income_amount), "expense_amount": parseFloat(item.expense_amount), "capacity_in_amount": parseFloat(item.capacity_in_amount), "capacity_in_hour": item.capacity_in_hour, working_hours: item.working_hour })
-                    })
+        let res = await apiAction({ url: getIncomeExpenseChartsData(), method: 'post', data: pBody }, onError)
+            .then((response) => {
+                if (response) {
+                    let resultArray = []
+                    if (response.success) {
+                        if (response.period === "monthly") {
+                            response.result.map((item) => {
+                                resultArray.push({ "name": formatDate(item.from_date, "MMM YY"), "from_date": item.from_date, "to_date": item.to_date, "income_amount": parseFloat(item.income_amount), "expense_amount": parseFloat(item.expense_amount), "capacity_in_amount": parseFloat(item.capacity_in_amount), "capacity_in_hour": item.capacity_in_hour, working_hours: item.working_hour })
+                            })
+                        } else if (response.period === "weekly") {
+                            response.result.map((item, index) => {
+                                resultArray.push({ "name": `Week ${index + 1}`, "from_date": item.from_date, "to_date": item.to_date, "income_amount": parseFloat(item.income_amount), "expense_amount": parseFloat(item.expense_amount), "capacity_in_amount": parseFloat(item.capacity_in_amount), "capacity_in_hour": item.capacity_in_hour, working_hours: item.working_hour })
+                            })
+                        } else if (response.period === "daily") {
+                            response.result.map((item) => {
+                                resultArray.push({ "name": formatDate(item.working_date, "DD MMM"), "working_date": item.working_date, "from_date": item.from_date, "to_date": item.to_date, "income_amount": parseFloat(item.income_amount), "expense_amount": parseFloat(item.expense_amount), "capacity_in_amount": parseFloat(item.capacity_in_amount), "capacity_in_hour": item.capacity_in_hour, working_hours: item.working_hour })
+                            })
+                        }
+                    }
+                    setData(resultArray)
+                    const resultData = response.result
+                    let maxIncomeAmount = resultData.reduce((prev, current) => (prev && Number(prev.income_amount) > Number(current.income_amount)) ? prev : current)
+                    let maxCapacityAmount = resultData.reduce((prev, current) => (prev && Number(prev.capacity_in_amount) > Number(current.capacity_in_amount)) ? prev : current)
+                    setCapacityInAmt({ capacity: 0, maxIncomeAmount: Number(maxIncomeAmount.income_amount), maxYAxisAmt: getMaxYAxisData(Number(maxCapacityAmount.capacity_in_amount), Number(maxIncomeAmount.income_amount)), hours: 0 })
                 }
             }
-            setData(resultArray)
-            const resultData = response.result
-            let maxIncomeAmount = resultData.reduce((prev, current) => (prev && Number(prev.income_amount) > Number(current.income_amount)) ? prev : current)
-            let maxCapacityAmount = resultData.reduce((prev, current) => (prev && Number(prev.capacity_in_amount) > Number(current.capacity_in_amount)) ? prev : current)
-            setCapacityInAmt({ capacity: 0, maxIncomeAmount: Number(maxIncomeAmount.income_amount), maxYAxisAmt: getMaxYAxisData(Number(maxCapacityAmount.capacity_in_amount), Number(maxIncomeAmount.income_amount)), hours: 0 })
+            )
+            .catch((error) => {
+                console.log("ERROR", error)
+            })
 
-        }
         function onError(err) {
             console.log("UPLOAD ERROR", err)
         }
     }
-
-
 
     return (
         <div className={`justify-center items-center p-10 rounded-md bg-white shadow-md`}>

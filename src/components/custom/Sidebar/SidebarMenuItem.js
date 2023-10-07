@@ -2,13 +2,13 @@ import React from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 
 export default function SidebarMenuItem(props) {
-    const {isSidebarOpen, activeItem, menuItem, onClick} = props
-    const navigate = useNavigate()
+  const { isSidebarOpen, activeItem, menuItem, onClick, alertStatus } = props
+  const navigate = useNavigate()
   return (
-      <li
+    <li
       title={isSidebarOpen ? '' : menuItem.name}
-      className={` ${isSidebarOpen ? '' : 'justify-center'} ${activeItem === menuItem.active ? 'bg-blue-600 font-bold text-white' : ''} m-1 text-gray-500 text-sm font-quicksand font-semibold px-4 py-5 border-gray-400 flex items-center rounded-md ${activeItem === menuItem.active ? 'hover:bg-blue-600': 'hover:bg-blue-400'} cursor-pointer hover:text-white`}
-      onClick={() => { 
+      className={` ${isSidebarOpen ? '' : 'justify-center'} ${activeItem === menuItem.active ? 'bg-blue-600 font-bold text-white' : ''} m-1 text-gray-500 text-sm font-quicksand font-semibold px-4 py-5 border-gray-400 flex items-center rounded-md ${activeItem === menuItem.active ? 'hover:bg-blue-600' : 'hover:bg-blue-400'} cursor-pointer hover:text-white`}
+      onClick={() => {
         onClick(menuItem)
       }}
     >
@@ -20,8 +20,9 @@ export default function SidebarMenuItem(props) {
           }
         }}
       > */}
-        <i className={`${menuItem.icon} mr-2`}></i>
-        <span className={`${isSidebarOpen ? '' : 'hidden'}`}>{menuItem.name}</span>
+      <i className={`${menuItem.icon} mr-2`}></i>
+      <span className={`${isSidebarOpen ? '' : 'hidden'}`}>{menuItem.name}</span>
+      {/* {menuItem.name == "Alerts" && alertStatus ? <i class="fa-solid fa-circle  fa-2xs ml-2" style={{ color:activeItem===menuItem.active ? "white" :'#1d6ced',}}></i> :null} */}
       {/* </Link> */}
     </li>
   )

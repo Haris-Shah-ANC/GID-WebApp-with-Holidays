@@ -40,10 +40,11 @@ export default function DeleteNotificationModal(props) {
 
 
     return (
-        <div
-            className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
-            <div className="relative my-6 max-w-sm w-full">
-                <div className="w-full border-0 rounded-lg shadow-lg relative flex flex-col bg-white outline-none focus:outline-none">
+        // <div
+        //     className="justify-center items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
+        //     <div className="relative my-6 max-w-sm w-full">
+        //         <div className="w-full border-0 rounded-lg shadow-lg relative flex flex-col bg-white outline-none focus:outline-none">
+        <>
                     {/* header */}
                     <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
                         <h3 className="text-lg font-quicksand font-bold text-center w-full">{'Are you sure to delete'}</h3>
@@ -61,8 +62,9 @@ export default function DeleteNotificationModal(props) {
 
                         <PlainButton title={"Delete"} className={"mt-10"} onButtonClick={onNotificationDelete} disable={false}></PlainButton>
                     </div>
-                </div>
-            </div>
-        </div>
+        </>
+        //         </div>
+        //     </div>
+        // </div>
     )
 }

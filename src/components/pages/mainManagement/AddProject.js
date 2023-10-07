@@ -44,8 +44,9 @@ export default function AddProject(props) {
 
     
   return (
-    <div className="relative my-6 md:w-2/4 w-full mx-2 sm:max-w-sm md:max-w-md overflow-x-auto">
-            <div className="w-full border-0 rounded-lg shadow-lg relative flex flex-col bg-white outline-none focus:outline-none">
+    // <div className="relative my-6 md:w-2/4 w-full mx-2 sm:max-w-sm md:max-w-md overflow-x-auto">
+    //         <div className="w-full border-0 rounded-lg shadow-lg relative flex flex-col bg-white outline-none focus:outline-none">
+    <>
                 {/* header */}
                 <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
                     <h3 className="text-lg font-quicksand font-bold text-center w-full">{'Create Project'}</h3>                    
@@ -100,9 +101,9 @@ export default function AddProject(props) {
                     </div>
                     
                 </form>
+      </>
 
-
-            </div>
-        </div>
+        //     </div>
+        // </div>
   )
 }

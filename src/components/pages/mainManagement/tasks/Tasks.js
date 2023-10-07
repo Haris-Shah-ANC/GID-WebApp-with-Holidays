@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { apiAction } from '../../../../api/api'
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import * as Actions from '../../../../state/Actions';
 import { ALERTS, DATE, DURATION, END_TIME, MODULE, PROJECT, START_TIME, TASK, add_effort, svgIcons } from '../../../../utils/Constant';
 import PlainButton from '../../../custom/Elements/buttons/PlainButton';
 import { employee, getDeleteTaskEffortsUrl, getTasksUrl, getTheAddTaskEffortsUrl, getTheUpdateTaskEffortsUrl, get_all_project, get_task } from '../../../../api/urls';
 import { getLoginDetails, getWorkspaceInfo } from '../../../../config/cookiesInfo';
-import { getTimePeriods, notifyErrorMessage, notifySuccessMessage } from '../../../../utils/Utils';
+import { getTimePeriods, getYesterday, notifyErrorMessage, notifySuccessMessage } from '../../../../utils/Utils';
 import Dropdown from '../../../custom/Dropdown/Dropdown';
 import IconInput from '../../../custom/Elements/inputs/IconInput';
 import EffortsPopup from './EffortsPopup';
@@ -17,10 +17,21 @@ import CustomDateRengePicker from '../../../custom/Elements/CustomDateRengePicke
 import CustomDatePicker from '../../../custom/Elements/CustomDatePicker';
 
 const timePeriods = getTimePeriods()
+timePeriods.push(
+  {
+    title: "Yesterday",
+    dates: {
+      from: getYesterday(),
+      to: getYesterday()
+    }
+  },
+)
 
 export default function Tasks(props) {
   const navigate = useNavigate();
   let workspace = getWorkspaceInfo(navigate)
+  const location = useLocation()
+  const paramsData = location.state
   const dispatch = Actions.getDispatch(React.useContext);
   const [tasks, setTasks] = useState([])
   const [projects, setProjects] = useState([])
@@ -39,12 +50,21 @@ export default function Tasks(props) {
   const [customPeriod, setCustomPeriod] = useState({ fromDate: moment().format("YYYY-MM-DD"), toDate: moment().format("YYYY-MM-DD") })
   useEffect(() => {
     let URL = getTasksUrl()
-    getTaskList(URL)
-  }, [selectedProject, selectedDuration, searchText, selectedEmployee, customPeriod])
+    if (props && props.taskData) {
+      setTasks(props.taskData)
+    } else {
+      getTaskList(URL)
+    }
+
+  }, [selectedDuration, searchText, customPeriod])
 
   useEffect(() => {
-    getProjects()
-    getEmployees()
+    if (!(props && props.taskData)) {
+      getProjects()
+      getEmployees()
+      // timePeriods.push()
+    }
+
 
   }, [])
   const [value, setValue] = useState({
@@ -56,39 +76,36 @@ export default function Tasks(props) {
     console.log("newValue:", newValue);
     setValue(newValue);
   };
-
-  const getTaskList = async (URL) => {
-    const payload = {
+  const getPostBody = () => {
+    let pBody = {
       workspace_id: work_id,
-      project_id: selectedProject ? selectedProject.project_id ? selectedProject.project_id : null : null,
       task_description: searchText,
-      employee_id: selectedEmployee && selectedEmployee.id
     }
     if (selectedDuration.title == "Custom") {
-      payload.from_date = customPeriod.fromDate
-      payload.to_date = customPeriod.toDate
+      pBody['from_date'] = customPeriod.fromDate
+      pBody['to_date'] = customPeriod.toDate
     } else {
-      payload.from_date = selectedDuration ? selectedDuration.dates.from : null
-      payload.to_date = selectedDuration ? selectedDuration.dates.to : null
+      pBody['from_date'] = selectedDuration ? selectedDuration.dates.from : null
+      pBody['to_date'] = selectedDuration ? selectedDuration.dates.to : null
     }
 
+    return pBody
+  }
+  const getTaskList = async (project, employee) => {
     setNetworkCallStatus(true)
-    let res = await apiAction({ url: URL, method: 'post', data: payload, navigate: navigate, dispatch: dispatch })
+    let res = await apiAction({ url: getTasksUrl(), method: 'post', data: { employee_id: employee ? employee.id : null, project_id: project ? project.project_id : null, ...getPostBody() }, navigate: navigate, dispatch: dispatch })
       .then((response) => {
         if (response) {
-          if (response.success)
-            // if(res.result.length > 0){
-            // var sorted ;= response.results.sort((a, b) => a.employee_name.localeCompare(b.employee_name, undefined, {}));
-
-            setTasks(res.result)
-          // }
+          if (response.success) {
+            setTasks(response.result)
+          }
         }
       })
       .catch((error) => {
         console.log("ERROR", error)
       })
     setNetworkCallStatus(false)
-  
+
   }
 
   const getProjects = async () => {
@@ -97,28 +114,51 @@ export default function Tasks(props) {
       navigate: navigate,
       dispatch: dispatch,
       url: get_all_project(work_id),
+    }).then((response) => {
+      if (response)
+        if (response.success) {
+          var sorted = response.result.sort((a, b) => a.project_name.localeCompare(b.project_name, undefined, {}));
+          setProjects([{ project_name: 'All Projects' }, ...sorted])
+        }
     })
-    if (res)
-      if (res.success) {
-        setProjects([{ project_name: 'All Projects' }, ...res.result])
-        // selectProject(res.result[0])
-      }
+      .catch((error) => {
+        console.log("ERROR", error)
+      })
+
   }
-  const getEmployees = async () => {
-    let response = await apiAction({
-      url: employee(work_id),
+  const getEmployees = async (project) => {
+    let res = await apiAction({
+      url: employee(work_id, project && project.project_id),
       method: 'get',
       navigate: navigate,
       dispatch: dispatch,
     })
-    if (response) {
-      setEmployeeList([{ employee_name: "All Employee" }, ...response.results])
-      selectEmployee(response.results.find((item) => item.id == user_id))
-    }
+      .then((response) => {
+        if (response) {
+          var sorted = response.results.sort((a, b) => a.employee_name.localeCompare(b.employee_name, undefined, {}));
+
+          setEmployeeList([{ employee_name: "All Employee" }, ...sorted])
+          let found = sorted.find(function (element) {
+            if (selectedEmployee != null) {
+              return element.id == selectedEmployee.id;
+            }
+          });
+          if (!found) {
+            selectEmployee(null)
+            getTaskList(project, undefined)
+          } else {
+            getTaskList(project, found)
+          }
+        }
+      })
+      .catch((error) => {
+        console.log("ERROR", error)
+      })
+
   }
 
-  const calculateDuration = (item) => {
-    return item.list_task_record.reduce((total, currentValue) => total = total + currentValue.working_duration, 0)
+  const calculateDuration = () => {
+    return tasks.reduce((total, currentValue) => total = total + parseFloat(currentValue.total_working_duration), 0)
   }
 
   const onSuccessCreate = (data, index) => {
@@ -166,75 +206,80 @@ export default function Tasks(props) {
     setTasks([...tasks])
 
   }
-  const onCustomPeriodChange = (date, type) => {
-    if (type === "from") {
-      setCustomPeriod({ ...customPeriod, fromDate: date })
-    } else {
-      setCustomPeriod({ ...customPeriod, toDate: date })
-    }
+  const onCustomPeriodChange = (fromDate, toDate) => {
+    setCustomPeriod({ ...customPeriod, fromDate: fromDate, toDate: toDate })
   }
-
-
+  const fromAlert = () => {
+    return props && props.from == ALERTS
+  }
   return (
     <React.Fragment>
-      <div className="bg-screenBackgroundColor flex flex-col justify-between overflow-auto w-full p-1 overflow-hidden">
+      <div className="bg-screenBackgroundColor flex flex-col justify-between w-full p-1 overflow-hidden">
         {modalVisibility && <EffortsPopup setState={setModalVisibility} data={itemDetails} onSuccessCreate={onSuccessCreate} />}
-        <div className='flex w-full space-x-0 space-y-2 flex-col md:flex-row md:space-x-3 md:space-y-0 mb-3 '>
-          <div className='md:w-64'>
-            <Dropdown options={projects} optionLabel="project_name" value={selectedProject ? selectedProject : { project_name: 'All Projects' }} setValue={(value) => {
-              selectProject(value)
-            }} />
+        {!(props && props.from == ALERTS) ?
+          <div className="grid gap-5 py-4 sm:grid-cols-2 md:grid-cols-5 lg:grid-cols-5">
+            <div className=''>
+              <Dropdown options={projects} optionLabel="project_name" value={selectedProject ? selectedProject : { project_name: 'All Projects' }} setValue={(value) => {
+                selectProject(value)
+                getEmployees(value)
+              }} />
+            </div>
+            <div className=''>
+              <Dropdown options={timePeriods} optionLabel="title" value={selectedDuration ? selectedDuration : { title: 'Select Option' }} setValue={(value) => {
+                selectDuration(value)
+
+              }} />
+            </div>
+
+            {selectedDuration.title == "Custom" &&
+              <CustomDateRengePicker fromDate={customPeriod.fromDate} toDate={customPeriod.toDate} setDate={onCustomPeriodChange} />
+            }
+            <div className=''>
+              <Dropdown options={employeeList} optionLabel="employee_name" value={selectedEmployee ? selectedEmployee : { name: 'All Employees' }} setValue={(value) => {
+                selectEmployee(value)
+                getTaskList(selectedProject, value)
+              }} />
+            </div>
+
+
+
+            <div className='flex flex-col md:w-64'>
+              <IconInput
+                id={"search_task_input"}
+                inputType={"text"}
+                disable={false}
+                className={``}
+                value={searchText}
+                onTextChange={(event) => { setSearchText(event.target.value) }}
+                onBlurEvent={() => { }}
+                placeholderMsg={"Search..."}
+                icon={svgIcons("fill-gray-600", "search")}
+                isRightIcon={true}
+              >
+              </IconInput>
+            </div>
+
+            <div className=' py-2 flex-row bg-green-50 justify-center rounded-md'>
+              <span className={`text-medium p-3 text-blueGray-500 font-interVar font-semibold w-full font-quicksand`}>Total Duration (hr) : </span>
+              <span className={`text-medium p-3  font-interVar font-bold w-full font-quicksand`}>{parseFloat(calculateDuration()).toFixed(2)} hrs</span>
+            </div>
+
           </div>
-          <div className='md:w-64'>
-            <Dropdown options={timePeriods} optionLabel="title" value={selectedDuration ? selectedDuration : { title: 'Select Option' }} setValue={(value) => {
-              selectDuration(value)
-
-            }} />
+          : null}
+        {
+          tasks.length > 0 &&
+          <div className='overflow-auto' style={{ height: 'calc(100vh - 170px)', ...props.style }}>
+            <TasksTimeSheet isAllEmployeeFilter={selectedEmployee ? selectedEmployee.employee_name == "All Employee" : true} fromAlerts={props && props.from == ALERTS} tasks={tasks} onEffortUpdate={onEffortUpdate} onAddEffortClick={onAddEffortClick} onItemClick={onItemClick} onDeleteEffort={onDeleteEffort} onEffortItemClick={onEffortItemClick}></TasksTimeSheet>
           </div>
-          {selectedDuration.title == "Custom" &&
-            <CustomDateRengePicker fromDate={customPeriod.fromDate} toDate={customPeriod.toDate} setDate={onCustomPeriodChange} />
-          }
+        }
 
-          <div className='md:w-64'>
-            <Dropdown options={employeeList} optionLabel="employee_name" value={selectedEmployee ? selectedEmployee : { name: 'All Employees' }} setValue={(value) => {
-              selectEmployee(value)
-            }} />
-          </div>
-
-
-
-          <div className='flex flex-col md:w-64'>
-            <IconInput
-              id={"search_task_input"}
-              inputType={"text"}
-              disable={false}
-              className={``}
-              value={searchText}
-              onTextChange={(event) => { setSearchText(event.target.value) }}
-              onBlurEvent={() => { }}
-              placeholderMsg={"Search..."}
-              icon={svgIcons("fill-gray-600", "search")}
-              isRightIcon={true}
-            >
-            </IconInput>
-          </div>
-          {/* <div className='w-1/2 '>
-            <CustomDatePicker />
-          </div> */}
+        {tasks.length <= 0 && <div className='text-center items-center justify-center flex h-[70vh]'>
+          No task found.
         </div>
-        <div className='overflow-auto' style={{ height: 'calc(100vh - 170px)', }}>
-          {
-            tasks.length > 0 ?
-              <TasksTimeSheet isAllEmployeeFilter={selectedEmployee.employee_name == "All Employee"} fromAlerts={props && props.from == ALERTS} tasks={tasks} onEffortUpdate={onEffortUpdate} onAddEffortClick={onAddEffortClick} onItemClick={onItemClick} onDeleteEffort={onDeleteEffort} onEffortItemClick={onEffortItemClick}></TasksTimeSheet>
-              :
-              <div className='text-center items-center justify-center flex h-[70vh]'>
-                No task found.
-              </div>
-          }
-
-        </div>
+        }
         {netWorkCallStatus && <Loader></Loader>}
       </div>
+
     </React.Fragment>
   )
 }

@@ -9,7 +9,8 @@ import { useNavigate } from 'react-router-dom'
 import * as Actions from '../../../../state/Actions';
 import { apiAction } from '../../../../api/api'
 import { employee, getAddNewBudgetUrl, getCurrencyUrl, getUpdateBudgetUrl, get_all_project } from '../../../../api/urls'
-import { isFormValid, notifyErrorMessage, notifySuccessMessage } from '../../../../utils/Utils'
+import { formatDate, isFormValid, notifyErrorMessage, notifySuccessMessage } from '../../../../utils/Utils'
+import CustomDatePicker from '../../../custom/Elements/CustomDatePicker'
 
 export default function BudgetForm(props) {
     const { onFormClose, employeeList, projectList, data = {}, setData, onNewBudgetAdded } = props
@@ -118,6 +119,8 @@ export default function BudgetForm(props) {
             { key: "valid_from", message: 'Budget start date field left empty!' },
             { key: "valid_upto", message: 'Budget end date field left empty!' },
             { key: "capacity", message: 'Capacity field left empty!' },
+            { key: "", validation: budgetData.valid_from > budgetData.valid_upto, message: 'Provide valid budget period' },
+            // { key: "", validation: budgetData.valid_upto > budgetData.valid_upto, message: 'Capacity field left empty!' },
         ]
 
         const { isValid, message } = isFormValid(budgetData, validation_data);
@@ -129,7 +132,6 @@ export default function BudgetForm(props) {
             } else {
                 addNewBudget()
             }
-
         } else {
             notifyErrorMessage(message)
         }
@@ -194,7 +196,7 @@ export default function BudgetForm(props) {
                             <div className='w-full max-w-sm w-lg'>
                                 <div className="my-0 flex flex-col">
                                     <CustomLabel label={`Valid From`} className={'font-quicksand font-semibold text-sm mb-1'} />
-                                    <GidInput
+                                    <CustomDatePicker
                                         inputType={"date"}
                                         id='to_date'
                                         disable={false}
@@ -202,10 +204,10 @@ export default function BudgetForm(props) {
                                         className={""}
                                         value={budgetData.valid_from}
                                         onBlurEvent={() => { }}
-                                        onTextChange={(e) => {
-
-                                            setBudgetData({ ...budgetData, valid_from: e.target.value })
-                                        }}></GidInput>
+                                        maxDate={formatDate(budgetData.valid_upto, "YYYY-MM-DD")}
+                                        onDateChange={(val) => {
+                                            setBudgetData({ ...budgetData, valid_from: val })
+                                        }}></CustomDatePicker>
 
                                 </div>
                             </div>
@@ -219,7 +221,7 @@ export default function BudgetForm(props) {
                                     className={""}
                                     value={budgetData.amount}
                                     onBlurEvent={() => { }}
-                                    maxDate={null}
+
                                     onTextChange={(e) => {
                                         if (e.target.value >= 0) {
                                             setBudgetData({ ...budgetData, amount: e.target.value })
@@ -231,7 +233,7 @@ export default function BudgetForm(props) {
                         <div className='flex flex-col justify-start'>
                             <div className="mt-0 flex flex-col">
                                 <CustomLabel label={`Valid Upto`} className={'font-quicksand font-semibold text-sm mb-1'} />
-                                <GidInput
+                                <CustomDatePicker
                                     inputType={"date"}
                                     id='to_date'
                                     disable={false}
@@ -239,9 +241,10 @@ export default function BudgetForm(props) {
                                     className={""}
                                     value={budgetData.valid_upto}
                                     onBlurEvent={() => { }}
-                                    onTextChange={(e) => {
-                                        setBudgetData({ ...budgetData, valid_upto: e.target.value })
-                                    }}></GidInput>
+                                    minDate={formatDate(budgetData.valid_from, "YYYY-MM-DD")}
+                                    onDateChange={(val) => {
+                                        setBudgetData({ ...budgetData, valid_upto: val })
+                                    }}></CustomDatePicker>
                             </div>
                             <div className="mt-5 flex flex-col">
                                 <CustomLabel label={`Capacity (hr)`} className={'font-quicksand font-semibold text-sm mb-1'} />

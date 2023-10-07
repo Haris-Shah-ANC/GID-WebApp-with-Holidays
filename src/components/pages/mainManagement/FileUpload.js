@@ -75,66 +75,67 @@ export default function FileUpload(props) {
   }
 
   return (
-    <div
-      className="justify-center  items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
-      <div className="relative my-6 max-w-sm">
-        <div className="w-full border-0 rounded-lg shadow-lg relative flex flex-col bg-white outline-none focus:outline-none">
-          <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
-            <h3 className="text-lg font-quicksand font-bold text-center w-full">{'Upload File'}</h3>
-            <button
-              className="text-lg w-10 h-10 ml-auto rounded-full focus:outline-none hover:bg-gray-200 flex justify-center items-center"
-              onClick={() => setShowModal(false)}
-            >
-              <i className="fa-solid fa-times"></i>
-            </button>
-          </div>
-
-          <div className='px-3 py-5 w-full flex flex-col'>
-            <div className='flex-row flex items-center'>
-              <input
-                accept=".csv,.xls,.xlsx"
-                id="input-file"
-                type="file"
-                className='border w-full p-1 rounded-md cursor-pointer'
-                onChange={(e) => onFileEvent(e)}
-                onClick={(e) => {
-                  e.target.value = null
-                }}
-              />
-              {/* <h3 className='ml-28 mr-10 text-black font-quicksand font-semibold absolute truncate w-full flex'>{fileUploadData.fileupload && fileUploadData.fileupload.file ? fileUploadData.fileupload.file.name : null}</h3> */}
-
-
-            </div>
-
-            {data ? data.from != "timesheet" &&
-              <>
-                <label className='mt-3 text-gray-600 font-quicksand font-semibold'>Year</label>
-                <GidInput
-                  inputType={"number"}
-                  id={"year"}
-                  disable={false}
-                  className={""}
-                  value={fileUploadData.year}
-                  onBlurEvent={() => { }}
-                  placeholderMsg="e.g 2023"
-                  onTextChange={(event) => {
-                    let value = event.target.value
-                    if (String(value).length <= 1) {
-                      let year = new Date().getFullYear()
-                      setFileData({ ...fileUploadData, year: year })
-                    } else {
-                      setFileData({ ...fileUploadData, year: value })
-                    }
-                  }}
-                >
-                </GidInput>
-              </>
-              : null}
-
-            <PlainButton title={"Upload"} className={"mt-10"} onButtonClick={onBtnClick} disable={false}></PlainButton>
-          </div>
-        </div>
+    // <div className="justify-center  items-center flex overflow-x-hidden overflow-y-auto fixed inset-0 z-50 outline-none focus:outline-none">
+    //   <div className="relative my-6 max-w-sm">
+    //     <div className="w-full border-0 rounded-lg shadow-lg relative flex flex-col bg-white outline-none focus:outline-none">
+    <>
+      <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
+        <h3 className="text-lg font-quicksand font-bold text-center w-full">{'Upload File'}</h3>
+        <button
+          className="text-lg w-10 h-10 ml-auto rounded-full focus:outline-none hover:bg-gray-200 flex justify-center items-center"
+          onClick={() => setShowModal(false)}
+        >
+          <i className="fa-solid fa-times"></i>
+        </button>
       </div>
-    </div>
+
+      <div className='px-3 py-5 w-full flex flex-col'>
+        <div className='flex-row flex items-center'>
+          <input
+            accept=".csv,.xls,.xlsx"
+            id="input-file"
+            type="file"
+            className='border w-full p-1 rounded-md cursor-pointer'
+            onChange={(e) => onFileEvent(e)}
+            onClick={(e) => {
+              e.target.value = null
+            }}
+          />
+          {/* <h3 className='ml-28 mr-10 text-black font-quicksand font-semibold absolute truncate w-full flex'>{fileUploadData.fileupload && fileUploadData.fileupload.file ? fileUploadData.fileupload.file.name : null}</h3> */}
+
+
+        </div>
+
+        {data ? data.from != "timesheet" &&
+          <>
+            <label className='mt-3 text-gray-600 font-quicksand font-semibold'>Year</label>
+            <GidInput
+              inputType={"number"}
+              id={"year"}
+              disable={false}
+              className={""}
+              value={fileUploadData.year}
+              onBlurEvent={() => { }}
+              placeholderMsg="e.g 2023"
+              onTextChange={(event) => {
+                let value = event.target.value
+                if (String(value).length <= 1) {
+                  let year = new Date().getFullYear()
+                  setFileData({ ...fileUploadData, year: year })
+                } else {
+                  setFileData({ ...fileUploadData, year: value })
+                }
+              }}
+            >
+            </GidInput>
+          </>
+          : null}
+
+        <PlainButton title={"Upload"} className={"mt-10"} onButtonClick={onBtnClick} disable={false}></PlainButton>
+      </div>
+    </>
+    //     {/* </div>
+    //   </div>
+    // </div> */}
   )
 }

@@ -28,7 +28,7 @@ import {
 } from '../../../api/urls';
 
 const FilterAndSort = (props) => {
-    const { setShowModal, data,onFilterApply,onFilterClear } = props;
+    const { setShowModal, data, onFilterApply, onFilterClear } = props;
     const { work_id } = getWorkspaceInfo();
 
     const navigate = useNavigate();
@@ -64,7 +64,7 @@ const FilterAndSort = (props) => {
 
     const getEmployeeList = async () => {
         let res = await apiAction({ url: employee(work_id), method: 'get', navigate: navigate, dispatch: dispatch })
-        if(res){
+        if (res) {
             if (res.success) {
                 setEmployeeList([{ employee_name: 'Select employee' }, ...res.results])
             }
@@ -125,59 +125,60 @@ const FilterAndSort = (props) => {
     }
 
     return (
-        <div className="relative my-6 md:w-2/4 w-full mx-2 sm:max-w-sm md:max-w-md overflow-x-auto">
-            <div className="w-full border-0 rounded-lg shadow-lg relative flex flex-col bg-white outline-none focus:outline-none">
-                {/* header */}
-                <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
-                    <h3 className="text-lg font-quicksand font-bold text-center w-full">{'Filter'}</h3>
-                    <button
-                        className="text-lg w-10 h-10 ml-auto rounded-full focus:outline-none hover:bg-gray-200 flex justify-center items-center"
-                        onClick={() => setShowModal(false)}>
-                        <i className="fa-solid fa-times"></i>
-                    </button>
-                </div>
-                <form>
+        // <div className="relative my-6 md:w-2/4 w-full mx-2 sm:max-w-sm md:max-w-md overflow-x-auto">
+        //     <div className="w-full border-0 rounded-lg shadow-lg relative flex flex-col bg-white outline-none focus:outline-none">
+        <>
+            {/* header */}
+            <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
+                <h3 className="text-lg font-quicksand font-bold text-center w-full">{'Filter'}</h3>
+                <button
+                    className="text-lg w-10 h-10 ml-auto rounded-full focus:outline-none hover:bg-gray-200 flex justify-center items-center"
+                    onClick={() => setShowModal(false)}>
+                    <i className="fa-solid fa-times"></i>
+                </button>
+            </div>
+            <form>
 
-                    <div className="relative px-5 pt-2 flex-auto">
-                        {/* <div className="my-1 flex flex-col">
+                <div className="relative px-5 pt-2 flex-auto">
+                    {/* <div className="my-1 flex flex-col">
                             <CustomLabel label={`User`} className={'font-quicksand font-semibold text-sm mb-1'} />
                             <Dropdown disabled={false} placeholder={true} options={employeeList} optionLabel={'employee_name'} value={selectedEmployee ? selectedEmployee :{ employee_name: 'Select employee' }} setValue={(value) => onEmployeeChange(value)} />
                         </div> */}
-                        <div className="my-1 flex flex-col my-6">
-                            <CustomLabel label={`Project`} className={'font-quicksand font-semibold text-sm mb-1'} />
-                            <Dropdown disabled={false} placeholder={true} options={projectsResults} optionLabel={'project_name'} value={selectedProject ? selectedProject : { project_name: 'Select project' }} setValue={(value) => onProjectSelect(value)} />
-                        </div>
-                        {/* {
+                    <div className="my-1 flex flex-col my-6">
+                        <CustomLabel label={`Project`} className={'font-quicksand font-semibold text-sm mb-1'} />
+                        <Dropdown disabled={false} placeholder={true} options={projectsResults} optionLabel={'project_name'} value={selectedProject ? selectedProject : { project_name: 'Select project' }} setValue={(value) => onProjectSelect(value)} />
+                    </div>
+                    {/* {
                             <div className="my-4 flex flex-col">
                                 <CustomLabel label={`Module`} className={'font-quicksand font-semibold text-sm mb-1'} />
                                 <Dropdown placeholder={true} disabled={moduleResults.length <= 1} options={moduleResults} optionLabel={'module_name'} value={selectedModule ? selectedModule : { module_name: 'Select module' }} setValue={(value) => onModuleChange(value)} />
                             </div>
                         } */}
 
-                    </div>
+                </div>
 
-                    <div className="p-6 border-solid border-slate-200 rounded-b flex flex-row mt-6">
-                        <button
-                            type="button"
-                            onClick={handleClearBtn}
-                            className="text-blue-500 mr-6 border-blue-500 border     font-bold text-sm w-full py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150"
-                        >
-                            Clear
-                        </button>
-                        <button
-                            type="button"
-                            onClick={handleSaveChanges}
-                            className="bg-blue-500 text-white ml-6 active:bg-blue-600 font-bold text-sm w-full py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150"
-                        >
-                            Apply
-                        </button>
+                <div className="p-6 border-solid border-slate-200 rounded-b flex flex-row mt-6">
+                    <button
+                        type="button"
+                        onClick={handleClearBtn}
+                        className="text-blue-500 mr-6 border-blue-500 border     font-bold text-sm w-full py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150"
+                    >
+                        Clear
+                    </button>
+                    <button
+                        type="button"
+                        onClick={handleSaveChanges}
+                        className="bg-blue-500 text-white ml-6 active:bg-blue-600 font-bold text-sm w-full py-3 rounded shadow hover:shadow-lg outline-none focus:outline-none mb-1 ease-linear transition-all duration-150"
+                    >
+                        Apply
+                    </button>
 
-                    </div>
-                </form>
+                </div>
+            </form>
+        </>
 
-
-            </div>
-        </div>
+        //     </div>
+        // </div>
     )
 }
 
