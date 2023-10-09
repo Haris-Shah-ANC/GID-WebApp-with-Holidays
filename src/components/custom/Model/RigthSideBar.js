@@ -23,17 +23,25 @@ export default function CommentsSideBar(props) {
     useLayoutEffect(() => {
         // Reset height - important to shrink on delete
         textFieldRef.current.style.height = "50px";
-        // Set height
-        console.log("Text area height ", textFieldRef.current.scrollHeight)
+        //Set height
         textFieldRef.current.style.height = `${Math.max(
             textFieldRef.current.scrollHeight,
             MIN_TEXTAREA_HEIGHT
         )}px`;
-    }, [msgData.reply]);
+    }, [chatList]);
 
     useEffect(() => {
         getCommentList()
+       
     }, []);
+    useLayoutEffect(() => {
+        scrollToBottom()
+    }, [chatList])
+    const scrollToBottom = () => {
+        var element = document.querySelector('#element');
+
+        element.scrollTop = element.scrollHeight;
+    }
 
     const getCommentList = async () => {
         let res = await apiAction({ url: getCommentListUrl(), method: 'post', data: { workspace_id: work_id, task_id: taskData.id }, navigate: navigate, dispatch: dispatch })
@@ -84,14 +92,14 @@ export default function CommentsSideBar(props) {
                         <div class="bubble">
                             <span className="text-sm px-2 font-medium text-gray-500">{chatData.comment_by_name}</span>
                             <p className="px-2 text-sm overflow-hidden break-words">{chatData.comment}</p>
-                            <span className="flex justify-end text-xs text-gray-500 pr-3">{moment(chatData.created_at).format("HH:MM A")}</span>
+                            <span className="flex justify-end text-xs text-gray-500 pr-3">{moment(chatData.created_at).format("HH:mm")}</span>
                         </div>
                     </div>
                     :
                     <div className="flex flex-row justify-end">
                         <div class="bubble2">
                             <p className="px-2 text-sm  break-words">{chatData.comment}</p>
-                            <span className="flex justify-end text-xs text-gray-500 pr-2">{moment(chatData.created_at).format("HH:MM A")}</span>
+                            <span className="flex justify-end text-xs text-gray-500 px-2">{moment(chatData.created_at).format("HH:mm")}</span>
                         </div>
                     </div>
 
@@ -104,14 +112,18 @@ export default function CommentsSideBar(props) {
             <div className="">
                 <div className="flex flex-row justify-between">
                     <span className="text-xl">#Comments</span>
-                    <svg fill="none" viewBox="0 0 24 24" className="cursor-pointer" height="1.5em" width="1.5em" onClick={() => setShowModal(false)}>
+                    <svg fill="none" viewBox="0 0 24 24" className="cursor-pointer" height="1.5em" width="1.5em" onClick={() => {
+                        setShowModal(false)
+                    }
+                    }
+                    >
                         <path
                             fill="currentColor"
                             d="M6.225 4.811a1 1 0 00-1.414 1.414L10.586 12 4.81 17.775a1 1 0 101.414 1.414L12 13.414l5.775 5.775a1 1 0 001.414-1.414L13.414 12l5.775-5.775a1 1 0 00-1.414-1.414L12 10.586 6.225 4.81z"
                         />
                     </svg>
                 </div>
-                <div className="no-scrollbar overflow-y-auto overflow-x-hidden pr-1" style={{ height: 'calc(100vh - 250px)', scrollbarWidth: 'none' }} >
+                <div id="element" className="no-scrollbar overflow-y-auto overflow-x-hidden pr-1" style={{ height: 'calc(100vh - 250px)', scrollbarWidth: 'none' }} >
                     {chatList.map((item, index) => (<ChatItem chatData={item} index={index} />))}
                     {chatList.length == 0 &&
                         <p className="flex justify-center mt-[35vh]">
@@ -125,25 +137,6 @@ export default function CommentsSideBar(props) {
             <div className="absolute bottom-2 right-2 left-2 "  >
                 <div className="flex flex-row justify-between items-between w-full">
                     <div className="flex w-full">
-                        {/* <input
-                            type={'text'}
-                            id={"replyInputBox"}
-                            disabled={false}
-                            name={''}
-                            value={msgData.reply}
-                            className={'h-10 flex w-full rounded-lg border-transparent'}
-                            onChange={(e) => { setMsgData({ ...msgData, reply: e.target.value }) }}
-                            onBlur={() => { }}
-                            placeholder={''}
-                            autoComplete="new-password"
-                            style={{ WebkitAppearance: "none" }}
-                            onKeyDown={(e) => {
-                                if (e.key == "Enter") {
-                                    onSendMsgClick()
-                                }
-                            }}
-                        >
-                        </input> */}
                         <textarea
                             value={msgData.reply}
                             id={"replyInputBox"}
@@ -176,7 +169,7 @@ export default function CommentsSideBar(props) {
                                 maxHeight: 120,
                                 minHeight: MIN_TEXTAREA_HEIGHT,
                                 resize: "none",
-                                verticalAlign:'center'
+                                verticalAlign: 'center'
 
                             }}
 

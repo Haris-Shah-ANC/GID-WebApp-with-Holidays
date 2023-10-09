@@ -7,6 +7,7 @@ import PlainButton from '../../custom/Elements/buttons/PlainButton';
 import ButtonWithImage from '../../custom/Elements/buttons/ButtonWithImage';
 import GidInput from '../../custom/Elements/inputs/GidInput';
 import IconInput from '../../custom/Elements/inputs/IconInput';
+import CustomTimePicker from '../../custom/Elements/CustomTimePicker';
 
 const CreateNewWorkspace = (props) => {
     const { setShowModal } = props
@@ -17,11 +18,11 @@ const CreateNewWorkspace = (props) => {
     };
 
     const handleClockInChange = (e) => {
-        setWorkspaceFormData({ ...wsFormData, office_start_time: e.target.value });
+        setWorkspaceFormData({ ...wsFormData, office_start_time: e });
     };
 
     const handleClockOutChange = (e) => {
-        setWorkspaceFormData({ ...wsFormData, office_end_time: e.target.value });
+        setWorkspaceFormData({ ...wsFormData, office_end_time: e });
     };
 
     const handleSaveChanges = () => {
@@ -91,37 +92,44 @@ const CreateNewWorkspace = (props) => {
                     <label className="text-slate-500 flex items-center ont-quicksand font-semibold text-sm mb-1" htmlFor="clock-in">
                         <i className="fa-regular fa-clock text-base mr-1"></i>
                         Clock In
-                    </label>
-                    <IconInput
-                        inputType={"time"}
-                        id="clock-in"
+                    </label>                   
+                    <CustomTimePicker
+                        id={"task_end_datetime"}
+                        inputType={"datetime-local"}
                         disable={false}
                         className={`w-full`}
                         value={wsFormData.office_start_time ? wsFormData.office_start_time : ''}
-                        onTextChange={handleClockInChange}
+                        onTimeChange={(val) => {
+
+                            handleClockInChange(val)
+                        }}
                         onBlurEvent={() => { }}
                         placeholder={""}
                         isRightIcon={true}
                     >
-                    </IconInput>
+                    </CustomTimePicker>
                 </div>
                 <div className="my-4 flex flex-col">
                     <label className="text-slate-500 flex items-center ont-quicksand font-semibold text-sm mb-1" htmlFor="clock-out">
                         <i className="fa-regular fa-clock text-base mr-1"></i>
                         Clock Out
                     </label>
-                    <IconInput
-                        inputType={"time"}
-                        id="clock-in"
+                    <CustomTimePicker
+                        id={"task_end_datetime"}
+                        inputType={"datetime-local"}
                         disable={false}
                         className={`w-full`}
                         value={wsFormData.office_end_time ? wsFormData.office_end_time : ''}
-                        onTextChange={handleClockOutChange}
+                        onTimeChange={(val) => {
+
+                            handleClockOutChange(val)
+                        }}
                         onBlurEvent={() => { }}
                         placeholder={""}
                         isRightIcon={true}
                     >
-                    </IconInput>
+                    </CustomTimePicker>
+                   
                 </div>
             </div>
 

@@ -35,6 +35,7 @@ import moment from 'moment';
 import CustomDatePicker from '../../custom/Elements/CustomDatePicker';
 import CustomDateTimePicker from '../../custom/Elements/CustomDateTimePicker';
 import dayjs from 'dayjs';
+import { LinkedText } from '../../custom/Elements/buttons/LinkedText';
 
 const CreateNewTask = (props) => {
     const { setShowModal, data, from } = props;
@@ -326,8 +327,8 @@ const CreateNewTask = (props) => {
                         </CustomDateTimePicker>
                         { }
                         <div className='flex flex-row'>
-                            <LinkText title={"Today"} onClick={onLinkTextClick}></LinkText>
-                            <LinkText title={"Tomorrow"} onClick={onLinkTextClick}></LinkText>
+                            <LinkedText title={"Today"} onClick={onLinkTextClick}></LinkedText>
+                            <LinkedText title={"Tomorrow"} onClick={onLinkTextClick}></LinkedText>
 
                         </div>
 
@@ -337,8 +338,8 @@ const CreateNewTask = (props) => {
                         <>
                             <div className='px-1 flex flex-row items-center justify-between my-5 text-sm font-medium font-quicksand text-gray-800 hover:bg-blue-50 cursor-pointer'
                                 onClick={() => {
-                                    const element = document.getElementById("last_div");
-                                    element.scrollTop = element.scrollHeight;
+                                    // const element = document.getElementById("last_div");
+                                    // element.scrollTop = element.scrollHeight;
                                     setEffortsTableVisible(!isEffortsTableVisible)
                                 }}>
                                 <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={<span>Efforts</span>} />
@@ -370,10 +371,6 @@ const CreateNewTask = (props) => {
     )
 }
 
-const LinkText = ({ title, onClick }) => {
-    return (
-        <p className='pr-4 text-blue-700 text-sm font-quicksand pt-1 cursor-pointer' onClick={() => onClick(title)}>{title}</p>
-    )
-}
+
 
 export default CreateNewTask;

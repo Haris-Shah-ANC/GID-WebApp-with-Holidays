@@ -83,15 +83,20 @@ const Login = () => {
         }
     }
     const fetchAlertsStatus = async (workspace) => {
-        console.log("WORKSPACE",workspace)
+        console.log("WORKSPACE", workspace)
         let res = await apiAction({ url: getEffortAlertsStatus(), method: "post", data: { workspace_id: workspace.work_id } })
             .then((response) => {
                 if (response) {
-                    if (response.result.length > 0) {
-                        navigate(routesName.alerts.path, { state: response.result })
+                    if (response.success) {
+                        if (response.result.length > 0) {
+                            navigate(routesName.alerts.path, { state: response.result })
+                        } else {
+                            navigate(routesName.dashboard.path)
+                        }
                     } else {
                         navigate(routesName.dashboard.path)
                     }
+
                 }
             })
             .catch((error) => {

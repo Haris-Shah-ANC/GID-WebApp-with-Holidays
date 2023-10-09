@@ -27,7 +27,7 @@ export default function CustomDatePicker(props) {
                 <DatePicker
                     slotProps={{
                         textField: {
-                            size: 'small', className: `bg-white rounded-lg focus:outline-none ${className}`,
+                            size: 'small',error:false,placeholder:'DD-MM-YYYY', className: `bg-white rounded-lg focus:outline-none ${className}`,
                             sx: { "& input::placeholder": { color: '#2F2F2E', fontWeight: '400', lineHeight: '16px', fontSize: '12px', fontStyle: 'normal', fontFamily: 'Noto Sans', opacity: 0.50, } }
                         }
                     }}

@@ -337,7 +337,7 @@ export const getTimePeriods = () => {
     //         from: previousWeek.from,
     //         to: previousWeek.to
     //     }
-    // },
+    // }
     // {
     //     title: "Previous Month",
     //     dates: {
@@ -391,7 +391,7 @@ const subtractByYear = () => {
   return moment().subtract(1, "year")
 }
 
-const getPreviousWeek = () => {
+export const getPreviousWeek = () => {
   const startOfPrevWeek = moment(subtractByWeek()).startOf('week').format("YYYY-MM-DD")
   const endOfPrevWeek = moment(subtractByWeek()).endOf('week').format("YYYY-MM-DD")
   return { from: startOfPrevWeek, to: endOfPrevWeek }

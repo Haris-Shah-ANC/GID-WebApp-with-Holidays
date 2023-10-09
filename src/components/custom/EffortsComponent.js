@@ -8,6 +8,7 @@ import { apiAction } from "../../api/api"
 import { getWorkspaceInfo } from "../../config/cookiesInfo";
 import CustomDatePicker from "./Elements/CustomDatePicker";
 import moment from "moment";
+import { LinkedText } from "./Elements/buttons/LinkedText";
 
 export default function EffortsComponent(props) {
     const { data, onEffortUpdate = () => { }, isVisible, updateEffortsStatus, onEffortsAddedSuccess, setUpdateEffortsStatus } = props
@@ -29,7 +30,7 @@ export default function EffortsComponent(props) {
     useEffect(() => {
         if (updateEffortsStatus) {
             onSubmitClick()
-        } 
+        }
     }, [updateEffortsStatus])
 
     const onEditClick = (item, index) => {
@@ -164,6 +165,16 @@ export default function EffortsComponent(props) {
         }
 
     }
+    const onLinkTextClick = (btnTitle, index) => {
+        const tomorrow = moment().add(1, 'days');
+        const today = moment()
+        let tomorrowDate = tomorrow.format('YYYY-MM-DD') + "T20:00"
+        let todayDate = today.format('YYYY-MM-DD') + "T20:00"
+        if (btnTitle === "Today") {
+            listOfTaskEfforts[index].working_date = todayDate
+        }
+        setListOfEfforts([...listOfTaskEfforts])
+    }
     return (
         <>
             {isVisible &&
@@ -199,20 +210,26 @@ export default function EffortsComponent(props) {
                                                 {formatDate(item.working_date, "DD/MM/YYYY")}
                                             </p>
                                             :
-                                            <CustomDatePicker
-                                                inputType={"date"}
-                                                id={`date` + index}
-                                                disable={false}
-                                                placeholderMsg={"HH:MM"}
-                                                className={"w-25 flex "}
-                                                value={item.working_date}
-                                                onBlurEvent={() => { }}
-                                                maxDate={formatDate(new Date, "YYYY-MM-DD")}
-                                                onDateChange={(date) => {
-                                                    listOfTaskEfforts[index].working_date = date
-                                                    setListOfEfforts([...listOfTaskEfforts])
-                                                }}></CustomDatePicker>
+                                            <>
+                                                <CustomDatePicker
+                                                    inputType={"date"}
+                                                    id={`date` + index}
+                                                    disable={false}
+                                                    placeholderMsg={"HH:MM"}
+                                                    className={"w-25 flex"}
+                                                    value={item.working_date}
+                                                    onBlurEvent={() => { }}
+                                                    maxDate={formatDate(new Date, "YYYY-MM-DD")}
+                                                    onDateChange={(date) => {
+                                                        listOfTaskEfforts[index].working_date = date
+                                                        setListOfEfforts([...listOfTaskEfforts])
+                                                    }}></CustomDatePicker>
+
+                                            </>
                                         }
+                                        {/* <div className='flex'>
+                                            <LinkedText title={"Today"} onClick={(title) => onLinkTextClick(title, index)}></LinkedText>
+                                        </div> */}
                                     </td>
 
                                     <td className="py-4 ">
@@ -298,7 +315,7 @@ export default function EffortsComponent(props) {
                                     </td>
                                     <td className="py-4 text-right justify-end flex mr-4 ">
                                         {item.id ? editItem && editItem.id == item.id ?
-                                            <span className="text-md font-quicksand cursor-pointer text-blue-700 font-medium" onClick={() => {
+                                             <LinkedText title={"Update"} className="font-medium" onClick={() => {
                                                 const { message, key, isValid } = isFormValid(editItem, validation_data)
                                                 if (isValid) {
                                                     onUpdateEfforts(index, item)
@@ -307,7 +324,7 @@ export default function EffortsComponent(props) {
                                                 }
 
                                             }
-                                            }>Update</span> :
+                                            }></LinkedText> :
                                             <svg
                                                 viewBox="0 0 1024 1024"
                                                 fill="red"
@@ -319,12 +336,16 @@ export default function EffortsComponent(props) {
                                                 <path d="M360 184h-8c4.4 0 8-3.6 8-8v8h304v-8c0 4.4 3.6 8 8 8h-8v72h72v-80c0-35.3-28.7-64-64-64H352c-35.3 0-64 28.7-64 64v80h72v-72zm504 72H160c-17.7 0-32 14.3-32 32v32c0 4.4 3.6 8 8 8h60.4l24.7 523c1.6 34.1 29.8 61 63.9 61h454c34.2 0 62.3-26.8 63.9-61l24.7-523H888c4.4 0 8-3.6 8-8v-32c0-17.7-14.3-32-32-32zM731.3 840H292.7l-24.2-512h487l-24.2 512z" />
                                             </svg> :
 
-                                            <span className="text-md font-quicksand cursor-pointer text-blue-700 font-medium" onClick={() => {
-                                                if (listOfTaskEfforts[index].working_date != "" && listOfTaskEfforts[index].working_duration != "") {
+                                            <LinkedText title={"Add"} className="font-medium" onClick={() => {
+                                                const { message, key, isValid } = isFormValid(listOfTaskEfforts[index], validation_data)
+                                                if (isValid) {
                                                     onAddAndSaveNewItem(index)
+                                                } else {
+                                                    notifyErrorMessage(message)
                                                 }
                                             }
-                                            }>Add</span>
+                                            }></LinkedText>
+                                          
                                         }
                                     </td>
                                 </tr>
@@ -332,9 +353,10 @@ export default function EffortsComponent(props) {
 
                         </tbody>
                     </table>
-                    <span className="text-sm text-blue-500 cursor-pointer w-fit pl-3 pb-2" onClick={onAddItemLineClick}>Add row</span>
 
-
+                    <div className='flex'>
+                        <LinkedText title={"Add row"} className="font-medium" onClick={onAddItemLineClick}></LinkedText>
+                    </div>
                 </div>
 
             }

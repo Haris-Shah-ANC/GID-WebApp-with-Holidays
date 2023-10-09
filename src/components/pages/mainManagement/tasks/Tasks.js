@@ -6,7 +6,7 @@ import { ALERTS, DATE, DURATION, END_TIME, MODULE, PROJECT, START_TIME, TASK, ad
 import PlainButton from '../../../custom/Elements/buttons/PlainButton';
 import { employee, getDeleteTaskEffortsUrl, getTasksUrl, getTheAddTaskEffortsUrl, getTheUpdateTaskEffortsUrl, get_all_project, get_task } from '../../../../api/urls';
 import { getLoginDetails, getWorkspaceInfo } from '../../../../config/cookiesInfo';
-import { getTimePeriods, getYesterday, notifyErrorMessage, notifySuccessMessage } from '../../../../utils/Utils';
+import { getPreviousWeek, getTimePeriods, getYesterday, notifyErrorMessage, notifySuccessMessage } from '../../../../utils/Utils';
 import Dropdown from '../../../custom/Dropdown/Dropdown';
 import IconInput from '../../../custom/Elements/inputs/IconInput';
 import EffortsPopup from './EffortsPopup';
@@ -24,8 +24,16 @@ timePeriods.push(
       from: getYesterday(),
       to: getYesterday()
     }
-  },
-)
+  },)
+timePeriods.splice(2,0,{
+  title: "Previous Week",
+  dates: {
+    from: getPreviousWeek().from,
+    to: getPreviousWeek().to
+  }
+})
+
+
 
 export default function Tasks(props) {
   const navigate = useNavigate();
@@ -259,10 +267,10 @@ export default function Tasks(props) {
               </IconInput>
             </div>
 
-            <div className=' py-2 flex-row bg-green-50 justify-center rounded-md'>
+            {/* <div className=' py-2 flex-row bg-green-50 justify-center rounded-md'>
               <span className={`text-medium p-3 text-blueGray-500 font-interVar font-semibold w-full font-quicksand`}>Total Duration (hr) : </span>
               <span className={`text-medium p-3  font-interVar font-bold w-full font-quicksand`}>{parseFloat(calculateDuration()).toFixed(2)} hrs</span>
-            </div>
+            </div> */}
 
           </div>
           : null}

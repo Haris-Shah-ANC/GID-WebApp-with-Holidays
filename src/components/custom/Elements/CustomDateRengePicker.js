@@ -16,7 +16,7 @@ export default function CustomDateRengePicker(props) {
         <div>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
                 {/* <DemoContainer components={['SingleInputDateRangeField']}> */}
-                <DateRangePicker slotProps={{ textField: { size: 'small', className: 'bg-white rounded-lg focus:outline-none w-full' } }}
+                <DateRangePicker slotProps={{ textField: { size: 'small',error:false,placeholder:"DD-MM-YYYY  -  DD-MM-YYYY", className: 'bg-white rounded-lg focus:outline-none w-full' } }}
                     // slots={{ field: SignIn }}
                     onChange={(e) => {
                         if (e[0] && e[1]) {

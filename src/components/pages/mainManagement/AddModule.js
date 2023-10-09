@@ -11,6 +11,10 @@ import PlainButton from '../../custom/Elements/buttons/PlainButton'
 import GidInput from '../../custom/Elements/inputs/GidInput'
 import ButtonWithImage from '../../custom/Elements/buttons/ButtonWithImage'
 import IconInput from '../../custom/Elements/inputs/IconInput'
+import CustomDateTimePicker from '../../custom/Elements/CustomDateTimePicker'
+import dayjs from 'dayjs'
+import { LinkedText } from '../../custom/Elements/buttons/LinkedText'
+import moment from 'moment'
 
 export default function AddModule(props) {
     const { work_id } = getWorkspaceInfo();
@@ -53,7 +57,7 @@ export default function AddModule(props) {
             { key: "module_name", message: 'Module field left empty!' },
             { key: "workspace_id", message: 'Workspace left empty!' },
             { key: "project_id", message: 'Project field left empty' },
-            { key: "deadline", message: 'Deadline field left empty' }
+            // { key: "deadline", message: 'Deadline field left empty' }
         ]
 
         // console.log(JSON.stringify(formData, 0, 2))
@@ -77,10 +81,28 @@ export default function AddModule(props) {
         }
     }
 
-
+    const onLinkTextClick = (btnTitle) => {
+        const tomorrow = moment().add(1, 'days');
+        const today = moment()
+        let tomorrowDate = tomorrow.format('YYYY-MM-DD') + "T20:00"
+        let todayDate = today.format('YYYY-MM-DD') + "T20:00"
+        if (btnTitle === "Today") {
+            setFormData((previous) => ({ ...previous, deadline: todayDate }))
+        } else {
+            setFormData((previous) => ({ ...previous, deadline: tomorrowDate }))
+        }
+    }
     return (
 
         <div>
+            <div className="flex items-center flex-row h-14  justify-between  border-solid border-slate-200 rounded-t text-black">
+                <h3 className="text-lg font-quicksand font-bold text-center w-full">{formData.task_id ? 'Update Task' : 'Add Module'}</h3>
+                <button
+                    className="text-lg w-10 h-10 ml-auto rounded-full focus:outline-none hover:bg-gray-200 flex justify-center items-center"
+                    onClick={() => setShowModal(false)}>
+                    <i className="fa-solid fa-times"></i>
+                </button>
+            </div>
             <form>
                 <div className="relative px-5 pt-2 flex-auto">
                     {projectsResults.length > 0 && <div className="my-1 flex flex-col">
@@ -107,18 +129,25 @@ export default function AddModule(props) {
 
                     <div className="my-4 flex flex-col">
                         <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={<span><i className="fa-solid fa-calendar-days text-base mb-1 mr-1"></i>Deadline</span>} />
-                        <IconInput
+                        <CustomDateTimePicker
                             id={"task_end_datetime"}
                             inputType={"datetime-local"}
                             disable={false}
-                            className={``}
+                            className={`w-full`}
                             value={formData.deadline ? formData.deadline : ""}
-                            onTextChange={(e) => setFormData((previous) => ({ ...previous, deadline: e.target.value }))}
+                            onDateChange={(val) => {
+                                setFormData((previous) => ({ ...previous, deadline: dayjs(val).toJSON() }))
+                            }}
                             onBlurEvent={() => { }}
                             placeholder={""}
                             isRightIcon={true}
                         >
-                        </IconInput>
+                        </CustomDateTimePicker>
+                        <div className='flex flex-row'>
+                            <LinkedText title={"Today"} onClick={onLinkTextClick}></LinkedText>
+                            <LinkedText title={"Tomorrow"} onClick={onLinkTextClick}></LinkedText>
+
+                        </div>
                     </div>
 
                 </div>

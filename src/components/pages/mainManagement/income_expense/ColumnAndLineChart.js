@@ -13,7 +13,7 @@ import { getWorkspaceInfo } from '../../../../config/cookiesInfo'
 export default function ColumnAndLineChart(props) {
     const { project, employee, period } = props
     const { work_id } = getWorkspaceInfo();
-    const [selectedTime, setTimePeriod] = useState(timePeriods[2])
+    const [selectedTime, setTimePeriod] = useState(timePeriods[0])
     const [data, setData] = useState([])
     const [capacityData, setCapacityInAmt] = useState({ capacity: 0, maxIncomeAmount: 0, maxYAxisAmt: null, hours: 0 })
     const [chartType, setChartType] = useState("Line Chart")

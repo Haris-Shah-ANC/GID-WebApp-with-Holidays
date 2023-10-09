@@ -15,7 +15,7 @@ import CheckRatePopup from './CheckRatePopup';
 import CustomDatePicker from '../../../custom/Elements/CustomDatePicker';
 
 const timePeriodsList = getTimePeriods()
-export default function Analysis(props) {
+export default function Analysis() {
     const navigate = useNavigate();
     const location = useLocation()
     const paramsData = location.state

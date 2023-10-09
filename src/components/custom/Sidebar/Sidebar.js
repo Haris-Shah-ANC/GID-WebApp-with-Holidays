@@ -226,8 +226,8 @@ const ChildItemComponent = (props) => {
               <React.Fragment>
                 <li className='p-2 text-gray-500 font-quicksand font-semibold text-sm'>Select Meeting:</li>
                 {meetingLinkList.map((item) => (
-                  <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm'>
-                    <a class="collapse-item" href={`${item.meeting_link}`} target="_blank">{item.meeting_title}</a>
+                  <li className='cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm'>
+                    <a class="collapse-item  flex p-2 mt-1" href={`${item.meeting_link}`} target="_blank">{item.meeting_title}</a>
                   </li>
                 )
                 )}

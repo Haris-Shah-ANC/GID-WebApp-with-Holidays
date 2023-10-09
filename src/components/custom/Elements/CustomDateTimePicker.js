@@ -16,27 +16,22 @@ export default function CustomDateTimePicker(props) {
     const handleValueChange = (value) => {
         onDateChange(value)
     }
-    console.log("VALUE",value)
 
     return (
 
         <div className={tailwindMergedCSS} >
             <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <MobileDateTimePicker
-                    slotProps={{ textField: { size: 'small', className: `bg-white rounded-lg focus:outline-none ${className}` } }}
+                    slotProps={{ textField: { size: 'small', error: false, placeholder: 'DD-MM-YYYY', className: `bg-white rounded-lg focus:outline-none ${className}` } }}
                     value={dayjs(value)}
                     format="DD-MM-YYYY hh:mm A"
                     maxDate={maxDate && dayjs(maxDate)}
                     minDate={minDate && dayjs(minDate)}
                     onAccept={(e) => {
-                        console.log("EVENT", e, dayjs(e).format("DD-MM-YYYY HH:mm A",), "------------", dayjs(e).toJSON())
                         handleValueChange(e)
-
                     }}
-                    
                 />
             </LocalizationProvider>
-
         </div>
 
 

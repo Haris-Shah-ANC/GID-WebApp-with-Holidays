@@ -36,6 +36,9 @@ import PlainButtonButton from '../../custom/Elements/buttons/PlainButton';
 import GidInput from '../../custom/Elements/inputs/GidInput';
 import IconInput from '../../custom/Elements/inputs/IconInput';
 import GIDTextArea from '../../custom/Elements/inputs/GIDTextArea';
+import dayjs from 'dayjs';
+import CustomDateTimePicker from '../../custom/Elements/CustomDateTimePicker';
+import { LinkedText } from '../../custom/Elements/buttons/LinkedText';
 
 
 const AssignTask = () => {
@@ -113,7 +116,7 @@ const CustomTable = (props) => {
             setFilteredArray(assignedTasks)
             return assignedTasks;
         }
-        setFilteredArray(assignedTasks.filter((item) => 
+        setFilteredArray(assignedTasks.filter((item) =>
             item.employee_name.toLowerCase().includes(searchTerm.toLowerCase())))
     };
     return (
@@ -134,11 +137,11 @@ const CustomTable = (props) => {
                                     setSearchTerm(e.target.value);
                                     getFilteredTask(e.target.value)
                                 }}
-                                onBlurEvent={() => {}}
+                                onBlurEvent={() => { }}
                                 icon={<i className="fa-solid fa-magnifying-glass"></i>}
                                 placeholderMsg={"Search with Employee Name"}
                                 isRightIcon={true}
-                                >
+                            >
                             </IconInput>
                         </div>
                     </div>
@@ -152,7 +155,7 @@ const CustomTable = (props) => {
                                 return (
                                     <th
                                         key={index}
-                                        className={`px-6 py-3 text-sm ${item.fields.toLowerCase() ==="status" ? "text-center": "text-left"} bg-blueGray-100 text-blueGray-500 border-blueGray-200 rounded-sm font-quicksand font-bold break-words`}
+                                        className={`px-6 py-3 text-sm ${item.fields.toLowerCase() === "status" ? "text-center" : "text-left"} bg-blueGray-100 text-blueGray-500 border-blueGray-200 rounded-sm font-quicksand font-bold break-words`}
                                     >
                                         {item.fields}
                                     </th>
@@ -161,7 +164,7 @@ const CustomTable = (props) => {
                         </tr>
                     </thead>
                     <tbody className="bg-white divide-y divide-gray-200">
-                        { filteredArray.length > 0 &&
+                        {filteredArray.length > 0 &&
                             filteredArray.map((item, index) => {
                                 return (
                                     <tr key={index}>
@@ -178,7 +181,7 @@ const CustomTable = (props) => {
                                             <div className="font-quicksand font-medium text-sm">{item.task}</div>
                                         </td>
                                         <td className="px-6 py-4 ">
-                                            <div className={task_status_color(item.status)+`font-quicksand font-medium text-sm text-white w-full justify-center`}>
+                                            <div className={task_status_color(item.status) + `font-quicksand font-medium text-sm text-white w-full justify-center`}>
                                                 {item.status}
                                             </div>
                                         </td>
@@ -194,11 +197,11 @@ const CustomTable = (props) => {
                                 );
                             })
                         }
-                        
+
                     </tbody>
                 </table>
                 {
-                    filteredArray.length === 0 && 
+                    filteredArray.length === 0 &&
                     <div className='h-12 flex flex-col  justify-center items-center'>
                         <div className='flex'>
                             <p className='font-quicksand font-medium text-md mr-1'>No tasks found </p>
@@ -244,7 +247,7 @@ const AssignedTask = () => {
             dispatch: dispatch,
             url: get_all_project(id),
         })
-        if(res)
+        if (res)
             if (res.success) {
                 setProjectsResults([{ project_name: 'Select project' }, ...res.result])
             }
@@ -256,7 +259,7 @@ const AssignedTask = () => {
             dispatch: dispatch,
             url: get_project_module(w_id, p_id),
         })
-        if(res)
+        if (res)
             if (res.success) {
                 setModuleResults([{ module_name: 'Select module' }, ...res.project_module_list])
             }
@@ -268,7 +271,7 @@ const AssignedTask = () => {
             navigate: navigate,
             dispatch: dispatch,
         })
-        if(res)
+        if (res)
             if (res.success) {
                 let filterResults = res.results.filter((item) => item.id !== user_id)
                 setEmployeeResults([{ employee_name: 'Select Employee' }, ...filterResults])
@@ -309,7 +312,7 @@ const AssignedTask = () => {
                 url: assign_task(),
                 data: { ...formData, dead_line: formattedDeadline(formData.dead_line) },
             })
-            if(res){
+            if (res) {
                 if (res.success) {
                     notifySuccessMessage(res.status);
                     navigate(routesName.assignTask.path);
@@ -317,11 +320,22 @@ const AssignedTask = () => {
                     notifyErrorMessage(res.detail)
                 }
             }
-            
+
         } else {
             notifyErrorMessage(message)
         }
     };
+    const onLinkTextClick = (btnTitle) => {
+        const tomorrow = moment().add(1, 'days');
+        const today = moment()
+        let tomorrowDate = tomorrow.format('YYYY-MM-DD') + "T20:00"
+        let todayDate = today.format('YYYY-MM-DD') + "T20:00"
+        if (btnTitle === "Today") {
+            setFormData((previous) => ({ ...previous, dead_line: todayDate }))
+        } else {
+            setFormData((previous) => ({ ...previous, dead_line: tomorrowDate }))
+        }
+    }
     return (
         <div className="w-full mb-10 border-0 rounded-xl shadow-lg flex flex-col bg-white outline-none focus:outline-none">
             {/* header */}
@@ -338,42 +352,49 @@ const AssignedTask = () => {
                     </div>
 
                     <div className="my-3 flex flex-col">
-                        <CustomLabel label={`Select Project`} className={'py-1'}/>
+                        <CustomLabel label={`Select Project`} className={'py-1'} />
                         <Dropdown placeholder={true} options={projectsResults} optionLabel="project_name" value={selectedProject ? selectedProject : { project_name: 'Select project' }} setValue={(value) => setFormData((previous) => ({ ...previous, project_id: value ? value.project_id : null }))} />
                     </div>
 
                     {!formData.task_id && (
                         <div className="my-3 flex flex-col">
-                            <CustomLabel label={`Select Module`} className={'py-1'}/>
+                            <CustomLabel label={`Select Module`} className={'py-1'} />
                             <Dropdown placeholder={true} options={moduleResults} optionLabel="module_name" value={selectedModule ? selectedModule : { module_name: 'Select project' }} setValue={(value) => setFormData((previous) => ({ ...previous, module_id: value ? value.module_id : null }))} />
                         </div>
                     )}
 
                     <div className="my-3 flex flex-col">
-                        <CustomLabel label={`Description`} className={'py-1'}/>
+                        <CustomLabel label={`Description`} className={'py-1'} />
                         <GIDTextArea
-                            id={"task_description"} disable={false} className={"h-20"} value={formData.task} 
-                            onBlurEvent={() => {}} 
-                            placeholderMsg={"Add the task description"} 
+                            id={"task_description"} disable={false} className={"h-20"} value={formData.task}
+                            onBlurEvent={() => { }}
+                            placeholderMsg={"Add the task description"}
                             onTextChange={(e) => setFormData((previous) => ({ ...previous, task: e.target.value }))}>
                         </GIDTextArea>
                     </div>
 
                     <div className="my-3 flex flex-col">
                         <CustomLabel className={`ml-0 py-1`} label={<span><i className="fa-solid fa-calendar-days text-base mr-1"></i>Deadline</span>} />
-                        <IconInput
-                                inputType={"datetime-local"}
-                                disable={false}
-                                className={`w-full`}
-                                value={formData.dead_line ? formData.dead_line : ''}
-                                onTextChange={(e) => {
-                                    setFormData((previous) => ({ ...previous, dead_line: e.target.value }))
-                                }}
-                                onBlurEvent={() => {}}
-                                placeholder={""}
-                                isRightIcon={true}
-                                >
-                            </IconInput>
+
+                        <CustomDateTimePicker
+                            id={"task_end_datetime"}
+                            inputType={"datetime-local"}
+                            disable={false}
+                            className={`w-full`}
+                            value={formData.dead_line ? formData.dead_line : ""}
+                            onDateChange={(val) => {
+                                setFormData((previous) => ({ ...previous, dead_line: dayjs(val).toJSON() }))
+                            }}
+                            onBlurEvent={() => { }}
+                            placeholder={""}
+                            isRightIcon={true}
+                        >
+                        </CustomDateTimePicker>
+                        <div className='flex flex-row'>
+                            <LinkedText title={"Today"} onClick={onLinkTextClick}></LinkedText>
+                            <LinkedText title={"Tomorrow"} onClick={onLinkTextClick}></LinkedText>
+
+                        </div>
                     </div>
                 </div>
 

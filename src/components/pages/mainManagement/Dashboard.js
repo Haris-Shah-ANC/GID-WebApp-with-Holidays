@@ -507,7 +507,7 @@ const Dashboard = () => {
                     height: 'calc(100vh - 215px)',
 
                 }}>
-                <div className=" mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 pb-6 ">
+                <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-6 pb-6 ">
                     {tasksResults.length > 0 && tasksResults.map((item, index) => {
                         return (
                             <DashboardCard {...item} onEditClick={onTaskEditClick} onTaskComplete={onTaskComplete} onHoldClick={onHoldClick} />
