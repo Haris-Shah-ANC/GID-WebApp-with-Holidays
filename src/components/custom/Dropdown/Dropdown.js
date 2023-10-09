@@ -22,7 +22,6 @@ const Dropdown = (props) => {
         {options.map((item, index) => {
           return (
             <React.Fragment key={index} >
-            
                 {
                   placeholder && index === 0 ?
                     <option value={JSON.stringify(item)} className="placeholder-blueGray-200 cursor-pointer font-quicksand font-medium mt-4">

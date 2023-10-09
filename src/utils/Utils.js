@@ -362,6 +362,20 @@ export const getTimePeriods = () => {
     // },
   ]
 }
+export const isDateBetweenDates = (period, date) => {
+  try {
+    var compareDate = moment(date, "YYYY-MM-DD")
+    var startDate = moment(period.dates.from, "YYYY-MM-DD");
+    var endDate = moment(period.dates.to, "YYYY-MM-DD");
+    return compareDate.isSameOrAfter(startDate) && compareDate.isSameOrBefore(endDate); //false in this case
+  }
+  catch {
+    console.log("ERROR IN COMPARING DATES")
+
+
+  }
+
+}
 export const timePeriods = [
   { name: "Daily", value: "daily" },
   { name: "Weekly", value: "weekly" },

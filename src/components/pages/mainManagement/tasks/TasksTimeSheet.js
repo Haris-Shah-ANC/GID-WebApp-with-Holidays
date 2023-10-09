@@ -10,7 +10,7 @@ import { getLoginDetails } from '../../../../config/cookiesInfo'
 import TaskStatusLabel from '../../../custom/TaskStatusLabel'
 
 export default function TasksTimeSheet(props) {
-    const { tasks, onAddEffortClick, onItemClick, onDeleteEffort, onEffortItemClick, onEffortUpdate, fromAlerts, isAllEmployeeFilter } = props
+    const { tasks, onAddEffortClick, onItemClick, onDeleteEffort, onEffortItemClick, onEffortUpdate, fromAlerts, isAllEmployeeFilter, period } = props
     const navigate = useNavigate()
     const loginDetails = getLoginDetails();
 
@@ -50,13 +50,8 @@ export default function TasksTimeSheet(props) {
             <tbody className=" divide-y divide-gray-200 table-fixed">
                 {
                     tasks.map((item, index) => {
-                        return <TableRow loggedInUserId={user_id} isAllEmployeeFilter={isAllEmployeeFilter} onEffortUpdate={onEffortUpdate} onAddEffortClick={onAddEffortClick} onItemClick={onItemClick} item={item} index={index} deleteTaskEfforts={deleteTaskEfforts} onEffortEditClick={onEffortEditClick} />
-                        // if (fromAlerts) {
-                        //     if (parseFloat(item.total_working_duration) == 0)
-                        //         return <TableRow isAllEmployeeFilter={isAllEmployeeFilter} loggedInUserId={user_id} onEffortUpdate={onEffortUpdate} onAddEffortClick={onAddEffortClick} onItemClick={onItemClick} item={item} index={index} deleteTaskEfforts={deleteTaskEfforts} onEffortEditClick={onEffortEditClick}></TableRow>
-                        // } else {
-                        //     return <TableRow loggedInUserId={user_id} onEffortUpdate={onEffortUpdate} onAddEffortClick={onAddEffortClick} onItemClick={onItemClick} item={item} index={index} deleteTaskEfforts={deleteTaskEfforts} onEffortEditClick={onEffortEditClick}></TableRow>
-                        // }
+                        return <TableRow period={period} loggedInUserId={user_id} isAllEmployeeFilter={isAllEmployeeFilter} onEffortUpdate={onEffortUpdate} onAddEffortClick={onAddEffortClick} onItemClick={onItemClick} item={item} index={index} deleteTaskEfforts={deleteTaskEfforts} onEffortEditClick={onEffortEditClick} />
+
                     })
                 }
             </tbody>
@@ -76,7 +71,7 @@ function TableHeader(props) {
 }
 
 function TableRow(props) {
-    const { onAddEffortClick, item, index, deleteTaskEfforts, onEffortEditClick, onEffortUpdate, onItemClick, loggedInUserId, isAllEmployeeFilter } = props
+    const { onAddEffortClick, item, index, deleteTaskEfforts, onEffortEditClick, onEffortUpdate, onItemClick, loggedInUserId, isAllEmployeeFilter, period } = props
 
     const calculateDuration = (item) => {
         return item.list_task_record.reduce((total, currentValue) => total = parseFloat(total) + parseFloat(currentValue.working_duration), 0)
@@ -140,7 +135,7 @@ function TableRow(props) {
                 <td colSpan={12}>
                     <div className=''>
                         <div className='w-[45vh] py-3'>
-                            <EffortsComponent data={item} onEffortUpdate={(total) => onEffortUpdate(total)} isVisible={item.is_selected} setUpdateEffortsStatus={() => { }} />
+                            <EffortsComponent data={item} period={period} onEffortUpdate={(total) => onEffortUpdate(total)} isVisible={item.is_selected} setUpdateEffortsStatus={() => { }} />
                         </div>
 
                     </div>

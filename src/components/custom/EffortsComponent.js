@@ -1,6 +1,6 @@
 import { useState, useContext, useEffect } from "react"
 import GidInput from "./Elements/inputs/GidInput"
-import { formatDate, isFormValid, notifyErrorMessage, notifyInfoMessage, notifySuccessMessage } from "../../utils/Utils"
+import { formatDate, isDateBetweenDates, isFormValid, notifyErrorMessage, notifyInfoMessage, notifySuccessMessage } from "../../utils/Utils"
 import { getDeleteTaskEffortsUrl, getTheAddTaskEffortsUrl, getTheListOfTaskEffortsUrl, getTheUpdateTaskEffortsUrl } from "../../api/urls"
 import { useNavigate } from 'react-router-dom';
 import * as Actions from '../../state/Actions';
@@ -11,13 +11,13 @@ import moment from "moment";
 import { LinkedText } from "./Elements/buttons/LinkedText";
 
 export default function EffortsComponent(props) {
-    const { data, onEffortUpdate = () => { }, isVisible, updateEffortsStatus, onEffortsAddedSuccess, setUpdateEffortsStatus } = props
+    const { data, onEffortUpdate = () => { }, isVisible, updateEffortsStatus, onEffortsAddedSuccess, setUpdateEffortsStatus, period } = props
     const { work_id } = getWorkspaceInfo();
     const [listOfTaskEfforts, setListOfEfforts] = useState([])
     const navigate = useNavigate();
     const dispatch = Actions.getDispatch(useContext);
     const [editItem, setEditItem] = useState()
-
+    const [latestEffort, setLatestEffortDuration] = useState(0)
     let validation_data = [
         { key: "working_duration", message: `Duration field left empty!` },
         { key: "working_date", message: `Date field left empty!` },]
@@ -82,10 +82,20 @@ export default function EffortsComponent(props) {
         let res = await apiAction({ url: getTheListOfTaskEffortsUrl(work_id, data.task_id ? data.task_id : data.id), method: 'get', data: {}, navigate: navigate, dispatch: dispatch })
             .then((response) => {
                 if (response) {
-                    setListOfEfforts(response.result.list_task_record)
-                    onEffortUpdate(response.result.total_task_duration)
-                    if (response.result.list_task_record.length == 0) {
+                    let listOfEfforts = response.result.list_task_record
+                    setListOfEfforts(listOfEfforts)
+                    if (listOfEfforts.length == 0) {
                         onAddItemLineClick()
+                    }
+                    let totalEffortsBetweenDates = 0
+                    listOfEfforts.map((item) => {
+                        console.log("DATE---", item.working_date, isDateBetweenDates(period, item.working_date))
+                        if (isDateBetweenDates(period, item.working_date)) {
+                            totalEffortsBetweenDates += Number(item.working_duration)
+                        }
+                    })
+                    if (totalEffortsBetweenDates > 0) {
+                        onEffortUpdate(totalEffortsBetweenDates)
                     }
                 }
             })
@@ -141,6 +151,7 @@ export default function EffortsComponent(props) {
                 const { message, isValid, key } = isFormValid(listOfTaskEfforts[i], validation_data)
                 if (isValid) {
                     currentAddedEffortsList.push({ hour: listOfTaskEfforts[i].working_duration, ...listOfTaskEfforts[i] })
+
                 } else {
                     setUpdateEffortsStatus(false)
                     notifyErrorMessage(message)
@@ -151,6 +162,7 @@ export default function EffortsComponent(props) {
         if (editItem) {
             const { message, isValid, key } = isFormValid(editItem, validation_data)
             if (isValid) {
+
                 updateEfforts({ workspace_id: work_id, working_date: editItem.working_date, hour: editItem.working_duration, task_record_id: editItem.id })
             } else {
                 setUpdateEffortsStatus(false)
@@ -158,6 +170,7 @@ export default function EffortsComponent(props) {
                 return
             }
         }
+
         if (currentAddedEffortsList.length > 0) {
             addEmployeeTaskEfforts(currentAddedEffortsList)
         } else {
@@ -315,7 +328,7 @@ export default function EffortsComponent(props) {
                                     </td>
                                     <td className="py-4 text-right justify-end flex mr-4 ">
                                         {item.id ? editItem && editItem.id == item.id ?
-                                             <LinkedText title={"Update"} className="font-medium" onClick={() => {
+                                            <LinkedText title={"Update"} className="font-medium" onClick={() => {
                                                 const { message, key, isValid } = isFormValid(editItem, validation_data)
                                                 if (isValid) {
                                                     onUpdateEfforts(index, item)
@@ -345,7 +358,7 @@ export default function EffortsComponent(props) {
                                                 }
                                             }
                                             }></LinkedText>
-                                          
+
                                         }
                                     </td>
                                 </tr>

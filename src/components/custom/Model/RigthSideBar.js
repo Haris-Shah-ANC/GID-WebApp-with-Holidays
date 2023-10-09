@@ -5,7 +5,7 @@ import * as Actions from '../../../state/Actions';
 import { apiAction } from "../../../api/api";
 import { getLoginDetails, getWorkspaceInfo } from "../../../config/cookiesInfo";
 import moment from "moment";
-import { formatDate } from "../../../utils/Utils";
+import { formatDate, isFormValid } from "../../../utils/Utils";
 import { Typography } from "@mui/material";
 
 export default function CommentsSideBar(props) {
@@ -16,7 +16,6 @@ export default function CommentsSideBar(props) {
     const dispatch = Actions.getDispatch(useContext);
     const { work_id } = getWorkspaceInfo();
     const { user_id } = getLoginDetails(useNavigate());
-
     let MIN_TEXTAREA_HEIGHT = 50;
     const textFieldRef = useRef(null)
 
@@ -28,15 +27,16 @@ export default function CommentsSideBar(props) {
             textFieldRef.current.scrollHeight,
             MIN_TEXTAREA_HEIGHT
         )}px`;
-    }, [chatList]);
+    }, [msgData.reply]);
 
     useEffect(() => {
         getCommentList()
-       
-    }, []);
+    }, [taskData])
+    
     useLayoutEffect(() => {
         scrollToBottom()
     }, [chatList])
+
     const scrollToBottom = () => {
         var element = document.querySelector('#element');
 
@@ -149,7 +149,10 @@ export default function CommentsSideBar(props) {
                                 console.log("nativeEvent", e.nativeEvent);
 
                                 // Destructure and update msgData
-                                setMsgData({ ...msgData, reply: e.target.value });
+                                if (e.target.value != " ") {
+                                    setMsgData({ ...msgData, reply: e.target.value });
+                                }
+
 
                                 // Check for the condition
                                 if (e.target.value.includes("/") && e.nativeEvent.inputType === "insertFromPaste") {
@@ -184,7 +187,7 @@ export default function CommentsSideBar(props) {
                             }}
                         />
                     </div>
-                    {msgData.reply !== "" &&
+                    {msgData.reply != "" &&
                         <div className="flex justify-center text-center items-center pl-2">
                             <svg
                                 viewBox="0 0 24 24"

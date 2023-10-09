@@ -6,7 +6,7 @@ import { ALERTS, DATE, DURATION, END_TIME, MODULE, PROJECT, START_TIME, TASK, ad
 import PlainButton from '../../../custom/Elements/buttons/PlainButton';
 import { employee, getDeleteTaskEffortsUrl, getTasksUrl, getTheAddTaskEffortsUrl, getTheUpdateTaskEffortsUrl, get_all_project, get_task } from '../../../../api/urls';
 import { getLoginDetails, getWorkspaceInfo } from '../../../../config/cookiesInfo';
-import { getPreviousWeek, getTimePeriods, getYesterday, notifyErrorMessage, notifySuccessMessage } from '../../../../utils/Utils';
+import { formatDate, getPreviousWeek, getTimePeriods, getYesterday, notifyErrorMessage, notifySuccessMessage } from '../../../../utils/Utils';
 import Dropdown from '../../../custom/Dropdown/Dropdown';
 import IconInput from '../../../custom/Elements/inputs/IconInput';
 import EffortsPopup from './EffortsPopup';
@@ -20,13 +20,16 @@ const timePeriods = getTimePeriods()
 timePeriods.push(
   {
     title: "Yesterday",
+    period: `(${formatDate(getYesterday(), "DD MMM YY")})`,
     dates: {
       from: getYesterday(),
       to: getYesterday()
     }
   },)
-timePeriods.splice(2,0,{
+timePeriods.splice(2, 0, {
   title: "Previous Week",
+  subTitle: "previous week",
+  period: `(${formatDate(getPreviousWeek().from, "DD MMM YY")} - ${formatDate(getPreviousWeek().to, "DD MMM YY")})`,
   dates: {
     from: getPreviousWeek().from,
     to: getPreviousWeek().to
@@ -61,7 +64,7 @@ export default function Tasks(props) {
     if (props && props.taskData) {
       setTasks(props.taskData)
     } else {
-      getTaskList(URL)
+      getTaskList(selectedProject, selectedEmployee)
     }
 
   }, [selectedDuration, searchText, customPeriod])
@@ -210,9 +213,9 @@ export default function Tasks(props) {
   const onEffortUpdate = (totalTaskDuration) => {
     // const is_selected = tasks[selectedTask.index].is_selected
     // tasks[selectedTask.index].is_selected = is_selected
+    console.log("TOTAL DURATION", totalTaskDuration)
     tasks[selectedTask.index]['total_working_duration'] = totalTaskDuration
     setTasks([...tasks])
-
   }
   const onCustomPeriodChange = (fromDate, toDate) => {
     setCustomPeriod({ ...customPeriod, fromDate: fromDate, toDate: toDate })
@@ -233,9 +236,8 @@ export default function Tasks(props) {
               }} />
             </div>
             <div className=''>
-              <Dropdown options={timePeriods} optionLabel="title" value={selectedDuration ? selectedDuration : { title: 'Select Option' }} setValue={(value) => {
+              <Dropdown options={timePeriods} optionDescLabel={"period"} optionLabel="title" value={selectedDuration ? selectedDuration : { title: 'Select Option' }} setValue={(value) => {
                 selectDuration(value)
-
               }} />
             </div>
 
@@ -277,7 +279,7 @@ export default function Tasks(props) {
         {
           tasks.length > 0 &&
           <div className='overflow-auto' style={{ height: 'calc(100vh - 170px)', ...props.style }}>
-            <TasksTimeSheet isAllEmployeeFilter={selectedEmployee ? selectedEmployee.employee_name == "All Employee" : true} fromAlerts={props && props.from == ALERTS} tasks={tasks} onEffortUpdate={onEffortUpdate} onAddEffortClick={onAddEffortClick} onItemClick={onItemClick} onDeleteEffort={onDeleteEffort} onEffortItemClick={onEffortItemClick}></TasksTimeSheet>
+            <TasksTimeSheet period={selectedDuration} isAllEmployeeFilter={selectedEmployee ? selectedEmployee.employee_name == "All Employee" : true} fromAlerts={props && props.from == ALERTS} tasks={tasks} onEffortUpdate={onEffortUpdate} onAddEffortClick={onAddEffortClick} onItemClick={onItemClick} onDeleteEffort={onDeleteEffort} onEffortItemClick={onEffortItemClick}></TasksTimeSheet>
           </div>
         }
 
