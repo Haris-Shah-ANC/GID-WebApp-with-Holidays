@@ -188,6 +188,9 @@ export default function EffortsComponent(props) {
         }
         setListOfEfforts([...listOfTaskEfforts])
     }
+    const calculateDuration = () => {
+        return listOfTaskEfforts.reduce((total, currentValue) => total = total + parseFloat(currentValue.working_duration), 0)
+    }
     return (
         <>
             {isVisible &&
@@ -364,6 +367,17 @@ export default function EffortsComponent(props) {
                                 </tr>
                             ))}
 
+                            <tr className="bg-gray-200">
+                                <td className="font-semibold font-quicksand pl-3 font-medium">
+                                        Total
+                                </td>
+                                <td className="font-semibold font-quicksand font-medium" align="center">
+                                        {(calculateDuration().toFixed(2))} Hrs
+                                </td>
+                                <td>
+
+                                </td>
+                            </tr>
                         </tbody>
                     </table>
 
