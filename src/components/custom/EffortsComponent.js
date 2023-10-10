@@ -17,7 +17,7 @@ export default function EffortsComponent(props) {
     const navigate = useNavigate();
     const dispatch = Actions.getDispatch(useContext);
     const [editItem, setEditItem] = useState()
-    const [latestEffort, setLatestEffortDuration] = useState(0)
+    const [totalEfforts, setTotalEfforts] = useState(0.00)
     let validation_data = [
         { key: "working_duration", message: `Duration field left empty!` },
         { key: "working_date", message: `Date field left empty!` },]
@@ -83,13 +83,14 @@ export default function EffortsComponent(props) {
             .then((response) => {
                 if (response) {
                     let listOfEfforts = response.result.list_task_record
+                    setTotalEfforts(parseFloat(response.result.total_task_duration).toFixed(2))
                     setListOfEfforts(listOfEfforts)
                     if (listOfEfforts.length == 0) {
                         onAddItemLineClick()
                     }
                     let totalEffortsBetweenDates = 0
                     listOfEfforts.map((item) => {
-                        console.log("DATE---", item.working_date, isDateBetweenDates(period, item.working_date))
+
                         if (isDateBetweenDates(period, item.working_date)) {
                             totalEffortsBetweenDates += Number(item.working_duration)
                         }
@@ -189,6 +190,7 @@ export default function EffortsComponent(props) {
         setListOfEfforts([...listOfTaskEfforts])
     }
     const calculateDuration = () => {
+        console.log("TIME", listOfTaskEfforts.reduce((total, currentValue) => total = total + parseFloat(currentValue.working_duration), 0))
         return listOfTaskEfforts.reduce((total, currentValue) => total = total + parseFloat(currentValue.working_duration), 0)
     }
     return (
@@ -369,10 +371,10 @@ export default function EffortsComponent(props) {
 
                             <tr className="bg-gray-200">
                                 <td className="font-semibold font-quicksand pl-3 font-medium">
-                                        Total
+                                    Total
                                 </td>
                                 <td className="font-semibold font-quicksand font-medium" align="center">
-                                        {(calculateDuration().toFixed(2))} Hrs
+                                    {listOfTaskEfforts.length > 0 ? totalEfforts : "0.00"} Hrs
                                 </td>
                                 <td>
 
