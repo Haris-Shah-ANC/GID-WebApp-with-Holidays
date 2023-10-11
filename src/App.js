@@ -13,8 +13,12 @@ import {
   Navigate,
   BrowserRouter,
 } from "react-router-dom";
-
 const App = () => {
+
+  const NoMatchPage = () => {
+    return <h3>404 - Not found</h3>;
+  };
+
   return (
     <BrowserRouter>
       <StateProvider>
@@ -28,7 +32,8 @@ const App = () => {
 
           {/* need to hide when landing page is there */}
           <Route path="/" element={<Navigate replace to="/auth/login" />} />
-
+          <Route  path="/404" element={NoMatchPage}/>
+          <Route from='*' element={<Navigate to="/404" />} />
         </Routes>
       </StateProvider>
     </BrowserRouter>

@@ -31,6 +31,7 @@ export const PROJECT = "Project"
 export const EMPLOYEE = "Employee"
 export const MODULE = "Module"
 export const ALERTS="Alerts"
+export const MAPPING="mapping"
 export const ROLES = [
     {role: "Employee", short_name: "employee", id:1},
     {role: "Admin", short_name: "admin", id:2},

@@ -27,4 +27,10 @@ export const stateChange = (key, value) => {
     value,
   };
 };
+export const resetFileImports = (dispatch) => {
+  dispatch(stateChange("mappings", { ...initialState.mappings }))
+  dispatch(stateChange("mapping", initialState.mapping))
+  dispatch(stateChange("model_fields", []))
+  dispatch(stateChange("activeStep", initialState.activeStep))
+}
  

@@ -25,6 +25,7 @@ function MainLayout() {
 
   const ProtectedRoute = ({ children }) => {
     // if (false) {
+
     if (!isAuthenticated()) {
       return <Navigate to={"/auth" + routesName.login.path} replace={true} />;
     } else {
@@ -57,12 +58,11 @@ function MainLayout() {
     setShow(true);
   }
   useEffect(() => {
-    dispatch(Actions.stateChange("workspace", getWorkspaceInfo()))
+    if (isAuthenticated()){
+      dispatch(Actions.stateChange("workspace", getWorkspaceInfo()))
+    }
     // notifyMe2()
   }, [])
-
-  useEffect(() => {
-  }, [dispatch.modalVisibility])
 
   // if (!isTokenFound) {
   //   notifyMe()
@@ -115,9 +115,9 @@ function MainLayout() {
     <React.Fragment>
       {/* <audio ref={audioPlayer} src={NotificationSound} /> */}
       <div className="flex w-screen h-screen bg-screenBackgroundColor relative overflow-hidden">
-        <SidebarContainer></SidebarContainer>
+        {isAuthenticated() && <SidebarContainer />}
         <div className="w-full flex-1">
-          <Navbar logOutClick={logOutFromTheApp}></Navbar>
+          {isAuthenticated() && <Navbar logOutClick={logOutFromTheApp} />}
           <div className="p-2 overflow-auto" style={{ height: '100%' }}>
             <Routes>
               {

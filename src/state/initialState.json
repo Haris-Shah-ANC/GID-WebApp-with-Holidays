@@ -2,5 +2,18 @@
     "loader": false,
     "workspace": null,
     "userinfo": null,
-    "modalVisibility": false
+    "modalVisibility": false,
+    "mappings": {
+        "file_headers": [],
+        "uploadedFile": null,
+        "rows": [],
+        "fileName": "",
+        "fileExtension": "",
+        "columns": [],
+        "mapped_headers": []
+    },
+    "model_fields": [],
+    "mapping": null,
+    "activeStep": 0,
+    "mapping_for": "time_sheet"
 }

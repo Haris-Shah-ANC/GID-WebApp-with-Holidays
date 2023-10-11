@@ -64,6 +64,7 @@ const CreateNewTask = (props) => {
     const [employeeList, setEmployeeList] = React.useState([{ employee_name: 'Self' }]);
     const [isEffortsTableVisible, setEffortsTableVisible] = useState(false)
     const [updateEffortsStatus, setUpdateEffortsStatus] = useState(false)
+
     const getProjectsResultsApi = async (id) => {
         let res = await apiAction({
             method: 'get',
@@ -71,9 +72,15 @@ const CreateNewTask = (props) => {
             dispatch: dispatch,
             url: get_all_project(id),
         })
-        if (res.success) {
-            setProjectsResults([{ project_name: 'Select project' }, ...res.result])
-        }
+            .then((response) => {
+                if (response.success) {
+                    setProjectsResults([{ project_name: 'Select project' }, ...res.result])
+                }
+            })
+            .catch((error) => {
+                console.log("ERROR", error)
+            })
+
     }
     const getModuleResultsApi = async (w_id, p_id) => {
         let res = await apiAction({
@@ -82,9 +89,15 @@ const CreateNewTask = (props) => {
             dispatch: dispatch,
             url: get_project_module(w_id, p_id),
         })
-        if (res.success) {
-            setModuleResults([{ module_name: 'Select module' }, ...res.project_module_list])
-        }
+            .then((response) => {
+                if (response.success) {
+                    setModuleResults([{ module_name: 'Select module' }, ...res.project_module_list])
+                }
+            })
+            .catch((error) => {
+                console.log("ERROR", error)
+            })
+
     }
     const getEmployeeList = async () => {
         let res = await apiAction({
@@ -93,15 +106,21 @@ const CreateNewTask = (props) => {
             dispatch: dispatch,
             url: employee(work_id),
         })
-        if (res.success) {
-            let employeeData = res.results
-            for (let index in employeeData) {
-                if (employeeData[index].id == user_id) {
-                    employeeData.splice(index, 1)
+            .then((response) => {
+                if (response.success) {
+                    let employeeData = response.results
+                    for (let index in employeeData) {
+                        if (employeeData[index].id == user_id) {
+                            employeeData.splice(index, 1)
+                        }
+                    }
+                    setEmployeeList([{ employee_name: "Self" }, ...employeeData])
                 }
-            }
-            setEmployeeList([{ employee_name: "Self" }, ...employeeData])
-        }
+            })
+            .then((error) => {
+                console.log("ERROR", error)
+            })
+        
     }
     React.useEffect(() => {
         if (formData.project_id) {

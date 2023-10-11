@@ -39,10 +39,11 @@ export const isAuthenticated = () => {
 export const setWorkspaceInfo = (info) => {
     Cookies.set('workspace-info', JSON.stringify(info));
 }
+
 export const getWorkspaceInfo = (navigate) => {
     if (Cookies.get('workspace-info')) {
         return JSON.parse(Cookies.get('workspace-info'));
-    }else{
+    } else {
         // navigate("/auth" + routesName.login.path)
         window.location.reload()
     }
@@ -55,4 +56,9 @@ export const clearCookie = () => {
     Cookies.remove('login-detail')
     Cookies.remove('workspace-info')
     Cookies.remove('gid-loginStatus')
+}
+
+///////////////////////////////Mapping info///////////////////////////////////
+export const setMappingInfo = (info) => {
+    Cookies.set('mappings', JSON.stringify(info));
 }

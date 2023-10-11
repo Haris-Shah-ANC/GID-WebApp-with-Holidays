@@ -18,6 +18,7 @@ import Budget from "../components/pages/mainManagement/income_expense/Budget";
 import Analysis from "../components/pages/mainManagement/income_expense/Analysis";
 import Tasks from "../components/pages/mainManagement/tasks/Tasks";
 import Alerts from "../components/pages/mainManagement/Alerts";
+import { UploadTimesheet } from "../components/pages/mainManagement/file_upload/UploadTimesheet";
 
 export const authRoutes = [
     {
@@ -108,6 +109,11 @@ export const mainRoutes = [
         path: routesName.alerts.path,
         name: routesName.alerts.name,
         component: <Alerts />,
+    },
+    {
+        path: routesName.uploadTimesheet.path,
+        name: routesName.uploadTimesheet.name,
+        component: <UploadTimesheet />,
     },
 ];
 export const landingRoutes = [];

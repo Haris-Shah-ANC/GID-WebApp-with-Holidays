@@ -31,7 +31,6 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, sideNavigationRef }) => {
   const dispatch = Actions.getDispatch(useContext)
   const workspace = getWorkspaceInfo()
   const [navigationUrl, setNavigationUrl] = useState([])
-  // const sideNavigationRef= useRef()
 
   const [activeItem, setActiveItem] = useState(routesName.dashboard.activeRoute);
 
@@ -59,7 +58,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, sideNavigationRef }) => {
     }
   }
 
- 
+
   useEffect(() => {
     if (workspace) {
       const menuOptions = sidebarMenu(workspace.role)
@@ -79,11 +78,13 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, sideNavigationRef }) => {
       return "dashboard"
     }
   }
-  
+  const isActive = (item) => {
+    return item == activeItem
+  }
 
   return (
-    <>
-      <div className="flex flex-col h-full mx-2 bg-white" ref={sideNavigationRef}>
+    <div className='overflow-hidden hover:overflow-auto h-full'>
+      <div className="flex flex-col h-full mx-2 bg-white " ref={sideNavigationRef} >
         <div className="flex items-center justify-between border-gray-400">
           <SidebarHeader isSidebarOpen={isSidebarOpen}></SidebarHeader>
         </div>
@@ -91,8 +92,11 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, sideNavigationRef }) => {
           <ul className="flex flex-col ">
             <li
               title={isSidebarOpen ? '' : "Add Task"}
-              className={` ${isSidebarOpen ? '' : 'justify-center'} m-1 rounded-md font-quicksand font-bold bg-blue-500 p-4 border-gray-400 flex items-center hover:bg-vimeo-active cursor-pointer`}
-              onClick={() => { setShowModal(add_task) }}
+              className={` ${isSidebarOpen ? '' : 'justify-center'}  text-gray-500 text-sm  p-5 rounded-md font-quicksand font-bold  p-4 border-gray-400 flex items-center  cursor-pointer hover:bg-blue-400  hover:text-white`}
+              onClick={() => {
+
+                setShowModal(add_task)
+              }}
             >
               <i className={`fa-solid fa-plus mr-2`}></i>
               <span className={`${isSidebarOpen ? '' : 'hidden'}`}>Add Task</span>
@@ -129,7 +133,7 @@ const Sidebar = ({ isSidebarOpen, setIsSidebarOpen, sideNavigationRef }) => {
       </div>
       <ModelComponent showModal={showModal} setShowModal={setShowModal} from={getActiveRoute()} />
 
-    </>
+    </div>
 
 
   )
@@ -147,6 +151,7 @@ const ChildItemComponent = (props) => {
   const [isVisible, setModalVisible] = useState(false)
   const [collapse, setCollapse] = React.useState(false);
   let workspace = getWorkspaceInfo(navigate)
+
   const onClickedHandler = () => {
     setCollapse(!collapse)
     // setIsSidebarOpen(true)
@@ -252,6 +257,12 @@ const ChildItemComponent = (props) => {
 
                 <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm' onClick={() => { navigate(routesName.tasks.path) }}>
                   Tasks
+                </li>
+                <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm' onClick={() => {
+                  Actions.resetFileImports(dispatch)
+                  navigate(routesName.uploadTimesheet.path)
+                }}>
+                  Upload Timesheet
                 </li>
 
 

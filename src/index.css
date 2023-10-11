@@ -71,7 +71,7 @@
         -moz-transition: opacity 0.3s linear, right 0.3s ease-out;
         -o-transition: opacity 0.3s linear, right 0.3s ease-out;
         transition: opacity 0.3s linear, right 0.3s ease-out;
-     
+
     }
 
     .custom-modal-dialog::-webkit-scrollbar {
@@ -140,12 +140,61 @@
         right: -10px;
     }
 }
+
 /* YourDatePicker.css */
 .custom-date-picker .MuiSvgIcon-root:focus,
 .custom-date-picker .MuiSvgIcon-root:active {
     border: none !important;
     /* Remove the border when the calendar icon is focused or active */
 }
+
 .MuiButtonBase-root {
     border: none !important;
+}
+
+@layer utilities {
+    ::-webkit-scrollbar {
+        width: 15px;
+        height: 10px;
+    }
+
+    ::-webkit-scrollbar-track {
+        /* border-radius: 100vh;
+        background: #f7f4ed; */
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #cfcbcb;
+        border-radius: 100vh;
+        border: 3px solid #f6f7ed;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: #949394;
+    }
+}
+
+.fixTableHead {
+    overflow-y: auto;
+    height: 550pt;
+}
+
+.fixTableHead thead th {
+    position: sticky;
+    top: 0;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+th,
+td {
+    /* padding: 8px 15px;
+    border: 2px solid #529432; */
+}
+
+th {
+    background: #d6d8d6;
 }

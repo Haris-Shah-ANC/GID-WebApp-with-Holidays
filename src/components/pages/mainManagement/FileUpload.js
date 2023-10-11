@@ -5,6 +5,7 @@ import { isFormValid, notifyErrorMessage, notifyInfoMessage, notifySuccessMessag
 import { getTheAttendanceReportUploadUrl, getTheTimeSheetUploadUrl } from '../../../api/urls'
 import PlainButton from '../../custom/Elements/buttons/PlainButton'
 import GidInput from '../../custom/Elements/inputs/GidInput'
+import { MAPPING } from '../../../utils/Constant'
 
 export default function FileUpload(props) {
   const { setShowModal, data = {}, onSuccess = () => { } } = props
@@ -53,6 +54,9 @@ export default function FileUpload(props) {
   const onBtnClick = () => {
     if (data && data.from == "timesheet") {
       uploadTimeSheet()
+    } else if (data && data.from == MAPPING) {
+      console.log("INSIDE--------->")
+      onSuccess(file)
     } else {
       uploadFile()
     }
@@ -67,8 +71,7 @@ export default function FileUpload(props) {
       } else {
         setFile(file)
         setFileData({ ...fileUploadData, fileupload: { ...fileUploadData.fileupload, file: file } })
-        // uploadFile()
-        // onFileUpload(event.target.files[0],{file:file, size: fileSize + "MB",extension:extension.toUpperCase(),name: file.name.replace(("." + extension), "")})
+
       }
 
     }
@@ -106,7 +109,7 @@ export default function FileUpload(props) {
 
         </div>
 
-        {data ? data.from != "timesheet" &&
+        {data ? data.from != "timesheet" && data.from != MAPPING ?
           <>
             <label className='mt-3 text-gray-600 font-quicksand font-semibold'>Year</label>
             <GidInput
@@ -129,7 +132,7 @@ export default function FileUpload(props) {
             >
             </GidInput>
           </>
-          : null}
+          : null : null}
 
         <PlainButton title={"Upload"} className={"mt-10"} onButtonClick={onBtnClick} disable={false}></PlainButton>
       </div>

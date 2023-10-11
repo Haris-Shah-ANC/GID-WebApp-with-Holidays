@@ -106,6 +106,11 @@ export const routesName = {
         name: 'Alerts',
         activeRoute: 'Alerts',
     },
+    uploadTimesheet: {
+        path: '/upload-timesheet',
+        name: 'Upload Timesheet',
+        activeRoute: 'Upload Timesheet',
+    },
 
 }
 

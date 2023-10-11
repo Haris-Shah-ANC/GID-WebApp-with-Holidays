@@ -66,7 +66,7 @@ const Dashboard = () => {
     })
     const [selectedTask, setSelectedTask] = useState(false);
     const [open, setOpen] = useState(false)
-    const [onHoldReason,setOnHoldReason]=useState('')
+    const [onHoldReason, setOnHoldReason] = useState('')
 
 
     useEffect(() => {
@@ -321,12 +321,7 @@ const Dashboard = () => {
             <React.Fragment>
 
 
-                <div className={`bg-white flex flex-col px-5 py-2 rounded-lg h-full border-borderColor-0 shadow-md `} onClick={(e) => {
-                    // e.preventDefault()
-                    // if (user_id === employee) {
-                    //     onEditClick(props)
-                    // }
-                }}>
+                <div className={`bg-white flex flex-col px-5 py-2 rounded-lg h-full border-borderColor-0 shadow-md `} onClick={(e) => { }}>
 
                     <div className='flex'>
                         <div className='flex flex-col w-full'>
@@ -350,90 +345,80 @@ const Dashboard = () => {
 
                     </div>
 
-                    <div onClick={() => {
-                        if (user_id === employee) {
-                            console.log(user_id, employee)
-                            onEditClick(props)
-                        }
-                    }} className={` ${(user_id === employee) ? "cursor-pointer" : ""}`}>
-                        <div className='flex justify-between my-3'>
-                            <span className="text-xs font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-md text-lightBlue-600 bg-lightBlue-200 last:mr-0 mr-1">
-                                {project_name}</span>
-                            <span className="text-xs font-semibold font-quicksand inline-block py-1">
-                                {module_name}</span>
-                        </div>
-
-                        <div className="flex flex-wrap my-2">
-                            <div className='mr-auto'>
-                                <span className={`text-xs font-quicksand font-semibold inline-block py-1 px-0 rounded-full ${expiredCheck(dead_line) ? 'text-red-400' : 'text-green-400'} last:mr-0 mr-1`}>
-                                    <i className="fa-solid fa-clock mr-1"></i> {moment(dead_line).format(DateFormatCard)}
-                                </span>
+                    <div className='flex-grow items-center'>
+                        <div onClick={() => {
+                            if (user_id === employee) {
+                                console.log(user_id, employee)
+                                onEditClick(props)
+                            }
+                        }} className={` ${(user_id === employee) ? "cursor-pointer" : ""}`}>
+                            <div className='flex justify-between my-3'>
+                                <span className="text-xs font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-md text-lightBlue-600 bg-lightBlue-200 last:mr-0 mr-1">
+                                    {project_name}</span>
+                                <span className="text-xs font-semibold font-quicksand inline-block py-1">
+                                    {module_name}</span>
                             </div>
 
-                            <div className='ml-auto'>
-                                <span className="text-gray-500 ml-auto mt-1 text-xs font-quicksand font-semibold">{getTimeAgo(created_at)}</span>
+                            <div className="flex flex-wrap my-2">
+                                <div className='mr-auto'>
+                                    <span className={`text-xs font-quicksand font-semibold inline-block py-1 px-0 rounded-full ${expiredCheck(dead_line) ? 'text-red-400' : 'text-green-400'} last:mr-0 mr-1`}>
+                                        <i className="fa-solid fa-clock mr-1"></i> {moment(dead_line).format(DateFormatCard)}
+                                    </span>
+                                </div>
+
+                                <div className='ml-auto'>
+                                    <span className="text-gray-500 ml-auto mt-1 text-xs font-quicksand font-semibold">{getTimeAgo(created_at)}</span>
+                                </div>
                             </div>
+
+
+
                         </div>
-
-
-
                     </div>
-                    <div className='flex flex-wrap justify-between items-center'>
-                        <span className="text-sm font-quicksand font-normal inline-block py-1 text-blueGray-600 last:mr-0 mr-1 self-center">
-                            Assigned By: {assignee_name === employee_name ? <span className='font-quicksand font-semibold'>Self</span> : <span className='font-quicksand font-semibold'>{assignee_name}</span>}
-                        </span>
-                        {props.status === "On Hold" &&
-                            <div className={`rounded-2xl bg-white pt-0 text-xs font-bold leading-none flex flex-col flex-wrap cursor-pointer`}>
-                                <span className={`text-yellow-400 hover:text-yellow-600`} onMouseDown={(e) => {
 
-                                    // showOnHoldReason(!openOnHoldReason)
-                                    setOnHoldReason(on_hold_reason)
-                                    onHoldClick(true)
-                                }}>{props.status}</span>
+                    <div>
+                        <div className='flex flex-wrap justify-between items-center'>
+                            <span className="text-sm font-quicksand font-normal inline-block py-1 text-blueGray-600 last:mr-0 mr-1 self-center">
+                                Assigned By: {assignee_name === employee_name ? <span className='font-quicksand font-semibold'>Self</span> : <span className='font-quicksand font-semibold'>{assignee_name}</span>}
+                            </span>
+                            {props.status === "On Hold" &&
+                                <div className={`rounded-2xl bg-white pt-0 text-xs font-bold leading-none flex flex-col flex-wrap cursor-pointer`}>
+                                    <span className={`text-yellow-400 hover:text-yellow-600`} onMouseDown={(e) => {
+
+                                        // showOnHoldReason(!openOnHoldReason)
+                                        setOnHoldReason(on_hold_reason)
+                                        onHoldClick(true)
+                                    }}>{props.status}</span>
+                                </div>
+                            }
+                        </div>
+
+                        {openOnHoldReason &&
+                            <div className='border py-1 px-2 rounded-md'>
+                                <span className={`text-gray-500 text-sm font-quicksand font-medium my-2 py-4`}>{props.on_hold_reason}</span>
                             </div>
                         }
-                    </div>
-                    {openOnHoldReason &&
-                        <div className='border py-1 px-2 rounded-md'>
-                            <span className={`text-gray-500 text-sm font-quicksand font-medium my-2 py-4`}>{props.on_hold_reason}</span>
+                        <div className='flex rounded-lg flex-wrap mt-2 items-center justify-between'>
+                            <div className='flex ml-0 items-center'>
+                                <img className='w-6 h-6 rounded-full' src={imagesList.employee_default_img.src} alt=''></img>
+                                <p className='text-5 ml-3 text-black text-sm font-quicksand font-semibold'>{employee_name}</p>
+                            </div>
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="#727273"
+                                height="1em"
+                                width="1em"
+                                className='cursor-pointer hover:fill-blue-500 '
+                                onMouseDown={(e) => {
+                                    e.preventDefault();
+                                    setSelectedTask(props)
+                                    setCommentSideBarVisibility(true)
+                                }}
+
+                            >
+                                <path d="M19 8h-1V5a3 3 0 00-3-3H5a3 3 0 00-3 3v12a1 1 0 00.62.92A.84.84 0 003 18a1 1 0 00.71-.29l2.81-2.82H8v1.44a3 3 0 003 3h6.92l2.37 2.38A1 1 0 0021 22a.84.84 0 00.38-.08A1 1 0 0022 21V11a3 3 0 00-3-3zM8 11v1.89H6.11a1 1 0 00-.71.29L4 14.59V5a1 1 0 011-1h10a1 1 0 011 1v3h-5a3 3 0 00-3 3zm12 7.59l-1-1a1 1 0 00-.71-.3H11a1 1 0 01-1-1V11a1 1 0 011-1h8a1 1 0 011 1z" />
+                            </svg>
                         </div>
-                    }
-
-                    <div className='flex flex-row rounded-lg flex-wrap mt-2 items-center justify-between'>
-
-                        <div className='flex flex-row ml-0 items-center justify-between '>
-                            <img className='w-6 h-6 rounded-full' src={imagesList.employee_default_img.src} alt=''></img>
-                            <p className='text-5 ml-3 text-black text-sm font-quicksand font-semibold'>{employee_name}</p>
-
-                            {/* <div className='mx-2 cursor-pointer group flex relative' onClick={onAddTimeSheetClick}>
-                                <svg
-                                    viewBox="0 0 24 24"
-                                    fill="currentColor"
-                                    height="1em"
-                                    width="1em"
-                                >
-                                    <path d="M13 14h-2V8h2v6m2-13H9v2h6V1M5 13a6.995 6.995 0 0113.79-1.66l.6-.6c.32-.32.71-.53 1.11-.64a8.59 8.59 0 00-1.47-2.71l1.42-1.42c-.45-.51-.9-.97-1.41-1.41L17.62 6c-1.55-1.26-3.5-2-5.62-2a9 9 0 00-9 9c0 4.63 3.5 8.44 8 8.94v-2.02c-3.39-.49-6-3.39-6-6.92m8 6.96V22h2.04l6.13-6.12-2.04-2.05L13 19.96m9.85-6.49l-1.32-1.32c-.2-.2-.53-.2-.72 0l-.98.98 2.04 2.04.98-.98c.2-.19.2-.52 0-.72z" />
-                                </svg>
-                                <span className=" pointer-events-none group-hover:opacity-100 transition-opacity bg-gray-500 px-1 text-sm text-gray-100 rounded-md absolute left-1/2 
-    -translate-x-1/2 translate-y-full opacity-0 m-4 mx-auto w-max">Add efforts</span>
-                            </div> */}
-
-                        </div>
-                        <svg
-                            viewBox="0 0 24 24"
-                            fill="#727273"
-                            height="1em"
-                            width="1em"
-                            className='cursor-pointer hover:fill-blue-500 '
-                            onMouseDown={(e) => {
-                                e.preventDefault();
-                                setSelectedTask(props)
-                                setCommentSideBarVisibility(true)
-                            }}
-
-                        >
-                            <path d="M19 8h-1V5a3 3 0 00-3-3H5a3 3 0 00-3 3v12a1 1 0 00.62.92A.84.84 0 003 18a1 1 0 00.71-.29l2.81-2.82H8v1.44a3 3 0 003 3h6.92l2.37 2.38A1 1 0 0021 22a.84.84 0 00.38-.08A1 1 0 0022 21V11a3 3 0 00-3-3zM8 11v1.89H6.11a1 1 0 00-.71.29L4 14.59V5a1 1 0 011-1h10a1 1 0 011 1v3h-5a3 3 0 00-3 3zm12 7.59l-1-1a1 1 0 00-.71-.3H11a1 1 0 01-1-1V11a1 1 0 011-1h8a1 1 0 011 1z" />
-                        </svg>
                     </div>
                 </div>
 
@@ -457,12 +442,12 @@ const Dashboard = () => {
                 projectsResults={projectsResults}
             /> */}
 
-            <div className="bg-white rounded-xl flex flex-col md:flex-row justify-between shadow overflow-auto">
-                <div className='flex-row flex'>
+            <div className="bg-white rounded-xl flex justify-between shadow overflow-auto flex-nowrap">
+                <div className='ml-5 flex items-center gap-5 justify-start'>
                     {btnLabelList.map((item, index) => {
                         return (
-                            <div className={`flex flex-row px-0.5 mx-5 items-center ${getBtnStyle(index)}`} >
-                                <button className={classNames("flex font-quicksand font-bold flex-row items-center text-md hover:opacity-75  outline-none focus:outline-none py-6", {
+                            <div className={`flex items-center ${getBtnStyle(index)}`} >
+                                <button className={classNames("flex font-quicksand whitespace-nowrap font-bold flex-row items-center text-md hover:opacity-75  outline-none focus:outline-none py-6", {
                                     "text-[#b7c1cc]": index !== taskCategoryIndex,
                                     "text-[#2e53e2]": index === taskCategoryIndex
                                 })} onClick={() => onCategoryBtnClick(index)}>
@@ -479,8 +464,8 @@ const Dashboard = () => {
 
                 </div>
 
-                <div className='flex flex-col md:flex-row ml-2 space-x-0 space-y-3 items-start md:space-x-3 md:space-y-0 md:items-center mr-5 w-1/2 justify-end'>
-                    <div className='max-w-sm w-full'>
+                <div className='mr-5 flex items-center gap-3 justify-end'>
+                    <div style={{width:200}}>
                         <Dropdown options={listOfEmployees} optionLabel="employee_name" value={selectedUser ? selectedUser : { employee_name: 'All Users' }} setValue={(value) => {
                             selectUser(value)
                             setTasksResults([])
@@ -488,12 +473,12 @@ const Dashboard = () => {
                         }} />
                     </div>
 
-                    <button className='border border-[#dddddf] rounded-lg flex px-3 py-2' onClick={onFilterClick}>
+                    <button className='border border-[#dddddf] whitespace-nowrap rounded-lg flex px-3 py-2' onClick={onFilterClick}>
                         <i className="fa-solid fa-sliders mr-2 text-[#75787b]"></i>
                         <p className='text-[#75787b] font-semibold font-quicksand text-sm'>Filter</p>
                     </button>
 
-                    <button className='border border-[#dddddf] rounded-lg flex px-3 py-2' onClick={() => onNewTaskAddClick()}>
+                    <button className='border border-[#dddddf] whitespace-nowrap rounded-lg flex px-3 py-2' onClick={() => onNewTaskAddClick()}>
                         <i className="fa-solid fa-plus mr-2 text-[#75787b]" ></i>
                         <p className='text-[#75787b] font-semibold font-quicksand text-sm'>Add New</p>
                     </button>
@@ -556,7 +541,7 @@ const ReasonModal = (props) => {
         bgcolor: 'background.paper',
         boxShadow: 24,
         borderRadius: 1,
-        p:2
+        p: 2
     };
     return (
         <Modal

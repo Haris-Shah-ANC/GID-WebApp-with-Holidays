@@ -72,7 +72,7 @@ const ModelComponent = (props) => {
                         <AddMeetingLinkModal setShowModal={setShowModal} data={data} onSuccess={() => onSuccess()}></AddMeetingLinkModal>
                     }
                     {showModal === file_upload &&
-                        <FileUpload setShowModal={setShowModal} data={data} onSuccess={(val) => onSuccess(val)}></FileUpload>
+                        <FileUpload setShowModal={setShowModal} data={data} onSuccess={(val) => onSuccess(val)} from={from}></FileUpload>
                     }
                     {showModal === add_time_sheet &&
                         <AddTimeSheetModal setShowModal={setShowModal} data={data}></AddTimeSheetModal>
