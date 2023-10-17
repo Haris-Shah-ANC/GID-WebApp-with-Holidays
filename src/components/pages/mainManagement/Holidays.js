@@ -102,7 +102,6 @@ const Holidays = () => {
             </table>
         </div>
     )
-
 }
 
 export default Holidays;

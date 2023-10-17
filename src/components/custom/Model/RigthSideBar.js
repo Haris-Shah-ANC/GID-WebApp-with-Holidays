@@ -19,6 +19,7 @@ export default function CommentsSideBar(props) {
     const { user_id } = getLoginDetails(useNavigate());
 
     const [openOptionsIndex, setOpenOptionsIndex] = useState(null); // State to track open options in comment section
+    // const [isOptionsVisible, setIsOpensVisible] = useState(null);
 
     let MIN_TEXTAREA_HEIGHT = 50;
     const textFieldRef = useRef(null)
@@ -55,15 +56,6 @@ export default function CommentsSideBar(props) {
         }
     }
 
-    // const sendComment = async () => {
-    //     let res = await apiAction({ url: getAddCommentUrl(), method: 'post', data: { workspace_id: work_id, task_id: taskData.id, comment: msgData.reply }, navigate: navigate, dispatch: dispatch })
-    //     if (res) {
-    //         if (res.success) {
-    //             setMsgData({ ...msgData, reply: "" })
-    //             getCommentList()
-    //         }
-    //     }
-    // }
 
     const sendComment = async () => {
         if (msgData.reply !== '') {
@@ -94,15 +86,13 @@ export default function CommentsSideBar(props) {
     const ChatItem = (props) => {
         const { chatData, index, openOptionsIndex, setOpenOptionsIndex } = props;
 
-        const [isOptionsVisible, setIsOpensVisible] = useState(true);
-
         const isDropdownOpen = openOptionsIndex === index;
+
+
 
         const handleDropdownClick = (e) => {
             e.stopPropagation();
-            setIsOpensVisible(!isOptionsVisible);
             setOpenOptionsIndex(isDropdownOpen ? null : index);
-            console.log("isOptionsVisible==>",isOptionsVisible)
         };
 
         const handleEditClick = () => {
@@ -128,13 +118,12 @@ export default function CommentsSideBar(props) {
 
                 {user_id !== chatData.comment_by_id ?
                     <div className="flex flex-row relative">
-                        <div className="transition-all transform translate-y-8 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 cursor-pointer" onClick={handleDropdownClick} >
+                        <div onClick={handleDropdownClick} className="transition-all transform translate-y-8 opacity-0 hover:opacity-100 hover:translate-y-0 cursor-pointer">
                             <FaAngleDown
                                 size={20}
                                 color="#949699"
                                 //fixing the dropdown symbol at the top right corner
                                 className="absolute top-0 right-0 hover:backdrop-blur-xl shadow-lg p-5"
-
                             />
                         </div>
 
@@ -143,14 +132,14 @@ export default function CommentsSideBar(props) {
                                 {chatData.comment_by_name}
                             </span>
 
-                            <pre className="px-2 text-sm overflow-hidden break-words">
+                            <p className="px-2 text-sm break-all">
                                 {chatData.comment.split('<br>').map((line, index) => (
                                     <React.Fragment key={index}>
                                         {line}
                                         <br />
                                     </React.Fragment>
                                 ))}
-                            </pre>
+                            </p>
 
                             <span className="flex justify-end text-xs text-gray-500 pr-3">
                                 {moment(chatData.created_at).format("HH:mm")}
@@ -171,7 +160,7 @@ export default function CommentsSideBar(props) {
                     <div className="flex flex-row justify-end">
 
                         <div class="bubble2">
-                            <div className="transition-all transform translate-y-8 opacity-0 hover:opacity-100 hover:translate-y-0 cursor-pointer" onClick={handleDropdownClick} >
+                            <div onClick={handleDropdownClick} className="transition-all transform translate-y-8 opacity-0 hover:opacity-100 hover:translate-y-0 cursor-pointer">
                                 <FaAngleDown
                                     size={20}
                                     color="#949699"
@@ -180,14 +169,16 @@ export default function CommentsSideBar(props) {
                                 />
 
                             </div>
-                            <pre className="px-2 text-sm break-words">
+
+                            <p className="px-2 text-sm break-all">
                                 {chatData.comment.split('<br>').map((line, index) => (
                                     <React.Fragment key={index}>
                                         {line}
                                         <br />
                                     </React.Fragment>
                                 ))}
-                            </pre>
+                            </p>
+
                             <span className="flex justify-end text-xs text-gray-500 px-2">
                                 {moment(chatData.created_at).format("HH:mm")}
                             </span>
@@ -217,109 +208,6 @@ export default function CommentsSideBar(props) {
         );
     };
 
-    // const ChatItem = (props) => {
-    //     const { chatData, index } = props;
-
-    //     const [showOptions, setShowOptions] = useState(false);
-
-    //     const handleEditClick = () => {
-    //         // Implement the edit functionality here 
-    //     };
-
-    //     const handleDeleteClick = () => {
-    //         // Implement the delete functionality here 
-    //     };
-
-    //     return (
-    //         <div className="mt-4" onClick={() => setOpenOptionsIndex(null)}>
-
-    //             {index === 0 ?
-    //                 <p className="text-sm text-gray-600 text-center">
-    //                     {moment(chatData.created_at).format("DD/MM/YYYY")}
-    //                 </p>
-    //                 : formatDate(chatData.created_at, "DD/MM/YYYY") !== formatDate(chatList[index - 1].created_at, "DD/MM/YYYY") ?
-    //                     <p className="text-sm text-gray-600 text-center">
-    //                         {moment(chatData.created_at).format("DD/MM/YYYY")}
-    //                     </p> : null
-    //             }
-
-    //             {user_id !== chatData.comment_by_id ?
-    //                 <div className="flex flex-row relative ">
-    //                     <div className="transition-all transform translate-y-8 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 ">
-    //                         <FaCaretDown
-    //                             size={20}
-    //                             color="#949699"
-    //                         // onClick={() => setShowOptions(!showOptions)}
-    //                         />
-    //                     </div>
-
-    //                     <div class="bubble">
-    //                         <span className="text-sm px-2 font-medium text-gray-500">
-    //                             {chatData.comment_by_name}
-    //                         </span>
-
-    //                         <pre className="px-2 text-sm overflow-hidden break-words">
-    //                             {chatData.comment.split('<br>').map((line, index) => (
-    //                                 <React.Fragment key={index}>
-    //                                     {line}
-    //                                     <br />
-    //                                 </React.Fragment>
-    //                             ))}
-    //                         </pre>
-
-    //                         <span className="flex justify-end text-xs text-gray-500 pr-3">
-    //                             {moment(chatData.created_at).format("HH:mm")}
-    //                         </span>
-
-    //                         {isDropdownOpen && (
-    //                             <div className="options-dropdown">
-    //                                 <ul>
-    //                                     <li onClick={handleEditClick}>Edit</li>
-    //                                     <li onClick={handleDeleteClick}>Delete</li>
-    //                                 </ul>
-    //                             </div>
-    //                         )}
-
-    //                     </div>
-    //                 </div>
-    //                 :
-    //                 <div className="flex flex-row justify-end">
-
-    //                     <div class="bubble2">
-    //                         <div className="transition-all transform translate-y-8 opacity-0 hover:opacity-100 hover:translate-y-0">
-    //                             <FaCaretDown
-    //                                 size={20}
-    //                                 color="#949699"
-    //                                 onClick={() => setShowOptions(!showOptions)}
-    //                                 className="cursor-pointer"
-    //                             />
-
-    //                         </div>
-    //                         <pre className="px-2 text-sm  break-words">
-    //                             {chatData.comment.split('<br>').map((line, index) => (
-    //                                 <React.Fragment key={index}>
-    //                                     {line}
-    //                                     <br />
-    //                                 </React.Fragment>
-    //                             ))}
-    //                         </pre>
-    //                         <span className="flex justify-end text-xs text-gray-500 px-2">
-    //                             {moment(chatData.created_at).format("HH:mm")}
-    //                         </span>
-    //                         {showOptions && (
-    //                             <div className="options-dropdown mt-3">
-    //                                 <ul>
-    //                                     <li onClick={handleEditClick}>Edit</li>
-    //                                     <li onClick={handleDeleteClick}>Delete</li>
-    //                                 </ul>
-    //                             </div>
-    //                         )}
-    //                     </div>
-    //                 </div>
-    //             }
-    //         </div>
-    //     );
-    // };
 
     return (
         <div className={`custom-modal-dialog ${showModal ? 'show' : ''}`} role="document">
@@ -345,6 +233,7 @@ export default function CommentsSideBar(props) {
                             key={item.id}
                             openOptionsIndex={openOptionsIndex}
                             setOpenOptionsIndex={setOpenOptionsIndex}
+
                         />
                     ))}
                     {chatList.length == 0 &&
