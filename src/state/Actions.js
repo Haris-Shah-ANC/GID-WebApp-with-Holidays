@@ -27,4 +27,3 @@ export const stateChange = (key, value) => {
     value,
   };
 };
- 

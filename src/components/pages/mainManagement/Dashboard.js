@@ -337,7 +337,6 @@ const Dashboard = () => {
         return (
             <React.Fragment>
 
-
                 <div className={`bg-white flex flex-col px-5 py-2 rounded-lg h-full border-borderColor-0 shadow-md  `} onClick={(e) => {
                     // e.preventDefault()
                     // if (user_id === employee) {
@@ -462,7 +461,6 @@ const Dashboard = () => {
     return (
         <React.Fragment>
             {showCommentSideBar &&
-
                 <CommentsSideBar showModal={showCommentSideBar} setShowModal={setCommentSideBarVisibility} taskData={selectedTask} />
             }
 
