@@ -4,6 +4,7 @@ import CreateNewWorkspace from '../../pages/mainManagement/CreateNewWorkspace';
 
 import {
     add_effort,
+    add_mapping,
     add_meeting_link,
     add_project,
     add_project_module,
@@ -13,6 +14,7 @@ import {
     delete_notification,
     file_upload,
     filter_and_sort,
+    import_confirmation,
 } from '../../../utils/Constant';
 import FilterAndSort from '../../pages/mainManagement/FilterAndSort';
 import AddProject from '../../pages/mainManagement/AddProject';
@@ -23,6 +25,8 @@ import AddMeetingLinkModal from '../../pages/mainManagement/AddMeetingLinkModal'
 import AddTimeSheetModal from './AddTimeSheetModal';
 import EffortsComponent from '../EffortsComponent';
 import { Box, Modal } from '@mui/material';
+import AddMappingModal from './AddMappingModal';
+import UploadConfirmationDialog from '../../pages/mainManagement/UploadConfirmationDialog';
 
 const ModelComponent = (props) => {
     const { showModal, setShowModal, data, onFilterApply, onFilterClear, from, onSuccess = () => "" } = props
@@ -84,6 +88,14 @@ const ModelComponent = (props) => {
                     {
                         showModal === add_effort &&
                         <EffortsComponent setShowModal={setShowModal} data={data}></EffortsComponent>
+                    }
+                    {
+                        showModal === add_mapping &&
+                        <AddMappingModal setShowModal={setShowModal} data={data} onSuccess={onSuccess} from={from} />
+                    }
+                    {
+                        showModal === import_confirmation &&
+                        <UploadConfirmationDialog setShowModal={setShowModal} data={data} onSuccess={(val) => onSuccess(val)} from={from} />
                     }
                 </Box>
             </Modal>

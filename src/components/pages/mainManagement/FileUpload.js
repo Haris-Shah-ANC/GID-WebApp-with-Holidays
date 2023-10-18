@@ -55,7 +55,6 @@ export default function FileUpload(props) {
     if (data && data.from == "timesheet") {
       uploadTimeSheet()
     } else if (data && data.from == MAPPING) {
-      console.log("INSIDE--------->")
       onSuccess(file)
     } else {
       uploadFile()
@@ -134,7 +133,7 @@ export default function FileUpload(props) {
           </>
           : null : null}
 
-        <PlainButton title={"Upload"} className={"mt-10"} onButtonClick={onBtnClick} disable={false}></PlainButton>
+        <PlainButton title={"Upload"} className={"mt-10"} onButtonClick={onBtnClick} disable={!file}></PlainButton>
       </div>
     </>
     //     {/* </div>

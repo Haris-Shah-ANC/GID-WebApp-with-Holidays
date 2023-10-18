@@ -362,6 +362,33 @@ export const getTimePeriods = () => {
     // },
   ]
 }
+export const createMappings = (model_fields = []) => {
+  let mappings = {}
+  model_fields.map((field) => {
+    if (field.file_header) {
+      mappings[field.db_field] = field.file_header
+    }
+    return null
+  })
+
+  return mappings
+}
+export const compareMappings = (mapping1, mapping2) => {
+  const keys1 = Object.keys(mapping1 ? mapping1 : {});
+  const keys2 = Object.keys(mapping2 ? mapping2 : {});
+
+  if (keys1.length !== keys2.length) {
+    return false;
+  }
+
+  for (let key of keys1) {
+    if (mapping1[key] !== mapping2[key]) {
+      return false;
+    }
+  }
+
+  return true;
+};
 export const isDateBetweenDates = (period, date) => {
   try {
     var compareDate = moment(date, "YYYY-MM-DD")
@@ -504,4 +531,12 @@ export const amountFormatter = (amount, currency_code) => {
     });
   let symbol = Number(amount) < 0 ? currency_symbol + ' ' : currency_symbol
   return symbol + formatterWithoutSymbol.format(amount).replace(currency_code, "")
+}
+
+export const formatText = (text) => {
+  if (String(text).includes("_")) {
+    return String(text).replace("_", " ")
+  } else {
+    return text
+  }
 }

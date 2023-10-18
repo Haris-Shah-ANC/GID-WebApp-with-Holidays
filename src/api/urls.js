@@ -219,3 +219,43 @@ export const getBudgetListUrl = () => {
 export const getEffortAlertsStatus = () => {
     return HOST + APP_NAME + `/task_effort_alert/`
 }
+
+//TIME SHEET UPLOAD  MAPPING RELATED URLS
+
+export const getMappingFieldUrl = () => {
+    return HOST + APP_NAME + `/get_fields_for_mapping/`
+}
+
+export const getValidateTimeSheetData = () => {
+    return HOST + APP_NAME + `/validate_timesheet/`
+}
+
+export const getMappingListUrl = () => {
+    return HOST + APP_NAME + `/list_dynamic_mapping/`
+}
+
+
+export const getRetrieveMappingUrl = () => {
+    return HOST + APP_NAME + `/get_dynamic_mapping/`
+}
+
+export const getCreateNewMappingUrl = () => {
+    return HOST + APP_NAME + `/create_dynamic_mapping/`
+}
+
+export const getUpdateMappingUrl = (id) => {
+    return HOST + APP_NAME + `/update_dynamic_mapping/`
+}
+
+export const getUploadTimeSheetUrl = (id) => {
+    return HOST + APP_NAME + `/upload_timesheet/`
+}
+
+/////////////////NOTES RELATED API///////////////////////
+export const getNotesUrl = () => {
+    return HOST + APP_NAME + `/upload_timesheet/`
+}
+
+export const getSaveNoteUrl = () => {
+    return HOST + APP_NAME + `/upload_timesheet/`
+}

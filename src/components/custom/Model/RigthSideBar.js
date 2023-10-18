@@ -1,4 +1,4 @@
-import { useEffect, useState, useContext, useLayoutEffect, useRef } from "react";
+import React, { useEffect, useState, useContext, useLayoutEffect, useRef } from "react";
 import { getAddCommentUrl, getCommentListUrl } from "../../../api/urls";
 import { useNavigate } from "react-router-dom";
 import * as Actions from '../../../state/Actions';
@@ -6,12 +6,13 @@ import { apiAction } from "../../../api/api";
 import { getLoginDetails, getWorkspaceInfo } from "../../../config/cookiesInfo";
 import moment from "moment";
 import { formatDate, isFormValid } from "../../../utils/Utils";
-import { Typography } from "@mui/material";
+import { Menu, MenuItem, Typography } from "@mui/material";
 
 export default function CommentsSideBar(props) {
     const { showModal, setShowModal, taskData } = props;
     const [msgData, setMsgData] = useState({ reply: "" })
     const [chatList, setChatData] = useState([])
+    const [openOptionsIndex, setOpenOptionsIndex] = useState(null); // State to track open options in comment section
     const navigate = useNavigate();
     const dispatch = Actions.getDispatch(useContext);
     const { work_id } = getWorkspaceInfo();
@@ -32,10 +33,12 @@ export default function CommentsSideBar(props) {
     useEffect(() => {
         getCommentList()
     }, [taskData])
-    
+
     useLayoutEffect(() => {
         scrollToBottom()
     }, [chatList])
+
+
 
     const scrollToBottom = () => {
         var element = document.querySelector('#element');
@@ -52,23 +55,76 @@ export default function CommentsSideBar(props) {
         }
 
     }
+    // const sendComment = async () => {
+    //     let res = await apiAction({ url: getAddCommentUrl(), method: 'post', data: { workspace_id: work_id, task_id: taskData.id, comment: msgData.reply }, navigate: navigate, dispatch: dispatch })
+    //     if (res) {
+    //         if (res.success) {
+    //             setMsgData({ ...msgData, reply: "" })
+    //             getCommentList()
+    //         }
+    //     }
+
+    // }
     const sendComment = async () => {
-        let res = await apiAction({ url: getAddCommentUrl(), method: 'post', data: { workspace_id: work_id, task_id: taskData.id, comment: msgData.reply }, navigate: navigate, dispatch: dispatch })
-        if (res) {
-            if (res.success) {
-                setMsgData({ ...msgData, reply: "" })
-                getCommentList()
+        if (msgData.reply !== '') {
+            // Replace line breaks with <br> tags when sending the message
+            const messageWithLineBreaks = msgData.reply.replace(/\n/g, '<br>');
+
+            let res = await apiAction({
+                url: getAddCommentUrl(),
+                method: 'post',
+                data: { workspace_id: work_id, task_id: taskData.id, comment: messageWithLineBreaks },
+                navigate: navigate,
+                dispatch: dispatch
+            });
+
+            if (res && res.success) {
+                setMsgData({ ...msgData, reply: '' });
+                getCommentList();
             }
         }
-
     }
+
     const onSendMsgClick = () => {
         if (msgData.reply !== '') {
             sendComment()
         }
     }
+    const Linkify = ({ children }) => {
+        const isUrl = word => {
+            const urlPattern = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/gm;
+            return word.match(urlPattern)
+        }
+
+        const addMarkup = word => {
+            return isUrl(word) ?
+                `<a target="blank" class="text-blue-700" href="${word}">${word}</a>` :
+                word
+        }
+        const words = children.split(' ')
+        const formatedWords = words.map((w, i) => addMarkup(w))
+        const html = formatedWords.join(' ')
+        return (
+            <p className="px-2 text-sm overflow-hidden break-words" dangerouslySetInnerHTML={{ __html: html }}></p>
+        )
+    }
+
     const ChatItem = (props) => {
-        const { chatData, index } = props
+        const { chatData, index, setOpenOptionsIndex, openOptionsIndex } = props
+        const isDropdownOpen = openOptionsIndex === index;
+
+        const handleDropdownClick = (e) => {
+            e.stopPropagation();
+            setOpenOptionsIndex(isDropdownOpen ? null : index);
+        };
+
+        const handleEditClick = () => {
+            // edit functionality 
+        };
+
+        const handleDeleteClick = () => {
+            // delete functionality 
+        };
         return (
             <div className=" mt-4">
                 {index == 0 ?
@@ -90,21 +146,68 @@ export default function CommentsSideBar(props) {
                         </div>
 
                         <div class="bubble">
+
                             <span className="text-sm px-2 font-medium text-gray-500">{chatData.comment_by_name}</span>
-                            <p className="px-2 text-sm overflow-hidden break-words">{chatData.comment}</p>
+                            <Linkify>{chatData.comment}</Linkify>
                             <span className="flex justify-end text-xs text-gray-500 pr-3">{moment(chatData.created_at).format("HH:mm")}</span>
                         </div>
                     </div>
                     :
                     <div className="flex flex-row justify-end">
-                        <div class="bubble2">
-                            <p className="px-2 text-sm  break-words">{chatData.comment}</p>
+                        <div class="bubble2" onMouseDown={() => ""} onMouseLeave={() => ""}>
+                            <div onClick={handleDropdownClick} className="bg-red-100 transition-all transform translate-y-8 opacity-0 hover:opacity-100 hover:translate-y-0 cursor-pointer">
+                                <i class="fa-solid fa-chevron-down" style={{ color: '#949699', position: 'absolute', top: 0, right: 0 }} ></i>
+                            </div>
+                            <div className="pr-6">
+                                <Linkify>{chatData.comment}</Linkify>
+                            </div>
                             <span className="flex justify-end text-xs text-gray-500 px-2">{moment(chatData.created_at).format("HH:mm")}</span>
+
+                            {isDropdownOpen && (
+                                // <Menu
+                                //     id="long-menu"
+                                //     MenuListProps={{
+                                //         'aria-labelledby': 'long-button',
+                                //     }}
+                                //     anchorEl={anchorEl}
+                                //     open={open}
+                                //     onClose={handleDropdownClick}
+                                //     PaperProps={{
+                                //         style: {
+                                //             maxHeight: ITEM_HEIGHT * 4.5,
+                                //             width: '20ch',
+                                //         },
+                                //     }}
+                                // >
+                                //     {options.map((option) => (
+                                //         <MenuItem key={option} selected={null} onClick={handleDropdownClick}>
+                                //             {option}
+                                //         </MenuItem>
+                                //     ))}
+                                // </Menu>
+                                <div className="options-dropdown mt-3">
+                                    <ul>
+                                        <li
+                                            onClick={handleEditClick}
+                                            className="text-xs font-quicksand"
+                                        >
+                                            Edit
+                                        </li>
+                                        <li onClick={handleDeleteClick}
+                                            className="text-xs font-quicksand"
+                                        >
+                                            Delete
+                                        </li>
+                                    </ul>
+                                </div>
+                            )}
                         </div>
                     </div>
 
                 }
+
             </div>
+
         )
     }
     return (
@@ -124,7 +227,7 @@ export default function CommentsSideBar(props) {
                     </svg>
                 </div>
                 <div id="element" className="no-scrollbar overflow-y-auto overflow-x-hidden pr-1" style={{ height: 'calc(100vh - 250px)', scrollbarWidth: 'none' }} >
-                    {chatList.map((item, index) => (<ChatItem chatData={item} index={index} />))}
+                    {chatList.map((item, index) => (<ChatItem chatData={item} index={index} openOptionsIndex={openOptionsIndex} setOpenOptionsIndex={setOpenOptionsIndex} />))}
                     {chatList.length == 0 &&
                         <p className="flex justify-center mt-[35vh]">
                             No data found
@@ -141,12 +244,11 @@ export default function CommentsSideBar(props) {
                             value={msgData.reply}
                             id={"replyInputBox"}
                             ref={textFieldRef}
-                            className={' text-justify w-full rounded-md border-transparent no-scrollbar '}
+                            className={' text-justify w-full rounded-md border-transparent no-scrollbar break-all'}
                             placeholder="Write your comment..."
                             type="text"
                             // multiple
                             onChange={e => {
-                                console.log("nativeEvent", e.nativeEvent);
 
                                 // Destructure and update msgData
                                 if (e.target.value != " ") {
@@ -156,12 +258,10 @@ export default function CommentsSideBar(props) {
 
                                 // Check for the condition
                                 if (e.target.value.includes("/") && e.nativeEvent.inputType === "insertFromPaste") {
-                                    console.log("IN IF");
                                     // setInputValue("");
                                     textFieldRef.current.value = null;
                                     // onType();
                                 } else {
-                                    console.log("IN ELSE");
                                     // setInputValue(e.target.value);
                                     // onType();
                                 }
@@ -175,16 +275,26 @@ export default function CommentsSideBar(props) {
                                 verticalAlign: 'center'
 
                             }}
-
                             onKeyDown={(e) => {
-                                if (e.key == 'Enter' && e.target.value) {
-                                    onSendMsgClick()                                    // 
-                                    setTimeout(() => {
+                                if (e.key === 'Enter' && e.target.value) {
+                                    if (!e.shiftKey) {
+                                        e.preventDefault(); // Prevent default behavior (submit)
+                                        onSendMsgClick();
                                         textFieldRef.current.style.height = "32px";
                                         textFieldRef.current.value = "";
-                                    }, 50)
+                                    }
                                 }
                             }}
+
+                        // onKeyDown={(e) => {
+                        //     if (e.key == 'Enter' && e.target.value) {
+                        //         onSendMsgClick()                                    // 
+                        //         setTimeout(() => {
+                        //             textFieldRef.current.style.height = "32px";
+                        //             textFieldRef.current.value = "";
+                        //         }, 50)
+                        //     }
+                        // }}
                         />
                     </div>
                     {msgData.reply != "" &&

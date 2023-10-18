@@ -19,6 +19,7 @@ import Analysis from "../components/pages/mainManagement/income_expense/Analysis
 import Tasks from "../components/pages/mainManagement/tasks/Tasks";
 import Alerts from "../components/pages/mainManagement/Alerts";
 import { UploadTimesheet } from "../components/pages/mainManagement/file_upload/UploadTimesheet";
+import UserNotes from "../components/pages/mainManagement/Notes";
 
 export const authRoutes = [
     {
@@ -115,6 +116,11 @@ export const mainRoutes = [
         name: routesName.uploadTimesheet.name,
         component: <UploadTimesheet />,
     },
+    {
+        path: routesName.notes.path,
+        name: routesName.notes.name,
+        component: <UserNotes />,
+    },
 ];
 export const landingRoutes = [];
 
@@ -134,15 +140,7 @@ export const sidebarMenu = (isAdminMenu) => {
             active: routesName.dashboard.activeRoute,
 
         },
-        // {
-        //     name: routesName.alerts.name,
-        //     path: routesName.alerts.path,
-        //     icon: "fa-solid fa-bell",
-        //     active: routesName.alerts.activeRoute,
 
-        // },
-     
-       
         {
             name: routesName.calendar.name,
             path: routesName.calendar.path,
@@ -174,6 +172,14 @@ export const sidebarMenu = (isAdminMenu) => {
             icon: "fa-solid fa-paste",
             active: routesName.newModule.activeRoute,
         },
+        {
+            name: routesName.notes.name,
+            path: routesName.notes.path,
+            icon: "fa-regular fa-message",
+            active: routesName.notes.activeRoute,
+
+        },
+
 
         {
             name: routesName.inviteToWorkspace.name,
@@ -189,7 +195,7 @@ export const sidebarMenu = (isAdminMenu) => {
             active: routesName.reports.activeRoute,
             childItem: 'hrms',
         },
-      
+
 
         {
             name: routesName.analytics.name,
@@ -206,12 +212,12 @@ export const sidebarMenu = (isAdminMenu) => {
             childItem: 'meeting',
         },
 
-     
+
 
     ] :
         [
-           
-           
+
+
             {
                 name: routesName.workSpace.name,
                 path: routesName.workSpace.path,
@@ -226,15 +232,7 @@ export const sidebarMenu = (isAdminMenu) => {
                 active: routesName.dashboard.activeRoute,
 
             },
-           
-            // {
-            //     name: routesName.alerts.name,
-            //     path: routesName.alerts.path,
-            //     icon: "fa-solid fa-bell",
-            //     active: routesName.alerts.activeRoute,
 
-            // },
-           
             {
                 name: routesName.calendar.name,
                 path: routesName.calendar.path,
@@ -249,14 +247,7 @@ export const sidebarMenu = (isAdminMenu) => {
                 active: routesName.analysis.activeRoute,
                 childItem: 'analysis',
             },
-            // {
-            //     name: routesName.reports.name,
-            //     path: routesName.reports.path,
-            //     icon: "fa-solid fa-file-invoice",
-            //     active: routesName.reports.activeRoute,
-            //     childItem: 'hrms',
-            // },
-           
+
             {
                 name: routesName.assignTask.name,
                 path: routesName.assignTask.path,
@@ -275,7 +266,13 @@ export const sidebarMenu = (isAdminMenu) => {
                 icon: "fa-solid fa-paste",
                 active: routesName.newModule.activeRoute,
             },
+            {
+                name: routesName.notes.name,
+                path: routesName.notes.path,
+                icon: "fa-regular fa-message",
+                active: routesName.notes.activeRoute,
 
+            },
 
             {
                 name: routesName.meeting.name,

@@ -4,17 +4,17 @@ import { Chip, FormLabel } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close';
 
 const style = {
-    width: '82%',
     float: 'left',
     display: 'flex',
     textAlign: 'center',
     borderRadius: '30px',
     alignItems: 'center',
-    marginBottom: '1rem',
-    marginRight: '1.5rem',
+    marginBottom: '1.5rem',
     justifyContent: 'center',
     padding: '0.3rem 1.5rem',
     border: '1px solid #f4c92e',
+    backgroundColor: '#d2e2f9',
+
 }
 
 function selectBackgroundColor(isActive, canDrop) {
@@ -45,7 +45,6 @@ export const DropGetter = memo(function DropGetter({
             canDrop: monitor.canDrop(),
         }),
     })
-    
     const isActive = isOver && canDrop
 
     var border = '1px solid #f4c92e'
@@ -56,7 +55,7 @@ export const DropGetter = memo(function DropGetter({
     }
 
     return (
-        <div ref={drop} style={{ ...style, border, backgroundColor }} data-testid="dustbin">
+        <div ref={drop} className={`capitalize rounded-full py-1 my-3 float-left bg-[#fae6f3] text-center `} style={{  border, backgroundColor }} data-testid="dustbin">
             {isActive
                 ? <Chip label={"Release"} style={{ width: '82%' }}></Chip>
                 : <>{model_field.file_header ?

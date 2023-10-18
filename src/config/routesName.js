@@ -111,6 +111,11 @@ export const routesName = {
         name: 'Upload Timesheet',
         activeRoute: 'Upload Timesheet',
     },
+    notes: {
+        path: '/notes',
+        name: 'Notes',
+        activeRoute: 'Notes',
+    },
 
 }
 

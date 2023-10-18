@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import * as XLSX from "xlsx";
 import Papa from 'papaparse';
 import * as Actions from '../../../../state/Actions';
@@ -6,16 +6,32 @@ import moment from 'moment';
 import FileUploadButton from '../../../custom/Elements/buttons/FileUploadButton';
 import { MAPPING } from '../../../../utils/Constant';
 import TableHeader from '../../../custom/TableHeader';
-import TableRow from '../../../custom/TableRow';
 import PlainButton from '../../../custom/Elements/buttons/PlainButton';
+import { getMappingFieldUrl } from '../../../../api/urls';
+import { apiAction } from '../../../../api/api';
+import { getWorkspaceInfo } from '../../../../config/cookiesInfo';
+import TimeSheetTable from '../../../custom/TimeSheetTable';
+import { Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material';
 const TimesheetFileData = () => {
     const state = Actions.getState(useContext);
     const dispatch = Actions.getDispatch(useContext);
+    const { work_id } = getWorkspaceInfo()
+    const [mappingFields, setMappingFields] = useState([])
+    const { mappings, mapping_for, activeStep } = state
+    const { rows, fileName, columns, uploadedFile } = mappings
 
-    const { mappings, mapping_for } = state
-    const { rows, fileName, columns } = mappings
-
-    console.log("STATE", mappings)
+    const fetchDBMappingFields = async () => {
+        let res = await apiAction({ url: getMappingFieldUrl(work_id), method: "get", data: null })
+            .then((response) => {
+                setFieldData(response.result)
+            })
+            .catch((error) => {
+                console.log("ERROR", error)
+            })
+    }
+    const setFieldData = (data) => {
+        dispatch(Actions.stateChange("model_fields", data))
+    }
     const onFileUpload = (fileData) => {
         const file = fileData
         const extension = file.name.split(".")[file.name.split(".").length - 1]
@@ -75,7 +91,7 @@ const TimesheetFileData = () => {
             _mappings.uploadedFile = result.uploadedFile
             _mappings.file_headers = Object.keys(firstElement)
 
-            _mappings.columns = Object.keys(firstElement).map((key) => { return { field: key, headerName: key, editable: false, sortable: false, flex: 1, minWidth: 200, fontWeight: key === 'Description' ? 500 : 700 } })
+            _mappings.columns = Object.keys(firstElement).map((key) => { return { field: key, headerName: key, editable: false, sortable: false, flex: 1, minWidth: 200, } })
             // dispatch(Actions.stateChange("filterMessage", null))
         } else {
             // dispatch(Actions.stateChange("filterMessage", `The uploaded file does't contain any data, please check that the file is not empty`))
@@ -83,6 +99,8 @@ const TimesheetFileData = () => {
         _mappings.fileExtension = result.extension
         _mappings.fileName = result.uploadedFile.name
         dispatch(Actions.stateChange("mappings", _mappings))
+        fetchDBMappingFields()
+        // dispatch(Actions.stateChange("model_fields", model_fields))
     }
     return (
         <div className='overflow-hidden' >
@@ -91,42 +109,22 @@ const TimesheetFileData = () => {
                     <FileUploadButton onSuccessFileUpload={onFileUpload} from={MAPPING} className={'flex-auto justify-start'}>{fileName}</FileUploadButton>
                 </div>
                 <div className='flex flex-row gap-6'>
-                    {/* <PlainButton onButtonClick={() => ""} title={"Clear"} className={"py-2"} disable={false} /> */}
-                    <PlainButton onButtonClick={() => ""} title={"Next"} className={"py-2"} disable={true} />
+                    {uploadedFile && <PlainButton onButtonClick={() => {
+                        Actions.resetFileImports(dispatch)
+                    }} title={"Clear"} className={"py-2 bg-white text-blue-600 hover:bg-blue-100 border-blue-600 border-0 border-[1px]"} disable={false} />}
+
+                    <PlainButton onButtonClick={() => {
+                        dispatch(Actions.stateChange("activeStep", 1))
+                    }} title={"Next"} className={"py-2"} disable={!uploadedFile} />
                 </div>
             </div>
-            <div className='mt-4 overflow-hidden ' >
+            <div className='mt-4 ' >
                 {columns && <TimeSheetTable columnsList={columns} rowsList={rows} />}
             </div>
         </div>
     )
 }
 
-function TimeSheetTable(props) {
-    const { columnsList, rowsList } = props
-
-    return (
-        <div className='fixTableHead'>
-            <table className=" bg-transparent w-full" >
-                <thead className='bg-gray-200 px-10 justify-center items-center'>
-                    <tr className='h-10 flex-auto'>
-                        {columnsList.map((item, index) => (<TableHeader className={`text-left w-auto pl-3`} title={item.field}></TableHeader>))}
-                    </tr>
-                </thead>
-
-                <tbody className=" divide-y divide-gray-200 table-fixed" style={{ height: 'calc(100vh - 350px)' }}>
-                    {
-                        rowsList.map((item, index) => {
-                            return <TableRow onItemClick={() => ""} item={item} index={index} className={``} />
-
-                        })
-                    }
-                </tbody>
-
-            </table>
-        </div>
-    )
-}
 
 
 

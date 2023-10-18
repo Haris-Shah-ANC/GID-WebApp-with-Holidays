@@ -3,7 +3,7 @@ import Box from '@mui/material/Box';
 import Stepper from '@mui/material/Stepper';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
-import { StepButton } from '@mui/material';
+import { StepButton, ThemeProvider, createTheme } from '@mui/material';
 import * as Actions from "../../../../../state/Actions"
 // import makeStyles from "@mui/styles/makeStyles";
 
@@ -22,8 +22,6 @@ export default function HorizontalLinearStepper() {
     const state = Actions.getState(React.useContext)
     const dispatch = Actions.getDispatch(React.useContext)
     const { activeStep } = state
-    // const classes = useStyles()
-
     const isStepOptional = (step) => {
         return step === 1;
     };
@@ -31,34 +29,64 @@ export default function HorizontalLinearStepper() {
     const isStepSkipped = (step) => {
         return skipped.has(step);
     };
+    const onStepClick = (index) => {
+        if (index !== activeStep) {
+            if (index == 0) {
+              Actions.resetFileImports(dispatch)
+            } else {
+                dispatch(Actions.stateChange("activeStep", index))
+            }
+
+        }
+
+    }
+    const theme = createTheme({
+        components: {
+            // Name of the component ⚛️
+
+            MuiStepper: {
+                defaultProps: {
+                    style: { outline: 0, }
+                }
+            },
+            MuiStepButton: {
+                defaultProps: {
+                    style: { outline: 0 },
+                }
+            }
+        },
+    });
 
 
     return (
-        <Box maxWidth={"400"} sx={{pt:2}}>
-            <Stepper activeStep={activeStep}>
-                {steps.map((label, index) => {
-                    const stepProps = {};
-                    const labelProps = {};
+        <Box maxWidth={"400"} sx={{ pt: 2 }}>
+            <ThemeProvider theme={theme}>
+                <Stepper activeStep={activeStep} >
+                    {steps.map((label, index) => {
+                        const stepProps = {};
+                        const labelProps = {};
 
-                    if (isStepSkipped(index)) {
-                        stepProps.completed = false;
-                    }
-                    return (
-                        <Step key={label} {...stepProps}>
-                            <StepButton color="inherit" sx={{}}>
-                                <StepLabel sx={{
-                                    fontSize: '14px',
-                                    fontFamily: "Noto Sans",
-                                   
-                                }}>
-                                    {label}
-                                </StepLabel>
-                            </StepButton>
-                        </Step>
-                    );
-                })}
-            </Stepper>
+                        if (isStepSkipped(index)) {
+                            stepProps.completed = false;
+                        }
+                        return (
+                            <Step key={label} {...stepProps}>
+                                <StepButton color="inherit" sx={{
+                                    color: "red !important",
+                                    ".MuiStepButton-root": {
+                                        backgroundColor: 'red',
 
+                                    },
+                                }} onClick={() => onStepClick(index)}>
+                                    <StepLabel sx={{}}>
+                                        {label}
+                                    </StepLabel>
+                                </StepButton>
+                            </Step>
+                        );
+                    })}
+                </Stepper>
+            </ThemeProvider>
         </Box>
     );
 }
