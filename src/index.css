@@ -140,6 +140,28 @@
         right: -10px;
     }
 }
+/* backdrop filter is not applying through tailwind */
+.bubble2-icon i {
+    backdrop-filter: blur(24px);
+    /* background-size: cover; */
+    /* opacity: 100%; */
+    /* background-color: black; */
+    /* margin-right: 4px; */
+    /* margin-top:5px;     */
+}
+
+/* CSS for making the child element visible when Parent element is hovered */
+
+/* #parent-bubble2 .AngleDown-hidden-bubble2{
+    display: none;
+}
+
+#parent-bubble2:hover .AngleDown-hidden-bubble2{
+    display: block;
+} */
+
+
+
 /* YourDatePicker.css */
 .custom-date-picker .MuiSvgIcon-root:focus,
 .custom-date-picker .MuiSvgIcon-root:active {
@@ -163,7 +185,6 @@
     z-index: 1;
 }
 
-/* CSS for the dropdown list item */
 .options-dropdown ul {
     list-style: none;
     padding: 0;

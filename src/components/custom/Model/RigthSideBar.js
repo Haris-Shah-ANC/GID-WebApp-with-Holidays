@@ -6,8 +6,7 @@ import { apiAction } from "../../../api/api";
 import { getLoginDetails, getWorkspaceInfo } from "../../../config/cookiesInfo";
 import moment from "moment";
 import { formatDate } from "../../../utils/Utils";
-import { Typography } from "@mui/material";
-import { FaAngleDown } from "react-icons/fa"; // Import the dropdown icon
+
 //
 export default function CommentsSideBar(props) {
     const { showModal, setShowModal, taskData } = props;
@@ -19,7 +18,6 @@ export default function CommentsSideBar(props) {
     const { user_id } = getLoginDetails(useNavigate());
 
     const [openOptionsIndex, setOpenOptionsIndex] = useState(null); // State to track open options in comment section
-    // const [isOptionsVisible, setIsOpensVisible] = useState(null);
 
     let MIN_TEXTAREA_HEIGHT = 50;
     const textFieldRef = useRef(null)
@@ -56,7 +54,6 @@ export default function CommentsSideBar(props) {
         }
     }
 
-
     const sendComment = async () => {
         if (msgData.reply !== '') {
             // Replace line breaks with <br> tags when sending the message
@@ -88,7 +85,9 @@ export default function CommentsSideBar(props) {
 
         const isDropdownOpen = openOptionsIndex === index;
 
-
+        // Classes to apply based on the value of isDropdownOpen for making the dropdown visible until the options are not closed
+        const isOptionsOpen = `transition-all transform translate-y-8 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 cursor-pointer`;
+        const isOptionsClosed = `opacity-100 cursor-pointer translate-y-0`;
 
         const handleDropdownClick = (e) => {
             e.stopPropagation();
@@ -103,8 +102,12 @@ export default function CommentsSideBar(props) {
             // delete functionality 
         };
 
+        const handleReplyClick = () => {
+            //Reply functionality
+        }
+
         return (
-            <div className="mt-4 " onClick={() => setOpenOptionsIndex(null)}>
+            <div className="mt-4" onClick={() => setOpenOptionsIndex(null)}>
 
                 {index === 0 ?
                     <p className="text-sm text-gray-600 text-center">
@@ -118,19 +121,42 @@ export default function CommentsSideBar(props) {
 
                 {user_id !== chatData.comment_by_id ?
                     <div className="flex flex-row relative">
-                        <div onClick={handleDropdownClick} className="transition-all transform translate-y-8 opacity-0 hover:opacity-100 hover:translate-y-0 cursor-pointer">
-                            <FaAngleDown
-                                size={20}
-                                color="#949699"
-                                //fixing the dropdown symbol at the top right corner
-                                className="absolute top-0 right-0 hover:backdrop-blur-xl shadow-lg p-5"
-                            />
+
+                        <div>
+                            <svg
+                                viewBox="0 0 24 24"
+                                fill="#949699"
+                                height="2em"
+                                width="2em"
+                            >
+                                <path d="M12 2C6.579 2 2 6.579 2 12s4.579 10 10 10 10-4.579 10-10S17.421 2 12 2zm0 5c1.727 0 3 1.272 3 3s-1.273 3-3 3c-1.726 0-3-1.272-3-3s1.274-3 3-3zm-5.106 9.772c.897-1.32 2.393-2.2 4.106-2.2h2c1.714 0 3.209.88 4.106 2.2C15.828 18.14 14.015 19 12 19s-3.828-.86-5.106-2.228z" />
+                            </svg>
                         </div>
 
-                        <div class="bubble">
-                            <span className="text-sm px-2 font-medium text-gray-500">
-                                {chatData.comment_by_name}
-                            </span>
+                        <div class="bubble group ">
+
+                            <div className="flex flex-row justify-between">
+                                <span className="text-sm px-2 font-medium text-gray-500 break-all">
+                                    {chatData.comment_by_name}
+                                </span>
+
+                                <div onClick={handleDropdownClick}
+                                    // className="transition-all transform translate-y-8 opacity-0 group-hover:opacity-100 "
+                                    className={isDropdownOpen ? isOptionsClosed : isOptionsOpen}
+                                >
+                                    <i class="fa-solid fa-chevron-down fa-1x"
+                                        style={{
+                                            paddingRight: 5, color: "#949699", cursor: 'pointer'
+                                        }}
+                                    ></i>
+                                    {/* <FaAngleDown
+                                        size={20}
+                                        color="#949699"
+                                        //fixing the dropdown symbol at the top right corner
+                                        className=" top-0 right-0 backdrop-blur-xl "
+                                    /> */}
+                                </div>
+                            </div>
 
                             <p className="px-2 text-sm break-all">
                                 {chatData.comment.split('<br>').map((line, index) => (
@@ -146,10 +172,19 @@ export default function CommentsSideBar(props) {
                             </span>
 
                             {isDropdownOpen && (
-                                <div className="options-dropdown">
+                                <div className="options-dropdown mt-3">
                                     <ul>
-                                        <li onClick={handleEditClick}>Edit</li>
-                                        <li onClick={handleDeleteClick}>Delete</li>
+                                        <li
+                                            onClick={handleReplyClick}
+                                            className="text-xs font-quicksand"
+                                        >
+                                            Reply
+                                        </li>
+                                        <li onClick={handleDeleteClick}
+                                            className="text-xs font-quicksand"
+                                        >
+                                            Delete
+                                        </li>
                                     </ul>
                                 </div>
                             )}
@@ -159,15 +194,29 @@ export default function CommentsSideBar(props) {
                     :
                     <div className="flex flex-row justify-end">
 
-                        <div class="bubble2">
-                            <div onClick={handleDropdownClick} className="transition-all transform translate-y-8 opacity-0 hover:opacity-100 hover:translate-y-0 cursor-pointer">
-                                <FaAngleDown
+                        <div class="bubble2 group"
+                        // id='parent-bubble2' // for making child element visible on hover using Vanilla CSS
+                        >
+                            <div
+                                // class="AngleDown-hidden-bubble2" 
+                                onClick={handleDropdownClick}
+                                // className="transition-all transform translate-y-8 opacity-0 group-hover:opacity-100 bg-black"
+                                className={isDropdownOpen ? isOptionsClosed : isOptionsOpen}
+                            >
+                                <p className="bubble2-icon ">
+                                    <i class="fa-solid fa-chevron-down fa-1x"
+                                        style={{
+                                            paddingRight: 5,
+                                            paddingTop: 1, color: "#949699", position: 'absolute', top: '0', right: '0',
+                                        }}
+                                    ></i>
+                                </p>
+                                {/* <FaAngleDown
                                     size={20}
                                     color="#949699"
                                     //Fixing the dropdown symbol to the top right corner
-                                    className="absolute top-0 right-0 hover:backdrop-blur-xl shadow-lg"
-                                />
-
+                                    className="absolute top-0 right-0 backdrop-blur-xl shadow-lg"
+                                /> */}
                             </div>
 
                             <p className="px-2 text-sm break-all">
@@ -213,7 +262,7 @@ export default function CommentsSideBar(props) {
         <div className={`custom-modal-dialog ${showModal ? 'show' : ''}`} role="document">
             <div className="">
                 <div className="flex flex-row justify-between">
-                    <span className="text-xl">#Comments</span>
+                    <span className="text-xl"> #Comments </span>
                     <svg fill="none" viewBox="0 0 24 24" className="cursor-pointer" height="1.5em" width="1.5em" onClick={() => {
                         setShowModal(!showModal)
                     }
@@ -233,7 +282,6 @@ export default function CommentsSideBar(props) {
                             key={item.id}
                             openOptionsIndex={openOptionsIndex}
                             setOpenOptionsIndex={setOpenOptionsIndex}
-
                         />
                     ))}
                     {chatList.length == 0 &&
@@ -242,7 +290,6 @@ export default function CommentsSideBar(props) {
                         </p>
                     }
                 </div>
-
             </div>
 
             <div className="absolute bottom-2 right-2 left-2">
