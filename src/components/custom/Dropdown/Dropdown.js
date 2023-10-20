@@ -10,7 +10,6 @@ const Dropdown = (props) => {
     }
   };
 
-
   return (
     <div className={"w-full"}>
       <select

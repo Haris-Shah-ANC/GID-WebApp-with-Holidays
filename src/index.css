@@ -70,8 +70,7 @@
         -webkit-transition: opacity 0.3s linear, right 0.3s ease-out;
         -moz-transition: opacity 0.3s linear, right 0.3s ease-out;
         -o-transition: opacity 0.3s linear, right 0.3s ease-out;
-        transition: opacity 0.3s linear, right 0.3s ease-out;
-     
+        transition: opacity 0.3s linear, right 0.3s ease-out;  
     }
 
     .custom-modal-dialog::-webkit-scrollbar {
@@ -143,9 +142,8 @@
 /* backdrop filter is not applying through tailwind */
 .bubble2-icon i {
     backdrop-filter: blur(24px);
-    /* background-size: cover; */
-    /* opacity: 100%; */
-    /* background-color: black; */
+    clip-path: circle(60%);
+    
     /* margin-right: 4px; */
     /* margin-top:5px;     */
 }
@@ -153,11 +151,14 @@
 /* CSS for making the child element visible when Parent element is hovered */
 
 /* #parent-bubble2 .AngleDown-hidden-bubble2{
+    "display" none hides the element as if the element was not there and "visibility" hides the element as if the element it is just not visible
     display: none;
+    visibility: hidden;
 }
 
 #parent-bubble2:hover .AngleDown-hidden-bubble2{
     display: block;
+    visibility: visible;
 } */
 
 

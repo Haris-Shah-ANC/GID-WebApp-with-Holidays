@@ -6,12 +6,14 @@ import { apiAction } from "../../../api/api";
 import { getLoginDetails, getWorkspaceInfo } from "../../../config/cookiesInfo";
 import moment from "moment";
 import { formatDate } from "../../../utils/Utils";
+import CustomLabel from "../Elements/CustomLabel";
+import { Box, Modal } from '@mui/material';
 
 //
 export default function CommentsSideBar(props) {
     const { showModal, setShowModal, taskData } = props;
     const [msgData, setMsgData] = useState({ reply: "" })
-    const [chatList, setChatData] = useState([])
+    const [chatList, setChatData] = useState([]);
     const navigate = useNavigate();
     const dispatch = Actions.getDispatch(useContext);
     const { work_id } = getWorkspaceInfo();
@@ -83,11 +85,17 @@ export default function CommentsSideBar(props) {
     const ChatItem = (props) => {
         const { chatData, index, openOptionsIndex, setOpenOptionsIndex } = props;
 
-        const isDropdownOpen = openOptionsIndex === index;
+        const [openEditModal,setOpenEditModal] =  useState(false) ;
+
+        const commentTypes = { self: "self", reply: "reply" }
+
+        let isDropdownOpen = openOptionsIndex === index;
+
 
         // Classes to apply based on the value of isDropdownOpen for making the dropdown visible until the options are not closed
         const isOptionsOpen = `transition-all transform translate-y-8 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 cursor-pointer`;
         const isOptionsClosed = `opacity-100 cursor-pointer translate-y-0`;
+
 
         const handleDropdownClick = (e) => {
             e.stopPropagation();
@@ -95,7 +103,7 @@ export default function CommentsSideBar(props) {
         };
 
         const handleEditClick = () => {
-            // edit functionality 
+            setOpenEditModal(true) ; 
         };
 
         const handleDeleteClick = () => {
@@ -133,7 +141,7 @@ export default function CommentsSideBar(props) {
                             </svg>
                         </div>
 
-                        <div class="bubble group ">
+                        <div class="bubble group">
 
                             <div className="flex flex-row justify-between">
                                 <span className="text-sm px-2 font-medium text-gray-500 break-all">
@@ -141,13 +149,15 @@ export default function CommentsSideBar(props) {
                                 </span>
 
                                 <div onClick={handleDropdownClick}
+                                    // ref={wrapperRef}
                                     // className="transition-all transform translate-y-8 opacity-0 group-hover:opacity-100 "
                                     className={isDropdownOpen ? isOptionsClosed : isOptionsOpen}
                                 >
                                     <i class="fa-solid fa-chevron-down fa-1x"
                                         style={{
-                                            paddingRight: 5, color: "#949699", cursor: 'pointer'
+                                            paddingRight: 5, color: "#949699", cursor: 'pointer',
                                         }}
+
                                     ></i>
                                     {/* <FaAngleDown
                                         size={20}
@@ -172,21 +182,7 @@ export default function CommentsSideBar(props) {
                             </span>
 
                             {isDropdownOpen && (
-                                <div className="options-dropdown mt-3">
-                                    <ul>
-                                        <li
-                                            onClick={handleReplyClick}
-                                            className="text-xs font-quicksand"
-                                        >
-                                            Reply
-                                        </li>
-                                        <li onClick={handleDeleteClick}
-                                            className="text-xs font-quicksand"
-                                        >
-                                            Delete
-                                        </li>
-                                    </ul>
-                                </div>
+                                <DropdownOptions commentType={commentTypes.reply} handleReplyClick={handleReplyClick} handleDeleteClick={handleDeleteClick} />
                             )}
 
                         </div>
@@ -203,11 +199,12 @@ export default function CommentsSideBar(props) {
                                 // className="transition-all transform translate-y-8 opacity-0 group-hover:opacity-100 bg-black"
                                 className={isDropdownOpen ? isOptionsClosed : isOptionsOpen}
                             >
-                                <p className="bubble2-icon ">
+                                <p className="bubble2-icon">
                                     <i class="fa-solid fa-chevron-down fa-1x"
                                         style={{
-                                            paddingRight: 5,
-                                            paddingTop: 1, color: "#949699", position: 'absolute', top: '0', right: '0',
+                                            paddingRight: 2,
+                                            paddingLeft: 2,
+                                            color: "#949699", position: 'absolute', top: '0', right: '0',
                                         }}
                                     ></i>
                                 </p>
@@ -233,21 +230,7 @@ export default function CommentsSideBar(props) {
                             </span>
 
                             {isDropdownOpen && (
-                                <div className="options-dropdown mt-3">
-                                    <ul>
-                                        <li
-                                            onClick={handleEditClick}
-                                            className="text-xs font-quicksand"
-                                        >
-                                            Edit
-                                        </li>
-                                        <li onClick={handleDeleteClick}
-                                            className="text-xs font-quicksand"
-                                        >
-                                            Delete
-                                        </li>
-                                    </ul>
-                                </div>
+                                <DropdownOptions commentType={commentTypes.self} handleEditClick={handleEditClick} handleDeleteClick={handleDeleteClick} />
                             )}
 
                         </div>
@@ -257,10 +240,46 @@ export default function CommentsSideBar(props) {
         );
     };
 
+    const DropdownOptions = (props) => {
+
+        const { commentType, handleEditClick, handleDeleteClick, handleReplyClick } = props;
+        const dropDownClasess = `text-xs font-quicksand` ;
+        const deleteClass = `text-xs font-quicksand text-red-500`
+
+        return (
+            <div className="options-dropdown mt-3">
+                <ul>
+                    {commentType === "self" ?
+                        <li
+                            onClick={handleEditClick}
+                            className="text-xs font-quicksand"
+                        >
+                            <CustomLabel  label={'Edit'} className={dropDownClasess}/>
+                        </li>
+                        :
+                        <li
+                            onClick={handleReplyClick}
+                            className="text-xs font-quicksand"
+                        >
+                            <CustomLabel  label={'Reply'} className={dropDownClasess}/>
+                        </li>
+                    }
+                    <li onClick={handleDeleteClick}
+                        className="text-xs font-quicksand text-red-500"
+                    >
+                        <CustomLabel  label={'Delete'} className={deleteClass}/>
+                    </li>
+                </ul>
+            </div>
+        )
+    }
 
     return (
-        <div className={`custom-modal-dialog ${showModal ? 'show' : ''}`} role="document">
-            <div className="">
+        <div className={`custom-modal-dialog ${showModal ? 'show' : ''}`} role="document"
+            onClick={(e) => setOpenOptionsIndex(false)} // for closing dropdown Options
+        >
+            <div className=""
+            >
                 <div className="flex flex-row justify-between">
                     <span className="text-xl"> #Comments </span>
                     <svg fill="none" viewBox="0 0 24 24" className="cursor-pointer" height="1.5em" width="1.5em" onClick={() => {
@@ -296,6 +315,7 @@ export default function CommentsSideBar(props) {
                 <div className="flex flex-row justify-between items-between w-full">
                     <div className="flex w-full">
                         <textarea
+                            onClick={(e) => setOpenOptionsIndex(false)} // for closing dropdown Options
                             value={msgData.reply}
                             id={"replyInputBox"}
                             ref={textFieldRef}

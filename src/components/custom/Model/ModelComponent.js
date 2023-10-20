@@ -27,6 +27,7 @@ import { Box, Modal } from '@mui/material';
 import AddHoliday from '../../pages/mainManagement/AddHoliday';
 
 const ModelComponent = (props) => {
+    
     const { showModal, setShowModal, data, onFilterApply, onFilterClear, from, onSuccess = () => "", holidayToEdit} = props
     const style = {
         position: 'absolute',
