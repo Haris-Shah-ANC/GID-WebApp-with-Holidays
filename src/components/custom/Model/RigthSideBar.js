@@ -8,8 +8,6 @@ import moment from "moment";
 import { formatDate } from "../../../utils/Utils";
 import CustomLabel from "../Elements/CustomLabel";
 import { Box, Modal } from '@mui/material';
-import { Edit } from "@mui/icons-material";
-import GidInput from "../Elements/inputs/GidInput";
 import PlainButton from "../Elements/buttons/PlainButton";
 import ButtonWithImage from "../Elements/buttons/ButtonWithImage";
 
@@ -106,7 +104,6 @@ function DeleteModal(props) {
 
     return (
         <div className="absolute">
-            {/* <Button onClick={handleOpen}>Open Child Modal</Button> */}
             <Modal
                 open={open}
                 onClose={onClose}
@@ -121,15 +118,11 @@ function DeleteModal(props) {
                             <h3 className="text-lg font-quicksand font-bold w-full">
                                 {'Delete message?'}
                             </h3>
-                            {/* <ButtonWithImage
-                                onButtonClick={onClose}
-                                title={""}
-                                className={"rounded-full w-10 h-10 p-0 m-0 justify-center items-center bg-white shadow-none hover:bg-gray-200 active:bg-gray-200"}
-                                icon={<i className="fa-solid fa-times text text-black self-center" color='black'></i>}
-                            ></ButtonWithImage> */}
                         </div>
                         <div className=" ml-56 pb-5 mt-9">
-                            <button className="bg-blue-400 hover:bg-blue-500 text-white font-semibold py-1 px-3 rounded-md mr-3"
+                            <button 
+                            className="bg-blue-400 hover:bg-blue-500 text-white font-semibold py-1 px-3 rounded-md mr-3"
+                            onMouseDown={onClose}
                             >Cancel
                             </button>
                             <button
