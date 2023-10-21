@@ -249,6 +249,7 @@ const Dashboard = () => {
     const onHoldClick = () => {
         setOpen(true)
     }
+
     const DashboardCard = (props) => {
         const { user_id } = getLoginDetails(useNavigate());
         const [popoverShow, setPopoverShow] = React.useState(false);
@@ -549,7 +550,7 @@ const Dashboard = () => {
                     {/* <span style={{ textAlign: 'right', justifyContent: 'end' }}>
                        page 1 of 1
                     </span> */}
-                </Box >
+                </Box > 
                 <ReasonModal open={open} handleClose={() => setOpen(!open)} reason={onHoldReason} />
             </div>
         </React.Fragment>
@@ -590,6 +591,7 @@ const ReasonModal = (props) => {
         </Modal>
     )
 }
+
 const Filter = (props) => {
     const { employeeResults, projectsResults, filters, setFilters } = props;
 

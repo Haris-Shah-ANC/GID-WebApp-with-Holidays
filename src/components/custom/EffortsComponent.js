@@ -101,6 +101,7 @@ export default function EffortsComponent(props) {
             getEmployeeTaskEfforts()
         }
     }
+    
     const updateEfforts = async (pBody) => {
         let res = await apiAction({ url: getTheUpdateTaskEffortsUrl(), method: 'post', data: pBody, navigate: navigate, dispatch: dispatch })
         if (res) {
@@ -123,17 +124,19 @@ export default function EffortsComponent(props) {
         if (result)
             deleteTaskEfforts(listOfTaskEfforts[index].id)
     }
+
     const onCancelEdit = () => {
         setEditItem(false)
     }
+
     const onUpdateEfforts = (index, item) => {
         if (editItem.working_duration > 0) {
             updateEfforts({ workspace_id: work_id, working_date: item.working_date, hour: editItem.working_duration, task_record_id: item.id })
         } else {
             notifyInfoMessage("Hours must be a positive number.")
         }
-
     }
+
     const onSubmitClick = () => {
         let currentAddedEffortsList = []
         for (let i = 0, len = listOfTaskEfforts.length, text = ""; i < len; i++) {

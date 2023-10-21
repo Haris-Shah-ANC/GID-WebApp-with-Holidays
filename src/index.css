@@ -139,6 +139,7 @@
         right: -10px;
     }
 }
+
 /* backdrop filter is not applying through tailwind */
 .bubble2-icon i {
     backdrop-filter: blur(24px);

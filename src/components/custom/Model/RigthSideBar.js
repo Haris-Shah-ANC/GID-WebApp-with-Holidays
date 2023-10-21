@@ -8,8 +8,142 @@ import moment from "moment";
 import { formatDate } from "../../../utils/Utils";
 import CustomLabel from "../Elements/CustomLabel";
 import { Box, Modal } from '@mui/material';
+import { Edit } from "@mui/icons-material";
+import GidInput from "../Elements/inputs/GidInput";
+import PlainButton from "../Elements/buttons/PlainButton";
+import ButtonWithImage from "../Elements/buttons/ButtonWithImage";
 
-//
+
+function EditModal(props) {
+    const { open, onClose } = props;
+
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '70%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        border: '1px solid #000',
+        boxShadow: 24,
+    };
+
+    return (
+        <div className="absolute">
+            {/* <Button onClick={handleOpen}>Open Child Modal</Button> */}
+            <Modal
+                open={open}
+                onClose={onClose}
+                aria-labelledby="child-modal-title"
+                aria-describedby="child-modal-description"
+            >
+                <Box
+                    sx={{ ...style, width: 400 }}
+                >
+                    <div className="bg-gray-200 ">
+                        <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
+                            <h3 className="text-lg font-quicksand font-bold text-center w-full">
+                                {'Edit Comment'}
+                            </h3>
+                            <ButtonWithImage
+                                onButtonClick={onClose}
+                                title={""}
+                                className={"rounded-full w-10 h-10 p-0 m-0 justify-center items-center bg-white shadow-none hover:bg-gray-200 active:bg-gray-200"}
+                                icon={<i className="fa-solid fa-times text text-black self-center" color='black'></i>}
+                            ></ButtonWithImage>
+                        </div>
+                        <form>
+
+                            <div className="relative px-5 pt-2 flex-auto">
+                                <div className="my-4 flex flex-col">
+                                    <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={"Comment to Edit"} />
+                                    <textarea
+                                        inputType={"text"}
+                                        disable={true}
+                                        className={"text-justify w-full rounded-md border-transparent no-scrollbar break-all "}
+                                        placeholder={"Prefilled comment"}
+                                        onBlurEvent={() => { }}
+                                        onTextChange={(e) => {
+                                            // if (e.target.value !== "")
+                                            // setHolidayData({ ...holidayData, title: e.target.value })
+                                        }}
+                                    >
+                                    </textarea>
+                                </div>
+
+                            </div>
+
+
+                            <div className="p-6 border-solid border-slate-200 rounded-b">
+                                <PlainButton
+                                    title={"Submit Changes"}
+                                    className={"w-full"}
+                                    // onButtonClick={handleSubmit}
+                                    disable={false}>
+                                </PlainButton>
+                            </div>
+
+                        </form>
+                    </div>
+                </Box>
+            </Modal>
+        </div>
+    );
+}
+
+function DeleteModal(props) {
+    const { open, onClose } = props;
+
+    const style = {
+        position: 'absolute',
+        top: '50%',
+        left: '70%',
+        transform: 'translate(-50%, -50%)',
+        width: 400,
+        bgcolor: 'background.paper',
+        boxShadow: 24,
+    };
+
+    return (
+        <div className="absolute">
+            {/* <Button onClick={handleOpen}>Open Child Modal</Button> */}
+            <Modal
+                open={open}
+                onClose={onClose}
+                aria-labelledby="child-modal-title"
+                aria-describedby="child-modal-description"
+            >
+                <Box
+                    sx={{ ...style, width: 400}}
+                >
+                    <div className="bg-gray-300">
+                        <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
+                            <h3 className="text-lg font-quicksand font-bold w-full">
+                                {'Delete message?'}
+                            </h3>
+                            {/* <ButtonWithImage
+                                onButtonClick={onClose}
+                                title={""}
+                                className={"rounded-full w-10 h-10 p-0 m-0 justify-center items-center bg-white shadow-none hover:bg-gray-200 active:bg-gray-200"}
+                                icon={<i className="fa-solid fa-times text text-black self-center" color='black'></i>}
+                            ></ButtonWithImage> */}
+                        </div>
+                        <div className=" ml-56 pb-5 mt-9">
+                            <button className="bg-blue-400 hover:bg-blue-500 text-white font-semibold py-1 px-3 rounded-md mr-3"
+                            >Cancel
+                            </button>
+                            <button
+                            className="bg-red-400 hover:bg-red-500 text-white font-semibold py-1 px-3 rounded-md"
+                            >Delete
+                            </button>
+                        </div>
+                    </div>
+                </Box>
+            </Modal>
+        </div>
+    );
+}
+
 export default function CommentsSideBar(props) {
     const { showModal, setShowModal, taskData } = props;
     const [msgData, setMsgData] = useState({ reply: "" })
@@ -18,6 +152,12 @@ export default function CommentsSideBar(props) {
     const dispatch = Actions.getDispatch(useContext);
     const { work_id } = getWorkspaceInfo();
     const { user_id } = getLoginDetails(useNavigate());
+
+    // state for opening and closing of edit modal
+    const [openEditModal, setOpenEditModal] = useState(false);
+
+    // state for opening and closing of delete modal
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
     const [openOptionsIndex, setOpenOptionsIndex] = useState(null); // State to track open options in comment section
 
@@ -83,10 +223,9 @@ export default function CommentsSideBar(props) {
     }
 
     const ChatItem = (props) => {
-        const { chatData, index, openOptionsIndex, setOpenOptionsIndex } = props;
+        const { chatData, index, openOptionsIndex, setOpenOptionsIndex, openEditModal, setOpenEditModal, openDeleteModal, setOpenDeleteModal } = props;
 
-        const [openEditModal,setOpenEditModal] =  useState(false) ;
-
+        console.log("chatData===>", chatData)
         const commentTypes = { self: "self", reply: "reply" }
 
         let isDropdownOpen = openOptionsIndex === index;
@@ -103,12 +242,18 @@ export default function CommentsSideBar(props) {
         };
 
         const handleEditClick = () => {
-            setOpenEditModal(true) ; 
+            setOpenEditModal(true);
         };
 
         const handleDeleteClick = () => {
-            // delete functionality 
+            setOpenDeleteModal(true);
         };
+
+        // const onDeleteItem = (index) => {
+        //     const result = window.confirm('Are you sure you want to delete this efforts?')
+        //     if (result)
+        //         deleteTaskEfforts(listOfTaskEfforts[index].id)
+        // }
 
         const handleReplyClick = () => {
             //Reply functionality
@@ -243,7 +388,7 @@ export default function CommentsSideBar(props) {
     const DropdownOptions = (props) => {
 
         const { commentType, handleEditClick, handleDeleteClick, handleReplyClick } = props;
-        const dropDownClasess = `text-xs font-quicksand` ;
+        const dropDownClasess = `text-xs font-quicksand`;
         const deleteClass = `text-xs font-quicksand text-red-500`
 
         return (
@@ -254,20 +399,20 @@ export default function CommentsSideBar(props) {
                             onClick={handleEditClick}
                             className="text-xs font-quicksand"
                         >
-                            <CustomLabel  label={'Edit'} className={dropDownClasess}/>
+                            <CustomLabel label={'Edit'} className={dropDownClasess} />
                         </li>
                         :
                         <li
                             onClick={handleReplyClick}
                             className="text-xs font-quicksand"
                         >
-                            <CustomLabel  label={'Reply'} className={dropDownClasess}/>
+                            <CustomLabel label={'Reply'} className={dropDownClasess} />
                         </li>
                     }
                     <li onClick={handleDeleteClick}
                         className="text-xs font-quicksand text-red-500"
                     >
-                        <CustomLabel  label={'Delete'} className={deleteClass}/>
+                        <CustomLabel label={'Delete'} className={deleteClass} />
                     </li>
                 </ul>
             </div>
@@ -275,121 +420,132 @@ export default function CommentsSideBar(props) {
     }
 
     return (
-        <div className={`custom-modal-dialog ${showModal ? 'show' : ''}`} role="document"
-            onClick={(e) => setOpenOptionsIndex(false)} // for closing dropdown Options
-        >
-            <div className=""
+        <React.Fragment>
+            <div className={`custom-modal-dialog ${showModal ? 'show' : ''}`} role="document"
+                onClick={(e) => setOpenOptionsIndex(false)} // for closing dropdown Options
             >
-                <div className="flex flex-row justify-between">
-                    <span className="text-xl"> #Comments </span>
-                    <svg fill="none" viewBox="0 0 24 24" className="cursor-pointer" height="1.5em" width="1.5em" onClick={() => {
-                        setShowModal(!showModal)
-                    }
-                    }
-                    >
-                        <path
-                            fill="currentColor"
-                            d="M6.225 4.811a1 1 0 00-1.414 1.414L10.586 12 4.81 17.775a1 1 0 101.414 1.414L12 13.414l5.775 5.775a1 1 0 001.414-1.414L13.414 12l5.775-5.775a1 1 0 00-1.414-1.414L12 10.586 6.225 4.81z"
-                        />
-                    </svg>
-                </div>
-                <div id="element" className="no-scrollbar overflow-y-auto overflow-x-hidden pr-1 " style={{ height: 'calc(100vh - 250px)', scrollbarWidth: 'none' }} >
-                    {chatList.map((item, index) => (
-                        <ChatItem
-                            chatData={item}
-                            index={index}
-                            key={item.id}
-                            openOptionsIndex={openOptionsIndex}
-                            setOpenOptionsIndex={setOpenOptionsIndex}
-                        />
-                    ))}
-                    {chatList.length == 0 &&
-                        <p className="flex justify-center mt-[35vh]">
-                            No data found
-                        </p>
-                    }
-                </div>
-            </div>
-
-            <div className="absolute bottom-2 right-2 left-2">
-                <div className="flex flex-row justify-between items-between w-full">
-                    <div className="flex w-full">
-                        <textarea
-                            onClick={(e) => setOpenOptionsIndex(false)} // for closing dropdown Options
-                            value={msgData.reply}
-                            id={"replyInputBox"}
-                            ref={textFieldRef}
-                            className={' text-justify w-full rounded-md border-transparent no-scrollbar break-all '}
-                            placeholder="Write your comment..."
-                            type="text"
-                            // multiple
-                            onChange={e => {
-                                // console.log("nativeEvent", e.nativeEvent);
-                                // Destructure and update msgData
-                                setMsgData({ ...msgData, reply: e.target.value });
-                                console.log("msgData ===>", msgData.reply);
-
-                                // Check for the condition
-                                // if (e.target.value.includes("/") && e.nativeEvent.inputType === "insertFromPaste") {
-                                //     console.log("IN IF");
-                                //     // setInputValue("");
-                                //     textFieldRef.current.value = null;
-                                //     // onType();
-                                // } else {
-                                //     console.log("IN ELSE");
-                                //     // setInputValue(e.target.value);
-                                //     // onType();
-                                // }
-                            }}
-
-                            // onChange={(e) => { setMsgData({ ...msgData, reply: e.target.value }) }}
-                            style={{
-                                maxHeight: 240,
-                                minHeight: MIN_TEXTAREA_HEIGHT,
-                                resize: "none",
-                                verticalAlign: 'center'
-                            }}
-
-                            // onKeyDown={(e) => {
-                            //     if (e.key === 'Enter' && e.target.value) {
-                            //         onSendMsgClick()                                    // 
-                            //         setTimeout(() => {
-                            //             textFieldRef.current.style.height = "32px";
-                            //             textFieldRef.current.value = "";
-                            //         }, 50)
-                            //     }
-                            // }}
-
-                            onKeyDown={(e) => {
-                                if (e.key === 'Enter' && e.target.value) {
-                                    if (!e.shiftKey) {
-                                        e.preventDefault(); // Prevent default behavior (submit)
-                                        onSendMsgClick();
-                                        textFieldRef.current.style.height = "32px";
-                                        textFieldRef.current.value = "";
-                                    }
-                                }
-                            }}
-                        ></textarea>
+                <div className="relative"
+                >
+                    <div className="relative">
+                        <EditModal open={openEditModal} onClose={() => setOpenEditModal(false)} />
+                        <DeleteModal open={openDeleteModal} onClose={() => setOpenDeleteModal(false)} />
                     </div>
-                    {msgData.reply !== "" &&
-                        <div className="flex justify-center text-center items-center pl-2">
-                            <svg
-                                viewBox="0 0 24 24"
-                                fill="#060fba"
-                                height="1.5em"
-                                width="1.5em"
-                                className="cursor-pointer"
-                                onClick={onSendMsgClick}
-                            >
-                                <path d="M21.426 11.095l-17-8A1 1 0 003.03 4.242l1.212 4.849L12 12l-7.758 2.909-1.212 4.849a.998.998 0 001.396 1.147l17-8a1 1 0 000-1.81z" />
-                            </svg>
-                        </div>
-                    }
 
+                    <div className="flex flex-row justify-between ">
+                        <span className="text-xl"> #Comments </span>
+                        <svg fill="none" viewBox="0 0 24 24" className="cursor-pointer" height="1.5em" width="1.5em" onClick={() => {
+                            setShowModal(!showModal)
+                        }
+                        }
+                        >
+                            <path
+                                fill="currentColor"
+                                d="M6.225 4.811a1 1 0 00-1.414 1.414L10.586 12 4.81 17.775a1 1 0 101.414 1.414L12 13.414l5.775 5.775a1 1 0 001.414-1.414L13.414 12l5.775-5.775a1 1 0 00-1.414-1.414L12 10.586 6.225 4.81z"
+                            />
+                        </svg>
+                    </div>
+                    <div id="element" className="no-scrollbar overflow-y-auto overflow-x-hidden pr-1 " style={{ height: 'calc(100vh - 250px)', scrollbarWidth: 'none' }} >
+                        {chatList.map((item, index) => (
+                            <ChatItem
+                                chatData={item}
+                                index={index}
+                                key={item.id}
+                                openOptionsIndex={openOptionsIndex}
+                                setOpenOptionsIndex={setOpenOptionsIndex}
+                                openEditModal={openEditModal}
+                                setOpenEditModal={setOpenEditModal}
+                                openDeleteModal={openDeleteModal}
+                                setOpenDeleteModal={setOpenDeleteModal}
+                            />
+                        ))}
+                        {chatList.length == 0 &&
+                            <p className="flex justify-center mt-[35vh]">
+                                No data found
+                            </p>
+                        }
+                    </div>
                 </div>
-            </div>
 
-        </div>
+                <div className="absolute bottom-2 right-2 left-2">
+                    <div className="flex flex-row justify-between items-between w-full">
+                        <div className="flex w-full">
+                            <textarea
+                                onClick={(e) => setOpenOptionsIndex(false)} // for closing dropdown Options
+                                value={msgData.reply}
+                                id={"replyInputBox"}
+                                ref={textFieldRef}
+                                className={' text-justify w-full rounded-md border-transparent no-scrollbar break-all '}
+                                placeholder="Write your comment..."
+                                type="text"
+                                // multiple
+                                onChange={e => {
+                                    // console.log("nativeEvent", e.nativeEvent);
+                                    // Destructure and update msgData
+                                    setMsgData({ ...msgData, reply: e.target.value });
+                                    console.log("msgData ===>", msgData.reply);
+
+                                    // Check for the condition
+                                    // if (e.target.value.includes("/") && e.nativeEvent.inputType === "insertFromPaste") {
+                                    //     console.log("IN IF");
+                                    //     // setInputValue("");
+                                    //     textFieldRef.current.value = null;
+                                    //     // onType();
+                                    // } else {
+                                    //     console.log("IN ELSE");
+                                    //     // setInputValue(e.target.value);
+                                    //     // onType();
+                                    // }
+                                }}
+
+                                // onChange={(e) => { setMsgData({ ...msgData, reply: e.target.value }) }}
+                                style={{
+                                    maxHeight: 240,
+                                    minHeight: MIN_TEXTAREA_HEIGHT,
+                                    resize: "none",
+                                    verticalAlign: 'center'
+                                }}
+
+                                // onKeyDown={(e) => {
+                                //     if (e.key === 'Enter' && e.target.value) {
+                                //         onSendMsgClick()                                    // 
+                                //         setTimeout(() => {
+                                //             textFieldRef.current.style.height = "32px";
+                                //             textFieldRef.current.value = "";
+                                //         }, 50)
+                                //     }
+                                // }}
+
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter' && e.target.value) {
+                                        if (!e.shiftKey) {
+                                            e.preventDefault(); // Prevent default behavior (submit)
+                                            onSendMsgClick();
+                                            textFieldRef.current.style.height = "32px";
+                                            textFieldRef.current.value = "";
+                                        }
+                                    }
+                                }}
+                            ></textarea>
+                        </div>
+                        {msgData.reply !== "" &&
+                            <div className="flex justify-center text-center items-center pl-2">
+                                <svg
+                                    viewBox="0 0 24 24"
+                                    fill="#060fba"
+                                    height="1.5em"
+                                    width="1.5em"
+                                    className="cursor-pointer"
+                                    onClick={onSendMsgClick}
+                                >
+                                    <path d="M21.426 11.095l-17-8A1 1 0 003.03 4.242l1.212 4.849L12 12l-7.758 2.909-1.212 4.849a.998.998 0 001.396 1.147l17-8a1 1 0 000-1.81z" />
+                                </svg>
+                            </div>
+                        }
+
+                    </div>
+                </div>
+
+            </div>
+        </React.Fragment>
     );
 }
