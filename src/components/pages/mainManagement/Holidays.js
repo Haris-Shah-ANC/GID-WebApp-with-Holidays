@@ -2,11 +2,10 @@ import React from "react";
 import ModelComponent from "../../custom/Model/ModelComponent";
 import { add_holidays } from "../../../utils/Constant";
 import { formatDate } from "../../../utils/Utils";
-
 const Holidays = () => {
 
-    const [showModal, setShowModal] = React.useState(false);
-
+    const [showModal, setShowModal] = React.useState(false);    
+    
     const [holidays, setHolidays] = React.useState([
         { date: '2023-10-24', title: 'Dussehra' },
         { date: '2023-10-02', title: 'Gandhi Jayanti' },

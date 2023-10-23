@@ -219,3 +219,7 @@ export const getBudgetListUrl = () => {
 export const getEffortAlertsStatus = () => {
     return HOST + APP_NAME + `/task_effort_alert/`
 }
+
+export const getDeleteCommentUrl = () => {
+    return HOST + APP_NAME + `/delete_comment/`
+}

@@ -52,6 +52,7 @@ export default function EffortsComponent(props) {
     const getTotalTaskEfforts = (item) => {
         return item.reduce((total, currentValue) => total = parseFloat(total) + parseFloat(currentValue.working_duration), 0)
     }
+
     const addEmployeeTaskEfforts = async (EffortsList) => {
         let payload = { workspace_id: work_id, task_id: data.task_id ? data.task_id : data.id }
         if (Array.isArray(EffortsList)) {
@@ -78,6 +79,7 @@ export default function EffortsComponent(props) {
 
         }
     }
+    
     const getEmployeeTaskEfforts = async () => {
         let res = await apiAction({ url: getTheListOfTaskEffortsUrl(work_id, data.task_id ? data.task_id : data.id), method: 'get', data: {}, navigate: navigate, dispatch: dispatch })
             .then((response) => {
@@ -94,6 +96,7 @@ export default function EffortsComponent(props) {
             })
 
     }
+    
     const deleteTaskEfforts = async (id) => {
         let res = await apiAction({ url: getDeleteTaskEffortsUrl(), method: 'post', data: { task_record_id: id, workspace_id: work_id }, navigate: navigate, dispatch: dispatch })
         if (res) {

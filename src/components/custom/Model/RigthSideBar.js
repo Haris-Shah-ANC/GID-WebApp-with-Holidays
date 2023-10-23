@@ -1,141 +1,16 @@
 import React, { useEffect, useState, useContext, useLayoutEffect, useRef } from "react";
-import { getAddCommentUrl, getCommentListUrl } from "../../../api/urls";
+import { getAddCommentUrl, getCommentListUrl, getDeleteCommentUrl } from "../../../api/urls";
 import { useNavigate } from "react-router-dom";
 import * as Actions from '../../../state/Actions';
 import { apiAction } from "../../../api/api";
 import { getLoginDetails, getWorkspaceInfo } from "../../../config/cookiesInfo";
 import moment from "moment";
-import { formatDate } from "../../../utils/Utils";
+import { formatDate, notifySuccessMessage } from "../../../utils/Utils";
 import CustomLabel from "../Elements/CustomLabel";
 import { Box, Modal } from '@mui/material';
 import PlainButton from "../Elements/buttons/PlainButton";
 import ButtonWithImage from "../Elements/buttons/ButtonWithImage";
 
-
-function EditModal(props) {
-    const { open, onClose } = props;
-
-    const style = {
-        position: 'absolute',
-        top: '50%',
-        left: '70%',
-        transform: 'translate(-50%, -50%)',
-        width: 400,
-        bgcolor: 'background.paper',
-        border: '1px solid #000',
-        boxShadow: 24,
-    };
-
-    return (
-        <div className="absolute">
-            {/* <Button onClick={handleOpen}>Open Child Modal</Button> */}
-            <Modal
-                open={open}
-                onClose={onClose}
-                aria-labelledby="child-modal-title"
-                aria-describedby="child-modal-description"
-            >
-                <Box
-                    sx={{ ...style, width: 400 }}
-                >
-                    <div className="bg-gray-200 ">
-                        <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
-                            <h3 className="text-lg font-quicksand font-bold text-center w-full">
-                                {'Edit Comment'}
-                            </h3>
-                            <ButtonWithImage
-                                onButtonClick={onClose}
-                                title={""}
-                                className={"rounded-full w-10 h-10 p-0 m-0 justify-center items-center bg-white shadow-none hover:bg-gray-200 active:bg-gray-200"}
-                                icon={<i className="fa-solid fa-times text text-black self-center" color='black'></i>}
-                            ></ButtonWithImage>
-                        </div>
-                        <form>
-
-                            <div className="relative px-5 pt-2 flex-auto">
-                                <div className="my-4 flex flex-col">
-                                    <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={"Comment to Edit"} />
-                                    <textarea
-                                        inputType={"text"}
-                                        disable={true}
-                                        className={"text-justify w-full rounded-md border-transparent no-scrollbar break-all "}
-                                        placeholder={"Prefilled comment"}
-                                        onBlurEvent={() => { }}
-                                        onTextChange={(e) => {
-                                            // if (e.target.value !== "")
-                                            // setHolidayData({ ...holidayData, title: e.target.value })
-                                        }}
-                                    >
-                                    </textarea>
-                                </div>
-
-                            </div>
-
-
-                            <div className="p-6 border-solid border-slate-200 rounded-b">
-                                <PlainButton
-                                    title={"Submit Changes"}
-                                    className={"w-full"}
-                                    // onButtonClick={handleSubmit}
-                                    disable={false}>
-                                </PlainButton>
-                            </div>
-
-                        </form>
-                    </div>
-                </Box>
-            </Modal>
-        </div>
-    );
-}
-
-function DeleteModal(props) {
-    const { open, onClose } = props;
-
-    const style = {
-        position: 'absolute',
-        top: '50%',
-        left: '70%',
-        transform: 'translate(-50%, -50%)',
-        width: 400,
-        bgcolor: 'background.paper',
-        boxShadow: 24,
-    };
-
-    return (
-        <div className="absolute">
-            <Modal
-                open={open}
-                onClose={onClose}
-                aria-labelledby="child-modal-title"
-                aria-describedby="child-modal-description"
-            >
-                <Box
-                    sx={{ ...style, width: 400}}
-                >
-                    <div className="bg-gray-300">
-                        <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
-                            <h3 className="text-lg font-quicksand font-bold w-full">
-                                {'Delete message?'}
-                            </h3>
-                        </div>
-                        <div className=" ml-56 pb-5 mt-9">
-                            <button 
-                            className="bg-blue-400 hover:bg-blue-500 text-white font-semibold py-1 px-3 rounded-md mr-3"
-                            onMouseDown={onClose}
-                            >Cancel
-                            </button>
-                            <button
-                            className="bg-red-400 hover:bg-red-500 text-white font-semibold py-1 px-3 rounded-md"
-                            >Delete
-                            </button>
-                        </div>
-                    </div>
-                </Box>
-            </Modal>
-        </div>
-    );
-}
 
 export default function CommentsSideBar(props) {
     const { showModal, setShowModal, taskData } = props;
@@ -146,13 +21,20 @@ export default function CommentsSideBar(props) {
     const { work_id } = getWorkspaceInfo();
     const { user_id } = getLoginDetails(useNavigate());
 
+    // state to track the id of the comment whose dropdown options are currently open
+    const [currentCommentId, setCurrentCommentId] = useState(null)
+
+    //state to track the text message of the comment whose dropdown options are currently open
+    const [currentCommentText, setCurrentCommentText] = useState("");
+
     // state for opening and closing of edit modal
     const [openEditModal, setOpenEditModal] = useState(false);
 
     // state for opening and closing of delete modal
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
-    const [openOptionsIndex, setOpenOptionsIndex] = useState(null); // State to track open options in comment section
+    // State to track open options in comment section
+    const [openOptionsIndex, setOpenOptionsIndex] = useState(null);
 
     let MIN_TEXTAREA_HEIGHT = 50;
     const textFieldRef = useRef(null)
@@ -189,10 +71,12 @@ export default function CommentsSideBar(props) {
         }
     }
 
+
     const sendComment = async () => {
         if (msgData.reply !== '') {
             // Replace line breaks with <br> tags when sending the message
             const messageWithLineBreaks = msgData.reply.replace(/\n/g, '<br>');
+            console.log("inside SendComment===>", messageWithLineBreaks)
 
             let res = await apiAction({
                 url: getAddCommentUrl(),
@@ -216,37 +100,25 @@ export default function CommentsSideBar(props) {
     }
 
     const ChatItem = (props) => {
-        const { chatData, index, openOptionsIndex, setOpenOptionsIndex, openEditModal, setOpenEditModal, openDeleteModal, setOpenDeleteModal } = props;
+        const { chatData, index, openOptionsIndex, setOpenOptionsIndex } = props;
 
-        console.log("chatData===>", chatData)
+        // console.log("chatData===>", chatData)
         const commentTypes = { self: "self", reply: "reply" }
 
         let isDropdownOpen = openOptionsIndex === index;
 
-
-        // Classes to apply based on the value of isDropdownOpen for making the dropdown visible until the options are not closed
+        // Classes to apply CSS based on the value of isDropdownOpen for making the dropdown visible until the options are not closed
         const isOptionsOpen = `transition-all transform translate-y-8 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 cursor-pointer`;
         const isOptionsClosed = `opacity-100 cursor-pointer translate-y-0`;
 
 
         const handleDropdownClick = (e) => {
+            console.log("inside handleDropdownClick==>", chatData.comment)
+            setCurrentCommentId(chatData.id)
+            setCurrentCommentText(chatData.comment)
             e.stopPropagation();
             setOpenOptionsIndex(isDropdownOpen ? null : index);
         };
-
-        const handleEditClick = () => {
-            setOpenEditModal(true);
-        };
-
-        const handleDeleteClick = () => {
-            setOpenDeleteModal(true);
-        };
-
-        // const onDeleteItem = (index) => {
-        //     const result = window.confirm('Are you sure you want to delete this efforts?')
-        //     if (result)
-        //         deleteTaskEfforts(listOfTaskEfforts[index].id)
-        // }
 
         const handleReplyClick = () => {
             //Reply functionality
@@ -295,7 +167,6 @@ export default function CommentsSideBar(props) {
                                         style={{
                                             paddingRight: 5, color: "#949699", cursor: 'pointer',
                                         }}
-
                                     ></i>
                                     {/* <FaAngleDown
                                         size={20}
@@ -306,7 +177,7 @@ export default function CommentsSideBar(props) {
                                 </div>
                             </div>
 
-                            <p className="px-2 text-sm break-all">
+                            <p className="px-2 text-sm break-all" >
                                 {chatData.comment.split('<br>').map((line, index) => (
                                     <React.Fragment key={index}>
                                         {line}
@@ -320,7 +191,7 @@ export default function CommentsSideBar(props) {
                             </span>
 
                             {isDropdownOpen && (
-                                <DropdownOptions commentType={commentTypes.reply} handleReplyClick={handleReplyClick} handleDeleteClick={handleDeleteClick} />
+                                <DropdownOptions commentType={commentTypes.reply} handleReplyClick={handleReplyClick} />
                             )}
 
                         </div>
@@ -368,7 +239,7 @@ export default function CommentsSideBar(props) {
                             </span>
 
                             {isDropdownOpen && (
-                                <DropdownOptions commentType={commentTypes.self} handleEditClick={handleEditClick} handleDeleteClick={handleDeleteClick} />
+                                <DropdownOptions commentType={commentTypes.self} />
                             )}
 
                         </div>
@@ -380,7 +251,7 @@ export default function CommentsSideBar(props) {
 
     const DropdownOptions = (props) => {
 
-        const { commentType, handleEditClick, handleDeleteClick, handleReplyClick } = props;
+        const { commentType, handleReplyClick } = props;
         const dropDownClasess = `text-xs font-quicksand`;
         const deleteClass = `text-xs font-quicksand text-red-500`
 
@@ -388,12 +259,19 @@ export default function CommentsSideBar(props) {
             <div className="options-dropdown mt-3">
                 <ul>
                     {commentType === "self" ?
-                        <li
-                            onClick={handleEditClick}
-                            className="text-xs font-quicksand"
-                        >
-                            <CustomLabel label={'Edit'} className={dropDownClasess} />
-                        </li>
+                        <>
+                            <li
+                                onClick={() => setOpenEditModal(true)}
+                                className="text-xs font-quicksand"
+                            >
+                                <CustomLabel label={'Edit'} className={dropDownClasess} />
+                            </li>
+                            <li onClick={() => setOpenDeleteModal(true)}
+                                className="text-xs font-quicksand text-red-500"
+                            >
+                                <CustomLabel label={'Delete'} className={deleteClass} />
+                            </li>
+                        </>
                         :
                         <li
                             onClick={handleReplyClick}
@@ -402,14 +280,152 @@ export default function CommentsSideBar(props) {
                             <CustomLabel label={'Reply'} className={dropDownClasess} />
                         </li>
                     }
-                    <li onClick={handleDeleteClick}
-                        className="text-xs font-quicksand text-red-500"
-                    >
-                        <CustomLabel label={'Delete'} className={deleteClass} />
-                    </li>
+
                 </ul>
             </div>
         )
+    }
+
+    function EditModal(props) {
+        const { open, onClose, currentCommentText } = props;
+
+        const [text, setText] = useState(currentCommentText)
+
+        const style = {
+            position: 'absolute',
+            top: '50%',
+            left: '87.5%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+        };
+        let chatMessage = text.replaceAll("<br>","\n")
+       
+        return (
+            <div >
+                {/* <Button onClick={handleOpen}>Open Child Modal</Button> */}
+                <Modal
+                    open={open}
+                    onClose={onClose}
+                    aria-labelledby="child-modal-title"
+                    aria-describedby="child-modal-description"
+                >
+                    <Box
+                        sx={{ ...style, width: 350 }}
+                    >
+                        <div className="bg-gray-200">
+                            <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
+                                <h3 className="text-lg font-quicksand font-bold text-center w-full">
+                                    {'Edit Comment'}
+                                </h3>
+                                <ButtonWithImage
+                                    onButtonClick={onClose}
+                                    title={""}
+                                    className={"rounded-full w-10 h-10 p-0 m-0 justify-center items-center bg-white shadow-none hover:bg-gray-200 active:bg-gray-200"}
+                                    icon={<i className="fa-solid fa-times text text-black self-center" color='black'></i>}
+                                ></ButtonWithImage>
+                            </div>
+                            <form>
+
+                                <div className="relative px-5 pt-2 flex-auto">
+                                    <div className="my-4 flex flex-col">
+                                        <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={"Comment to Edit"} />
+                                        <textarea
+                                            inputType={"text"}
+                                            disable={true}
+                                            value={chatMessage}
+                                            className={"text-justify w-full rounded-md border-transparent no-scrollbar break-all "}
+                                            placeholder={"Prefilled comment"}
+                                            onBlurEvent={() => { }}
+                                            onChange={(e) => {
+                                                setText(e.target.value)
+                                                // if (e.target.value !== "")
+                                                // setHolidayData({ ...holidayData, title: e.target.value })
+                                            }}
+                                        >
+                                        </textarea>
+                                    </div>
+
+                                </div>
+
+
+                                <div className="p-6 border-solid border-slate-200 rounded-b">
+                                    <PlainButton
+                                        title={"Submit Changes"}
+                                        className={"w-full"}
+                                        // onButtonClick={handleSubmit}
+                                        disable={false}>
+                                    </PlainButton>
+                                </div>
+
+                            </form>
+                        </div>
+                    </Box>
+                </Modal>
+            </div>
+        );
+    }
+
+    function DeleteModal(props) {
+        const { open, setOpenDeleteModal, onClose, currentComment } = props;
+        const style = {
+            position: 'absolute',
+            top: '50%',
+            left: '87.5%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: 'background.paper',
+            boxShadow: 24,
+        };
+
+        // For Deleting Comment
+
+        const deleteComment = async (id) => {
+            // console.log('inside deleteComment==>', id)
+            let res = await apiAction({ url: getDeleteCommentUrl(), method: 'post', data: { comment_id: id, } })
+            if (res) {
+                notifySuccessMessage(res.status)
+                getCommentList()
+                setOpenDeleteModal(false)
+            }
+        }
+        ////////////////////////////
+
+        return (
+            <div >
+                <Modal
+                    open={open}
+                    onClose={onClose}
+                    aria-labelledby="child-modal-title"
+                    aria-describedby="child-modal-description"
+                >
+                    <Box
+                        sx={{ ...style, width: 350 }}
+                    >
+                        <div className="bg-gray-300">
+                            <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
+                                <h3 className="text-lg font-quicksand font-bold w-full">
+                                    {'Delete message?'}
+                                </h3>
+                            </div>
+                            <div className=" ml-44 pb-5 mt-9">
+                                <button
+                                    className="bg-blue-400 hover:bg-blue-500 text-white font-semibold py-1 px-3 rounded-md mr-3"
+                                    onMouseDown={onClose}
+                                >Cancel
+                                </button>
+                                <button
+                                    onClick={() => deleteComment(currentComment)}
+                                    className="bg-red-400 hover:bg-red-500 text-white font-semibold py-1 px-3 rounded-md"
+                                >Delete
+                                </button>
+                            </div>
+                        </div>
+                    </Box>
+                </Modal>
+            </div>
+        );
     }
 
     return (
@@ -420,8 +436,8 @@ export default function CommentsSideBar(props) {
                 <div className="relative"
                 >
                     <div className="relative">
-                        <EditModal open={openEditModal} onClose={() => setOpenEditModal(false)} />
-                        <DeleteModal open={openDeleteModal} onClose={() => setOpenDeleteModal(false)} />
+                        <EditModal open={openEditModal} onClose={() => setOpenEditModal(false)} currentCommentText={currentCommentText} />
+                        <DeleteModal open={openDeleteModal} setOpenDeleteModal={setOpenDeleteModal} onClose={() => setOpenDeleteModal(false)} currentComment={currentCommentId} />
                     </div>
 
                     <div className="flex flex-row justify-between ">
@@ -445,10 +461,6 @@ export default function CommentsSideBar(props) {
                                 key={item.id}
                                 openOptionsIndex={openOptionsIndex}
                                 setOpenOptionsIndex={setOpenOptionsIndex}
-                                openEditModal={openEditModal}
-                                setOpenEditModal={setOpenEditModal}
-                                openDeleteModal={openDeleteModal}
-                                setOpenDeleteModal={setOpenDeleteModal}
                             />
                         ))}
                         {chatList.length == 0 &&
@@ -475,7 +487,7 @@ export default function CommentsSideBar(props) {
                                     // console.log("nativeEvent", e.nativeEvent);
                                     // Destructure and update msgData
                                     setMsgData({ ...msgData, reply: e.target.value });
-                                    console.log("msgData ===>", msgData.reply);
+                                    // console.log("msgData ===>", msgData.reply);
 
                                     // Check for the condition
                                     // if (e.target.value.includes("/") && e.nativeEvent.inputType === "insertFromPaste") {
@@ -537,7 +549,6 @@ export default function CommentsSideBar(props) {
 
                     </div>
                 </div>
-
             </div>
         </React.Fragment>
     );
