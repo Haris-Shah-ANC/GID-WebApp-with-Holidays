@@ -223,3 +223,7 @@ export const getEffortAlertsStatus = () => {
 export const getDeleteCommentUrl = () => {
     return HOST + APP_NAME + `/delete_comment/`
 }
+
+export const getEditCommentUrl = () => {
+    return HOST + APP_NAME + `/update_comment/`
+}

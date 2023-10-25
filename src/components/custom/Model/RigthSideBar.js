@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext, useLayoutEffect, useRef } from "react";
-import { getAddCommentUrl, getCommentListUrl, getDeleteCommentUrl } from "../../../api/urls";
+import { getAddCommentUrl, getCommentListUrl, getDeleteCommentUrl, getEditCommentUrl } from "../../../api/urls";
 import { useNavigate } from "react-router-dom";
 import * as Actions from '../../../state/Actions';
 import { apiAction } from "../../../api/api";
@@ -10,7 +10,7 @@ import CustomLabel from "../Elements/CustomLabel";
 import { Box, Modal } from '@mui/material';
 import PlainButton from "../Elements/buttons/PlainButton";
 import ButtonWithImage from "../Elements/buttons/ButtonWithImage";
-
+import { chart } from "highcharts";
 
 export default function CommentsSideBar(props) {
     const { showModal, setShowModal, taskData } = props;
@@ -76,7 +76,7 @@ export default function CommentsSideBar(props) {
         if (msgData.reply !== '') {
             // Replace line breaks with <br> tags when sending the message
             const messageWithLineBreaks = msgData.reply.replace(/\n/g, '<br>');
-            console.log("inside SendComment===>", messageWithLineBreaks)
+            // console.log("inside SendComment===>", messageWithLineBreaks)
 
             let res = await apiAction({
                 url: getAddCommentUrl(),
@@ -107,13 +107,13 @@ export default function CommentsSideBar(props) {
 
         let isDropdownOpen = openOptionsIndex === index;
 
-        // Classes to apply CSS based on the value of isDropdownOpen for making the dropdown visible until the options are not closed
+        // Classes to apply CSS based on the value of isDropdownOpen for making the dropdown visible until the dropdown options are not closed
         const isOptionsOpen = `transition-all transform translate-y-8 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 cursor-pointer`;
         const isOptionsClosed = `opacity-100 cursor-pointer translate-y-0`;
 
 
         const handleDropdownClick = (e) => {
-            console.log("inside handleDropdownClick==>", chatData.comment)
+            console.log("inside handleDropdownClick==>", chatData)
             setCurrentCommentId(chatData.id)
             setCurrentCommentText(chatData.comment)
             e.stopPropagation();
@@ -151,14 +151,14 @@ export default function CommentsSideBar(props) {
                             </svg>
                         </div>
 
-                        <div class="bubble group">
+                        <div class="bubble group ">
 
                             <div className="flex flex-row justify-between">
                                 <span className="text-sm px-2 font-medium text-gray-500 break-all">
                                     {chatData.comment_by_name}
                                 </span>
 
-                                <div onClick={handleDropdownClick}
+                                {/* <div onClick={handleDropdownClick}
                                     // ref={wrapperRef}
                                     // className="transition-all transform translate-y-8 opacity-0 group-hover:opacity-100 "
                                     className={isDropdownOpen ? isOptionsClosed : isOptionsOpen}
@@ -167,14 +167,14 @@ export default function CommentsSideBar(props) {
                                         style={{
                                             paddingRight: 5, color: "#949699", cursor: 'pointer',
                                         }}
-                                    ></i>
-                                    {/* <FaAngleDown
+                                    ></i> */}
+                                {/* <FaAngleDown
                                         size={20}
                                         color="#949699"
                                         //fixing the dropdown symbol at the top right corner
                                         className=" top-0 right-0 backdrop-blur-xl "
                                     /> */}
-                                </div>
+                                {/* </div> */}
                             </div>
 
                             <p className="px-2 text-sm break-all" >
@@ -199,7 +199,7 @@ export default function CommentsSideBar(props) {
                     :
                     <div className="flex flex-row justify-end">
 
-                        <div class="bubble2 group"
+                        <div class="bubble2 group "
                         // id='parent-bubble2' // for making child element visible on hover using Vanilla CSS
                         >
                             <div
@@ -235,6 +235,8 @@ export default function CommentsSideBar(props) {
                             </p>
 
                             <span className="flex justify-end text-xs text-gray-500 px-2">
+                                {(chatData.comment === chatData.currentComment) &&
+                                    <b> {`edited`} </b>}
                                 {moment(chatData.created_at).format("HH:mm")}
                             </span>
 
@@ -287,21 +289,73 @@ export default function CommentsSideBar(props) {
     }
 
     function EditModal(props) {
+
         const { open, onClose, currentCommentText } = props;
 
+        // console.log("Inside EditModal===>", open)
         const [text, setText] = useState(currentCommentText)
+        const [initialTextareaText, setInitialTextareaText] = useState(''); // State to conditionally render the code inside the useLayoutEffect as it was running before the textarea was rendered
+        const editCommentRef = useRef(null);
+        let textareaHeight = 70;
 
-        const style = {
+        const styleforEditModal = {
             position: 'absolute',
             top: '50%',
-            left: '87.5%',
+            // left: '87.5%',
+            left: '50%',
             transform: 'translate(-50%, -50%)',
             width: 400,
             bgcolor: 'background.paper',
             boxShadow: 24,
         };
-        let chatMessage = text.replaceAll("<br>","\n")
-       
+
+
+        let chatMessage = text.replaceAll("<br>", "\n")
+
+        useLayoutEffect(() => {
+            if (initialTextareaText.length !== 0) {
+                // Reset height - important to shrink on delete
+                editCommentRef.current.style.height = "50px";
+                //Set height
+                editCommentRef.current.style.height = `${Math.max(
+                    editCommentRef.current.scrollHeight,
+                    textareaHeight
+                )}px`;
+            }
+        }, [editCommentRef, textareaHeight, initialTextareaText]);
+
+        // For Editing the Comment 
+
+        const editComment = async (id, comment) => {
+            if (text !== '') {
+                // Replace line breaks with <br> tags when sending the message
+                const commentWithLineBreaks = text.replace(/\n/g, '<br>');
+                // console.log("inside editComment===>", commentWithLineBreaks)
+
+                let res = await apiAction({
+                    url: getEditCommentUrl(), method: 'post', data: {
+                        comment_id: id,
+                        comment: commentWithLineBreaks
+                    }
+                })
+                console.log("commentWithLineBreaks==>",commentWithLineBreaks);
+                console.log("comment==>",comment)
+                if (res && (comment !== commentWithLineBreaks)) { // show edited status only if the user made any changes to the comment
+                    notifySuccessMessage(res.status)
+                    // getCommentList()
+                    chatList.map((data, index) => {
+                        if (data.id === id) {
+                            console.log("ID to update", data.comment)
+                            data.comment = commentWithLineBreaks
+                            console.log("after changing==>", data.comment)
+                        }
+                    })
+                    setOpenEditModal(false)
+                }
+            }
+        }
+        ////////////////
+
         return (
             <div >
                 {/* <Button onClick={handleOpen}>Open Child Modal</Button> */}
@@ -312,7 +366,7 @@ export default function CommentsSideBar(props) {
                     aria-describedby="child-modal-description"
                 >
                     <Box
-                        sx={{ ...style, width: 350 }}
+                        sx={{ ...styleforEditModal, width: 350 }}
                     >
                         <div className="bg-gray-200">
                             <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
@@ -332,17 +386,24 @@ export default function CommentsSideBar(props) {
                                     <div className="my-4 flex flex-col">
                                         <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={"Comment to Edit"} />
                                         <textarea
-                                            inputType={"text"}
+                                            style={{
+                                                maxHeight: 240,
+                                                minHeight: textareaHeight,
+                                                resize: "none",
+                                                verticalAlign: 'center'
+                                            }}
+                                            ref={editCommentRef}
                                             disable={true}
                                             value={chatMessage}
                                             className={"text-justify w-full rounded-md border-transparent no-scrollbar break-all "}
-                                            placeholder={"Prefilled comment"}
-                                            onBlurEvent={() => { }}
                                             onChange={(e) => {
-                                                setText(e.target.value)
+                                                setText(e.target.value);
+                                                setInitialTextareaText(e.target.value);
+                                                console.log("editCommentTextarea==>", initialTextareaText)
                                                 // if (e.target.value !== "")
                                                 // setHolidayData({ ...holidayData, title: e.target.value })
                                             }}
+
                                         >
                                         </textarea>
                                     </div>
@@ -354,7 +415,7 @@ export default function CommentsSideBar(props) {
                                     <PlainButton
                                         title={"Submit Changes"}
                                         className={"w-full"}
-                                        // onButtonClick={handleSubmit}
+                                        onButtonClick={() => { editComment(currentCommentId, text) }}
                                         disable={false}>
                                     </PlainButton>
                                 </div>
@@ -372,7 +433,8 @@ export default function CommentsSideBar(props) {
         const style = {
             position: 'absolute',
             top: '50%',
-            left: '87.5%',
+            // left: '87.5%',
+            left: '50%',
             transform: 'translate(-50%, -50%)',
             width: 400,
             bgcolor: 'background.paper',
@@ -438,6 +500,7 @@ export default function CommentsSideBar(props) {
                     <div className="relative">
                         <EditModal open={openEditModal} onClose={() => setOpenEditModal(false)} currentCommentText={currentCommentText} />
                         <DeleteModal open={openDeleteModal} setOpenDeleteModal={setOpenDeleteModal} onClose={() => setOpenDeleteModal(false)} currentComment={currentCommentId} />
+                        {/* <DeleteModal showModal={openDeleteModal} setShowModal={setOpenDeleteModal} /> */}
                     </div>
 
                     <div className="flex flex-row justify-between ">
@@ -463,7 +526,7 @@ export default function CommentsSideBar(props) {
                                 setOpenOptionsIndex={setOpenOptionsIndex}
                             />
                         ))}
-                        {chatList.length == 0 &&
+                        {chatList.length === 0 &&
                             <p className="flex justify-center mt-[35vh]">
                                 No data found
                             </p>
