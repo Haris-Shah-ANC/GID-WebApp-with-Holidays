@@ -338,16 +338,16 @@ export default function CommentsSideBar(props) {
                         comment: commentWithLineBreaks
                     }
                 })
-                console.log("commentWithLineBreaks==>",commentWithLineBreaks);
-                console.log("comment==>",comment)
-                if (res && (comment !== commentWithLineBreaks)) { // show edited status only if the user made any changes to the comment
+                console.log("commentWithLineBreaks==>", commentWithLineBreaks);
+                console.log("comment==>", comment)
+                if (res) { // show edited status only if the user made any changes to the comment
                     notifySuccessMessage(res.status)
                     // getCommentList()
-                    chatList.map((data, index) => {
+                    chatList.map((data) => {
                         if (data.id === id) {
-                            console.log("ID to update", data.comment)
+                            // console.log("ID to update", data.comment)
                             data.comment = commentWithLineBreaks
-                            console.log("after changing==>", data.comment)
+                            // console.log("after changing==>", data.comment)
                         }
                     })
                     setOpenEditModal(false)
@@ -446,9 +446,22 @@ export default function CommentsSideBar(props) {
         const deleteComment = async (id) => {
             // console.log('inside deleteComment==>', id)
             let res = await apiAction({ url: getDeleteCommentUrl(), method: 'post', data: { comment_id: id, } })
+
             if (res) {
                 notifySuccessMessage(res.status)
-                getCommentList()
+                // if deletion is successfull filter the chatList and remove the deleted comment from the chatList  
+                // setChatData(chatList.filter((data) =>
+                //     data.id !== id
+                // ))
+                let indexToDelete = chatList.findIndex(function (data) {
+                    return data.id === id;
+                })
+                console.log("indexToDelete==>", indexToDelete);
+                chatList.splice(indexToDelete, 1)
+                // console.log("chatList===>",chatList)
+                // setChatData(...chatList,chatList.splice(indexToDelete,1))
+
+                // getCommentList()
                 setOpenDeleteModal(false)
             }
         }
