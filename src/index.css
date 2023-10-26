@@ -200,3 +200,13 @@
 .options-dropdown ul li:hover {
     background-color: #f0f0f0;
 }
+
+/* CSS for centering edit and delete Modal */
+.center {
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    width: 100%;
+  }

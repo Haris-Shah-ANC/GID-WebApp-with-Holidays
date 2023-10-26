@@ -14,7 +14,6 @@ import {
     file_upload,
     add_holidays,
     filter_and_sort,
-    delete_comment,
 } from '../../../utils/Constant';
 import FilterAndSort from '../../pages/mainManagement/FilterAndSort';
 import AddProject from '../../pages/mainManagement/AddProject';
@@ -26,7 +25,6 @@ import AddTimeSheetModal from './AddTimeSheetModal';
 import EffortsComponent from '../EffortsComponent';
 import { Box, Modal } from '@mui/material';
 import AddHoliday from '../../pages/mainManagement/AddHoliday';
-import DeleteModal from './DeleteModal';
 
 const ModelComponent = (props) => {
     
@@ -92,10 +90,7 @@ const ModelComponent = (props) => {
                         showModal === add_holidays &&
                         <AddHoliday setShowModal={setShowModal} onSuccess={onSuccess} holidayToEdit={holidayToEdit}/>
                     }
-                    {
-                        showModal === delete_comment && 
-                        <DeleteModal setShowModal={setShowModal} />
-                    }
+                   
 
                 </Box>
             </Modal>

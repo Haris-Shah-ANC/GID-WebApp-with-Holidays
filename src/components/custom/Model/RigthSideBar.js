@@ -10,7 +10,6 @@ import CustomLabel from "../Elements/CustomLabel";
 import { Box, Modal } from '@mui/material';
 import PlainButton from "../Elements/buttons/PlainButton";
 import ButtonWithImage from "../Elements/buttons/ButtonWithImage";
-import { chart } from "highcharts";
 
 export default function CommentsSideBar(props) {
     const { showModal, setShowModal, taskData } = props;
@@ -357,18 +356,10 @@ export default function CommentsSideBar(props) {
         ////////////////
 
         return (
-            <div >
-                {/* <Button onClick={handleOpen}>Open Child Modal</Button> */}
-                <Modal
-                    open={open}
-                    onClose={onClose}
-                    aria-labelledby="child-modal-title"
-                    aria-describedby="child-modal-description"
-                >
-                    <Box
-                        sx={{ ...styleforEditModal, width: 350 }}
-                    >
-                        <div className="bg-gray-200">
+            
+            <div className="center p-5" style={{ width: 400, zIndex: 5 }} onClose={onClose}>
+                <div className="rounded">
+                <div className="bg-gray-200">
                             <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
                                 <h3 className="text-lg font-quicksand font-bold text-center w-full">
                                     {'Edit Comment'}
@@ -400,8 +391,6 @@ export default function CommentsSideBar(props) {
                                                 setText(e.target.value);
                                                 setInitialTextareaText(e.target.value);
                                                 console.log("editCommentTextarea==>", initialTextareaText)
-                                                // if (e.target.value !== "")
-                                                // setHolidayData({ ...holidayData, title: e.target.value })
                                             }}
 
                                         >
@@ -422,24 +411,91 @@ export default function CommentsSideBar(props) {
 
                             </form>
                         </div>
-                    </Box>
-                </Modal>
+                </div>
             </div>
+
+            // <div  >
+            //     <Modal
+            //         open={open}
+            //         onClose={onClose}
+            //         aria-labelledby="child-modal-title"
+            //         aria-describedby="child-modal-description"
+            //     >
+            //         <Box
+            //             sx={{ ...styleforEditModal, width: "350" }}
+            //         >
+            //             <div className="bg-gray-200">
+            //                 <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
+            //                     <h3 className="text-lg font-quicksand font-bold text-center w-full">
+            //                         {'Edit Comment'}
+            //                     </h3>
+            //                     <ButtonWithImage
+            //                         onButtonClick={onClose}
+            //                         title={""}
+            //                         className={"rounded-full w-10 h-10 p-0 m-0 justify-center items-center bg-white shadow-none hover:bg-gray-200 active:bg-gray-200"}
+            //                         icon={<i className="fa-solid fa-times text text-black self-center" color='black'></i>}
+            //                     ></ButtonWithImage>
+            //                 </div>
+            //                 <form>
+
+            //                     <div className="relative px-5 pt-2 flex-auto">
+            //                         <div className="my-4 flex flex-col">
+            //                             <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={"Comment to Edit"} />
+            //                             <textarea
+            //                                 style={{
+            //                                     maxHeight: 240,
+            //                                     minHeight: textareaHeight,
+            //                                     resize: "none",
+            //                                     verticalAlign: 'center'
+            //                                 }}
+            //                                 ref={editCommentRef}
+            //                                 disable={true}
+            //                                 value={chatMessage}
+            //                                 className={"text-justify w-full rounded-md border-transparent no-scrollbar break-all "}
+            //                                 onChange={(e) => {
+            //                                     setText(e.target.value);
+            //                                     setInitialTextareaText(e.target.value);
+            //                                     console.log("editCommentTextarea==>", initialTextareaText)
+            //                                     // if (e.target.value !== "")
+            //                                     // setHolidayData({ ...holidayData, title: e.target.value })
+            //                                 }}
+
+            //                             >
+            //                             </textarea>
+            //                         </div>
+
+            //                     </div>
+
+
+            //                     <div className="p-6 border-solid border-slate-200 rounded-b">
+            //                         <PlainButton
+            //                             title={"Submit Changes"}
+            //                             className={"w-full"}
+            //                             onButtonClick={() => { editComment(currentCommentId, text) }}
+            //                             disable={false}>
+            //                         </PlainButton>
+            //                     </div>
+
+            //                 </form>
+            //             </div>
+            //         </Box>
+            //     </Modal>
+            // </div>
         );
     }
 
     function DeleteModal(props) {
-        const { open, setOpenDeleteModal, onClose, currentComment } = props;
-        const style = {
-            position: 'absolute',
-            top: '50%',
-            // left: '87.5%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: 400,
-            bgcolor: 'background.paper',
-            boxShadow: 24,
-        };
+        const { open, setOpenDeleteModal, onClose, currentCommentId } = props;
+        // const style = {
+        //     position: 'absolute',
+        //     top: '50%',
+        //     // left: '87.5%',
+        //     left: '50%',
+        //     transform: 'translate(-50%, -50%)',
+        //     width: 400,
+        //     bgcolor: 'background.paper',
+        //     boxShadow: 24,
+        // };
 
         // For Deleting Comment
 
@@ -453,9 +509,7 @@ export default function CommentsSideBar(props) {
                 // setChatData(chatList.filter((data) =>
                 //     data.id !== id
                 // ))
-                let indexToDelete = chatList.findIndex(function (data) {
-                    return data.id === id;
-                })
+                let indexToDelete = chatList.findIndex((item) => item.id === id)
                 console.log("indexToDelete==>", indexToDelete);
                 chatList.splice(indexToDelete, 1)
                 // console.log("chatList===>",chatList)
@@ -468,52 +522,63 @@ export default function CommentsSideBar(props) {
         ////////////////////////////
 
         return (
-            <div >
-                <Modal
-                    open={open}
-                    onClose={onClose}
-                    aria-labelledby="child-modal-title"
-                    aria-describedby="child-modal-description"
-                >
-                    <Box
-                        sx={{ ...style, width: 350 }}
-                    >
-                        <div className="bg-gray-300">
-                            <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
-                                <h3 className="text-lg font-quicksand font-bold w-full">
-                                    {'Delete message?'}
-                                </h3>
-                            </div>
-                            <div className=" ml-44 pb-5 mt-9">
-                                <button
-                                    className="bg-blue-400 hover:bg-blue-500 text-white font-semibold py-1 px-3 rounded-md mr-3"
-                                    onMouseDown={onClose}
-                                >Cancel
-                                </button>
-                                <button
-                                    onClick={() => deleteComment(currentComment)}
-                                    className="bg-red-400 hover:bg-red-500 text-white font-semibold py-1 px-3 rounded-md"
-                                >Delete
-                                </button>
-                            </div>
-                        </div>
-                    </Box>
-                </Modal>
+            <div className="center p-5" style={{ width: 400, zIndex: 5 }}>
+                <div className="bg-white rounded shadow p-2">
+                    <CustomLabel label={"Delete Message ?"} className={'text-black text-lg'} />
+                    <div className=" flex justify-end gap-4">
+                        <PlainButton title={"Cancel"} onButtonClick={onClose} className={"bg-blue-400 hover:bg-blue-500 text-white px-2.5 py-1.5"} disable={false} />
+                        <PlainButton title={"Delete"} onButtonClick={deleteComment} className={"bg-red-400 hover:bg-red-500 text-white px-2.5 py-1.5"} disable={false} />
+                    </div>
+                </div>
             </div>
+
+            // <div >
+            //     <Modal
+            //         open={open}
+            //         onClose={onClose}
+            //         aria-labelledby="child-modal-title"
+            //         aria-describedby="child-modal-description"
+            //     >
+            //         <Box
+            //             sx={{ ...style, width: 350 }}
+            //         >
+            //             <div className="bg-gray-300">
+            //                 <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
+            //                     <h3 className="text-lg font-quicksand font-bold w-full">
+            //                         {'Delete message?'}
+            //                     </h3>
+            //                 </div>
+            //                 <div className=" ml-44 pb-5 mt-9">
+            //                     <button
+            //                         className="bg-blue-400 hover:bg-blue-500 text-white font-semibold py-1 px-3 rounded-md mr-3"
+            //                         onMouseDown={onClose}
+            //                     >Cancel
+            //                     </button>
+            //                     <button
+            //                         onClick={() => deleteComment(currentCommentId)}
+            //                         className="bg-red-400 hover:bg-red-500 text-white font-semibold py-1 px-3 rounded-md"
+            //                     >Delete
+            //                     </button>
+            //                 </div>
+            //             </div>
+            //         </Box>
+            //     </Modal>
+            // </div>
         );
     }
 
     return (
         <React.Fragment>
             <div className={`custom-modal-dialog ${showModal ? 'show' : ''}`} role="document"
-                onClick={(e) => setOpenOptionsIndex(false)} // for closing dropdown Options
+                onClick={(e) => {setOpenOptionsIndex(false);}} // for closing dropdown Options
             >
-                <div className="relative"
+
+                <div className=""
                 >
-                    <div className="relative">
-                        <EditModal open={openEditModal} onClose={() => setOpenEditModal(false)} currentCommentText={currentCommentText} />
-                        <DeleteModal open={openDeleteModal} setOpenDeleteModal={setOpenDeleteModal} onClose={() => setOpenDeleteModal(false)} currentComment={currentCommentId} />
-                        {/* <DeleteModal showModal={openDeleteModal} setShowModal={setOpenDeleteModal} /> */}
+
+                    <div className=" ">
+                       {openEditModal && <EditModal open={openEditModal} onClose={() => setOpenEditModal(false)} currentCommentText={currentCommentText} />  }
+                        {openDeleteModal && <DeleteModal open={openDeleteModal} setOpenDeleteModal={setOpenDeleteModal} onClose={() => setOpenDeleteModal(false)} currentCommentId={currentCommentId} />}
                     </div>
 
                     <div className="flex flex-row justify-between ">

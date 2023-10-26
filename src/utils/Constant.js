@@ -32,7 +32,6 @@ export const EMPLOYEE = "Employee"
 export const MODULE = "Module"
 export const ALERTS="Alerts"
 export const add_holidays="add_holidays"
-export const delete_comment = "delete_comment"
 
 export const ROLES = [
     {role: "Employee", short_name: "employee", id:1},
