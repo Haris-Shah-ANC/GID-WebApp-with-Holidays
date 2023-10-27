@@ -4,13 +4,16 @@ import CreateNewWorkspace from '../../pages/mainManagement/CreateNewWorkspace';
 
 import {
     add_effort,
+    add_folder,
     add_mapping,
     add_meeting_link,
+    add_note,
     add_project,
     add_project_module,
     add_task,
     add_time_sheet,
     create_new_work_space,
+    delete_modal,
     delete_notification,
     file_upload,
     filter_and_sort,
@@ -27,9 +30,12 @@ import EffortsComponent from '../EffortsComponent';
 import { Box, Modal } from '@mui/material';
 import AddMappingModal from './AddMappingModal';
 import UploadConfirmationDialog from '../../pages/mainManagement/UploadConfirmationDialog';
+import AddFolderModal from '../../pages/mainManagement/notes/AddFolderModal';
+import AddNewNoteModal from '../../pages/mainManagement/notes/AddNewNoteModal';
+import CommonDeletePupUp from './CommonDeletePupUp';
 
 const ModelComponent = (props) => {
-    const { showModal, setShowModal, data, onFilterApply, onFilterClear, from, onSuccess = () => "" } = props
+    const { showModal, setShowModal, data, onFilterApply, onFilterClear, from, onSuccess = () => "", onSuccessDelete = () => "" } = props
     const style = {
         position: 'absolute',
         top: '50%',
@@ -97,6 +103,16 @@ const ModelComponent = (props) => {
                         showModal === import_confirmation &&
                         <UploadConfirmationDialog setShowModal={setShowModal} data={data} onSuccess={(val) => onSuccess(val)} from={from} />
                     }
+                    {
+                        showModal === add_folder &&
+                        <AddFolderModal setShowModal={setShowModal} data={data} onSuccess={(val) => onSuccess(val)} from={from} />
+                    }
+                    {
+                        showModal === add_note &&
+                        <AddNewNoteModal setShowModal={setShowModal} data={data} onSuccess={(val) => onSuccess(val)} from={from} />
+                    }
+                    {showModal == delete_modal &&
+                        <CommonDeletePupUp onSuccess={(id, type) => onSuccessDelete(id, type)} data={data} setShowModal={setShowModal} />}
                 </Box>
             </Modal>
             // <>

@@ -2,7 +2,7 @@
 export const imagesList = {
     appLogo: { src: require('../assets/image/logo.png'), alt: 'logo.png' },
     profile: { src: require('../assets/image/undraw_profile.png'), alt: 'undraw_profile.png' },
-    employee_default_img: {src: require('../assets/image/profile.png')},
+    employee_default_img: { src: require('../assets/image/profile.png') },
 
 }
 
@@ -12,32 +12,41 @@ export const imagesList = {
 ///////////////////////////////////////////////////////////////Date Formate/////////////////////////////////////////////////////////////////////////////
 export const DateFormatCard = 'MMMM D, YYYY, h:mm A';
 
-export const add_task=`add_task`; 
-export const create_new_work_space=`create_new_work_space`; 
-export const filter_and_sort=`filter_and_sort`;
+export const add_task = `add_task`;
+export const create_new_work_space = `create_new_work_space`;
+export const filter_and_sort = `filter_and_sort`;
 export const add_project = `add_project`;
 export const add_project_module = `add_project_module`;
 export const file_upload = "file_upload";
-export const add_time_sheet="add_time_sheet"
+export const add_time_sheet = "add_time_sheet"
 export const delete_notification = "delete_notification";
-export const add_meeting_link="add_meeting_link"
+export const add_meeting_link = "add_meeting_link"
 export const add_effort = "add_efforts"
 export const TASK = "Task"
 export const DURATION = "Duration"
-export const STATUS="Status"
+export const STATUS = "Status"
 export const START_TIME = "Start Time"
 export const END_TIME = "End Time"
 export const PROJECT = "Project"
 export const EMPLOYEE = "Employee"
 export const MODULE = "Module"
-export const ALERTS="Alerts"
-export const MAPPING="mapping"
-export const add_mapping="add_mapping"
+export const ALERTS = "Alerts"
+export const MAPPING = "mapping"
+export const add_mapping = "add_mapping"
 export const import_confirmation = "import_confirmation"
+export const add_folder = "add_folder"
+export const add_note = "add_note"
+export const delete_modal="delete_modal"
 export const ROLES = [
-    {role: "Employee", short_name: "employee", id:1},
-    {role: "Admin", short_name: "admin", id:2},
-    {role: "Manager", short_name: "manager", id:3}
+    { role: "Employee", short_name: "employee", id: 1 },
+    { role: "Admin", short_name: "admin", id: 2 },
+    { role: "Manager", short_name: "manager", id: 3 }
+]
+
+export const sampleFolders = [
+    { folder_name: "Sample 1", id: 1, },
+    { folder_name: "Sample 3", id: 2, },
+    { folder_name: "Sample 2", id: 3, }
 ]
 
 export const MENU = [
@@ -77,20 +86,19 @@ export const svgIcons = (style = "", icon) => {
         arrow: <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 384 512" className={style}>
             <path d="M214.6 9.4c-12.5-12.5-32.8-12.5-45.3 0l-128 128c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L160 109.3V480c0 17.7 14.3 32 32 32s32-14.3 32-32V109.3l73.4 73.4c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3l-128-128z" /></svg>,
         timer: <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" className={style}>
-        <path d="M464 256A208 208 0 1 1 48 256a208 208 0 1 1 416 0zM0 256a256 256 0 1 0 512 0A256 256 0 1 0 0 256zM232 120V256c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2V120c0-13.3-10.7-24-24-24s-24 10.7-24 24z"/></svg>,
+            <path d="M464 256A208 208 0 1 1 48 256a208 208 0 1 1 416 0zM0 256a256 256 0 1 0 512 0A256 256 0 1 0 0 256zM232 120V256c0 8 4 15.5 10.7 20l96 64c11 7.4 25.9 4.4 33.3-6.7s4.4-25.9-6.7-33.3L280 243.2V120c0-13.3-10.7-24-24-24s-24 10.7-24 24z" /></svg>,
         close: <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 384 512" className={style}>
-        <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"/></svg>,
+            <path d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z" /></svg>,
         search: <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 512 512" className={style}>
-            <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z"/></svg>,
+            <path d="M416 208c0 45.9-14.9 88.3-40 122.7L502.6 457.4c12.5 12.5 12.5 32.8 0 45.3s-32.8 12.5-45.3 0L330.7 376c-34.4 25.2-76.8 40-122.7 40C93.1 416 0 322.9 0 208S93.1 0 208 0S416 93.1 416 208zM208 352a144 144 0 1 0 0-288 144 144 0 1 0 0 288z" /></svg>,
         delete: <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512" className={style}>
-            <path d="M170.5 51.6L151.5 80h145l-19-28.4c-1.5-2.2-4-3.6-6.7-3.6H177.1c-2.7 0-5.2 1.3-6.7 3.6zm147-26.6L354.2 80H368h48 8c13.3 0 24 10.7 24 24s-10.7 24-24 24h-8V432c0 44.2-35.8 80-80 80H112c-44.2 0-80-35.8-80-80V128H24c-13.3 0-24-10.7-24-24S10.7 80 24 80h8H80 93.8l36.7-55.1C140.9 9.4 158.4 0 177.1 0h93.7c18.7 0 36.2 9.4 46.6 24.9zM80 128V432c0 17.7 14.3 32 32 32H336c17.7 0 32-14.3 32-32V128H80zm80 64V400c0 8.8-7.2 16-16 16s-16-7.2-16-16V192c0-8.8 7.2-16 16-16s16 7.2 16 16zm80 0V400c0 8.8-7.2 16-16 16s-16-7.2-16-16V192c0-8.8 7.2-16 16-16s16 7.2 16 16zm80 0V400c0 8.8-7.2 16-16 16s-16-7.2-16-16V192c0-8.8 7.2-16 16-16s16 7.2 16 16z"/></svg>
+            <path d="M170.5 51.6L151.5 80h145l-19-28.4c-1.5-2.2-4-3.6-6.7-3.6H177.1c-2.7 0-5.2 1.3-6.7 3.6zm147-26.6L354.2 80H368h48 8c13.3 0 24 10.7 24 24s-10.7 24-24 24h-8V432c0 44.2-35.8 80-80 80H112c-44.2 0-80-35.8-80-80V128H24c-13.3 0-24-10.7-24-24S10.7 80 24 80h8H80 93.8l36.7-55.1C140.9 9.4 158.4 0 177.1 0h93.7c18.7 0 36.2 9.4 46.6 24.9zM80 128V432c0 17.7 14.3 32 32 32H336c17.7 0 32-14.3 32-32V128H80zm80 64V400c0 8.8-7.2 16-16 16s-16-7.2-16-16V192c0-8.8 7.2-16 16-16s16 7.2 16 16zm80 0V400c0 8.8-7.2 16-16 16s-16-7.2-16-16V192c0-8.8 7.2-16 16-16s16 7.2 16 16zm80 0V400c0 8.8-7.2 16-16 16s-16-7.2-16-16V192c0-8.8 7.2-16 16-16s16 7.2 16 16z" /></svg>
     }
     return icons[icon]
 }
 export const locale_dict_currency = {
     "INR": "en_IN",
     "RUB": "ru_RU",
-    "GBP": "en_GB",
     "USD": "en_US",
     "AZN": "az_AZ",
     "AUD": "en_AU",

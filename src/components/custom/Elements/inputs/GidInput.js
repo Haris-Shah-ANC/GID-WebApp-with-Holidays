@@ -3,7 +3,7 @@ import React from 'react'
 import { twMerge } from 'tailwind-merge'
 
 export default function GidInput(props) {
-  const { inputType, id, disable, error, errorStyle, className, value, onTextChange, onBlurEvent, placeholderMsg, reference, maxDate=null } = props
+  const { inputType, id, style, disable, error, errorStyle, className, value, onTextChange, onBlurEvent, placeholderMsg, reference, maxDate = null, onKeyDown = () => { } } = props
   const tailwindMergedCSS = twMerge(`rounded-md border border-blueGray-300 text-sm font-quicksand font-medium text-blueGray-700 placeholder-blueGray-200`, className)
   return (
     <input
@@ -18,8 +18,10 @@ export default function GidInput(props) {
       placeholder={placeholderMsg}
       ref={reference}
       autoComplete="new-password"
-      style={{WebkitAppearance:"none"}}
-      max={maxDate==null ? maxDate : moment().format("YYYY-MM-DD")}
+      style={{ WebkitAppearance: "none", ...style }}
+      max={maxDate == null ? maxDate : moment().format("YYYY-MM-DD")}
+      onKeyDown={(event) => onKeyDown(event)}
+
     >
     </input>
   )

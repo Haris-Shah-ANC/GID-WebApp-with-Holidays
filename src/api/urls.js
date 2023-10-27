@@ -162,6 +162,13 @@ export const getAddCommentUrl = () => {
 export const getCommentListUrl = () => {
     return HOST + APP_NAME + `/list_comment/`
 }
+export const getDeleteCommentUrl = () => {
+    return HOST + APP_NAME + `/delete_comment/`
+}
+
+export const getEditCommentUrl = () => {
+    return HOST + APP_NAME + `/update_comment/`
+}
 //INCOME AND EXPENSE ANALYSIS RELATED API`S
 export const getIncomeExpenseDataWithComparison = () => {
     return HOST + APP_NAME + `/income_expense_data/`
@@ -252,10 +259,45 @@ export const getUploadTimeSheetUrl = (id) => {
 }
 
 /////////////////NOTES RELATED API///////////////////////
-export const getNotesUrl = () => {
-    return HOST + APP_NAME + `/upload_timesheet/`
+export const getNotesUrl = (workspaceId, employeeId, folderId = null, search) => {
+    if (folderId) {
+        return HOST + APP_NAME + ROUTER + `/note/?workspace=${workspaceId}&folder=${folderId}&employee=${employeeId}&search=${search}`
+    } else {
+        return HOST + APP_NAME + ROUTER + `/note/?workspace=${workspaceId}&employee=${employeeId}&search=${search}`
+    }
 }
 
-export const getSaveNoteUrl = () => {
-    return HOST + APP_NAME + `/upload_timesheet/`
+export const getAddNoteUrl = () => {
+    return HOST + APP_NAME + ROUTER + `/note/`
 }
+
+export const getUpdateNoteUrl = (noteId) => {
+    return HOST + APP_NAME + ROUTER + `/note/${noteId}/`
+}
+
+export const getAddFolderUrl = () => {
+    return HOST + APP_NAME + `/create_folder/`
+}
+
+export const getUpdateFolderUrl = (folderId) => {
+    if (folderId) {
+        return HOST + APP_NAME + ROUTER + `/folder/${folderId}/`
+    } else {
+        return HOST + APP_NAME + ROUTER + `/folder/`
+    }
+}
+
+export const getFolderListUrl = (workspaceId, employeeId, search) => {
+    return HOST + APP_NAME + ROUTER + `/folder/?workspace=${workspaceId}&employee=${employeeId}&search=${search}`
+}
+
+export const getFetchNoteUrl = (workspaceId, noteId) => {
+    return HOST + APP_NAME + ROUTER + `/note/${noteId}/?workspace=${workspaceId}`
+}
+
+export const getDeleteFolderUrl = (workspaceId, folderId) => {
+    return HOST + APP_NAME + ROUTER + `/folder/${folderId}/?workspace=${workspaceId}`
+}
+
+
+

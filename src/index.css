@@ -198,6 +198,7 @@ td {
 th {
     background: #d6d8d6;
 }
+
 .options-dropdown {
     position: absolute;
     top: 10px;
@@ -205,7 +206,7 @@ th {
     background-color: #fff;
     border: 1px solid #ccc;
     box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
-    z-index: 1;
+
 }
 
 .options-dropdown ul {
@@ -220,4 +221,30 @@ th {
 
 .options-dropdown ul li:hover {
     background-color: #F0F0F0;
+}
+.inputText[type=text] {
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    box-sizing: border-box;
+    border: 0px solid transparent;
+    outline: none;
+}
+
+.inputText[type=text]:focus {
+    border: none;
+    outline: none;
+}
+.bubble2-icon i {
+    backdrop-filter: blur(24px);
+    clip-path: circle(60%);
+    
+}
+.center {
+  margin: 0;
+  position: absolute;
+  top: 50%;
+  -ms-transform: translateY(-50%);
+  transform: translateY(-50%);
+  width: 100%;
 }

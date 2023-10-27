@@ -89,7 +89,7 @@ const FilterAndSort = (props) => {
     }
     const onProjectSelect = (item) => {
         setModuleResults([{ module_name: 'Select module' }])
-        setFormData((previous) => ({ ...previous, project_id: item ? item.project_id : null }))
+        setFormData((previous) => ({ ...previous, project_id: item ? item.project_id : null ,project:item}))
         if (item.id) {
             getModuleResultsApi(work_id, item.id)
         }
