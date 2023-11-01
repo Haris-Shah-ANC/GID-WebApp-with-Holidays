@@ -12,6 +12,7 @@ import {
     formattedDeadline,
     notifyErrorMessage,
     notifySuccessMessage,
+    formatDate,
 } from '../../../utils/Utils';
 
 import {
@@ -25,6 +26,7 @@ import {
     get_all_project,
     get_project_module,
     employee,
+    getTheListOfTaskEffortsUrl,
 } from '../../../api/urls';
 import PlainButton from '../../custom/Elements/buttons/PlainButton';
 import GidInput from '../../custom/Elements/inputs/GidInput';
@@ -37,6 +39,9 @@ import CustomDateTimePicker from '../../custom/Elements/CustomDateTimePicker';
 import dayjs from 'dayjs';
 import { LinkedText } from '../../custom/Elements/buttons/LinkedText';
 import ToggleSlider from '../../custom/Elements/ToggleSlider';
+import { twMerge } from 'tailwind-merge';
+import { DateFormatCard } from '../../../utils/Constant';
+import { Divider } from '@mui/material';
 
 const CreateNewTask = (props) => {
     const { setShowModal, data, from } = props;
@@ -65,7 +70,9 @@ const CreateNewTask = (props) => {
     const [employeeList, setEmployeeList] = React.useState([{ employee_name: 'Self' }]);
     const [isEffortsTableVisible, setEffortsTableVisible] = useState(false)
     const [updateEffortsStatus, setUpdateEffortsStatus] = useState(false)
-    const [isEditAction, setEditAction] = useState(false)
+    const [isEditAction, setEditAction] = useState(!formData.task_id)
+    const [listOfEfforts, setListOfEfforts] = useState([])
+    const [totalEfforts, setTotalEfforts] = useState(null)
     const getProjectsResultsApi = async (id) => {
         let res = await apiAction({
             method: 'get',
@@ -134,6 +141,9 @@ const CreateNewTask = (props) => {
             getProjectsResultsApi(work_id);
             getEmployeeList()
         }
+        if (!isEditAction) {
+            getEmployeeTaskEfforts()
+        }
 
     }, [work_id])
 
@@ -180,6 +190,20 @@ const CreateNewTask = (props) => {
             notifyErrorMessage(message)
         }
     };
+    const getEmployeeTaskEfforts = async () => {
+        let res = await apiAction({ url: getTheListOfTaskEffortsUrl(work_id, data.task_id ? data.task_id : data.id), method: 'get', data: {}, navigate: navigate, dispatch: dispatch })
+            .then((response) => {
+                if (response) {
+                    let listOfEfforts = response.result.list_task_record
+                    setTotalEfforts(parseFloat(response.result.total_task_duration).toFixed(2))
+                    setListOfEfforts(listOfEfforts)
+                }
+            })
+            .catch((error) => {
+                console.log(error)
+            })
+
+    }
     const onSaveChangesBtnClick = (e) => {
         e.preventDefault();
         if (formData.task_id && isEffortsTableVisible) {
@@ -205,26 +229,157 @@ const CreateNewTask = (props) => {
             setFormData((previous) => ({ ...previous, dead_line: tomorrowDate }))
         }
     }
+    const Linkify = ({ children }) => {
+        const isUrl = word => {
+            const urlPattern = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/gm;
+            return word.match(urlPattern)
+        }
+
+        const addMarkup = word => {
+            return isUrl(word) ?
+                `<a target="blank" class="text-blue-700 font-medium text-sm" href="${word}">${word}</a>` :
+                word
+        }
+        const words = children.split(' ')
+        const formatedWords = words.map((w, i) => addMarkup(w))
+        const html = formatedWords.join(' ')
+        return (
+            <p className="px-0 font-bold text-md overflow-hidden break-all font-quicksand" dangerouslySetInnerHTML={{ __html: html }}></p>
+        )
+    }
 
     return (
         <>
             <div className="flex items-center flex-row h-14  justify-between  border-solid border-slate-200 rounded-t text-black">
-                <h3 className="text-lg font-quicksand font-bold text-center w-full">{formData.task_id ? 'Update Task' : 'Add Task'}</h3>
-                {/* <div className='absolute flex justify-end right-[0px] pr-3'>
-                    <ToggleSlider isChecked={isEditAction} handleChange={(val) => setEditAction(val)} />
-                </div> */}
-                {/* <button
-                    className="text-lg  ml-auto rounded-full focus:outline-none hover:bg-gray-200 flex justify-center items-center"
-                    onClick={() => {}}>
-                    <i className="fa-solid fa-times"></i>
-                   
-                </button> */}
+                <h3 className={`text-lg font-quicksand font-bold text-center w-full`}>{!isEditAction ? "Task Details" : formData.task_id ? 'Update Task' : 'Add Task'}</h3>
 
+                <div className={`absolute flex justify-end right-[0px] pr-3 ${formData.task_id ? "" : "hidden"}`}>
+                    <ToggleSlider isChecked={isEditAction} handleChange={(val) => setEditAction(val)} />
+                </div>
             </div>
 
             <form id={"last_div"} className='overflow-auto relative     ' style={{ height: 'calc(100vh - 180px)', }} >
 
-                <div className="relative mt-2  flex-auto p-4" >
+                {/* READ ONLY VIEW */}
+
+                <div className={`relative mt-4 p-4 ${isEditAction ? "hidden" : ""}`} >
+                    <span className="text-lg font-semibold font-quicksand align-middle ">
+                        {formData.task}</span>
+
+                    {formData.detailed_description &&
+                        <div className='flex-flex-col w-full mt-3'>
+                            <span className="text-sm font-quicksand font-medium inline-block pb-1 text-blueGray-600 last:mr-0 mr-1 truncate text-ellipsis w-full">
+                                {formData.detailed_description}
+                            </span>
+                        </div>
+                    }
+                    <div className='mt-6 flex flex-row items-center'>
+                        <LabelText label={"Project"} className={""} />
+                        <span className="text-xs font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-full border">
+                            {selectedProject && selectedProject.project_name}</span>
+
+                    </div>
+
+
+                    {selectedModule &&
+                        <div className='mt-4'>
+                            <LabelText label={"Module"} className={""} />
+                            <span className="text-xs font-semibold font-quicksand inline-block py-1">
+                                {selectedModule.module_name}</span>
+                            <br />
+                        </div>
+                    }
+
+                    {formData.description_link &&
+                        <div className={`align-top font-quicksand flex flex-row w-full mt-6 `} >
+                            <LabelText label={"Description link"} className={""} />
+
+                            <Linkify>
+                                {formData.description_link}
+                            </Linkify>
+
+                        </div>
+                    }
+
+                    <div className={` flex flex-row items-center w-full mt-6 `} >
+                        <LabelText label={"Status"} className={""} />
+                        <span className="text-xs font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-full border">{formData.status}</span>
+                    </div>
+
+                    {formData.on_hold_reason &&
+                        <div className={` flex flex-row  mt-6`} >
+                            <LabelText label={"Reason"} className={"w-[30%] mt-1 "} />
+                            <span className='font-quicksand text-sm font-medium w-[85%]'>{formData.on_hold_reason}</span>
+                        </div>
+                    }
+                    <div className='flex flex-row items-center mt-6'>
+                        <LabelText label={"Created at"} className={""} />
+                        <span className='font-quicksand  text-sm font-medium '>{moment(data.created_at).format(DateFormatCard)}</span>
+                    </div>
+                    <div className='flex flex-row items-center mt-6'>
+                        <LabelText label={"Due Date"} className={""} />
+                        <span className='font-quicksand text-sm font-medium '>{moment(formData.dead_line).format(DateFormatCard)}</span>
+                    </div>
+
+
+                    <Divider className='py-4' />
+                    <div className=''>
+                        <LabelText label={"Efforts"} className={"mt-6"} />
+                        <div className={`relative flex-col flex justify-center ${listOfEfforts.length <= 0 ? "hidden" : ""} mt-2`}>
+                            <table className=" bg-transparent border-collapse table-auto rounded-lg ">
+                                <thead className='bg-gray-200 justify-center items-center'>
+                                    <tr className='justify-center h-5'>
+                                        <th
+                                            key={"valid_from"}
+                                            className={`text-sm pl-3 text-left text-blueGray-500 font-interVar w-1/2 font-quicksand font-normal`}>
+                                            Date
+                                        </th>
+                                        <th
+                                            key={"valid_upto"}
+                                            className={`text-sm  text-center text-blueGray-500 font-interVar w-1/2 font-quicksand font-normal`}>
+                                            {'Duration (Hr)'}
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody className=" divide-y divide-gray-200 table-fixed">
+                                    {listOfEfforts.map((item, index) => (
+                                        <tr key={index} className={`bg-white `} onClick={() => { }}>
+                                            <td className="pl-3">
+                                                <p className=' text-left text-sm font-quicksand'>
+                                                    {formatDate(item.working_date, "DD/MM/YYYY")}
+                                                </p>
+                                            </td>
+
+                                            <td className="py-4 ">
+                                                <p className=' text-center text-sm font-quicksand'>
+                                                    {item.working_duration}
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    ))}
+
+                                    <tr className="bg-gray-200">
+                                        <td className="text-sm font-quicksand pl-3 font-medium">
+                                            Total
+                                        </td>
+                                        <td className="text-sm font-quicksand font-medium" align="center">
+                                            {listOfEfforts.length > 0 ? totalEfforts : "0.00"} Hrs
+                                        </td>
+                                        <td>
+
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+
+                </div>
+
+
+                {/* EDIT OR CREATE VIEW */}
+                <div className={`relative mt-2  flex-auto p-4 ${isEditAction ? "" : "hidden"}`} >
                     <div className="my-1 flex flex-col">
                         <CustomLabel label={`Select  Project`} className={'font-quicksand font-semibold text-sm mb-1'} />
                         <Dropdown disabled={formData.task_id ? true : false} placeholder={true} options={projectsResults} optionLabel={'project_name'} value={selectedProject ? selectedProject : { project_name: 'Select project' }} setValue={(value) => setFormData((previous) => ({ ...previous, project_id: value ? value.project_id : null }))} />
@@ -371,7 +526,7 @@ const CreateNewTask = (props) => {
 
                 </div>
 
-                <div className='m-4'>
+                <div className={`m-4 ${isEditAction ? "" : "hidden"}`}>
                     <PlainButton title={"Save Changes"} className={"w-full  "} onButtonClick={onSaveChangesBtnClick} disable={formData.task_id ? user_id == formData.employee ? false : true : false}></PlainButton>
                 </div>
             </form>
@@ -379,6 +534,13 @@ const CreateNewTask = (props) => {
     )
 }
 
+function LabelText(props) {
+    const { label, className } = props
+    const tailwindMergedCSS = twMerge(` font-quicksand text-sm font-normal w-1/4 flex`, className)
 
+    return (
+        <span className={tailwindMergedCSS}>{label}</span>
+    )
+}
 
 export default CreateNewTask;

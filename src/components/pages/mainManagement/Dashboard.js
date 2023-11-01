@@ -325,26 +325,19 @@ const Dashboard = () => {
 
                     <div className='flex'>
                         <div className='flex flex-col w-full'>
-
                             <div className={`max-h-14 align-top font-quicksand font-medium flex w-full  `} >
                                 <a href={description_link === null ? null : description_link}
-                                    target="blank"
+                                    target='_blank' rel={'external'}
                                     className={`text-5  ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 "} font-quicksand font-bold text-lg line-clamp-2 text-ellipsis overflow-x-hidden`}
                                 >
                                     {task_description}
-
                                 </a>
-                                {/* <p className={`text-5 ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg line-clamp-2`}></p> */}
                             </div>
                             <span className="text-sm font-quicksand font-medium inline-block pb-1 text-blueGray-600 last:mr-0 mr-1 truncate text-ellipsis w-full">
                                 {detailed_description}
                             </span>
-
-
                         </div>
-
                     </div>
-
                     <div className='flex-grow items-center'>
                         <div onClick={() => {
                             if (user_id === employee) {
@@ -465,7 +458,7 @@ const Dashboard = () => {
                 </div>
 
                 <div className='mr-5 flex items-center gap-3 justify-end'>
-                    <div style={{width:200}}>
+                    <div style={{ width: 200 }}>
                         <Dropdown options={listOfEmployees} optionLabel="employee_name" value={selectedUser ? selectedUser : { employee_name: 'All Users' }} setValue={(value) => {
                             selectUser(value)
                             setTasksResults([])
