@@ -5,6 +5,7 @@ import CreateNewWorkspace from '../../pages/mainManagement/CreateNewWorkspace';
 import {
     add_effort,
     add_folder,
+    add_holiday,
     add_mapping,
     add_meeting_link,
     add_note,
@@ -33,6 +34,7 @@ import UploadConfirmationDialog from '../../pages/mainManagement/UploadConfirmat
 import AddFolderModal from '../../pages/mainManagement/notes/AddFolderModal';
 import AddNewNoteModal from '../../pages/mainManagement/notes/AddNewNoteModal';
 import CommonDeletePupUp from './CommonDeletePupUp';
+import AddHoliday from '../../pages/mainManagement/holiday/AddHolidays';
 
 const ModelComponent = (props) => {
     const { showModal, setShowModal, data, onFilterApply, onFilterClear, from, onSuccess = () => "", onSuccessDelete = () => "" } = props
@@ -113,6 +115,10 @@ const ModelComponent = (props) => {
                     }
                     {showModal == delete_modal &&
                         <CommonDeletePupUp onSuccess={(id, type) => onSuccessDelete(id, type)} data={data} setShowModal={setShowModal} />}
+                    {
+                        showModal === add_holiday &&
+                        <AddHoliday setShowModal={setShowModal} onSuccess={onSuccess} data={data} />
+                    }
                 </Box>
             </Modal>
             // <>

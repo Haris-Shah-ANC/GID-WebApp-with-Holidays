@@ -36,6 +36,7 @@ import CustomDatePicker from '../../custom/Elements/CustomDatePicker';
 import CustomDateTimePicker from '../../custom/Elements/CustomDateTimePicker';
 import dayjs from 'dayjs';
 import { LinkedText } from '../../custom/Elements/buttons/LinkedText';
+import ToggleSlider from '../../custom/Elements/ToggleSlider';
 
 const CreateNewTask = (props) => {
     const { setShowModal, data, from } = props;
@@ -64,7 +65,7 @@ const CreateNewTask = (props) => {
     const [employeeList, setEmployeeList] = React.useState([{ employee_name: 'Self' }]);
     const [isEffortsTableVisible, setEffortsTableVisible] = useState(false)
     const [updateEffortsStatus, setUpdateEffortsStatus] = useState(false)
-
+    const [isEditAction, setEditAction] = useState(false)
     const getProjectsResultsApi = async (id) => {
         let res = await apiAction({
             method: 'get',
@@ -74,7 +75,7 @@ const CreateNewTask = (props) => {
         })
             .then((response) => {
                 if (response.success) {
-                    setProjectsResults([{ project_name: 'Select project' }, ...res.result])
+                    setProjectsResults([{ project_name: 'Select project' }, ...response.result])
                 }
             })
             .catch((error) => {
@@ -91,7 +92,7 @@ const CreateNewTask = (props) => {
         })
             .then((response) => {
                 if (response.success) {
-                    setModuleResults([{ module_name: 'Select module' }, ...res.project_module_list])
+                    setModuleResults([{ module_name: 'Select module' }, ...response.project_module_list])
                 }
             })
             .catch((error) => {
@@ -120,7 +121,7 @@ const CreateNewTask = (props) => {
             .then((error) => {
                 console.log("ERROR", error)
             })
-        
+
     }
     React.useEffect(() => {
         if (formData.project_id) {
@@ -206,26 +207,21 @@ const CreateNewTask = (props) => {
     }
 
     return (
-
-        // <div className="justify-center overflow-hidden  items-center flex fixed overflow-x-hidden  fixed inset-0 z-50 outline-none focus:outline-none">
-        //     <div className=" sm:w-[65vh] h-[80vh] overflow-hidden border-0 rounded-lg shadow-lg relative flex flex-col bg-white outline-none focus:outline-none">
-        //         <div className="flex items-center flex-row h-14  justify-between  border-solid border-slate-200 rounded-t text-black">
-        //             <h3 className="text-lg font-quicksand font-bold text-center w-full">{formData.task_id ? 'Update Task' : 'Add Task'}</h3>
-        //             <button
-        //                 className="text-lg w-10 h-10 ml-auto rounded-full focus:outline-none hover:bg-gray-200 flex justify-center items-center"
-        //                 onClick={() => setShowModal(false)}>
-        //                 <i className="fa-solid fa-times"></i>
-        //             </button>
-        //         </div>
         <>
             <div className="flex items-center flex-row h-14  justify-between  border-solid border-slate-200 rounded-t text-black">
                 <h3 className="text-lg font-quicksand font-bold text-center w-full">{formData.task_id ? 'Update Task' : 'Add Task'}</h3>
-                <button
-                    className="text-lg w-10 h-10 ml-auto rounded-full focus:outline-none hover:bg-gray-200 flex justify-center items-center"
-                    onClick={() => setShowModal(false)}>
+                {/* <div className='absolute flex justify-end right-[0px] pr-3'>
+                    <ToggleSlider isChecked={isEditAction} handleChange={(val) => setEditAction(val)} />
+                </div> */}
+                {/* <button
+                    className="text-lg  ml-auto rounded-full focus:outline-none hover:bg-gray-200 flex justify-center items-center"
+                    onClick={() => {}}>
                     <i className="fa-solid fa-times"></i>
-                </button>
+                   
+                </button> */}
+
             </div>
+
             <form id={"last_div"} className='overflow-auto relative     ' style={{ height: 'calc(100vh - 180px)', }} >
 
                 <div className="relative mt-2  flex-auto p-4" >
@@ -379,14 +375,7 @@ const CreateNewTask = (props) => {
                     <PlainButton title={"Save Changes"} className={"w-full  "} onButtonClick={onSaveChangesBtnClick} disable={formData.task_id ? user_id == formData.employee ? false : true : false}></PlainButton>
                 </div>
             </form>
-            {/* <div className="p-6 border-solid border-slate-200 rounded-b">
-                <PlainButton title={"Save Changes"} className={"w-full"} onButtonClick={onSaveChangesBtnClick} disable={formData.task_id ? user_id == formData.employee ? false : true : false}></PlainButton>
-            </div> */}
-
         </>
-
-        //     </div>
-        // </div>
     )
 }
 

@@ -18,7 +18,6 @@ export default function Budget(props) {
     const { work_id } = getWorkspaceInfo();
     const navigate = useNavigate();
     const dispatch = Actions.getDispatch(useContext);
-
     const [formVisibility, setFormVisibility] = useState(false)
     const [listOfEmployees, setEmployees] = useState([])
     const [listOfProjects, setProjects] = useState([])

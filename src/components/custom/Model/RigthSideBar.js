@@ -1,15 +1,14 @@
 import React, { useEffect, useState, useContext, useLayoutEffect, useRef } from "react";
 import { getAddCommentUrl, getCommentListUrl, getDeleteCommentUrl, getEditCommentUrl } from "../../../api/urls";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import * as Actions from '../../../state/Actions';
 import { apiAction } from "../../../api/api";
 import { getLoginDetails, getWorkspaceInfo } from "../../../config/cookiesInfo";
 import moment from "moment";
 import { formatDate, notifySuccessMessage } from "../../../utils/Utils";
-import { Box, Modal, } from "@mui/material";
 import CustomLabel from '../Elements/CustomLabel'
-import ButtonWithImage from '../Elements/buttons/ButtonWithImage'
 import PlainButton from '../Elements/buttons/PlainButton'
+
 export default function CommentsSideBar(props) {
     const { showModal, setShowModal, taskData } = props;
     const [msgData, setMsgData] = useState({ reply: "" })
@@ -21,18 +20,18 @@ export default function CommentsSideBar(props) {
     const { user_id } = getLoginDetails(useNavigate());
     let MIN_TEXTAREA_HEIGHT = 50;
     const textFieldRef = useRef(null)
-    const [openReplyModal, setOpenReplyModal] = useState(false);
-    // state to track the id of the comment whose dropdown options are currently open
-    const [currentCommentId, setCurrentCommentId] = useState(null)
 
-    //state to track the text message of the comment whose dropdown options are currently open
-    const [currentCommentText, setCurrentCommentText] = useState("");
+    // state to track the data of the comment whose dropdown options are currently open
+    const [currentCommentData, setCurrentCommentData] = useState("");
 
     // state for opening and closing of edit modal
     const [openEditModal, setOpenEditModal] = useState(false);
 
     // state for opening and closing of delete modal
     const [openDeleteModal, setOpenDeleteModal] = useState(false);
+
+    // state for opening and closing of reply modal
+    const [openReplyModal, setOpenReplyModal] = useState(false);
 
     useLayoutEffect(() => {
         // Reset height - important to shrink on delete
@@ -52,11 +51,8 @@ export default function CommentsSideBar(props) {
         scrollToBottom()
     }, [chatList])
 
-
-
     const scrollToBottom = () => {
         var element = document.querySelector('#element');
-
         element.scrollTop = element.scrollHeight;
     }
 
@@ -69,16 +65,7 @@ export default function CommentsSideBar(props) {
         }
 
     }
-    // const sendComment = async () => {
-    //     let res = await apiAction({ url: getAddCommentUrl(), method: 'post', data: { workspace_id: work_id, task_id: taskData.id, comment: msgData.reply }, navigate: navigate, dispatch: dispatch })
-    //     if (res) {
-    //         if (res.success) {
-    //             setMsgData({ ...msgData, reply: "" })
-    //             getCommentList()
-    //         }
-    //     }
 
-    // }
     const sendComment = async () => {
         if (msgData.reply !== '') {
             // Replace line breaks with <br> tags when sending the message
@@ -94,7 +81,9 @@ export default function CommentsSideBar(props) {
 
             if (res && res.success) {
                 setMsgData({ ...msgData, reply: '' });
-                getCommentList();
+                // getCommentList();
+                setChatData([...chatList, res.result])
+                console.log("word_id==>", work_id)
             }
         }
     }
@@ -119,140 +108,13 @@ export default function CommentsSideBar(props) {
         const formatedWords = words.map((w, i) => addMarkup(w))
         const html = formatedWords.join(' ')
         return (
-            <p className="px-2 text-sm overflow-hidden break-all" dangerouslySetInnerHTML={{ __html: html }}></p>
+            <p className="px-0 text-sm overflow-hidden break-all" dangerouslySetInnerHTML={{ __html: html }}></p>
         )
     }
-    function EditModal(props) {
-        const { onClose, currentCommentText } = props;
 
-        const [text, setText] = useState(currentCommentText)
-        const [initialTextareaText, setInitialTextareaText] = useState(''); // State to conditionally render the code inside the useLayoutEffect as it was running before the textarea was rendered
-        const editCommentRef = useRef(null);
-        let textareaHeight = 70;
-
-        let chatMessage = text.replaceAll("<br>", "\n")
-
-        useLayoutEffect(() => {
-            const end = editCommentRef.current.value.length;
-            editCommentRef.current.focus()
-            editCommentRef.current.setSelectionRange(end, end)
-            if (initialTextareaText.length !== 0) {
-                // Reset height - important to shrink on delete
-                editCommentRef.current.style.height = "50px";
-                //Set height
-                editCommentRef.current.style.height = `${Math.max(
-                    editCommentRef.current.scrollHeight,
-                    textareaHeight
-                )}px`;
-            }
-        }, [editCommentRef, textareaHeight, initialTextareaText]);
-
-        // For Editing the Comment 
-
-        const editComment = async () => {
-            if (text !== '') {
-                // Replace line breaks with <br> tags when sending the message
-                const commentWithLineBreaks = text.replace(/\n/g, '<br>');
-                // console.log("inside editComment===>", commentWithLineBreaks)
-
-                let res = await apiAction({
-                    url: getEditCommentUrl(), method: 'post', data: {
-                        comment_id: currentCommentId,
-                        comment: commentWithLineBreaks
-                    }
-                })
-                if (res) { // show edited status only if the user made any changes to the comment
-                    notifySuccessMessage(res.status)
-                    // getCommentList()
-                    chatList.map((data) => {
-                        if (data.id === currentCommentId) {
-                            // console.log("ID to update", data.comment)
-                            data.comment = commentWithLineBreaks
-                            // console.log("after changing==>", data.comment)
-                        }
-                    })
-                    setOpenEditModal(false)
-                }
-            }
-        }
-        ////////////////    
-
-        function useOutsideClickTracker(ref) {
-            useEffect(() => {
-                // close modal if clicked outside 
-                function handleClickOutside(event) {
-                    if (ref.current && !ref.current.contains(event.target)) {
-                        setOpenEditModal(false)
-                    }
-                }
-                // Bind the event listener
-                document.addEventListener("mousedown", handleClickOutside);
-                return () => {
-                    // Unbind the event listener on clean up
-                    document.removeEventListener("mousedown", handleClickOutside);
-                };
-            }, [ref]);
-        }
-
-        const wrapperRef = useRef(null);
-        useOutsideClickTracker(wrapperRef);
-
-        return (
-
-            <div className="center p-5" style={{ width: 400, zIndex: 5 }} onClose={onClose} ref={wrapperRef}>
-                <div className="bg-gray-100 rounded shadow">
-                    <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
-                        <h3 className="text-lg font-quicksand font-bold text-center w-full">
-                            {'Edit Comment'}
-                        </h3>
-
-                    </div>
-
-                    <div className="relative px-5 pt-2 flex-auto">
-                        <div className="my-4 flex flex-col">
-                            {/* <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={"Comment to Edit"} /> */}
-                            <textarea
-                                style={{
-                                    maxHeight: 240,
-                                    minHeight: textareaHeight,
-                                    resize: "none",
-                                    verticalAlign: 'center'
-                                }}
-                                ref={editCommentRef}
-                                disable={true}
-                                value={chatMessage}
-                                className={"text-justify w-full rounded-md border-transparent no-scrollbar break-all "}
-                                onChange={(e) => {
-                                    setText(e.target.value);
-                                    setInitialTextareaText(e.target.value);
-                                }}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter' && e.target.value) {
-                                        if (!e.shiftKey) {
-                                            editComment()
-                                            e.preventDefault(); // Prevent default behavior (submit)
-
-                                        }
-                                    }
-                                }}
-                            >
-                            </textarea>
-                        </div>
-
-                    </div>
-
-                    <div className=" flex justify-end gap-4 pb-5 pr-5 pt-1">
-                        <PlainButton title={"Cancel"} onButtonClick={onClose} className={"bg-white text-blue-500 hover:bg-blue-100 px-2.5 py-1.5"} disable={false} />
-                        <PlainButton title={"Save"} onButtonClick={editComment} className={"px-2.5 py-1.5"} disable={false} />
-                    </div>
-
-                </div>
-            </div>
-        );
-    }
     const DropdownOptions = (props) => {
 
-        const { commentType, } = props;
+        const { commentType } = props;
         const dropDownClasess = `text-xs font-quicksand`;
         const deleteClass = `text-xs font-quicksand text-red-500`
 
@@ -288,7 +150,7 @@ export default function CommentsSideBar(props) {
     }
 
     function DeleteModal(props) {
-        const { open, setOpenDeleteModal, onClose, currentCommentId } = props;
+        const { setOpenDeleteModal, onClose } = props;
         const wrapperRef = useRef(null);
 
         useOutsideClickTracker(wrapperRef);
@@ -312,11 +174,11 @@ export default function CommentsSideBar(props) {
 
 
 
-        const deleteComment = async (id) => {
-            let res = await apiAction({ url: getDeleteCommentUrl(), method: 'post', data: { comment_id: currentCommentId, } })
+        const deleteComment = async () => {
+            let res = await apiAction({ url: getDeleteCommentUrl(), method: 'post', data: { comment_id: currentCommentData.id, } })
             if (res) {
                 notifySuccessMessage(res.status)
-                let indexToDelete = chatList.findIndex((item) => item.id === id)
+                let indexToDelete = chatList.findIndex((item) => item.id === currentCommentData.id)
                 console.log("indexToDelete==>", indexToDelete);
                 chatList.splice(indexToDelete, 1)
                 setOpenDeleteModal(false)
@@ -335,6 +197,158 @@ export default function CommentsSideBar(props) {
             </div>
         );
     }
+
+    function EditModal(props) {
+        const { onClose, } = props;
+
+        const [text, setText] = useState(currentCommentData.comment)
+        const [initialTextareaText, setInitialTextareaText] = useState(''); // State to conditionally render the code inside the useLayoutEffect as it was running before the textarea was rendered
+        const editCommentRef = useRef(null);
+        let textareaHeight = 70;
+
+        let chatMessage = text.replaceAll("<br>", "\n")
+
+        useLayoutEffect(() => {
+            const end = editCommentRef.current.value.length;
+            editCommentRef.current.focus()
+            editCommentRef.current.setSelectionRange(end, end)
+            if (initialTextareaText.length !== 0) {
+                // Reset height - important to shrink on delete
+                editCommentRef.current.style.height = "50px";
+                //Set height
+                editCommentRef.current.style.height = `${Math.max(
+                    editCommentRef.current.scrollHeight,
+                    textareaHeight
+                )}px`;
+            }
+        }, [editCommentRef, textareaHeight, initialTextareaText]);
+
+        ///////////////////////////
+
+        // let url = getEditCommentUrl() ;
+        // let data = {comment_id: currentCommentData.id}
+
+        // function onSuccess(res) {
+        //     notifySuccessMessage(res.status)
+
+        //     chatList.map((data,comment) => {
+        //         if (data.id === currentCommentData.id) {
+        //             // console.log("ID to update", data.comment)
+        //             data.comment = comment
+        //             // console.log("after changing==>", data.comment)
+        //         }
+        //     })
+        //     setOpenEditModal(false)
+        // }
+
+        /////////////////
+        // For Editing the Comment 
+
+        const editComment = async () => {
+            if (text !== '') {
+                // Replace line breaks with <br> tags when sending the message
+                const commentWithLineBreaks = text.replace(/\n/g, '<br>');
+                // console.log("inside editComment===>", commentWithLineBreaks)
+
+                let res = await apiAction({
+                    url: getEditCommentUrl(), method: 'post', data: {
+                        comment_id: currentCommentData.id,
+                        comment: commentWithLineBreaks
+                    }
+                })
+
+                if (res) {
+                    notifySuccessMessage(res.status)
+                    // getCommentList()
+                    chatList.map((data) => {
+                        if (data.id === currentCommentData.id) {
+                            // console.log("ID to update", data.comment)
+                            data.comment = commentWithLineBreaks
+                            // console.log("after changing==>", data.comment)
+                        }
+                    })
+                    setOpenEditModal(false)
+                }
+            }
+        }
+        ////////////////    
+
+        function useOutsideClickTracker(ref) {
+            useEffect(() => {
+                // close modal if clicked outside 
+                function handleClickOutside(event) {
+                    if (ref.current && !ref.current.contains(event.target)) {
+                        setOpenEditModal(false)
+                    }
+                }
+                // Bind the event listener
+                document.addEventListener("mousedown", handleClickOutside);
+                return () => {
+                    // Unbind the event listener on clean up
+                    document.removeEventListener("mousedown", handleClickOutside);
+                };
+            }, [ref]);
+        }
+
+        const wrapperRef = useRef(null);
+        useOutsideClickTracker(wrapperRef);
+
+        return (
+            <>
+                <div className="center p-5" style={{ width: 400, zIndex: 5 }} onClose={onClose} ref={wrapperRef}>
+                    <div className="bg-gray-100 rounded shadow">
+                        <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
+                            <h3 className="text-lg font-quicksand font-bold text-center w-full">
+                                {'Edit Comment'}
+                            </h3>
+
+                        </div>
+
+                        <div className="relative px-5 pt-2 flex-auto">
+                            <div className="my-4 flex flex-col">
+                                {/* <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={"Comment to Edit"} /> */}
+                                <textarea
+                                    style={{
+                                        maxHeight: 240,
+                                        minHeight: textareaHeight,
+                                        resize: "none",
+                                        verticalAlign: 'center'
+                                    }}
+                                    ref={editCommentRef}
+                                    disable={true}
+                                    value={chatMessage}
+                                    className={"text-justify w-full rounded-md border-transparent no-scrollbar break-all"}
+                                    onChange={(e) => {
+                                        setText(e.target.value);
+                                        setInitialTextareaText(e.target.value);
+                                    }}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' && e.target.value) {
+                                            if (!e.shiftKey) {
+                                                // editComment()
+                                                e.preventDefault(); // Prevent default behavior (submit)
+                                            }
+                                        }
+                                    }}
+                                >
+                                </textarea>
+                            </div>
+
+                        </div>
+
+                        <div className=" flex justify-end gap-4 pb-5 pr-5 pt-1">
+                            <PlainButton title={"Cancel"} onButtonClick={onClose} className={"bg-white text-blue-500 hover:bg-blue-100 px-2.5 py-1.5"} disable={false} />
+                            <PlainButton title={"Save"} onButtonClick={editComment} className={"px-2.5 py-1.5"} disable={false} />
+                        </div>
+
+                    </div>
+                </div>
+
+                {/* <ModalForCommentsOperations currentCommentData={currentCommentData} /> */}
+            </>
+        );
+    }
+
     function ReplyModal(props) {
         const { onClose } = props;
         const wrapperRef = useRef(null);
@@ -342,7 +356,30 @@ export default function CommentsSideBar(props) {
         const [initialTextareaText, setInitialTextareaText] = useState('');
         useOutsideClickTracker(wrapperRef);
         let textareaHeight = 70;
+
+        // let commentReplyingTo = currentCommentData.comment.replaceAll("<br>", "\n")
+
+        ///////// data for Api Calls
+
+        // const url = getAddCommentUrl();
+        // const data = {
+        //     workspace_id: work_id,
+        //     task_id: taskData.id,
+        //     reply_to_id: currentCommentData.id
+        // }
+
+        // function onSuccess(res) {
+        //     notifySuccessMessage(res.status);
+        //     setChatData([...chatList, res.result])
+        //     setOpenReplyModal(false)
+        // }
+
+        ////////////////////////////////////
+
         useLayoutEffect(() => {
+            const end = replyInputRef.current.value.length;
+            replyInputRef.current.focus()
+            replyInputRef.current.setSelectionRange(end, end)
             if (initialTextareaText.length !== 0) {
                 // Reset height - important to shrink on delete
                 replyInputRef.current.style.height = "50px";
@@ -369,8 +406,29 @@ export default function CommentsSideBar(props) {
                     document.removeEventListener("mousedown", handleClickOutside);
                 };
             }, [ref]);
-
         }
+
+        const replyToComment = async () => {
+            if (initialTextareaText !== '') {
+                const commentWithLineBreaks = initialTextareaText.replace(/\n/g, '<br>');
+
+                let res = await apiAction({
+                    url: getAddCommentUrl(), method: 'post', data: {
+                        workspace_id: work_id,
+                        task_id: taskData.id,
+                        comment: commentWithLineBreaks,
+                        reply_to_id: currentCommentData.id
+                    },
+                })
+                if (res) {
+                    notifySuccessMessage(res.status)
+                    // getCommentList()
+                    setChatData([...chatList, res.result])
+                }
+                setOpenReplyModal(false);
+            }
+        }
+
         return (
             <div className="center p-3" style={{ width: 400, zIndex: 5 }} ref={wrapperRef}>
                 <div className="bg-gray-100 rounded shadow">
@@ -381,35 +439,35 @@ export default function CommentsSideBar(props) {
                     </div>
                     <div className="relative px-3 pt-2">
                         <div className="my-4 flex flex-col">
+
                             <div className="bg-gray-300 mx-1 px-1 mb-1 rounded flex flex-row">
                                 <div className="w-1 bg-blue-500 rounded-tl-lg rounded-bl-lg "></div>
                                 <div className="overflow-hidden py-2">
-                                    <p className="px-2 text-sm font-semibold text-blue-400 overflow-hidden break-all">Harish</p>
-                                    <p className="px-2 text-sm overflow-hidden break-all " >{currentCommentText}</p>
+                                    <p className="px-2 text-sm font-semibold text-blue-400 overflow-hidden break-all">{currentCommentData.comment_by_name}</p>
+                                    <p className="px-2 text-sm overflow-hidden break-all">
+                                        <Linkify> 
+                                        {currentCommentData.comment}
+                                        </Linkify>
+                                    </p>
                                 </div>
 
                             </div>
+
                             <textarea
                                 style={{
                                     maxHeight: 240,
-                                    // minHeight: textareaHeight,
+                                    minHeight: textareaHeight,
                                     resize: "none",
                                     verticalAlign: 'center'
                                 }}
                                 ref={replyInputRef}
                                 disable={true}
-                                // value={chatMessage}
                                 className={"text-justify w-full rounded-md border-transparent no-scrollbar break-all mt-2"}
-                                onChange={(e) => {
-                                   
-                                    setInitialTextareaText(e.target.value);
-                                }}
+                                onChange={(e) => { setInitialTextareaText(e.target.value); }}
                                 onKeyDown={(e) => {
                                     if (e.key === 'Enter' && e.target.value) {
                                         if (!e.shiftKey) {
-                                            
                                             e.preventDefault(); // Prevent default behavior (submit)
-
                                         }
                                     }
                                 }}
@@ -421,17 +479,22 @@ export default function CommentsSideBar(props) {
 
                     <div className=" flex justify-end gap-4 pb-3 mt-3 pr-5">
                         <PlainButton title={"Cancel"} onButtonClick={onClose} className={"bg-white hover:bg-blue-100 text-blue-500 px-2.5 py-1.5"} disable={false} />
-                        <PlainButton title={"Send"} onButtonClick={() => ""} className={" px-2.5 py-1.5"} disable={false} />
+                        <PlainButton title={"Send"}
+                            onButtonClick={replyToComment}
+                            className={" px-2.5 py-1.5"} disable={false} />
                     </div>
                 </div>
             </div>
+            // <ModalForCommentsOperations currentCommentData={currentCommentData} url={url} data={data} onSuccess={onSuccess}
+            //     Linkify={Linkify} openModal={openReplyModal} setOpenModal={setOpenReplyModal}
+            //     ModalType={"Reply"} />
         )
     }
 
     const ChatItem = (props) => {
         const { chatData, index, openOptionsIndex, setOpenOptionsIndex } = props;
 
-        // console.log("chatData===>", chatData)
+        // console.log("chatData.is_reply===>", chatData.is_reply)
         const commentTypes = { self: "self", reply: "reply" }
 
         let isDropdownOpen = openOptionsIndex === index;
@@ -440,18 +503,12 @@ export default function CommentsSideBar(props) {
         const isOptionsOpen = `transition-all transform translate-y-8 opacity-0 group-hover:opacity-100 group-hover:translate-y-0 cursor-pointer`;
         const isOptionsClosed = `opacity-100 cursor-pointer translate-y-0`;
 
-
         const handleDropdownClick = (e) => {
             console.log("inside handleDropdownClick==>", chatData)
-            setCurrentCommentId(chatData.id)
-            setCurrentCommentText(chatData.comment)
+            setCurrentCommentData(chatData)
             e.stopPropagation();
             setOpenOptionsIndex(isDropdownOpen ? null : index);
         };
-
-        const handleReplyClick = () => {
-            //Reply functionality
-        }
 
         return (
             <div className="mt-4" onClick={() => setOpenOptionsIndex(null)}>
@@ -488,7 +545,6 @@ export default function CommentsSideBar(props) {
                                 </span>
 
                                 <div onClick={handleDropdownClick}
-                                    // ref={wrapperRef}
                                     // className="transition-all transform translate-y-8 opacity-0 group-hover:opacity-100 "
                                     className={isDropdownOpen ? isOptionsClosed : isOptionsOpen}
                                 >
@@ -505,15 +561,32 @@ export default function CommentsSideBar(props) {
                                     /> */}
                                 </div>
                             </div>
-                            <Linkify>{chatData.comment}</Linkify>
-                            {/* <p className="px-2 text-sm break-all" >
+                            {/* Show Replied Comments */}
+                            {chatData.is_reply &&
+                                <div className="bg-blue-200 py-1 mx-1 mb-1 rounded flex flex-row">
+                                    <div className="w-1 bg-blue-500 rounded-tl-lg rounded-bl-lg "></div>
+                                    <div>
+                                        <p className="px-2 text-sm font-semibold text-blue-400 overflow-hidden break-all">
+                                            {chatData.reply_to_user}
+                                        </p>
+                                        <p className="px-2 text-sm overflow-hidden break-all">
+                                            {chatData.reply_to_comment.replaceAll("<br>", "\n")}
+                                        </p>
+                                    </div>
+                                </div>
+                            }
+
+                            {/* <Linkify>{chatData.comment}</Linkify> */}
+
+                            <p className="px-2 text-sm break-all">
                                 {chatData.comment.split('<br>').map((line, index) => (
                                     <React.Fragment key={index}>
-                                        {line}
-                                        <br />
+                                        <Linkify>{line}</Linkify>
+                                        {/* <br /> */}
                                     </React.Fragment>
                                 ))}
-                            </p> */}
+                            </p>
+
 
                             <span className="flex justify-end text-xs text-gray-500 pr-3">
                                 {moment(chatData.created_at).format("HH:mm")}
@@ -539,18 +612,36 @@ export default function CommentsSideBar(props) {
                                             paddingLeft: 2,
                                             color: "#949699", position: 'absolute', top: '0', right: '0',
                                         }}
-                                    ></i>
+                                    > </i>
                                 </p>
                             </div>
-                            <div className="bg-blue-200 py-1 mx-1 mb-1 rounded flex flex-row">
-                                <div className="w-2 bg-blue-500 rounded-tl-lg rounded-bl-lg "></div>
-                                <div>
-                                    <p className="px-2 text-sm font-semibold text-blue-400 overflow-hidden break-all">Harish</p>
-                                    <p className="px-2 text-sm overflow-hidden break-all " >MMMMMMMMMMMMMMMMMMMM MMMMMMMMMMM MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM</p>
+                            {/* Show Replied Comments */}
+                            {chatData.is_reply &&
+                                <div className="bg-blue-200 py-1 mx-1 mb-1 rounded flex flex-row">
+                                    <div className="w-1 bg-blue-500 rounded-tl-lg rounded-bl-lg "></div>
+                                    <div>
+                                        <p className="px-2 text-sm font-semibold text-blue-400 overflow-hidden break-all">
+                                          {chatData.reply_to_user} 
+                                        </p>
+                                        <p className="px-2 text-sm overflow-hidden break-all">
+                                           <Linkify> 
+                                           {chatData.reply_to_comment} 
+                                           </Linkify>
+                                        </p>
+                                    </div>
                                 </div>
+                            }
 
-                            </div>
-                            <Linkify>{chatData.comment}</Linkify>
+                            {/* <Linkify>{chatData.comment}</Linkify> */}
+
+                            <p className="px-2 text-sm break-all">
+                                {chatData.comment.split('<br>').map((line, index) => (
+                                    <React.Fragment key={index}>
+                                        <Linkify>{line}</Linkify>
+                                        {/* <br /> */}
+                                    </React.Fragment>
+                                ))}
+                            </p>
 
                             <span className="flex justify-end text-xs text-gray-500 px-2">
                                 {/* {(chatData.comment === chatData.currentComment) &&
@@ -568,6 +659,7 @@ export default function CommentsSideBar(props) {
             </div>
         );
     };
+
     return (
         <div className={`custom-modal-dialog ${showModal ? 'show' : ''}`} role="document"
             onClick={(e) => setOpenOptionsIndex(false)} // for closing dropdown Options
@@ -576,9 +668,10 @@ export default function CommentsSideBar(props) {
             {/* <div className="relative"> */}
             {/* <div className="center h-12 bg-green-400" style={{}}></div> */}
             {/* </div> */}
-            {openDeleteModal && <DeleteModal open={openDeleteModal} setOpenDeleteModal={setOpenDeleteModal} onClose={() => setOpenDeleteModal(false)} currentCommentId={currentCommentId} />}
-            {openEditModal && <EditModal open={openEditModal} onClose={() => setOpenEditModal(false)} currentCommentText={currentCommentText} />}
+            {openDeleteModal && <DeleteModal open={openDeleteModal} setOpenDeleteModal={setOpenDeleteModal} onClose={() => setOpenDeleteModal(false)} />}
+            {openEditModal && <EditModal open={openEditModal} onClose={() => setOpenEditModal(false)} />}
             {openReplyModal && <ReplyModal onClose={() => setOpenReplyModal(false)} />}
+
             <div className="">
                 {/* <div className="relative">
                 </div> */}
@@ -597,7 +690,7 @@ export default function CommentsSideBar(props) {
                 </div>
                 <div id="element" className="no-scrollbar overflow-y-auto overflow-x-hidden pr-1" style={{ height: 'calc(100vh - 250px)', scrollbarWidth: 'none' }} >
                     {chatList.map((item, index) => (<ChatItem chatData={item} index={index} openOptionsIndex={openOptionsIndex} setOpenOptionsIndex={setOpenOptionsIndex} />))}
-                    {chatList.length == 0 &&
+                    {chatList.length === 0 &&
                         <p className="flex justify-center mt-[35vh]">
                             No data found
                         </p>
@@ -618,22 +711,17 @@ export default function CommentsSideBar(props) {
                             type="text"
                             // multiple
                             onChange={e => {
-
                                 // Destructure and update msgData
-                                if (e.target.value != " ") {
-                                    setMsgData({ ...msgData, reply: e.target.value });
-                                }
-
-
+                                // if (e.target.value !== "") {
+                                setMsgData({ ...msgData, reply: e.target.value });
+                                // }
                                 // Check for the condition
-                                if (e.target.value.includes("/") && e.nativeEvent.inputType === "insertFromPaste") {
-                                    // setInputValue("");
-                                    textFieldRef.current.value = null;
-                                    // onType();
-                                } else {
-                                    // setInputValue(e.target.value);
-                                    // onType();
-                                }
+                                // if (e.target.value.includes("/") && e.nativeEvent.inputType === "insertFromPaste") {
+                                //     textFieldRef.current.value = null;
+                                // } else {
+                                // setInputValue(e.target.value);
+                                // onType();
+                                // }
                             }}
 
                             // onChange={(e) => { setMsgData({ ...msgData, reply: e.target.value }) }}
@@ -655,18 +743,9 @@ export default function CommentsSideBar(props) {
                                 }
                             }}
 
-                        // onKeyDown={(e) => {
-                        //     if (e.key == 'Enter' && e.target.value) {
-                        //         onSendMsgClick()                                    // 
-                        //         setTimeout(() => {
-                        //             textFieldRef.current.style.height = "32px";
-                        //             textFieldRef.current.value = "";
-                        //         }, 50)
-                        //     }
-                        // }}
                         />
                     </div>
-                    {msgData.reply != "" &&
+                    {msgData.reply !== "" &&
                         <div className="flex justify-center text-center items-center pl-2">
                             <svg
                                 viewBox="0 0 24 24"

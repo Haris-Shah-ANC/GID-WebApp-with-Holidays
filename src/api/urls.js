@@ -299,5 +299,19 @@ export const getDeleteFolderUrl = (workspaceId, folderId) => {
     return HOST + APP_NAME + ROUTER + `/folder/${folderId}/?workspace=${workspaceId}`
 }
 
+//HOLIDAYS RELATED URLS
+export const getHolidaysUrl = (workId) => {
+    return HOST + APP_NAME + `/get_holiday_dates/?workspace_id=${workId}`
+}
 
+export const getAddHolidaysUrl = () => {
+    return HOST + APP_NAME + `/holidays/`
+}
+export const getUpdateHolidaysUrl = () => {
+    return HOST + APP_NAME + `/update_holidays/`
+}
+
+export const getDeleteHolidaysUrl = () => {
+    return HOST + APP_NAME + `/delete_dates/`
+}
 

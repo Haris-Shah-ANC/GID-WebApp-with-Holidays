@@ -86,7 +86,7 @@ function TableRow(props) {
             </td>
             <td className="p-3" >
                 <div className='flex  items-center' >
-                    <p className={`text-sm text-left break-words line-clamp-2 min-w-[320px] ${item.employee_id == loggedInUserId ? item.is_selected ? 'font-semibold' : 'hover:font-semibold cursor-pointer' : ''} font-quicksand w-full   `} onClick={() => {
+                    <p className={`${loggedInUserId == item.employee_id ? "text-blue-600" :""} text-sm text-left break-words line-clamp-2 min-w-[320px] ${item.employee_id == loggedInUserId ? item.is_selected ? 'font-semibold' : 'hover:font-semibold cursor-pointer' : ''} font-quicksand w-full   `} onClick={() => {
                         if (loggedInUserId == item.employee_id) {
                             onItemClick(item, index)
                         }

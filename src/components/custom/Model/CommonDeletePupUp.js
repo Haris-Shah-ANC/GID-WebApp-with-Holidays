@@ -7,11 +7,12 @@ import { useNavigate } from 'react-router-dom';
 import { notifyErrorMessage } from '../../../utils/Utils';
 
 export default function CommonDeletePupUp(props) {
-    const { setShowModal, title, subTitle, onSuccess, data } = props
+    const { setShowModal, onSuccess, data } = props
     const { work_id } = getWorkspaceInfo()
     const dispatch = Actions.getDispatch(useContext);
     const navigate = useNavigate();
 
+    console.log("MODAL DATA",data)
     const onDeleClick = () => {
         onSuccess(data.id,data.type)
         setShowModal(false)

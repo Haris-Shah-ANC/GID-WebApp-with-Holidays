@@ -111,6 +111,11 @@ export const routesName = {
         name: 'Upload Timesheet',
         activeRoute: 'Upload Timesheet',
     },
+    holidays: {
+        path: '/holidays',
+        name: 'Holidays',
+        activeRoute: 'Holidays',
+    },
     notes: {
         path: '/notes',
         name: 'Notes',

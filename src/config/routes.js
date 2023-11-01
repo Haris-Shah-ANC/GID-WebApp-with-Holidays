@@ -20,6 +20,7 @@ import Tasks from "../components/pages/mainManagement/tasks/Tasks";
 import Alerts from "../components/pages/mainManagement/Alerts";
 import { UploadTimesheet } from "../components/pages/mainManagement/file_upload/UploadTimesheet";
 import UserNotes from "../components/pages/mainManagement/Notes";
+import Holidays from "../components/pages/mainManagement/holiday/Holidays";
 
 export const authRoutes = [
     {
@@ -121,6 +122,11 @@ export const mainRoutes = [
         name: routesName.notes.name,
         component: <UserNotes />,
     },
+    {
+        path: routesName.holidays.path,
+        name: routesName.holidays.name,
+        component: <Holidays />,
+    },
 ];
 export const landingRoutes = [];
 
@@ -203,6 +209,12 @@ export const sidebarMenu = (isAdminMenu) => {
             icon: "fa-solid fa-chart-line",
             active: routesName.analytics.activeRoute,
         },
+        {
+            name: routesName.holidays.name,
+            path: routesName.holidays.path,
+            icon: "fa-solid fa-snowman",
+            active: routesName.holidays.activeRoute,
+        },
 
         {
             name: routesName.meeting.name,
@@ -272,6 +284,12 @@ export const sidebarMenu = (isAdminMenu) => {
                 icon: "fa-regular fa-message",
                 active: routesName.notes.activeRoute,
 
+            },
+            {
+                name: routesName.holidays.name,
+                path: routesName.holidays.path,
+                icon: "fa-solid fa-snowman",
+                active: routesName.holidays.activeRoute,
             },
 
             {
