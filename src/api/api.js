@@ -24,7 +24,6 @@ export async function apiAction({ url, method = 'get', data = null, onError = ()
     if(!response){
       return {success: false, status: "Something went wrong."}
     }
-
     let status = response.status
     if (isAPISuccess(status)) {
       // if(dispatch){

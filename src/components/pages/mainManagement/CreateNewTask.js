@@ -73,6 +73,7 @@ const CreateNewTask = (props) => {
     const [isEditAction, setEditAction] = useState(!formData.task_id)
     const [listOfEfforts, setListOfEfforts] = useState([])
     const [totalEfforts, setTotalEfforts] = useState(null)
+    const [isNetworkCallRunning, setNetworkCallStatus] = useState(false)
     const getProjectsResultsApi = async (id) => {
         let res = await apiAction({
             method: 'get',
@@ -88,7 +89,6 @@ const CreateNewTask = (props) => {
             .catch((error) => {
                 console.log("ERROR", error)
             })
-
     }
     const getModuleResultsApi = async (w_id, p_id) => {
         let res = await apiAction({
@@ -191,8 +191,10 @@ const CreateNewTask = (props) => {
         }
     };
     const getEmployeeTaskEfforts = async () => {
+        setNetworkCallStatus(true)
         let res = await apiAction({ url: getTheListOfTaskEffortsUrl(work_id, data.task_id ? data.task_id : data.id), method: 'get', data: {}, navigate: navigate, dispatch: dispatch })
             .then((response) => {
+                setNetworkCallStatus(false)
                 if (response) {
                     let listOfEfforts = response.result.list_task_record
                     setTotalEfforts(parseFloat(response.result.total_task_duration).toFixed(2))
@@ -244,7 +246,7 @@ const CreateNewTask = (props) => {
         const formatedWords = words.map((w, i) => addMarkup(w))
         const html = formatedWords.join(' ')
         return (
-            <p className="px-0 font-bold text-md overflow-hidden break-all font-quicksand" dangerouslySetInnerHTML={{ __html: html }}></p>
+            <p className="flex w-[88%] font-bold text-md overflow-hidden break-all font-quicksand" dangerouslySetInnerHTML={{ __html: html }}></p>
         )
     }
 
@@ -263,7 +265,7 @@ const CreateNewTask = (props) => {
                 {/* READ ONLY VIEW */}
 
                 <div className={`relative mt-4 p-4 ${isEditAction ? "hidden" : ""}`} >
-                    <span className="text-lg font-semibold font-quicksand align-middle ">
+                    <span className="text-lg font-bold font-quicksand align-middle ">
                         {formData.task}</span>
 
                     {formData.detailed_description &&
@@ -274,17 +276,17 @@ const CreateNewTask = (props) => {
                         </div>
                     }
                     <div className='mt-6 flex flex-row items-center'>
-                        <LabelText label={"Project"} className={""} />
-                        <span className="text-xs font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-full border">
+                        <LabelText label={"Project"} className={"w-1/4"} />
+                        <span className="text-xs  font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-full border border-black">
                             {selectedProject && selectedProject.project_name}</span>
 
                     </div>
 
 
                     {selectedModule &&
-                        <div className='mt-4'>
-                            <LabelText label={"Module"} className={""} />
-                            <span className="text-xs font-semibold font-quicksand inline-block py-1">
+                        <div className='mt-4 flex flex-row items-center'>
+                            <LabelText label={"Module"} className={"w-1/4"} />
+                            <span className="text-xs  font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-full border border-black">
                                 {selectedModule.module_name}</span>
                             <br />
                         </div>
@@ -293,7 +295,6 @@ const CreateNewTask = (props) => {
                     {formData.description_link &&
                         <div className={`align-top font-quicksand flex flex-row w-full mt-6 `} >
                             <LabelText label={"Description link"} className={""} />
-
                             <Linkify>
                                 {formData.description_link}
                             </Linkify>
@@ -302,23 +303,23 @@ const CreateNewTask = (props) => {
                     }
 
                     <div className={` flex flex-row items-center w-full mt-6 `} >
-                        <LabelText label={"Status"} className={""} />
-                        <span className="text-xs font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-full border">{formData.status}</span>
+                        <LabelText label={"Status"} className={"w-1/4"} />
+                        <span className="text-xs font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-full border border-black">{formData.status}</span>
                     </div>
 
                     {formData.on_hold_reason &&
                         <div className={` flex flex-row  mt-6`} >
                             <LabelText label={"Reason"} className={"w-[30%] mt-1 "} />
-                            <span className='font-quicksand text-sm font-medium w-[85%]'>{formData.on_hold_reason}</span>
+                            <ValueText value={formData.on_hold_reason} className={'w-[89%]'} />
                         </div>
                     }
                     <div className='flex flex-row items-center mt-6'>
                         <LabelText label={"Created at"} className={""} />
-                        <span className='font-quicksand  text-sm font-medium '>{moment(data.created_at).format(DateFormatCard)}</span>
+                        <ValueText value={data && moment(data.created_at).format(DateFormatCard)} />
                     </div>
                     <div className='flex flex-row items-center mt-6'>
                         <LabelText label={"Due Date"} className={""} />
-                        <span className='font-quicksand text-sm font-medium '>{moment(formData.dead_line).format(DateFormatCard)}</span>
+                        <ValueText value={moment(formData.dead_line).format(DateFormatCard)} />
                     </div>
 
 
@@ -331,12 +332,12 @@ const CreateNewTask = (props) => {
                                     <tr className='justify-center h-5'>
                                         <th
                                             key={"valid_from"}
-                                            className={`text-sm pl-3 text-left text-blueGray-500 font-interVar w-1/2 font-quicksand font-normal`}>
+                                            className={`text-sm pl-3 text-left text-blueGray-500 font-interVar w-1/2 font-quicksand font-medium`}>
                                             Date
                                         </th>
                                         <th
                                             key={"valid_upto"}
-                                            className={`text-sm  text-center text-blueGray-500 font-interVar w-1/2 font-quicksand font-normal`}>
+                                            className={`text-sm  text-center text-blueGray-500 font-interVar w-1/2 font-quicksand font-medium`}>
                                             {'Duration (Hr)'}
                                         </th>
                                     </tr>
@@ -371,7 +372,13 @@ const CreateNewTask = (props) => {
                                     </tr>
                                 </tbody>
                             </table>
+
                         </div>
+                        {listOfEfforts.length == 0 && !isNetworkCallRunning ?
+                            <div className='flex justify-center mt-6'>
+                                <LabelText label={"No efforts added."} />
+                            </div>
+                            : null}
                     </div>
 
 
@@ -536,10 +543,18 @@ const CreateNewTask = (props) => {
 
 function LabelText(props) {
     const { label, className } = props
-    const tailwindMergedCSS = twMerge(` font-quicksand text-sm font-normal w-1/4 flex`, className)
+    const tailwindMergedCSS = twMerge(` font-quicksand text-sm font-normal  w-[30%] flex`, className)
 
     return (
         <span className={tailwindMergedCSS}>{label}</span>
+    )
+}
+function ValueText(props) {
+    const { value, className } = props
+    const tailwindMergedCSS = twMerge('font-quicksand text-sm font-medium w-[88%]', className)
+
+    return (
+        <span className={tailwindMergedCSS}>{value}</span>
     )
 }
 

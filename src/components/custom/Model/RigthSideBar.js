@@ -357,25 +357,6 @@ export default function CommentsSideBar(props) {
         useOutsideClickTracker(wrapperRef);
         let textareaHeight = 70;
 
-        // let commentReplyingTo = currentCommentData.comment.replaceAll("<br>", "\n")
-
-        ///////// data for Api Calls
-
-        // const url = getAddCommentUrl();
-        // const data = {
-        //     workspace_id: work_id,
-        //     task_id: taskData.id,
-        //     reply_to_id: currentCommentData.id
-        // }
-
-        // function onSuccess(res) {
-        //     notifySuccessMessage(res.status);
-        //     setChatData([...chatList, res.result])
-        //     setOpenReplyModal(false)
-        // }
-
-        ////////////////////////////////////
-
         useLayoutEffect(() => {
             const end = replyInputRef.current.value.length;
             replyInputRef.current.focus()
@@ -445,8 +426,8 @@ export default function CommentsSideBar(props) {
                                 <div className="overflow-hidden py-2">
                                     <p className="px-2 text-sm font-semibold text-blue-400 overflow-hidden break-all">{currentCommentData.comment_by_name}</p>
                                     <p className="px-2 text-sm overflow-hidden break-all">
-                                        <Linkify> 
-                                        {currentCommentData.comment}
+                                        <Linkify>
+                                            {currentCommentData.comment}
                                         </Linkify>
                                     </p>
                                 </div>
@@ -545,7 +526,6 @@ export default function CommentsSideBar(props) {
                                 </span>
 
                                 <div onClick={handleDropdownClick}
-                                    // className="transition-all transform translate-y-8 opacity-0 group-hover:opacity-100 "
                                     className={isDropdownOpen ? isOptionsClosed : isOptionsOpen}
                                 >
                                     <i class="fa-solid fa-chevron-down fa-1x"
@@ -553,12 +533,7 @@ export default function CommentsSideBar(props) {
                                             paddingRight: 5, color: "#949699", cursor: 'pointer',
                                         }}
                                     ></i>
-                                    {/* <FaAngleDown
-                                        size={20}
-                                        color="#949699"
-                                        //fixing the dropdown symbol at the top right corner
-                                        className=" top-0 right-0 backdrop-blur-xl "
-                                    /> */}
+                                
                                 </div>
                             </div>
                             {/* Show Replied Comments */}
@@ -576,13 +551,10 @@ export default function CommentsSideBar(props) {
                                 </div>
                             }
 
-                            {/* <Linkify>{chatData.comment}</Linkify> */}
-
                             <p className="px-2 text-sm break-all">
                                 {chatData.comment.split('<br>').map((line, index) => (
                                     <React.Fragment key={index}>
                                         <Linkify>{line}</Linkify>
-                                        {/* <br /> */}
                                     </React.Fragment>
                                 ))}
                             </p>
@@ -621,12 +593,12 @@ export default function CommentsSideBar(props) {
                                     <div className="w-1 bg-blue-500 rounded-tl-lg rounded-bl-lg "></div>
                                     <div>
                                         <p className="px-2 text-sm font-semibold text-blue-400 overflow-hidden break-all">
-                                          {chatData.reply_to_user} 
+                                            {chatData.reply_to_user}
                                         </p>
                                         <p className="px-2 text-sm overflow-hidden break-all">
-                                           <Linkify> 
-                                           {chatData.reply_to_comment} 
-                                           </Linkify>
+                                            <Linkify>
+                                                {chatData.reply_to_comment}
+                                            </Linkify>
                                         </p>
                                     </div>
                                 </div>

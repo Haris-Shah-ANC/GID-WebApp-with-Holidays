@@ -206,6 +206,9 @@ export const getDeleteTaskEffortsUrl = () => {
 export const getTasksUrl = () => {
     return HOST + APP_NAME + `/list_of_task_records_of_employee/`
 }
+export const getExportTimesheetUrl = () => {
+    return HOST + APP_NAME + `/export_timesheet_record/`
+}
 
 export const getAddNewBudgetUrl = () => {
     return HOST + APP_NAME + `/add_budget/`
