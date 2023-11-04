@@ -30,20 +30,14 @@ const Holidays = () => {
     }, [])
 
 
-    const onSuccess = (data, isItEditAction) => {
-        setHolidayToEdit(null)
-        console.log("NEW DATA", isItEditAction, data)
+    const onSuccess = (data, isItEditAction, index) => {
         if (isItEditAction) {
-            const updatedHolidayIndex = holidays.findIndex((item, i) => item.holiday_id == data.holiday_id
-            );
-            holidays.splice(updatedHolidayIndex, 1)
-            holidays.push(data)
-
-
+            holidays[index] = data
         } else {
             holidays.push(data)
         }
         setHolidays(holidays)
+        setHolidayToEdit(null)
     }
     const fetchHolidays = async () => {
         setNetworkCallStatus(true)
@@ -61,7 +55,7 @@ const Holidays = () => {
     }
     const deleteHoliday = async (id) => {
         setNetworkCallStatus(true)
-        let res = await apiAction({ url: getDeleteHolidaysUrl(work_id), method: 'post', navigate: navigate, dispatch: dispatch, data: { "workspace_id": 1, "holiday_id": [id] } })
+        let res = await apiAction({ url: getDeleteHolidaysUrl(work_id), method: 'post', navigate: navigate, dispatch: dispatch, data: { "workspace_id": work_id, "holiday_id": [id] } })
             .then((response) => {
                 setNetworkCallStatus(false)
                 if (response) {
@@ -86,7 +80,7 @@ const Holidays = () => {
     return (
 
         <div className="">
-            {deleteModalVisibility && <ModelComponent showModal={deleteModalVisibility} setShowModal={setDeletePopUp} onSuccessDelete={onDeleteHoliday} data={{ id: holidayToEdit.holiday_id, title: "Remove holiday?", subTitle: `Are you sure to remove holiday '${holidayToEdit.event_name}' ?` }} />}
+            {deleteModalVisibility && <ModelComponent showModal={deleteModalVisibility} setShowModal={setDeletePopUp} onSuccessDelete={onDeleteHoliday} data={{ id: holidays[holidayToEdit].holiday_id, title: "Remove holiday?", subTitle: `Are you sure to remove holiday '${holidays[holidayToEdit].event_name}' ?` }} />}
             <div className="flex flex-row justify-between px-2 pt-5">
                 <span className=" text-2xl">Holidays</span>
 
@@ -100,21 +94,20 @@ const Holidays = () => {
                 }
             </div>
             {isFormVisible && <AddHolidayForm onClose={() => {
-
                 setFormVisible(false)
-            }} onSuccess={onSuccess} data={holidayToEdit} />}
+            }} onSuccess={onSuccess} data={holidays[holidayToEdit]} index={holidayToEdit} />}
             {holidays.length > 0 &&
                 <div className="flex mx-2 rounded mt-5">
                     <table className=" bg-transparent border-collapse table-auto w-full rounded-lg">
                         <thead className='bg-gray-200 px-10 justify-center items-center'>
                             <tr className='justify-between h-10'>
                                 <th
-                                    key={"valid_from"}
+                                    key={"sr_no"}
                                     className={`text-sm p-3 text-left text-blueGray-500 font-interVar font-bold  font-quicksand font-bold`}>
                                     Sr/No
                                 </th>
                                 <th
-                                    key={"valid_from"}
+                                    key={"name"}
                                     className={`text-sm p-3 text-left text-blueGray-500 font-interVar font-bold   font-quicksand font-bold`}>
                                     Name
                                 </th>
@@ -160,7 +153,7 @@ const Holidays = () => {
                                                     width="1em"
                                                     className="cursor-pointer hover:fill-blue-500"
                                                     onClick={() => {
-                                                        setHolidayToEdit(item)
+                                                        setHolidayToEdit(index)
                                                         setFormVisible(true)
                                                     }}
 
@@ -176,7 +169,7 @@ const Holidays = () => {
                                                         className="cursor-pointer hover:fill-red-500"
                                                         onClick={() => {
                                                             console.log("ITEM", item)
-                                                            setHolidayToEdit(item)
+                                                            setHolidayToEdit(index)
                                                             setDeletePopUp(delete_modal)
                                                         }}
                                                     >

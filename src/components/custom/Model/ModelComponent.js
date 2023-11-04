@@ -19,6 +19,7 @@ import {
     file_upload,
     filter_and_sort,
     import_confirmation,
+    share_note,
 } from '../../../utils/Constant';
 import FilterAndSort from '../../pages/mainManagement/FilterAndSort';
 import AddProject from '../../pages/mainManagement/AddProject';
@@ -34,7 +35,7 @@ import UploadConfirmationDialog from '../../pages/mainManagement/UploadConfirmat
 import AddFolderModal from '../../pages/mainManagement/notes/AddFolderModal';
 import AddNewNoteModal from '../../pages/mainManagement/notes/AddNewNoteModal';
 import CommonDeletePupUp from './CommonDeletePupUp';
-import AddHoliday from '../../pages/mainManagement/holiday/AddHolidays';
+import ShareNotesModal from '../../pages/mainManagement/holiday/ShareNotesModal';
 
 const ModelComponent = (props) => {
     const { showModal, setShowModal, data, onFilterApply, onFilterClear, from, onSuccess = () => "", onSuccessDelete = () => "" } = props
@@ -116,8 +117,8 @@ const ModelComponent = (props) => {
                     {showModal == delete_modal &&
                         <CommonDeletePupUp onSuccess={(id, type) => onSuccessDelete(id, type)} data={data} setShowModal={setShowModal} />}
                     {
-                        showModal === add_holiday &&
-                        <AddHoliday setShowModal={setShowModal} onSuccess={onSuccess} data={data} />
+                        showModal === share_note &&
+                        <ShareNotesModal setShowModal={setShowModal} onSuccess={onSuccess} data={data} />
                     }
                 </Box>
             </Modal>

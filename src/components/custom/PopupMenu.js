@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 const PopupMenu = (props) => {
-    const { item, onMenuItemClick = () => { }, isClicked ,onClose=()=>{}} = props
+    const { item, onMenuItemClick = () => { }, isClicked, onClose = () => { }, menuOptions } = props
     const [isOpen, setIsOpen] = useState(isClicked);
     const menuRef = useRef();
 
@@ -44,8 +44,9 @@ const PopupMenu = (props) => {
                 <div className="absolute right-[-40px] mt-2 bg-white border rounded shadow-lg z-5">
 
                     <ul>
-                        <li className="px-4 py-2 hover:bg-gray-100 text-sm font-quicksand font-medium cursor-pointer" onClick={() => onMenuItemClick("Edit", item)}>Edit</li>
-                        <li className="px-4 py-2 hover:bg-gray-100 text-red-500 text-sm font-quicksand font-medium cursor-pointer" onClick={() => onMenuItemClick("Delete", item)}>Delete</li>
+                        {menuOptions.map((menuItem) => (
+                            <li className={`px-4 py-2 hover:bg-gray-100 text-sm font-quicksand font-medium cursor-pointer ${menuItem.action == "Delete" ? "text-red-500" : ""}`} onClick={() => onMenuItemClick(menuItem.action, item)}>{menuItem.title}</li>
+                        ))}
                     </ul>
                 </div>
             )}

@@ -6,7 +6,7 @@ import { getLoginDetails, getWorkspaceInfo } from '../../../config/cookiesInfo';
 import { apiAction } from '../../../api/api';
 import { Divider, Fade, Menu, MenuItem, Tooltip } from '@mui/material';
 import ModelComponent from '../../custom/Model/ModelComponent';
-import { add_folder, add_note, delete_modal, filter_and_sort, sampleFolders } from '../../../utils/Constant';
+import { add_folder, add_note, delete_modal, filter_and_sort, folderMenuOptions, notesMenuOptions, sampleFolders, share_note } from '../../../utils/Constant';
 import { getAddNoteUrl, getDeleteFolderUrl, getFetchNoteUrl, getFolderListUrl, getNotesUrl, getUpdateNoteUrl } from '../../../api/urls';
 import CustomLabel from '../../custom/Elements/CustomLabel';
 import PopupMenu from '../../custom/PopupMenu';
@@ -240,6 +240,10 @@ function UserNotes(props) {
         return JSON.stringify(hoveredElement) == JSON.stringify(item)
     }
 
+    const isNotesSelected = (item) => {
+        return JSON.stringify(hoverChildElement) == JSON.stringify(item)
+    }
+
     const onFolderClick = (folder, event) => {
         setNotesListUnderFolder([])
         if (JSON.stringify(folder) == JSON.stringify(selectedFolder)) {
@@ -271,22 +275,14 @@ function UserNotes(props) {
         }
     }
     const onClickChildNoteMenuItem = (option, item) => {
-        console.log(item)
-        if (option == "Edit") {
-            setModalData({ note_id: item.id, folder: item.folder, title: item.title, folders: folderList })
-            setShowModal(add_note)
+        setMenuVisible(false)
+        if (option == "Share") {
+            setShowModal(share_note)
 
         } else if (option == "Delete") {
-
+            onDeleteNoteClick(item)
         }
-    }
-    const MenuIcon = (props) => {
-        const { item } = props
-        return (
-            <div className='px-2 py-0.5 '>
-                <i class="fa-solid fa-ellipsis" style={{ color: '#4a4c4f', cursor: 'pointer', display: isFolderSelected(item) ? 'flex' : 'none' }} ></i>
-            </div>
-        )
+
     }
 
     const onClickNote = (note) => {
@@ -411,7 +407,7 @@ function UserNotes(props) {
 
                             </div>
                             {JSON.stringify(isMenuVisible) == JSON.stringify(item) &&
-                                <PopupMenu item={item} isClicked={isMenuVisible} onMenuItemClick={onFolderMenuClick} onClose={() => setMenuVisible(false)} />
+                                <PopupMenu menuOptions={folderMenuOptions} item={item} isClicked={isMenuVisible} onMenuItemClick={onFolderMenuClick} onClose={() => setMenuVisible(false)} />
                             }
                             {JSON.stringify(selectedFolder) == JSON.stringify(item) &&
                                 <div className='pb-4 '>
@@ -434,20 +430,31 @@ function UserNotes(props) {
 
 
                                                     </div>
-                                                    <Tooltip title="Delete note" placement="top">
-                                                        <div>
-                                                            <i class="fa-solid fa-trash fa-xs" onClick={(event) => {
+                                                    {/* <Tooltip title="Delete note" placement="top"> */}
+                                                    <div className='showme flex flex-row items-center'>
+                                                        <i class="fa-solid fa-ellipsis" onClick={(e) => {
+                                                            if (isMenuVisible) {
+                                                                setMenuVisible(false)
+                                                            } else {
+                                                                setMenuVisible(childItem)
+                                                            }
+                                                            e.stopPropagation()
+
+                                                        }} style={{ color: '#4a4c4f', cursor: 'pointer', display: isNotesSelected(childItem) || JSON.stringify(isMenuVisible) == JSON.stringify(childItem) ? "flex" : 'none', padding: 3 }} ></i>
+                                                        {/* <i class="fa-solid fa-trash fa-xs" onClick={(event) => {
                                                                 onDeleteNoteClick(childItem)
                                                                 event.stopPropagation()
-                                                            }} style={{ color: '#a60512', display: JSON.stringify(hoverChildElement) == JSON.stringify(childItem) ? "flex" : 'none' }}></i>
-                                                        </div>
-                                                    </Tooltip>
-                                                </div>
-                                                <div className='flex flex-row items-center '>
-                                                    <PopupMenu item={childItem} onMenuItemClick={onClickChildNoteMenuItem} isIconVisible={JSON.stringify(childItem) == JSON.stringify(selectedChildNote) || JSON.stringify(childItem) == JSON.stringify(hoverChildElement)} />
+                                                            }} style={{ color: '#a60512', display: JSON.stringify(hoverChildElement) == JSON.stringify(childItem) ? "flex" : 'none' }}></i> */}
+                                                    </div>
+                                                    {/* </Tooltip> */}
+
                                                 </div>
 
+
                                             </div>
+                                            {JSON.stringify(isMenuVisible) == JSON.stringify(childItem) &&
+                                                <PopupMenu menuOptions={notesMenuOptions} item={childItem} onMenuItemClick={onClickChildNoteMenuItem} isClicked={isMenuVisible} onClose={() => setMenuVisible(false)} />
+                                            }
                                         </>
                                     ))
                                     }

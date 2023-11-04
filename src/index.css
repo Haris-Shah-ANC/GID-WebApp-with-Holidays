@@ -219,9 +219,16 @@ th {
     cursor: pointer;
 }
 
+.noborder {
+    border: "none",
+}
+
+
+
 .options-dropdown ul li:hover {
     background-color: #F0F0F0;
 }
+
 .inputText[type=text] {
     width: 100%;
     padding: 12px 20px;
@@ -235,16 +242,18 @@ th {
     border: none;
     outline: none;
 }
+
 .bubble2-icon i {
     backdrop-filter: blur(24px);
     clip-path: circle(60%);
-    
+
 }
+
 .center {
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  -ms-transform: translateY(-50%);
-  transform: translateY(-50%);
-  width: 100%;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    width: 100%;
 }
