@@ -222,6 +222,12 @@ th {
     cursor: pointer;
 }
 
+.noborder {
+    border: "none",
+}
+
+
+
 .options-dropdown ul li:hover {
     background-color: #F0F0F0;
 }

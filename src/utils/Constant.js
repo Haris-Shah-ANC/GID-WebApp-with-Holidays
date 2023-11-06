@@ -38,6 +38,7 @@ export const add_folder = "add_folder"
 export const add_note = "add_note"
 export const delete_modal = "delete_modal"
 export const add_holiday = "add_holiday"
+export const share_note="share_note"
 export const ROLES = [
     { role: "Employee", short_name: "employee", id: 1 },
     { role: "Admin", short_name: "admin", id: 2 },
@@ -49,74 +50,19 @@ export const sampleFolders = [
     { folder_name: "Sample 3", id: 2, },
     { folder_name: "Sample 2", id: 3, }
 ]
-export const tasks = [
-    [
-        {
-            "id": 2243,
-            "task_description": "Add holidays,weekends",
-            "project_module": null,
-            "module_name": null,
-            "assignee_name": "Kunal Kadlag",
-            "assignee_id": 2,
-            "project": 3,
-            "project_name": "Get It done",
-            "detailed_description": null,
-            "status": "In-Progress",
-            "on_hold_reason": null,
-            "description_link": null,
-            "created_at": "2023-10-31T06:56:01.218418Z",
-            "dead_line": "2023-10-31T09:30:00Z",
-            "completed_at": null,
-            "employee": 2,
-            "employee_name": "Kunal Kadlag",
-            "working_duration": 2
-        },
-        {
-            "id": 2203,
-            "task_description": "Add read-only view for the task.",
-            "project_module": null,
-            "module_name": null,
-            "assignee_name": "Kunal Kadlag",
-            "assignee_id": 2,
-            "project": 3,
-            "project_name": "Get It done",
-            "detailed_description": null,
-            "status": "On Hold",
-            "on_hold_reason": "Complete the add holidays incomplete task.",
-            "description_link": null,
-            "created_at": "2023-10-18T07:02:01.404059Z",
-            "dead_line": "2023-10-18T14:30:00Z",
-            "completed_at": null,
-            "employee": 2,
-            "employee_name": "Kunal Kadlag",
-            "working_duration": 0
-        },
-        {
-            "id": 2174,
-            "task_description": "Design 404 page not found UI and integration.",
-            "project_module": null,
-            "module_name": null,
-            "assignee_name": "Kunal Kadlag",
-            "assignee_id": 2,
-            "project": 3,
-            "project_name": "Get It done",
-            "detailed_description": null,
-            "status": "On Hold",
-            "on_hold_reason": "High priority task assign-Add file mapping feature when uploading timesheet",
-            "description_link": null,
-            "created_at": "2023-10-11T06:19:01.633922Z",
-            "dead_line": "2023-10-11T10:30:00Z",
-            "completed_at": null,
-            "employee": 2,
-            "employee_name": "Kunal Kadlag",
-            "working_duration": 0
-        }
-    ]
-]
+
 export const MENU = [
     "Profile",
     "Settings",
     "Activity Log"
+]
+export const folderMenuOptions = [
+    { title: "Edit", action: "Edit" },
+    { title: "Delete", action: "Delete" }
+]
+export const notesMenuOptions = [
+    { title: "Share", action: "Share" },
+    { title: "Delete", action: "Delete" }
 ]
 
 export const WEEKS = [

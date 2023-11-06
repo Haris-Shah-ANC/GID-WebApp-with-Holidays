@@ -711,10 +711,10 @@ export default function CommentsSideBar(props) {
                                     <div className="w-1 bg-blue-500 rounded-tl-lg rounded-bl-lg "></div>
                                     <div>
 
-                                        <p className="px-2 text-sm font-semibold text-blue-400 overflow-hidden break-words">
+                                        {/* <p className="px-2 text-sm font-semibold text-blue-400 overflow-hidden break-words">
                                             {chatData.reply_to_user}
                                         </p>
-                                        <p className=" text-sm overflow-hidden break-all">
+                                        <p className=" text-sm overflow-hidden break-all"> */}
 
                                         <p className="px-2 text-sm font-semibold text-blue-400 overflow-hidden break-all">
                                             {chatData.reply_to_user}

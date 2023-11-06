@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom"
 import * as Actions from '../../../../state/Actions';
 
 export default function AddHolidayForm(props) {
-    const { onClose, onSuccess, isFormVisible, data } = props
+    const { onClose, onSuccess, isFormVisible, data,index } = props
     const { work_id } = getWorkspaceInfo();
     const navigate = useNavigate();
     const dispatch = Actions.getDispatch(useContext);
@@ -36,9 +36,8 @@ export default function AddHolidayForm(props) {
         })
         if (res) {
             if (res.success) {
-                console.log("POST DATA", res)
                 notifySuccessMessage(res.status)
-                onSuccess(res.result, itIsEditAction)
+                onSuccess(res.result, itIsEditAction,index)
                 onClose()
 
             } else {
@@ -54,7 +53,6 @@ export default function AddHolidayForm(props) {
 
         const { isValid, message } = isFormValid(formData.holiday_dates[0], validation_data);
         if (isValid) {
-            console.log("DATA", getWorkspaceInfo())
             addHoliday()
         }
     }
