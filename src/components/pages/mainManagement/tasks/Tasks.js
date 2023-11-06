@@ -54,12 +54,15 @@ export default function Tasks(props) {
   const user_id = loginDetails.user_id
   const [itemDetails, setItemDetails] = useState({ details: null, index: 0, editDetails: null })
   const [modalVisibility, setModalVisibility] = useState(false)
-  const [searchText, setSearchText] = useState("")
+  const [searchText, setSearchText] = useState("")  /////
   const [netWorkCallStatus, setNetworkCallStatus] = useState(false)
   const [selectedTask, selectTask] = useState({ item: null, index: 0 })
   const [employeeList, setEmployeeList] = useState([{ employee_name: "All Employee" }])
   const [selectedEmployee, selectEmployee] = useState({ employee_name: "All Employee" })
   const [customPeriod, setCustomPeriod] = useState({ fromDate: moment().format("YYYY-MM-DD"), toDate: moment().format("YYYY-MM-DD") })
+
+  console.log("props inside Task==>", props.taskData)
+
   useEffect(() => {
     let URL = getTasksUrl()
     if (props && props.taskData) {
@@ -76,9 +79,8 @@ export default function Tasks(props) {
       getEmployees()
       // timePeriods.push()
     }
-
-
   }, [])
+
   const [value, setValue] = useState({
     startDate: new Date(),
     endDate: new Date().setMonth(11)
@@ -88,6 +90,7 @@ export default function Tasks(props) {
     console.log("newValue:", newValue);
     setValue(newValue);
   };
+
   const getPostBody = () => {
     let pBody = {
       workspace_id: work_id,
@@ -100,12 +103,19 @@ export default function Tasks(props) {
       pBody['from_date'] = selectedDuration ? selectedDuration.dates.from : null
       pBody['to_date'] = selectedDuration ? selectedDuration.dates.to : null
     }
-
+    console.log("pBody==>", pBody)
     return pBody
   }
+
   const getTaskList = async (project, employee) => {
     setNetworkCallStatus(true)
-    let res = await apiAction({ url: getTasksUrl(), method: 'post', data: { employee_id: employee ? employee.id : null, project_id: project ? project.project_id : null, ...getPostBody() }, navigate: navigate, dispatch: dispatch })
+    let res = await apiAction({
+      url: getTasksUrl(), method: 'post',
+      data: {
+        employee_id: employee ? employee.id : null,
+        project_id: project ? project.project_id : null, ...getPostBody()
+      }, navigate: navigate, dispatch: dispatch
+    })
       .then((response) => {
         if (response) {
           if (response.success) {
@@ -117,7 +127,6 @@ export default function Tasks(props) {
         console.log("ERROR", error)
       })
     setNetworkCallStatus(false)
-
   }
 
   const exportTimesheet = async () => {
@@ -174,6 +183,7 @@ export default function Tasks(props) {
       })
 
   }
+
   const getEmployees = async (project) => {
     let res = await apiAction({
       url: employee(work_id, project && project.project_id),
@@ -294,12 +304,10 @@ export default function Tasks(props) {
               }} />
             </div>
 
-
-
-
-
             <div className='flex flex-col md:w-64'>
-              <IconInput
+
+              <SearchBar searchText={searchText} setSearchText={setSearchText} />
+              {/* <IconInput
                 id={"search_task_input"}
                 inputType={"text"}
                 disable={false}
@@ -307,11 +315,12 @@ export default function Tasks(props) {
                 value={searchText}
                 onTextChange={(event) => { setSearchText(event.target.value) }}
                 onBlurEvent={() => { }}
-                placeholderMsg={"Search..."}
+                placeholderMsg={"Search Task..."}
                 icon={svgIcons("fill-gray-600", "search")}
                 isRightIcon={true}
               >
-              </IconInput>
+              </IconInput> */}
+
             </div>
             <div className='flex'>
               <ButtonWithImage onButtonClick={() => {
@@ -345,3 +354,26 @@ export default function Tasks(props) {
 }
 
 
+export function SearchBar(props) {
+
+  let { searchText, setSearchText, className } = props;
+
+  return (
+    <>
+      <IconInput
+        id={"search_task_input"}
+        inputType={"text"}
+        disable={false}
+        className={className}
+        value={searchText}
+        onTextChange={(event) => { setSearchText(event.target.value) }}
+        onBlurEvent={() => { }}
+        placeholderMsg={"Search Task..."}
+        icon={svgIcons("fill-gray-600", "search")}
+        isRightIcon={true}
+      >
+      </IconInput>
+    </>
+  )
+
+}
