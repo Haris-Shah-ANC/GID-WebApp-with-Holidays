@@ -65,12 +65,16 @@
         top: 10vh;
         right: -416px;
         height: 85vh;
-        width: 415px;
+        min-width: 500px;
+        
+        /*  */
+        max-width: 1000px;
         border-radius: 4px;
         -webkit-transition: opacity 0.3s linear, right 0.3s ease-out;
         -moz-transition: opacity 0.3s linear, right 0.3s ease-out;
         -o-transition: opacity 0.3s linear, right 0.3s ease-out;
         transition: opacity 0.3s linear, right 0.3s ease-out;
+        z-index: 10;
     }
 
     .custom-modal-dialog::-webkit-scrollbar {
@@ -117,7 +121,7 @@
         position: relative;
         background: rgb(220, 238, 241);
         height: auto;
-        width:auto;
+        width: auto;
         /* max-width: 390px; */
         margin-left: 6px;
         border-radius: 2px;
@@ -221,6 +225,7 @@ th {
 .options-dropdown ul li:hover {
     background-color: #F0F0F0;
 }
+
 .inputText[type=text] {
     width: 100%;
     padding: 12px 20px;
@@ -234,18 +239,20 @@ th {
     border: none;
     outline: none;
 }
+
 .bubble2-icon i {
     backdrop-filter: blur(24px);
     clip-path: circle(60%);
-    
+
 }
+
 .center {
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  -ms-transform: translateY(-50%);
-  transform: translateY(-50%);
-  width: 100%;
+    margin: 0;
+    position: absolute;
+    top: 50%;
+    -ms-transform: translateY(-50%);
+    transform: translateY(-50%);
+    width: 100%;
 }
 
 /* CSS for Resizable div */
@@ -257,29 +264,31 @@ th {
     background: #FFBC97;
     position: relative;
   } */
-  
-  .resizeable {
-    /* position: absolute; */
-    /* border: 1px solid #533535; */
-    /* width: 100px; */
-    /* height: 100px; */
-    /* border-radius: 3px; */
-    /* display: flex; */
-    /* justify-content: center; */
-    /* align-items: center; */
-    min-width: 250px;
-    /* min-height: 50px; */
-  }
-  
-  /* .resizer {
+
+/* .resizeable {
     position: absolute;
-    background: black;
-  } */
-  
-  /* .resizer-l {
+    border: 1px solid #533535;
+    width: 100px;
+    height: 100px;
+    border-radius: 3px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 250px;
+    max-width: 1000px;
+    min-height: 50px;
+} */
+
+.resizer {
+    position: absolute;
+    background-color: rgb(223, 220, 220);
+    /* background-color: #949394; */
+}
+
+.resizer-l {
     cursor: col-resize;
     height: 100%;
     left: 0;
     top: 0;
-    width: 5px;
-  } */
+    width: 15px;
+}

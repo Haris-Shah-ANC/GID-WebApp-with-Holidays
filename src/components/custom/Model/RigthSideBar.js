@@ -699,57 +699,57 @@ export default function CommentsSideBar(props) {
         );
     };
 
+    //////// for resizing the comment Modal
     const mainRef = useRef(null);
     const refLeft = useRef(null);
 
     useEffect(() => {
+
         const resizeableEle = mainRef.current;
         const styles = window.getComputedStyle(resizeableEle);
         let width = parseInt(styles.width, 10);
         let x = 0;
-    
+
         // resizeableEle.style.top = "50px";
         // resizeableEle.style.left = "50px";
-    
-        
+
         // Left resize
         const onMouseMoveLeftResize = (event) => {
-          const dx = event.clientX - x;
-          x = event.clientX;
-          width = width - dx;
-          resizeableEle.style.width = `${width}px`;
+            const dx = event.clientX - x;
+            x = event.clientX;
+            width = width - dx;
+            resizeableEle.style.width = `${width}px`;
         };
-    
+
         const onMouseUpLeftResize = (event) => {
-          document.removeEventListener("mousemove", onMouseMoveLeftResize);
+            document.removeEventListener("mousemove", onMouseMoveLeftResize);
         };
-    
+
         const onMouseDownLeftResize = (event) => {
-          x = event.clientX;
-          resizeableEle.style.right = styles.right;
-          resizeableEle.style.left = null;
-          document.addEventListener("mousemove", onMouseMoveLeftResize);
-          document.addEventListener("mouseup", onMouseUpLeftResize);
+            x = event.clientX;
+            resizeableEle.style.right = styles.right;
+            resizeableEle.style.left = null;
+            document.addEventListener("mousemove", onMouseMoveLeftResize);
+            document.addEventListener("mouseup", onMouseUpLeftResize);
         };
-    
+
         // Add mouse down event listener
         const resizerLeft = refLeft.current;
         resizerLeft.addEventListener("mousedown", onMouseDownLeftResize);
-    
+
         return () => {
-          resizerLeft.removeEventListener("mousedown", onMouseDownLeftResize);
+            resizerLeft.removeEventListener("mousedown", onMouseDownLeftResize);
         };
-      }, []);
+    }, []);
 
     return (
         <div className="container">
-
             <div className={`custom-modal-dialog resizable ${showModal ? 'show' : ''}`} role="document"
                 onClick={(e) => setOpenOptionsIndex(false)} // for closing dropdown Options
                 ref={mainRef}
             >
-                {/* <div ref={refLeft} className="resizer resizer-l "></div> */}
-                
+                <div className="resizer resizer-l" ref={refLeft}> </div>
+
                 {/* <div className="relative"> */}
                 {/* <div className="center h-12 bg-green-400" style={{}}></div> */}
                 {/* </div> */}
@@ -757,15 +757,16 @@ export default function CommentsSideBar(props) {
                 {openEditModal && <EditModal onClose={() => setOpenEditModal(false)} />}
                 {openReplyModal && <ReplyModal onClose={() => setOpenReplyModal(false)} />}
 
-                <div className="resizer resizer-l" ref={refLeft}>
+                <div
+                // className="resizer resizer-l" ref={refLeft}
+                >
                     {/* <div className="relative">
                 </div> */}
                     <div className="flex flex-row justify-between">
-                        <span className="text-xl">#Comments</span>
+                        <span className="text-xl ml-3">#Comments</span>
                         <svg fill="none" viewBox="0 0 24 24" className="cursor-pointer" height="1.5em" width="1.5em" onClick={() => {
                             setShowModal(false)
-                        }
-                        }
+                        }}
                         >
                             <path
                                 fill="currentColor"
@@ -784,7 +785,7 @@ export default function CommentsSideBar(props) {
 
                 </div>
 
-                <div className="absolute bottom-2 right-2 left-2 "  >
+                <div className="absolute bottom-2 right-2 left-2">
                     <div className="flex flex-row justify-between items-between w-full">
                         <div className="flex w-full">
                             <textarea

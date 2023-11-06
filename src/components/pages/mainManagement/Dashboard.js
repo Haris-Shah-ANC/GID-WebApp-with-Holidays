@@ -34,12 +34,18 @@ import CustomLabel from '../../custom/Elements/CustomLabel';
 import { Box, Modal, Pagination, Stack, Tooltip, Typography } from '@mui/material';
 import NewModal from '../../custom/Model/NewModal';
 import CommentsSideBar from '../../custom/Model/RigthSideBar';
+
+import { SearchBar } from './tasks/Tasks';
+
+
 const Dashboard = () => {
     const navigate = useNavigate();
     const dispatch = Actions.getDispatch(React.useContext);
     history.navigate = useNavigate();
     history.location = useLocation();
-
+    /////
+    const [searchText, setSearchText] = useState("")
+    /////
     const loginDetails = getLoginDetails();
     const user_id = loginDetails.user_id
     const state = Actions.getState(useContext)
@@ -55,7 +61,8 @@ const Dashboard = () => {
         { index: 3, title: "All", count: 0 },
     ])
     const [showModal, setShowModal] = useState(false)
-    const [postBody, setPostBody] = useState({ "workspace_id": work_id, projects: [], "tasks": ["In-Progress", "On Hold"], "employees": [user_id] })
+    const [postBody, setPostBody] = useState({ "workspace_id": work_id, projects: [], "tasks": ["In-Progress", "On Hold"], "employees": [user_id]})
+
     const [showCommentSideBar, setCommentSideBarVisibility] = useState(false);
     const [formData, setFormData] = useState({});
     const [paginationData, setPaginationData] = useState(0)
@@ -70,7 +77,7 @@ const Dashboard = () => {
 
 
     useEffect(() => {
-        let getTasksUrl = get_task() + `?created_at__date__gte=&created_at__date__lte=&workspace=${work_id}`
+        let getTasksUrl = get_task() + `?created_at__date__gte=&created_at__date__lte=&workspace=${work_id}&search=${searchText}`
 
         let taskCountUrl = get_task_count_url(work_id) + `&employee_id=${postBody.employees}&project_id=${postBody.projects}`
         if (postBody.employees != "") {
@@ -91,20 +98,23 @@ const Dashboard = () => {
         }
         getTaskList(getTasksUrl)
         getTaskCount(taskCountUrl)
-    }, [postBody, state.workspace])
+    }, [postBody, searchText, state.workspace])
+
 
     useEffect(() => {
         getEmployeeResultsApi()
     }, [])
 
-
     const getTaskList = async (URL) => {
-        let res = await apiAction({ url: URL, method: 'get', navigate: navigate, dispatch: dispatch })
+
+        let res = await apiAction({ url: URL, method: 'get',navigate: navigate, dispatch: dispatch })
         if (res) {
+            console.log("Inside getTaskList (Res)==>", res)
             setPaginationData(res.total_pages)
             setTasksResults(res.results)
         }
     }
+
     const getTaskCount = async (URL) => {
         let res = await apiAction({ url: URL, method: 'get', navigate: navigate, dispatch: dispatch })
         if (res) {
@@ -115,8 +125,8 @@ const Dashboard = () => {
             btnLabelList[3].count = responseData.all_tasks
             setTaskCount([...btnLabelList])
         }
-
     }
+
     // const getAllTaskList = async () => {
     //     let res = await apiAction({ url: get_task(work_id), method: 'get', navigate: navigate, dispatch: dispatch })
     //     if (res.success) {
@@ -212,6 +222,7 @@ const Dashboard = () => {
             setPostBody(pBody)
         }
     }
+
     const onFilterClear = () => {
         setFilters({
             module_id: null,
@@ -224,6 +235,7 @@ const Dashboard = () => {
         setFormData(filters);
         setShowModal(filter_and_sort)
     }
+
     const onPaginationHandle = (pageNumber) => {
         setPostBody({ ...postBody, pageNumber: pageNumber })
     }
@@ -316,6 +328,7 @@ const Dashboard = () => {
 
         }
 
+        // console.log(results)
 
         return (
             <React.Fragment>
@@ -461,11 +474,15 @@ const Dashboard = () => {
                             </div>
                         )
                     })}
-
+                    {/* /////////////////////////////////////// */}
+                    <SearchBar searchText={searchText} setSearchText={setSearchText} className={`mr-20 mt-5 mb-5`} />
+                    {/* ////////////////////////////////////////// */}
                 </div>
 
+
+
                 <div className='mr-5 flex items-center gap-3 justify-end'>
-                    <div style={{width:200}}>
+                    <div style={{ width: 200 }}>
                         <Dropdown options={listOfEmployees} optionLabel="employee_name" value={selectedUser ? selectedUser : { employee_name: 'All Users' }} setValue={(value) => {
                             selectUser(value)
                             setTasksResults([])
