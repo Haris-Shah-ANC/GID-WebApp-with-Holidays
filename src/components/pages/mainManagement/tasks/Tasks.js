@@ -4,8 +4,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import * as Actions from '../../../../state/Actions';
 import { ALERTS, DATE, DURATION, END_TIME, MODULE, PROJECT, START_TIME, TASK, add_effort, svgIcons } from '../../../../utils/Constant';
 import PlainButton from '../../../custom/Elements/buttons/PlainButton';
-import { employee, getDeleteTaskEffortsUrl, getTasksUrl, getTheAddTaskEffortsUrl, getTheUpdateTaskEffortsUrl, get_all_project, get_task } from '../../../../api/urls';
-import { getLoginDetails, getWorkspaceInfo } from '../../../../config/cookiesInfo';
+import { employee, getDeleteTaskEffortsUrl, getExportTimesheetUrl, getTasksUrl, getTheAddTaskEffortsUrl, getTheUpdateTaskEffortsUrl, get_all_project, get_task } from '../../../../api/urls';
+import { getAccessToken, getLoginDetails, getWorkspaceInfo } from '../../../../config/cookiesInfo';
 import { formatDate, getPreviousWeek, getTimePeriods, getYesterday, notifyErrorMessage, notifySuccessMessage } from '../../../../utils/Utils';
 import Dropdown from '../../../custom/Dropdown/Dropdown';
 import IconInput from '../../../custom/Elements/inputs/IconInput';
@@ -15,6 +15,7 @@ import Loader from '../../../custom/Loaders/Loader'
 import moment from 'moment';
 import CustomDateRengePicker from '../../../custom/Elements/CustomDateRengePicker';
 import CustomDatePicker from '../../../custom/Elements/CustomDatePicker';
+import ButtonWithImage from '../../../custom/Elements/buttons/ButtonWithImage';
 
 const timePeriods = getTimePeriods()
 timePeriods.push(
@@ -128,6 +129,42 @@ export default function Tasks(props) {
     setNetworkCallStatus(false)
   }
 
+  const exportTimesheet = async () => {
+    let options = {
+      method: 'post',
+      body: JSON.stringify({ employee_id: user_id, project_id: selectedProject ? selectedProject.project_id : null, ...getPostBody() }),
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${getAccessToken()}`
+      }
+    }
+    try {
+      fetch(getExportTimesheetUrl(), options)
+        .then((response) => {
+          const blob = response.blob()
+            .then((blobValue) => {
+              const postData = getPostBody()
+              const a = document.createElement('a');
+              const url = window.URL.createObjectURL(blobValue);
+              // Set the anchor's attributes for the download
+              a.href = url;
+              a.download = `timesheet_record_${user_id}_${postData.from_date}_${postData.to_date}.csv`;
+              // Append the anchor to the body
+              document.body.appendChild(a);
+              // Trigger a click to initiate the download
+              a.click();
+              // Remove the anchor from the body
+              document.body.removeChild(a);
+              // Release the object URL
+              window.URL.revokeObjectURL(url);
+            })
+        })
+    } catch (error) {
+      console.log("EXPORT ERROR", error)
+    }
+
+  }
+
   const getProjects = async () => {
     let res = await apiAction({
       method: 'get',
@@ -233,12 +270,18 @@ export default function Tasks(props) {
   const fromAlert = () => {
     return props && props.from == ALERTS
   }
+  const onExportTimesheetClick = () => {
+    exportTimesheet()
+  }
+  const isExportBtnEnabled = () => {
+    return selectedEmployee && selectedEmployee.id === user_id
+  }
   return (
     <React.Fragment>
       <div className="bg-screenBackgroundColor flex flex-col justify-between w-full p-1 overflow-hidden">
         {modalVisibility && <EffortsPopup setState={setModalVisibility} data={itemDetails} onSuccessCreate={onSuccessCreate} />}
         {!(props && props.from == ALERTS) ?
-          <div className="grid gap-5 py-4 sm:grid-cols-2 md:grid-cols-5 lg:grid-cols-5">
+          <div className="grid gap-5 py-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 flex">
             <div className=''>
               <Dropdown options={projects} optionLabel="project_name" value={selectedProject ? selectedProject : { project_name: 'All Projects' }} setValue={(value) => {
                 selectProject(value)
@@ -278,6 +321,11 @@ export default function Tasks(props) {
               >
               </IconInput> */}
 
+            </div>
+            <div className='flex'>
+              <ButtonWithImage onButtonClick={() => {
+                onExportTimesheetClick()
+              }} disable={!isExportBtnEnabled()} title={"Export Timesheet"} className={"py-2"} icon={svgIcons("mr-2 self-center fill-white", "export")}></ButtonWithImage>
             </div>
 
             {/* <div className=' py-2 flex-row bg-green-50 justify-center rounded-md'>

@@ -14,6 +14,7 @@ import GidInput from '../../custom/Elements/inputs/GidInput';
 import { isFormValid, notifyErrorMessage, notifyInfoMessage } from '../../../utils/Utils';
 import { LinkedText } from '../../custom/Elements/buttons/LinkedText';
 import PlainButton from '../../custom/Elements/buttons/PlainButton';
+import AutocompleteDropdown from '../../custom/Dropdown/AutocompleteDropdown';
 
 function UserNotes(props) {
     const navigate = useNavigate();
@@ -39,12 +40,16 @@ function UserNotes(props) {
     const [isMenuVisible, setMenuVisible] = useState(false)
     const [formData, setFormData] = useState({ employee: user_id, workspace: work_id, title: "", folder: newNoteFolderData ? newNoteFolderData.id : null, note: "", folder_name: '' })
     const [isNoteTitleEditable, setNoteTitleEditable] = useState(false)
+    const [allNotesList, setAllNotesList] = useState([])
+    const [searchedText, setSearchedText] = useState("")
 
     useEffect(() => {
         fetchFolderList()
+
     }, [postBody])
-
-
+    useEffect(() => {
+        fetchAllNotesList("")
+    }, [])
 
     let getFolderName = folderList.find((item) => selectedChildNote ? selectedChildNote.folder == item.id : null)
 
@@ -55,6 +60,20 @@ function UserNotes(props) {
                 setNetworkCallStatus(false)
                 if (response) {
                     setNotesListUnderFolder(response.results)
+                }
+            })
+            .catch((error) => {
+                console.log("ERROR", error)
+            })
+
+    }
+    const fetchAllNotesList = async (searchedTest) => {
+        setNetworkCallStatus(true)
+        let res = await apiAction({ url: getNotesUrl(work_id, user_id, null, searchedTest), method: 'get', navigate: navigate, dispatch: dispatch })
+            .then((response) => {
+                setNetworkCallStatus(false)
+                if (response) {
+                    setAllNotesList(response.results)
                 }
             })
             .catch((error) => {
@@ -293,6 +312,15 @@ function UserNotes(props) {
             return selectedChildNote.folder == folder.id
         }
     }
+    const onSearchedTextChange = (val) => {
+        setSearchedText(val)
+    }
+    const onSelectFromSearch = (item) => {
+        if (item) {
+            onClickNote(item)
+        }
+
+    }
 
 
     return (
@@ -312,9 +340,12 @@ function UserNotes(props) {
                                 <i class="fa-solid fa-filter fa-sm" style={{ color: '#9a9b9e', cursor: 'pointer' }} onClick={onFilterClick}></i>
                             </div>
                         </Tooltip> */}
+
                     </div>
+
                 </div>
                 <Divider></Divider>
+                <AutocompleteDropdown value={searchedText} groupByKey={"folder_name"} labelKey={"title"} onTextChange={onSearchedTextChange} data={allNotesList} onSelect={(val) => onSelectFromSearch(val)} />
                 {filterData.project_id &&
                     <>
                         <div className='p-2'>
@@ -364,12 +395,12 @@ function UserNotes(props) {
                                         }
 
                                         }>
-                                            <i class="fa-solid fa-circle-plus fa-xs" style={{padding:3,marginLeft:10, color: '#4a4c4f', cursor: 'pointer', display: isFolderSelected(item) ? 'flex' : 'none' }}></i>
+                                            <i class="fa-solid fa-circle-plus fa-xs" style={{ padding: 3, marginLeft: 10, color: '#4a4c4f', cursor: 'pointer', display: isFolderSelected(item) ? 'flex' : 'none' }}></i>
                                         </div>
                                     </Tooltip>
-                                    {JSON.stringify(selectedFolder) == JSON.stringify(item) ? <i class={`fa-solid fa-chevron-up fa-sm`} style={{  padding:3,marginLeft:10, color: '#4a4c4f', cursor: 'pointer', }} onClick={(event) => onFolderClick(item, event)}></i>
+                                    {JSON.stringify(selectedFolder) == JSON.stringify(item) ? <i class={`fa-solid fa-chevron-up fa-sm`} style={{ padding: 3, marginLeft: 10, color: '#4a4c4f', cursor: 'pointer', }} onClick={(event) => onFolderClick(item, event)}></i>
                                         :
-                                        <i class={`fa-solid fa-chevron-down fa-sm`} style={{ padding:3,marginLeft:10, color: '#4a4c4f', cursor: 'pointer', }} onClick={(event) => onFolderClick(item, event)}></i>
+                                        <i class={`fa-solid fa-chevron-down fa-sm`} style={{ padding: 3, marginLeft: 10, color: '#4a4c4f', cursor: 'pointer', }} onClick={(event) => onFolderClick(item, event)}></i>
                                     }
                                 </div>
 
@@ -483,7 +514,7 @@ function UserNotes(props) {
                                 }}
 
                             />
-                            <div className="flex justify-end pr-4">
+                            <div className="flex justify-end pr-4 mt-3">
                                 <PlainButton title={isNoteEditAction() ? "Save" : "Create"} className={""} onButtonClick={onCreateNote} disable={false}></PlainButton>
                             </div>
                         </div>

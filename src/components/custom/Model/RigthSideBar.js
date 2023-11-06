@@ -382,6 +382,7 @@ export default function CommentsSideBar(props) {
         // useOutsideClickTracker(wrapperRef);
         let textareaHeight = 70;
 
+
         // let commentReplyingTo = currentCommentData.comment.replaceAll("<br>", "\n")
 
         ///////// data for Api Calls
@@ -433,6 +434,39 @@ export default function CommentsSideBar(props) {
         //     }, [ref]);
         // }
 
+        useLayoutEffect(() => {
+            const end = replyInputRef.current.value.length;
+            replyInputRef.current.focus()
+            replyInputRef.current.setSelectionRange(end, end)
+            if (initialTextareaText.length !== 0) {
+                // Reset height - important to shrink on delete
+                replyInputRef.current.style.height = "50px";
+                //Set height
+                replyInputRef.current.style.height = `${Math.max(
+                    replyInputRef.current.scrollHeight,
+                    textareaHeight
+                )}px`;
+            }
+        }, [replyInputRef, textareaHeight, initialTextareaText]);
+
+        function useOutsideClickTracker(ref) {
+            useEffect(() => {
+                // close modal if clicked outside 
+                function handleClickOutside(event) {
+                    if (ref.current && !ref.current.contains(event.target)) {
+                        setOpenReplyModal(false)
+                    }
+                }
+                // Bind the event listener
+                document.addEventListener("mousedown", handleClickOutside);
+                return () => {
+                    // Unbind the event listener on clean up
+                    document.removeEventListener("mousedown", handleClickOutside);
+                };
+            }, [ref]);
+        }
+
+
         // const replyToComment = async () => {
         //     if (initialTextareaText !== '') {
         //         const commentWithLineBreaks = initialTextareaText.replace(/\n/g, '<br>');
@@ -476,6 +510,27 @@ export default function CommentsSideBar(props) {
                                             </Linkify>
                                         </p>
                                     </div>
+
+
+            <div className="center p-3" style={{ width: 400, zIndex: 5 }} ref={wrapperRef}>
+                <div className="bg-gray-100 rounded shadow">
+                    <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
+                        <h3 className="text-lg font-quicksand font-bold text-center w-full">
+                            {'Reply'}
+                        </h3>
+                    </div>
+                    <div className="relative px-3 pt-2">
+                        <div className="my-4 flex flex-col">
+
+                            <div className="bg-gray-300 mx-1 px-1 mb-1 rounded flex flex-row">
+                                <div className="w-1 bg-blue-500 rounded-tl-lg rounded-bl-lg "></div>
+                                <div className="overflow-hidden py-2">
+                                    <p className="px-2 text-sm font-semibold text-blue-400 overflow-hidden break-all">{currentCommentData.comment_by_name}</p>
+                                    <p className="px-2 text-sm overflow-hidden break-all">
+                                        <Linkify>
+                                            {currentCommentData.comment}
+                                        </Linkify>
+                                    </p>
 
                                 </div>
 
@@ -573,7 +628,6 @@ export default function CommentsSideBar(props) {
                                 </span>
 
                                 <div onClick={handleDropdownClick}
-                                    // className="transition-all transform translate-y-8 opacity-0 group-hover:opacity-100 "
                                     className={isDropdownOpen ? isOptionsClosed : isOptionsOpen}
                                 >
                                     <i class="fa-solid fa-chevron-down fa-1x"
@@ -581,12 +635,7 @@ export default function CommentsSideBar(props) {
                                             paddingRight: 10, color: "#949699", cursor: 'pointer',
                                         }}
                                     ></i>
-                                    {/* <FaAngleDown
-                                        size={20}
-                                        color="#949699"
-                                        //fixing the dropdown symbol at the top right corner
-                                        className=" top-0 right-0 backdrop-blur-xl "
-                                    /> */}
+                                
                                 </div>
                             </div>
 
@@ -607,6 +656,7 @@ export default function CommentsSideBar(props) {
                                 </div>
                             }
 
+
                             <Linkify>
                                 {chatData.comment}
                             </Linkify>
@@ -616,6 +666,12 @@ export default function CommentsSideBar(props) {
                                     <React.Fragment key={index}>
                                         <Linkify>{line}</Linkify>
                                         <br />
+
+                            <p className="px-2 text-sm break-all">
+                                {chatData.comment.split('<br>').map((line, index) => (
+                                    <React.Fragment key={index}>
+                                        <Linkify>{line}</Linkify>
+
                                     </React.Fragment>
                                 ))}
                             </p> */}
@@ -654,10 +710,17 @@ export default function CommentsSideBar(props) {
                                 <div className="bg-blue-200 py-1 mx-1 mb-1 rounded flex flex-row">
                                     <div className="w-1 bg-blue-500 rounded-tl-lg rounded-bl-lg "></div>
                                     <div>
+
                                         <p className="px-2 text-sm font-semibold text-blue-400 overflow-hidden break-words">
                                             {chatData.reply_to_user}
                                         </p>
                                         <p className=" text-sm overflow-hidden break-all">
+
+                                        <p className="px-2 text-sm font-semibold text-blue-400 overflow-hidden break-all">
+                                            {chatData.reply_to_user}
+                                        </p>
+                                        <p className="px-2 text-sm overflow-hidden break-all">
+
                                             <Linkify>
                                                 {chatData.reply_to_comment}
                                             </Linkify>

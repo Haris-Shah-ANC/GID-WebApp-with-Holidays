@@ -178,7 +178,7 @@ const Dashboard = () => {
         console.log("ITEM", item)
         setFormData({
             task: item.task_description,
-            module_id: null,
+            module_id: item.project_module,
             work_id: work_id,
             status: item.status,
             task_id: item.id,
@@ -188,7 +188,8 @@ const Dashboard = () => {
             dead_line: moment(item.dead_line).format("YYYY-MM-DD HH:mm"),
             description_link: item.description_link,
             assignee_id: item.assignee_id,
-            employee: item.employee
+            employee: item.employee,
+            created_at: item.created_at
         });
         setShowModal(add_task)
     }
@@ -338,26 +339,19 @@ const Dashboard = () => {
 
                     <div className='flex'>
                         <div className='flex flex-col w-full'>
-
                             <div className={`max-h-14 align-top font-quicksand font-medium flex w-full  `} >
-                                <a href={description_link === null ? null : description_link}
-                                    target="blank"
-                                    className={`text-5  ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 "} font-quicksand font-bold text-lg line-clamp-2 text-ellipsis overflow-x-hidden`}
+                                <a href={description_link === null || description_link == "" ? null : description_link}
+                                    target='_blank' rel={'external'}
+                                    className={`text-5  ${description_link === null || description_link=="" ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 "} font-quicksand font-bold text-lg line-clamp-2 text-ellipsis overflow-x-hidden`}
                                 >
                                     {task_description}
-
                                 </a>
-                                {/* <p className={`text-5 ${description_link === null ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 hover:cursor-default"} font-quicksand font-bold text-lg line-clamp-2`}></p> */}
                             </div>
                             <span className="text-sm font-quicksand font-medium inline-block pb-1 text-blueGray-600 last:mr-0 mr-1 truncate text-ellipsis w-full">
                                 {detailed_description}
                             </span>
-
-
                         </div>
-
                     </div>
-
                     <div className='flex-grow items-center'>
                         <div onClick={() => {
                             if (user_id === employee) {

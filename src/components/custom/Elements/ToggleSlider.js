@@ -9,7 +9,7 @@ const ToggleSlider = (props) => {
     return (
         <div class=" items-center justify-center">
             <label for="toggleB" class="flex items-center cursor-pointer">
-                <div class="mr-3 text-gray-700 font-medium">
+                <div class="mr-3 text-sm text-gray-700 font-medium">
                     Edit
                 </div>
                 <div class="relative">
