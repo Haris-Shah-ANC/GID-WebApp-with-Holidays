@@ -8,6 +8,9 @@ import { useNavigate } from 'react-router-dom'
 import { getLoginDetails, getWorkspaceInfo } from '../../../../config/cookiesInfo'
 import * as Actions from '../../../../state/Actions';
 import Dropdown from '../../../custom/Dropdown/Dropdown'
+import RadioButton from '../../../custom/Elements/RadioButton'
+import { Autocomplete, TextField } from '@mui/material'
+import MultiSelectAutoCompleteDropdown from '../../../custom/Dropdown/MultiSelectAutoCompleteDropdown'
 
 export default function ShareNotesModal(props) {
 
@@ -17,8 +20,8 @@ export default function ShareNotesModal(props) {
     const loginDetails = getLoginDetails();
     const user_id = loginDetails.user_id
     const dispatch = Actions.getDispatch(useContext);
-    const [employeeList, setEmployeeList] = useState([{ employee_name: 'Select' }]);
-    const [formData, setFormData] = useState({ workspace: work_id, employee: null })
+    const [employeeList, setEmployeeList] = useState([]);
+    const [formData, setFormData] = useState({ workspace: work_id, employee: null, access: 'Read Only' })
 
     useEffect(() => {
         getEmployeeList()
@@ -39,12 +42,15 @@ export default function ShareNotesModal(props) {
             .then((response) => {
                 if (response.success) {
                     let employeeData = response.results
-                    setEmployeeList([{ employee_name: "Select" }, ...employeeData])
+                    setEmployeeList(employeeData.sort((a, b) => -b['employee_name'].localeCompare(a['employee_name'])))
                 }
             })
             .then((error) => {
                 console.log("ERROR", error)
             })
+    }
+    const onSelectChange = (empList) => {
+
     }
 
     return (
@@ -65,11 +71,20 @@ export default function ShareNotesModal(props) {
                     <div className="relative px-5 pt-2 flex-auto">
                         <div className="mt-4 my-1 flex flex-col">
                             <CustomLabel label={`Share with`} className={'font-quicksand font-semibold text-sm mb-1'} />
-                            <Dropdown disabled={false} placeholder={true} options={employeeList} optionLabel={'employee_name'} value={selectedEmployee ? selectedEmployee : { employee_name: 'Select' }} setValue={(value) => setFormData((previous) => ({ ...previous, employee: value ? value.id : null }))} />
+                            <MultiSelectAutoCompleteDropdown arrayList={employeeList} labelKey={"employee_name"} onChange={onSelectChange} />
                         </div>
+                        <div className='mt-4'>
+                            <CustomLabel label={`Access`} className={'font-quicksand font-semibold text-sm mb-1'} />
+                            <div class="flex flex-row items-center mb-4 mt-2">
+                                <RadioButton title={"Read Only"} checked={formData.access} onChange={(val) => setFormData({ ...formData, access: val })} disable={false} />
+                                <RadioButton className={'ml-5'} title={"Write"} checked={formData.access} onChange={(val) => setFormData({ ...formData, access: val })} disable={false} />
+                                <RadioButton className={'ml-5'} title={"Both"} checked={formData.access} onChange={(val) => setFormData({ ...formData, access: val })} disable={false} />
+                            </div>
+
+                        </div>
+
                         <div className="my-4 flex flex-col">
-                            <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={"Link"}
-                            />
+                            {/* <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={"Link"}/> */}
                         </div>
 
                     </div>
