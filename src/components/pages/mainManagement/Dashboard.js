@@ -109,7 +109,7 @@ const Dashboard = () => {
 
         let res = await apiAction({ url: URL, method: 'get',navigate: navigate, dispatch: dispatch })
         if (res) {
-            console.log("Inside getTaskList (Res)==>", res)
+            // console.log("Inside getTaskList (Res)==>", res)
             setPaginationData(res.total_pages)
             setTasksResults(res.results)
         }
