@@ -1,9 +1,12 @@
 import { useEffect, useRef, useState } from "react";
+import { twMerge } from "tailwind-merge";
 
 const PopupMenu = (props) => {
-    const { item, onMenuItemClick = () => { }, isClicked, onClose = () => { }, menuOptions } = props
+    const { item, onMenuItemClick = () => { }, isClicked, onClose = () => { }, menuOptions, className } = props
     const [isOpen, setIsOpen] = useState(isClicked);
     const menuRef = useRef();
+    const style = twMerge("absolute right-[-40px] mt-2 bg-white border rounded shadow-lg z-5", className)
+
 
     useEffect(() => {
         setIsOpen(isClicked)
@@ -34,14 +37,8 @@ const PopupMenu = (props) => {
 
     return (
         <div className="relative" ref={menuRef} >
-            {/* <div className='px-2 py-0.5  '>
-                <button onClick={(e) => toggleMenu(e)} className=""
-                    >
-                    <i class="fa-solid fa-ellipsis" style={{ color: '#4a4c4f', cursor: 'pointer', display: isIconVisible ? "flex" : 'none' }} ></i>
-                </button>
-            </div> */}
             {isOpen && (
-                <div className="absolute right-[-40px] mt-2 bg-white border rounded shadow-lg z-5">
+                <div className={style}>
 
                     <ul>
                         {menuOptions.map((menuItem) => (

@@ -262,44 +262,40 @@ export const getUploadTimeSheetUrl = (id) => {
 }
 
 /////////////////NOTES RELATED API///////////////////////
-export const getNotesUrl = (workspaceId, employeeId, folderId = null, search) => {
-    if (folderId) {
-        return HOST + APP_NAME + ROUTER + `/note/?workspace=${workspaceId}&folder=${folderId}&employee=${employeeId}&search=${search}`
-    } else {
-        return HOST + APP_NAME + ROUTER + `/note/?workspace=${workspaceId}&employee=${employeeId}&search=${search}`
-    }
+export const getNotesUrl = (folderId) => {
+    return HOST + APP_NAME + `/list_notes/`
 }
 
 export const getAddNoteUrl = () => {
-    return HOST + APP_NAME + ROUTER + `/note/`
+    return HOST + APP_NAME + `/create_notes/`
 }
 
 export const getUpdateNoteUrl = (noteId) => {
-    return HOST + APP_NAME + ROUTER + `/note/${noteId}/`
+    return HOST + APP_NAME + `/update_notes/`
 }
 
 export const getAddFolderUrl = () => {
     return HOST + APP_NAME + `/create_folder/`
 }
 
-export const getUpdateFolderUrl = (folderId) => {
-    if (folderId) {
-        return HOST + APP_NAME + ROUTER + `/folder/${folderId}/`
-    } else {
-        return HOST + APP_NAME + ROUTER + `/folder/`
-    }
+export const getUpdateFolderUrl = () => {
+    return HOST + APP_NAME + `/update_folder/`
 }
 
 export const getFolderListUrl = (workspaceId, employeeId, search) => {
-    return HOST + APP_NAME + ROUTER + `/folder/?workspace=${workspaceId}&employee=${employeeId}&search=${search}`
+    return HOST + APP_NAME + `/list_folders/?workspace=${workspaceId}&search=${search}`
 }
 
-export const getFetchNoteUrl = (workspaceId, noteId) => {
-    return HOST + APP_NAME + ROUTER + `/note/${noteId}/?workspace=${workspaceId}`
+export const getFetchNoteUrl = (workspaceId, noteID) => {
+    return HOST + APP_NAME + `/get_note/?workspace=${workspaceId}&note_id=${noteID}`
 }
 
 export const getDeleteFolderUrl = (workspaceId, folderId) => {
     return HOST + APP_NAME + ROUTER + `/folder/${folderId}/?workspace=${workspaceId}`
+}
+
+export const getShareNoteUrl = () => {
+    return HOST + APP_NAME + `/share_notes/`
 }
 
 //HOLIDAYS RELATED URLS

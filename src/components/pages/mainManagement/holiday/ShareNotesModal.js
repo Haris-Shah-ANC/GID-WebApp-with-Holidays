@@ -3,34 +3,57 @@ import PlainButton from '../../../custom/Elements/buttons/PlainButton'
 import ButtonWithImage from '../../../custom/Elements/buttons/ButtonWithImage'
 import CustomLabel from '../../../custom/Elements/CustomLabel'
 import { apiAction } from '../../../../api/api'
-import { employee } from '../../../../api/urls'
+import { employee, getShareNoteUrl } from '../../../../api/urls'
 import { useNavigate } from 'react-router-dom'
 import { getLoginDetails, getWorkspaceInfo } from '../../../../config/cookiesInfo'
 import * as Actions from '../../../../state/Actions';
 import Dropdown from '../../../custom/Dropdown/Dropdown'
 import RadioButton from '../../../custom/Elements/RadioButton'
-import { Autocomplete, TextField } from '@mui/material'
+import { Autocomplete, Divider, TextField } from '@mui/material'
 import MultiSelectAutoCompleteDropdown from '../../../custom/Dropdown/MultiSelectAutoCompleteDropdown'
 
 export default function ShareNotesModal(props) {
 
-    const { setShowModal, onSuccess, } = props
+    const { setShowModal, onSuccess, data } = props
     const { work_id } = getWorkspaceInfo();
+    let empData = data.employee_list
     const navigate = useNavigate();
     const loginDetails = getLoginDetails();
     const user_id = loginDetails.user_id
     const dispatch = Actions.getDispatch(useContext);
     const [employeeList, setEmployeeList] = useState([]);
-    const [formData, setFormData] = useState({ workspace: work_id, employee: null, access: 'Read Only' })
+    const [formData, setFormData] = useState({ workspace: work_id, share_to: [], access: 'read', note_id: data.id })
+    const [sharedEmployeeList, setSharedEmployeeList] = useState(empData)
 
+    const roleList = [
+        { access: "read", title: "Read Only" },
+        { access: "edit", title: "Editor" },
+        { access: "edit", title: "Owner" }
+    ]
     useEffect(() => {
         getEmployeeList()
-    }, [])
-    const selectedEmployee = formData.employee ? employeeList.find((item) => item.id == employee) : null
-    const handleSubmit = () => {
 
+    }, [])
+    // console.log("IS DATA SAME", JSON.stringify(data.employee_list) === JSON.stringify(sharedEmployeeList))
+    const isEditDisable = data && data.permission === "read"
+
+    const handleSubmit = () => {
+        shareNote()
         setShowModal(false);
     };
+
+    const shareNote = async () => {
+        let res = await apiAction({ url: getShareNoteUrl(), method: 'post', navigate: navigate, dispatch: dispatch, data: formData })
+            .then((response) => {
+                if (response) {
+                    onSuccess()
+                }
+            })
+            .catch((error) => {
+                console.log("ERROR", error)
+            })
+
+    }
 
     const getEmployeeList = async () => {
         let res = await apiAction({
@@ -50,13 +73,31 @@ export default function ShareNotesModal(props) {
             })
     }
     const onSelectChange = (empList) => {
-
+        let employeeIds = []
+        if (empList) {
+            empList.map((item) => {
+                employeeIds.push(item.id)
+            })
+        }
+        setFormData({ ...formData, share_to: employeeIds })
+    }
+    const getEmployeeRoleData = (access) => {
+        return roleList.find((item) => item.access == access)
+    }
+    const style1 = {
+        control: (base, state) => ({
+            ...base,
+            border: "0 !important",
+            boxShadow: "0 !important",
+            "&:hover": {
+                border: "0 !important"
+            }
+        })
     }
 
     return (
-        <div>
+        <div className=''>
             <div>
-                {/* header */}
                 <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
                     <h3 className="text-lg font-quicksand font-bold text-center w-full">{'Share note'}</h3>
                     <ButtonWithImage
@@ -73,34 +114,53 @@ export default function ShareNotesModal(props) {
                             <CustomLabel label={`Share with`} className={'font-quicksand font-semibold text-sm mb-1'} />
                             <MultiSelectAutoCompleteDropdown arrayList={employeeList} labelKey={"employee_name"} onChange={onSelectChange} />
                         </div>
-                        <div className='mt-4'>
-                            <CustomLabel label={`Access`} className={'font-quicksand font-semibold text-sm mb-1'} />
-                            <div class="flex flex-row items-center mb-4 mt-2">
-                                <RadioButton title={"Read Only"} checked={formData.access} onChange={(val) => setFormData({ ...formData, access: val })} disable={false} />
-                                <RadioButton className={'ml-5'} title={"Write"} checked={formData.access} onChange={(val) => setFormData({ ...formData, access: val })} disable={false} />
-                                <RadioButton className={'ml-5'} title={"Both"} checked={formData.access} onChange={(val) => setFormData({ ...formData, access: val })} disable={false} />
+                        {sharedEmployeeList.length > 1 && formData.share_to.length <= 0 ?
+                            < div className='mt-4'>
+                                <span className=' text-sm font-semibold font-quicksand'>Employees with access</span>
+                                <div className='h-[0.2px] bg-gray-600 mb-2 mt-1'></div>
+                                <div className='max-h-52 overflow-y-scroll'>
+                                    {data.employee_list.map((item, itemIndex) => (
+                                        <>
+                                            <div className='flex flex-row items-center justify-between pb-1'>
+                                                <div>
+                                                    <span className='font-quicksand text-sm font-medium'>{item.employee_name}</span>
+                                                </div>
+                                                <div className='w-1/4'>
+                                                    <Dropdown className={`border-0 outline-none focus:outline-none border-transparent ${data.created_by_id === item.employee_id ? "cursor-not-allowed" : "cursor-pointer"}`} style={style1}
+                                                        disabled={data.created_by_id === item.employee_id} placeholder={true} options={roleList} optionLabel={'title'} value={data.created_by_id === item.employee_id ? roleList[2] : getEmployeeRoleData(item.permission)} setValue={(value) => {
+                                                            sharedEmployeeList[itemIndex].permission = value.access
+                                                            setSharedEmployeeList([...sharedEmployeeList])
+                                                        }} />
+                                                </div>
+
+                                            </div>
+                                            <Divider />
+                                        </>
+                                    ))}
+                                </div>
                             </div>
-
-                        </div>
-
-                        <div className="my-4 flex flex-col">
-                            {/* <CustomLabel className={`mb-1 font-quicksand font-semibold text-sm`} label={"Link"}/> */}
-                        </div>
-
+                            : null}
+                        {formData.share_to.length > 0 &&
+                            <div className='mt-4'>
+                                <CustomLabel label={`Access`} className={'font-quicksand font-semibold text-sm mb-1'} />
+                                <div class="flex flex-row items-center mb-4 mt-2">
+                                    <RadioButton title={"Read Only"} value={"read"} checked={formData.access} onChange={(val) => setFormData({ ...formData, access: val })} disable={false} />
+                                    <RadioButton className={'ml-5'} title={"Write"} value={"write"} checked={formData.access} onChange={(val) => setFormData({ ...formData, access: val })} disable={isEditDisable} />
+                                </div>
+                            </div>
+                        }
                     </div>
 
                     <div className="p-6 border-solid border-slate-200 rounded-b">
                         <PlainButton
-                            title={"Share"}
+                            title={formData.share_to.length > 0 ? "Share":"Save"}
                             className={"w-full"}
                             onButtonClick={handleSubmit}
-                            disable={false}>
+                            disable={formData.share_to.length <= 0}>
                         </PlainButton>
                     </div>
-
                 </form>
-            </div>
-        </div>
-
+            </div >
+        </div >
     )
 }

@@ -19,6 +19,7 @@ import {
     file_upload,
     filter_and_sort,
     import_confirmation,
+    manage_action,
     share_note,
 } from '../../../utils/Constant';
 import FilterAndSort from '../../pages/mainManagement/FilterAndSort';
@@ -117,8 +118,9 @@ const ModelComponent = (props) => {
                     {showModal == delete_modal &&
                         <CommonDeletePupUp onSuccess={(id, type) => onSuccessDelete(id, type)} data={data} setShowModal={setShowModal} />}
                     {
-                        showModal === share_note &&
-                        <ShareNotesModal setShowModal={setShowModal} onSuccess={onSuccess} data={data} />
+                        showModal === share_note || showModal === manage_action ?
+                            <ShareNotesModal setShowModal={setShowModal} onSuccess={onSuccess} data={data} />
+                            : null
                     }
                 </Box>
             </Modal>

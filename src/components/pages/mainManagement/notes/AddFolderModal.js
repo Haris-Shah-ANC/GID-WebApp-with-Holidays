@@ -3,7 +3,7 @@ import CustomLabel from '../../../custom/Elements/CustomLabel'
 import { apiAction } from '../../../../api/api'
 import { useNavigate } from 'react-router-dom'
 import * as Actions from '../../../../state/Actions';
-import { getCreateProjectUrl, getUpdateFolderUrl } from '../../../../api/urls'
+import { getAddFolderUrl, getCreateProjectUrl, getUpdateFolderUrl } from '../../../../api/urls'
 import { getLoginDetails, getWorkspaceInfo } from '../../../../config/cookiesInfo'
 import GidInput from '../../../custom/Elements/inputs/GidInput'
 import PlainButton from '../../../custom/Elements/buttons/PlainButton'
@@ -14,7 +14,7 @@ export default function AddFolderModal(props) {
     const { work_id } = getWorkspaceInfo();
     const loginDetails = getLoginDetails();
     const user_id = loginDetails.user_id
-    const [formData, setFormData] = useState({ workspace: work_id, name: "", employee: user_id })
+    const [formData, setFormData] = useState({ workspace: work_id, name: "", })
     const { setShowModal, onSuccess, data = null } = props
     const dispatch = Actions.getDispatch(useContext);
     const navigate = useNavigate()
@@ -22,7 +22,7 @@ export default function AddFolderModal(props) {
     useEffect(() => {
         inputRef.current.focus()
         if (data) {
-            setFormData({ ...formData, name: data.folder_name })
+            setFormData({ ...formData, name: data.folder_name, folder: data.folder })
         }
     }, [data])
 
@@ -36,7 +36,7 @@ export default function AddFolderModal(props) {
                 method: data && data.folder ? 'put' : 'post',
                 // navigate: navigate,
                 dispatch: dispatch,
-                url: getUpdateFolderUrl(data && data.folder),
+                url: data && data.folder ? getUpdateFolderUrl() : getAddFolderUrl(),
                 data: formData,
             })
             if (res) {

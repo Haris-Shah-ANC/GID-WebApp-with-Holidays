@@ -6,8 +6,8 @@ import { getLoginDetails, getWorkspaceInfo } from '../../../config/cookiesInfo';
 import { apiAction } from '../../../api/api';
 import { Divider, Fade, Menu, MenuItem, Tooltip } from '@mui/material';
 import ModelComponent from '../../custom/Model/ModelComponent';
-import { add_folder, add_note, delete_modal, filter_and_sort, folderMenuOptions, notesMenuOptions, sampleFolders, share_note } from '../../../utils/Constant';
-import { getAddNoteUrl, getDeleteFolderUrl, getFetchNoteUrl, getFolderListUrl, getNotesUrl, getUpdateNoteUrl } from '../../../api/urls';
+import { actionsMenuOptions, add_folder, add_note, delete_modal, filter_and_sort, folderMenuOptions, manage_action, notesMenuOptions, sampleFolders, share_note } from '../../../utils/Constant';
+import { employee, getAddNoteUrl, getDeleteFolderUrl, getFetchNoteUrl, getFolderListUrl, getNotesUrl, getUpdateNoteUrl } from '../../../api/urls';
 import CustomLabel from '../../custom/Elements/CustomLabel';
 import PopupMenu from '../../custom/PopupMenu';
 import GidInput from '../../custom/Elements/inputs/GidInput';
@@ -19,7 +19,6 @@ import AutocompleteDropdown from '../../custom/Dropdown/AutocompleteDropdown';
 function UserNotes(props) {
     const navigate = useNavigate();
     const dispatch = Actions.getDispatch(useContext);
-    const location = useLocation();
     const loginDetails = getLoginDetails();
     const user_id = loginDetails.user_id
     const { work_id } = getWorkspaceInfo();
@@ -32,48 +31,67 @@ function UserNotes(props) {
     const [selectedFolder, selectFolder] = useState(null)
     const [hoveredElement, setHoveredElement] = useState(null)
     const [hoverChildElement, setHoverChildElement] = useState(null)
-    let options = ["Edit", "Delete"];
     const [folderList, setFolderList] = useState([])
     const [notesListUnderFolder, setNotesListUnderFolder] = useState([])
     const [selectedChildNote, selectChildNote] = useState(null)
     const [isNetworkCallRunning, setNetworkCallStatus] = useState(false)
     const [isMenuVisible, setMenuVisible] = useState(false)
-    const [formData, setFormData] = useState({ employee: user_id, workspace: work_id, title: "", folder: newNoteFolderData ? newNoteFolderData.id : null, note: "", folder_name: '' })
+    const [formData, setFormData] = useState({ workspace: work_id, title: "", folder: newNoteFolderData ? newNoteFolderData.id : null, note: "", folder_name: '', attachment: null })
     const [isNoteTitleEditable, setNoteTitleEditable] = useState(false)
     const [allNotesList, setAllNotesList] = useState([])
     const [searchedText, setSearchedText] = useState("")
-
+    const [actionsMenuVisible, setActionsMenuVisible] = useState(false)
+    const [employeeList, setEmployeeList] = useState([])
+    const [isSharedFolderSelected, setSharedFolderSelection] = useState(false)
+    const [sharedNotesList, setSharedNotesList] = useState([])
+    const [mode, setMode] = useState("read")
+    const [isNoteDataChanged, setNoteDataChanged] = useState(false)
+    let colors = ["bg-blue-200", "bg-green-200", "bg-indigo-300", "bg-pink-200",]
     useEffect(() => {
         fetchFolderList()
 
     }, [postBody])
+
     useEffect(() => {
         fetchAllNotesList("")
+        getEmployeeList()
     }, [])
 
-    let getFolderName = folderList.find((item) => selectedChildNote ? selectedChildNote.folder == item.id : null)
+    let getFolderName = isSharedFolderSelected ? { name: "Shared" } : folderList.find((item) => selectedChildNote ? selectedChildNote.folder == item.id : null)
 
     const fetchNotesList = async (folderId) => {
         setNetworkCallStatus(true)
-        let res = await apiAction({ url: getNotesUrl(work_id, user_id, folderId, ""), method: 'get', navigate: navigate, dispatch: dispatch })
+        let res = await apiAction({ url: getNotesUrl(), method: 'post', navigate: navigate, dispatch: dispatch, data: { workspace: work_id, folder: folderId } })
             .then((response) => {
                 setNetworkCallStatus(false)
                 if (response) {
-                    setNotesListUnderFolder(response.results)
+                    setNotesListUnderFolder(response.result)
                 }
             })
             .catch((error) => {
                 console.log("ERROR", error)
             })
-
     }
-    const fetchAllNotesList = async (searchedTest) => {
+    const fetchSharedNotesList = async () => {
         setNetworkCallStatus(true)
-        let res = await apiAction({ url: getNotesUrl(work_id, user_id, null, searchedTest), method: 'get', navigate: navigate, dispatch: dispatch })
+        let res = await apiAction({ url: getNotesUrl(), method: 'post', navigate: navigate, dispatch: dispatch, data: { workspace: work_id, shared: true } })
             .then((response) => {
                 setNetworkCallStatus(false)
                 if (response) {
-                    setAllNotesList(response.results)
+                    setSharedNotesList(response.result)
+                }
+            })
+            .catch((error) => {
+                console.log("ERROR", error)
+            })
+    }
+    const fetchAllNotesList = async (searchedTest) => {
+        setNetworkCallStatus(true)
+        let res = await apiAction({ url: getNotesUrl(work_id, user_id, null, searchedTest), method: 'post', navigate: navigate, dispatch: dispatch, data: { workspace: work_id } })
+            .then((response) => {
+                setNetworkCallStatus(false)
+                if (response) {
+                    setAllNotesList(response.result)
                 }
             })
             .catch((error) => {
@@ -86,30 +104,34 @@ function UserNotes(props) {
     }
 
     const createNote = async () => {
+
+
+
         let validation_data = [
             { key: "title", message: 'title field left empty!' },
             { key: "note", message: 'note field left empty!' },
         ]
+
         const { isValid, message } = isFormValid(formData, validation_data);
         if (isValid) {
             let res = await apiAction({
-                method: isNoteEditAction() ? "put" : 'post',
+                method: 'post',
                 // navigate: navigate,
                 dispatch: dispatch,
-                url: isNoteEditAction() ? getUpdateNoteUrl(formData.id) : getAddNoteUrl(),
+                url: isNoteEditAction() ? getUpdateNoteUrl() : getAddNoteUrl(),
                 data: formData,
             })
             if (res) {
                 setNoteTitleEditable(false)
                 if (!isNoteEditAction()) {
-                    notesListUnderFolder.push(res)
+                    notesListUnderFolder.push(res.result)
                     setNotesListUnderFolder(notesListUnderFolder)
                 } else {
                     fetchNotesList(formData.folder)
 
                 }
-                setFormData(res)
-                selectChildNote(res)
+                setFormData(res.result)
+                selectChildNote(res.result)
 
 
                 // notifySuccessMessage(res.status);
@@ -126,7 +148,7 @@ function UserNotes(props) {
             .then((response) => {
                 setNetworkCallStatus(false)
                 if (response) {
-                    setFolderList(response.results)
+                    setFolderList(response.result)
                 }
             })
             .catch((error) => {
@@ -138,7 +160,10 @@ function UserNotes(props) {
         let res = await apiAction({ url: getFetchNoteUrl(work_id, noteID), method: 'get', navigate: navigate, dispatch: dispatch })
             .then((response) => {
                 if (response) {
-                    setFormData(response)
+                    let responseData = response.result
+                    responseData['note_id'] = response.id
+                    setMode('read')
+                    setFormData(responseData)
                 }
             })
             .catch((error) => {
@@ -185,11 +210,36 @@ function UserNotes(props) {
         // setFolderList(folderList)
         fetchFolderList()
     }
-
+    const getEmployeeList = async () => {
+        let res = await apiAction({
+            method: 'get',
+            navigate: navigate,
+            dispatch: dispatch,
+            url: employee(work_id),
+        })
+            .then((response) => {
+                if (response.success) {
+                    setEmployeeList(response.results)
+                }
+            })
+            .catch((error) => {
+                console.log("ERROR", error)
+            })
+    }
 
     const onCreateNote = () => {
         let noteData = editorRef.current.getContent()
         formData.note = noteData
+        if (isNoteEditAction()) {
+            formData['note_id'] = formData.id
+            delete formData['employee_id_list']
+            delete formData['permission']
+            delete formData['updated_at']
+            delete formData['created_at']
+            delete formData['created_by']
+            delete formData['updated_by']
+
+        }
         setFormData({ ...formData })
         createNote()
         // console.log(formData)
@@ -252,6 +302,13 @@ function UserNotes(props) {
             fetchNotesList(folder.id)
             selectFolder(folder)
         }
+
+    }
+    const onSharedFolderClick = (event) => {
+        setSharedFolderSelection(!isSharedFolderSelected)
+        if (!isSharedFolderSelected) {
+            fetchSharedNotesList()
+        }
         event.stopPropagation();
     }
     const onRemoveProjectClick = () => {
@@ -264,6 +321,7 @@ function UserNotes(props) {
 
     const onSuccess = () => {
         console.log("ON SUCCESS")
+        setModalData(null)
         fetchFolderList()
     }
     const onAddNewNoteClick = (folder, event) => {
@@ -277,6 +335,7 @@ function UserNotes(props) {
     const onClickChildNoteMenuItem = (option, item) => {
         setMenuVisible(false)
         if (option == "Share") {
+            setModalData(item)
             setShowModal(share_note)
 
         } else if (option == "Delete") {
@@ -317,12 +376,40 @@ function UserNotes(props) {
         }
 
     }
+    const onActionsMenuOptionSelect = (option) => {
+        setActionsMenuVisible(false)
+        if (option === "Manage") {
+            setModalData(selectedChildNote)
+            setShowModal(manage_action)
+        }
+    }
+    const getListOfEmployeeInitials = (empList = [], idList = []) => {
+        let result = []
+        idList.map((item) => {
+            result.push(getInitials(item.employee_name))
+        })
+
+        function getInitials(value = "") {
+            let result = ""
+            let valArray = value.split(" ")
+            valArray.map((item) => {
+                result += item.at(0)
+            })
+            return result
+        }
+        return result
+    }
+
+    const isHomeSelected = () => {
+        return !(Boolean(selectedFolder))
+    }
+
 
 
     return (
         <div className='flex flex-row bg-white rounded-lg shadow pr-1 m-2'>
             <ModelComponent showModal={showModal} setShowModal={setShowModal} data={modal_data} onFilterApply={onFilterApply} onFilterClear={onFilterClear} from={"dashboard"} onSuccess={onSuccess} onSuccessDelete={(id, type) => onDeleteItem(id, type)} />
-            <div className='w-1/5 border-r-2'>
+            <div className='w-1/5 border-r-2 flex flex-col'>
                 <div className='flex flex-row justify-between m-3 items-center'>
                     <span className='font-quicksand font-semibold text-gray-600'>All Topics</span>
                     <div className='flex flex-row'>
@@ -355,158 +442,272 @@ function UserNotes(props) {
                     </>
                 }
 
-                <div className='m-1.5'>
-                    {folderList.map((item) => (
+                <div className='m-1.5 flex flex-col'>
+                    <div className='flex flex-col '>
+                        {/* <div className={`flex items-center p-2 mt-2 hover:bg-blue-100 rounded-lg ${selectedFolder ? '' : "bg-blue-100"}`}
+                            onClick={() => {
+                                selectFolder(null)
+                                selectChildNote(null)
+                            }}>
+                            <i class="fa-regular fa-circle fa-2xs" style={{ paddingRight: 10, color: selectedFolder ? '#4a4c4f' : "blue", }}></i>
+                            <span className='text-sm break-all font-quicksand font-medium'>Home</span>
+                        </div> */}
 
-                        <>
-                            <div className={`hover:bg-blue-100 p-2 mt-2 flex rounded-lg items-center cursor-pointer flex-row justify-between flex ${JSON.stringify(hoveredElement) == JSON.stringify(item) ||
-                                JSON.stringify(newNoteFolderData) == JSON.stringify(item)
-                                ? 'bg-blue-100' : ''}`}
-                                onMouseOverCapture={() => setHoveredElement(item)}
-                                onMouseOut={() => setHoveredElement(null)}
-                                onClick={(event) => {
-                                    onFolderClick(item, event)
-                                }}
-                            >
-                                <div className='flex items-center'>
-                                    <i class="fa-regular fa-circle fa-2xs" style={{ paddingRight: 10, color: isCurrentNotePresentInFolder(item) ? "blue" : '#4a4c4f', }}></i>
-                                    <span className='text-sm break-all font-quicksand font-medium'>{item.name}</span>
+                        {folderList.map((item) => (
+                            <>
+                                <div className={`hover:bg-blue-100 p-2 mt-2 flex rounded-lg items-center cursor-pointer flex-row justify-between flex ${JSON.stringify(hoveredElement) == JSON.stringify(item) ||
+                                    JSON.stringify(newNoteFolderData) == JSON.stringify(item)
+                                    ? 'bg-blue-100' : ''}`}
+                                    onMouseOverCapture={() => setHoveredElement(item)}
+                                    onMouseOut={() => setHoveredElement(null)}
+                                    onClick={(event) => {
+                                        onFolderClick(item, event)
+                                    }}
+                                >
+                                    <div className='flex items-center'>
+                                        <i class="fa-regular fa-circle fa-2xs" style={{ paddingRight: 10, color: isCurrentNotePresentInFolder(item) ? "blue" : '#4a4c4f', }}></i>
+                                        <span className='text-sm break-all font-quicksand font-medium'>{item.name}</span>
+                                    </div>
+                                    <div className='showme flex flex-row items-center '>
+
+                                        <i class="fa-solid fa-ellipsis" onClick={(e) => {
+                                            if (isMenuVisible) {
+                                                setMenuVisible(false)
+                                            } else {
+                                                setMenuVisible(item)
+                                            }
+                                            e.stopPropagation()
+
+                                        }} style={{ color: '#4a4c4f', cursor: 'pointer', display: isFolderSelected(item) || JSON.stringify(isMenuVisible) == JSON.stringify(item) ? "flex" : 'none', padding: 3 }} ></i>
+
+                                        <Tooltip title="Add new note" placement="top">
+                                            <div className='cursor-pointer' onClick={(event) => {
+                                                onAddNewNoteClick(item, event)
+                                                event.stopPropagation()
+                                            }
+
+                                            }>
+                                                <i class="fa-solid fa-circle-plus fa-xs" style={{ padding: 3, marginLeft: 10, color: '#4a4c4f', cursor: 'pointer', display: isFolderSelected(item) ? 'flex' : 'none' }}></i>
+                                            </div>
+                                        </Tooltip>
+                                        {JSON.stringify(selectedFolder) == JSON.stringify(item) ? <i class={`fa-solid fa-chevron-up fa-sm`} style={{ padding: 3, marginLeft: 10, color: '#4a4c4f', cursor: 'pointer', }} onClick={(event) => onFolderClick(item, event)}></i>
+                                            :
+                                            <i class={`fa-solid fa-chevron-down fa-sm`} style={{ padding: 3, marginLeft: 10, color: '#4a4c4f', cursor: 'pointer', }} onClick={(event) => onFolderClick(item, event)}></i>
+                                        }
+                                    </div>
+
+                                    {folderList.length == 0 && !isNetworkCallRunning ?
+                                        <div className='flex justify-center mt-4'>
+                                            <span className='text-gray-500'>No data found.</span>
+                                        </div> : null}
+
                                 </div>
-                                <div className='showme flex flex-row items-center '>
+                                {JSON.stringify(isMenuVisible) == JSON.stringify(item) &&
+                                    <PopupMenu menuOptions={folderMenuOptions} item={item} isClicked={isMenuVisible} onMenuItemClick={onFolderMenuClick} onClose={() => setMenuVisible(false)} />
+                                }
+                                {JSON.stringify(selectedFolder) == JSON.stringify(item) &&
+                                    <div className=''>
+                                        <div className='pb-4 flex flex-row pl-7'>
+                                            <div className='w-[1px] bg-gray-300 mr-2 my-[5px]'>
 
-                                    <i class="fa-solid fa-ellipsis" onClick={(e) => {
-                                        if (isMenuVisible) {
-                                            setMenuVisible(false)
-                                        } else {
-                                            setMenuVisible(item)
-                                        }
-                                        e.stopPropagation()
+                                            </div>
+                                            
+                                            <div className='flex flex-col w-full'>
+                                                {notesListUnderFolder.map((childItem, index) => (
+                                                    <div className=''>
+                                                        <div key={index} className='flex flex-col '>
+                                                            <div className={`hover:bg-blue-100 p-2 mt-1 flex rounded-lg items-center cursor-pointer flex-row justify-between ${JSON.stringify(selectedChildNote) == JSON.stringify(childItem) ? 'bg-blue-100' : ''}`}
+                                                                onMouseOverCapture={() => setHoverChildElement(childItem)}
+                                                                onMouseOut={() => setHoverChildElement(null)}
+                                                                onClick={(event) => {
+                                                                    onClickNote(childItem)
+                                                                    event.stopPropagation()
+                                                                }}
+                                                            >
+                                                                <div className='flex flex-row justify-between'>
+                                                                    <span className='text-sm break-all font-quicksand font-medium pl-2'>{childItem.title}</span>
+                                                                </div>
 
-                                    }} style={{ color: '#4a4c4f', cursor: 'pointer', display: isFolderSelected(item) || JSON.stringify(isMenuVisible) == JSON.stringify(item) ? "flex" : 'none', padding: 3 }} ></i>
+                                                                <div className='showme flex flex-row items-center'>
+                                                                    <i class="fa-solid fa-ellipsis" onClick={(e) => {
+                                                                        if (isMenuVisible) {
+                                                                            setMenuVisible(false)
+                                                                        } else {
+                                                                            setMenuVisible(childItem)
+                                                                        }
+                                                                        e.stopPropagation()
 
-                                    <Tooltip title="Add new note" placement="top">
-                                        <div className='cursor-pointer' onClick={(event) => {
-                                            onAddNewNoteClick(item, event)
-                                            event.stopPropagation()
-                                        }
+                                                                    }} style={{ color: '#4a4c4f', cursor: 'pointer', display: isNotesSelected(childItem) || JSON.stringify(isMenuVisible) == JSON.stringify(childItem) ? "flex" : 'none', padding: 3 }} ></i>
 
-                                        }>
-                                            <i class="fa-solid fa-circle-plus fa-xs" style={{ padding: 3, marginLeft: 10, color: '#4a4c4f', cursor: 'pointer', display: isFolderSelected(item) ? 'flex' : 'none' }}></i>
+                                                                </div>
+
+
+                                                            </div>
+
+
+                                                        </div>
+                                                        {JSON.stringify(isMenuVisible) == JSON.stringify(childItem) &&
+                                                            <PopupMenu menuOptions={notesMenuOptions} item={childItem} onMenuItemClick={onClickChildNoteMenuItem} isClicked={isMenuVisible} onClose={() => setMenuVisible(false)} />
+                                                        }
+                                                    </div>
+                                                ))
+                                                }
+                                            </div>
                                         </div>
-                                    </Tooltip>
-                                    {JSON.stringify(selectedFolder) == JSON.stringify(item) ? <i class={`fa-solid fa-chevron-up fa-sm`} style={{ padding: 3, marginLeft: 10, color: '#4a4c4f', cursor: 'pointer', }} onClick={(event) => onFolderClick(item, event)}></i>
-                                        :
-                                        <i class={`fa-solid fa-chevron-down fa-sm`} style={{ padding: 3, marginLeft: 10, color: '#4a4c4f', cursor: 'pointer', }} onClick={(event) => onFolderClick(item, event)}></i>
-                                    }
-                                </div>
-
-                                {folderList.length == 0 && !isNetworkCallRunning ?
-                                    <div className='flex justify-center mt-4'>
-                                        <span className='text-gray-500'>No data found.</span>
-                                    </div> : null}
-
+                                        {notesListUnderFolder.length == 0 && !isNetworkCallRunning ?
+                                            <div className='flex justify-center mt-4'>
+                                                <span className='text-gray-500'>No data found.</span>
+                                            </div> : null}
+                                    </div>
+                                }
+                            </>
+                        ))}
+                    </div>
+                    <div className='flex flex-col mt-16'>
+                        <div className={`flex items-center cursor-pointer justify-between p-2 mt-2 hover:bg-blue-100 rounded-lg ${isSharedFolderSelected ? 'bg-blue-100' : ""}`}
+                            onClick={(event) => {
+                                onSharedFolderClick(event)
+                            }}>
+                            <div>
+                                <i class="fa-regular fa-circle fa-2xs" style={{ paddingRight: 10, color: isSharedFolderSelected ? 'blue' : "#4a4c4f", }}></i>
+                                <span className='text-sm break-all font-quicksand font-medium'>Shared with me</span>
                             </div>
-                            {JSON.stringify(isMenuVisible) == JSON.stringify(item) &&
-                                <PopupMenu menuOptions={folderMenuOptions} item={item} isClicked={isMenuVisible} onMenuItemClick={onFolderMenuClick} onClose={() => setMenuVisible(false)} />
-                            }
-                            {JSON.stringify(selectedFolder) == JSON.stringify(item) &&
-                                <div className='pb-4 '>
-                                    {notesListUnderFolder.map((childItem, index) => (
-                                        <>
-                                            <div key={index} className='flex flex-col'>
-                                                <div className={`hover:bg-blue-100 p-2 mt-1 flex rounded-lg items-center cursor-pointer flex-row justify-between flex ${JSON.stringify(selectedChildNote) == JSON.stringify(childItem) ? 'bg-blue-100' : ''}`}
-                                                    onMouseOverCapture={() => setHoverChildElement(childItem)}
-                                                    onMouseOut={() => setHoverChildElement(null)}
-                                                    onClick={(event) => {
-                                                        onClickNote(childItem)
+                            <div>
+                                {isSharedFolderSelected ? <i class={`fa-solid fa-chevron-up fa-sm`} style={{ padding: 3, marginLeft: 10, color: '#4a4c4f', cursor: 'pointer', }} onClick={(event) => onSharedFolderClick(event)}></i>
+                                    :
+                                    <i class={`fa-solid fa-chevron-down fa-sm`} style={{ padding: 3, marginLeft: 10, color: '#4a4c4f', cursor: 'pointer', }} onClick={(event) => onSharedFolderClick(event)}></i>
+                                }
+                            </div>
+                        </div>
+                        {isSharedFolderSelected &&
+                            <div className='pb-4 '>
 
-                                                        event.stopPropagation()
-                                                    }}
-                                                >
+                                {sharedNotesList.map((sharedNoteItem, index) => (
+                                    <>
+                                        <div key={index} className='flex flex-col'>
+                                            <div className={`hover:bg-blue-100 p-2 mt-1 flex rounded-lg items-center cursor-pointer flex-row justify-between flex ${JSON.stringify(selectedChildNote) == JSON.stringify(sharedNoteItem) ? 'bg-blue-100' : ''}`}
+                                                onMouseOverCapture={() => setHoverChildElement(sharedNoteItem)}
+                                                onMouseOut={() => setHoverChildElement(null)}
+                                                onClick={(event) => {
+                                                    onClickNote(sharedNoteItem)
+                                                    event.stopPropagation()
+                                                }}
+                                            >
+                                                <div className='flex flex-row justify-between'>
+                                                    <span className='text-sm break-all font-quicksand font-medium pl-4'>{sharedNoteItem.title}</span>
+                                                </div>
 
-                                                    <div className='flex flex-row justify-between'>
+                                                <div className='showme flex flex-row items-center'>
+                                                    <i class="fa-solid fa-ellipsis" onClick={(e) => {
+                                                        if (isMenuVisible) {
+                                                            setMenuVisible(false)
+                                                        } else {
+                                                            setMenuVisible(sharedNoteItem)
+                                                        }
+                                                        e.stopPropagation()
 
-                                                        <span className='text-sm break-all font-quicksand font-medium pl-4'>{childItem.title}</span>
-
-
-                                                    </div>
-                                                    {/* <Tooltip title="Delete note" placement="top"> */}
-                                                    <div className='showme flex flex-row items-center'>
-                                                        <i class="fa-solid fa-ellipsis" onClick={(e) => {
-                                                            if (isMenuVisible) {
-                                                                setMenuVisible(false)
-                                                            } else {
-                                                                setMenuVisible(childItem)
-                                                            }
-                                                            e.stopPropagation()
-
-                                                        }} style={{ color: '#4a4c4f', cursor: 'pointer', display: isNotesSelected(childItem) || JSON.stringify(isMenuVisible) == JSON.stringify(childItem) ? "flex" : 'none', padding: 3 }} ></i>
-                                                        {/* <i class="fa-solid fa-trash fa-xs" onClick={(event) => {
-                                                                onDeleteNoteClick(childItem)
-                                                                event.stopPropagation()
-                                                            }} style={{ color: '#a60512', display: JSON.stringify(hoverChildElement) == JSON.stringify(childItem) ? "flex" : 'none' }}></i> */}
-                                                    </div>
-                                                    {/* </Tooltip> */}
+                                                    }} style={{ color: '#4a4c4f', cursor: 'pointer', display: isNotesSelected(sharedNoteItem) || JSON.stringify(isMenuVisible) == JSON.stringify(sharedNoteItem) ? "flex" : 'none', padding: 3 }} ></i>
 
                                                 </div>
 
 
                                             </div>
-                                            {JSON.stringify(isMenuVisible) == JSON.stringify(childItem) &&
-                                                <PopupMenu menuOptions={notesMenuOptions} item={childItem} onMenuItemClick={onClickChildNoteMenuItem} isClicked={isMenuVisible} onClose={() => setMenuVisible(false)} />
-                                            }
-                                        </>
-                                    ))
-                                    }
-                                    {notesListUnderFolder.length == 0 && !isNetworkCallRunning ?
-                                        <div className='flex justify-center mt-4'>
-                                            <span className='text-gray-500'>No data found.</span>
-                                        </div> : null}
-                                </div>
-                            }
-                        </>
-                    ))}
+
+
+                                        </div>
+                                        {JSON.stringify(isMenuVisible) == JSON.stringify(sharedNoteItem) &&
+                                            <PopupMenu menuOptions={notesMenuOptions} item={sharedNoteItem} onMenuItemClick={onClickChildNoteMenuItem} isClicked={isMenuVisible} onClose={() => setMenuVisible(false)} />
+                                        }
+                                    </>
+                                ))
+                                }
+                                {sharedNotesList.length == 0 && !isNetworkCallRunning ?
+                                    <div className='flex justify-center mt-4'>
+                                        <span className='text-gray-500'>No data found.</span>
+                                    </div> : null}
+                            </div>
+                        }
+                    </div>
                 </div>
 
             </div>
             <div className='w-4/5'>
                 {selectedChildNote || newNoteFolderData ?
                     <div className='pt-3' style={{ height: 'calc(100vh - 115px)', }}>
-                        {isNoteTitleEditable ?
-                            <GidInput
-                                inputType={"text"}
-                                disable={false}
-                                className={"w-full border-none text-lg "}
-                                placeholderMsg={"Enter title"}
-                                value={formData.title}
-                                onBlurEvent={() => { }}
-                                onTextChange={(e) => {
-                                    setFormData({ ...formData, title: e.target.value })
-                                }}
-                                style={{}}>
-                            </GidInput>
-                            :
-                            <div className='flex flex-row items-center'>
-                                <span className='px-3 font-semibold font-quicksand text-gray-600'>{getFolderName && getFolderName.name}{" "}
-                                    <i class="fa-solid fa-chevron-right fa-xs"></i>
-                                    {" "} {selectedChildNote && selectedChildNote.title}
+                        <div className='flex flex-row w-full justify-between items-center gap-5'>
+                            {isNoteTitleEditable ?
+                                <GidInput
+                                    inputType={"text"}
+                                    disable={false}
+                                    className={"w-full border-none text-lg "}
+                                    placeholderMsg={"Enter title"}
+                                    value={formData.title}
+                                    onBlurEvent={() => { }}
+                                    onTextChange={(e) => {
+                                        setFormData({ ...formData, title: e.target.value })
+                                    }}
+                                    style={{}}>
+                                </GidInput>
+                                :
+                                <div className='flex flex-row items-center'>
+                                    <span className='px-3 font-bold font-quicksand text-xl '>{getFolderName && getFolderName.name}{" "}
+                                        <i class="fa-solid fa-chevron-right fa-xs"></i>
+                                        {" "} {selectedChildNote && selectedChildNote.title}
 
-                                </span>
-                                <Tooltip title="Edit" placement="top">
-                                    <div>
-                                        <i onClick={() => setNoteTitleEditable(true)} class="fa-solid fa-pencil" style={{ paddingLeft: 5, color: 'blue', cursor: 'pointer' }}></i>
+                                    </span>
+                                    <Tooltip title="Edit" placement="top">
+                                        <div>
+                                            <i onClick={() => setNoteTitleEditable(true)} class="fa-solid fa-pencil" style={{ paddingLeft: 5, color: 'blue', cursor: 'pointer' }}></i>
+                                        </div>
+                                    </Tooltip>
+                                </div>}
+
+                            <div className='pr-3 flex flex-row items-center'>
+                                {/* {mode === "edit" &&
+                                    <span className='text-gray-500 text-xs px-1 font-quicksand'>{isNoteDataChanged ? "Unsaved" : "Saved"}</span>
+
+                                } */}
+                                <GroupButtons mode={mode} setMode={(val) => setMode(val)} disableEdit={selectedChildNote && selectedChildNote.permission === 'read'} />
+
+                                {selectedChildNote ?
+                                    <div className='flex flex-row items-center'>
+                                        {getListOfEmployeeInitials(employeeList, selectedChildNote.employee_list).map((item, index) => (
+                                            <>
+                                                {index <= 3 &&
+                                                    <span className={`text-xs font-quicksand font-semibold rounded-full ${colors[index]} p-1.5 ml-[-10px] tracking-wide text-gray-700`}>{item}</span>
+                                                }
+                                            </>
+                                        ))}
+
+                                        <Tooltip title="More actions" placement="top">
+                                            <div className='px-3 hover:cursor-pointer' onClick={(e) => {
+                                                setActionsMenuVisible(!actionsMenuVisible)
+                                                e.stopPropagation()
+                                            }}>
+                                                <i class="fa-solid fa-ellipsis-vertical" style={{ color: '#4a4c4f', cursor: 'pointer', }} ></i>
+                                            </div>
+                                        </Tooltip>
                                     </div>
-                                </Tooltip>
-                            </div>}
+                                    : null}
+
+                                {actionsMenuVisible &&
+                                    <PopupMenu className={'right-3 top-6'} menuOptions={actionsMenuOptions} item={null} onMenuItemClick={onActionsMenuOptionSelect} isClicked={actionsMenuVisible} onClose={() => setActionsMenuVisible(false)} />
+                                }
+                            </div>
+
+                        </div>
 
 
                         <Divider className='pt-3' />
-                        <div className=''>
+                        <div >
                             <Editor
-                                onClick={() => setMenuVisible(false)}
+                                onClick={() => { setMenuVisible(false); setActionsMenuVisible(false) }}
                                 apiKey='maqnmurf1rsii0z9aug8zbh2mcwd2mb5k3725m8npujc9yjl'
-                                onInit={(evt, editor) => editorRef.current = editor}
+                                onInit={(evt, editor) => {
+                                    editorRef.current = editor
+                                }}
                                 initialValue={formData.note}
+                                disabled={mode === "read"}
                                 init={{
                                     selector: 'textarea#premiumskinsandicons-borderless',
                                     skin: 'borderless',
@@ -520,6 +721,7 @@ function UserNotes(props) {
                                     content_style: 'div { margin: 10px; border: 5px solid red; padding: 3px;}',
                                 }}
 
+
                             />
                             <div className="flex justify-end pr-4 mt-3">
                                 <PlainButton title={isNoteEditAction() ? "Save" : "Create"} className={""} onButtonClick={onCreateNote} disable={false}></PlainButton>
@@ -527,12 +729,41 @@ function UserNotes(props) {
                         </div>
                     </div>
                     :
-                    <div className='flex justify-center items-center' style={{ height: 'calc(100vh - 200px)' }}>
-                        <span className='text-center'>No topics selected.</span>
+                    <div className='flex' style={{ height: 'calc(100vh - 200px)' }}>
+                        <span className='text-center font-bold font-quicksand text-2xl pt-4 px-4'>Welcome to Notes.</span>
                     </div>
                 }
             </div>
         </div >
+    )
+}
+
+function GroupButtons(props) {
+    const { mode, setMode, disableEdit } = props
+
+    const isEditSelected = mode === "edit"
+
+    return (
+        <div className='flex flex-row items-center mr-10 rounded-md bg-gray-300 py-0.5 '>
+            <Tooltip title={disableEdit ? "You do not have permission to edit content." : ""} placement="top" style={{}}>
+                <div className='flex'>
+                    <span onClick={() => {
+                        if (!disableEdit)
+                            setMode("edit")
+                    }}
+                        className={`text-sm font-bold font-quicksand ml-0.5 px-3 py-0.5 mr-3 ${disableEdit ? "" : "cursor-pointer"} ${isEditSelected ? "bg-white rounded text-blue-700" : "text-gray-600"}`}>
+                        {isEditSelected ? "Editing" : "Edit"}
+                    </span>
+                </div>
+            </Tooltip>
+            <span onClick={() => {
+                setMode("read")
+            }}
+                className={`text-sm cursor-pointer font-bold font-quicksand ml-0.5 px-3 py-0.5 mr-0.5 ${!isEditSelected ? "bg-white rounded text-blue-700" : "text-gray-600"}`}>
+                {!isEditSelected ? "Reading" : "Read"}
+            </span>
+
+        </div>
     )
 }
 

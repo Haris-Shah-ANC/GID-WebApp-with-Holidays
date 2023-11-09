@@ -38,7 +38,8 @@ export const add_folder = "add_folder"
 export const add_note = "add_note"
 export const delete_modal = "delete_modal"
 export const add_holiday = "add_holiday"
-export const share_note="share_note"
+export const share_note = "share_note"
+export const manage_action = "manage_action"
 export const ROLES = [
     { role: "Employee", short_name: "employee", id: 1 },
     { role: "Admin", short_name: "admin", id: 2 },
@@ -63,6 +64,11 @@ export const folderMenuOptions = [
 export const notesMenuOptions = [
     { title: "Share", action: "Share" },
     { title: "Delete", action: "Delete" }
+]
+
+export const actionsMenuOptions = [
+    { title: "Manage", action: "Manage" }
+
 ]
 
 export const WEEKS = [
