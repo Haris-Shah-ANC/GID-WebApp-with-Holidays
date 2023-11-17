@@ -55,7 +55,7 @@ export default function AddFolderModal(props) {
         <>
             {/* header */}
             <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
-                <h3 className="text-lg font-quicksand font-bold text-center w-full">{'Add Topic'}</h3>
+                <h3 className="text-lg font-quicksand font-bold text-center w-full">{data ? 'Edit Topic': 'Add Topic'}</h3>
                 <ButtonWithImage
                     onButtonClick={() => { setShowModal(false) }}
                     title={""}

@@ -25,10 +25,22 @@ export default function AutocompleteDropdown(props) {
         }
     }
 
+    const getNoteList = () => {
+        let result = []
+        data.map((item) => {
+            if (item.is_shared) {
+                item['folder_name'] = "Shared with me"
+            }
+            result.push(item)
+        })
+        return result
+
+    }
+
     return (
         <Autocomplete
             id="grouped-demo"
-            options={data.sort((a, b) => -b[groupByKey].localeCompare(a[groupByKey]))}
+            options={getNoteList().sort((a, b) => -b[groupByKey].localeCompare(a[groupByKey]))}
             onSelect={(event) => onSelectValue(event.target.value)}
             groupBy={(option) => option[groupByKey]}
             getOptionLabel={(option) => option[labelKey]}
@@ -39,7 +51,7 @@ export default function AutocompleteDropdown(props) {
                     inputProps={{
                         ...params.inputProps,
                     }}
-                    
+
                 />
             }
             renderGroup={(params) => (
@@ -48,7 +60,7 @@ export default function AutocompleteDropdown(props) {
                     <GroupItems className='font-quicksand text-sm'>{params.children}</GroupItems>
                 </li>
             )}
-            
+
             noOptionsText="No data found."
         />
     );

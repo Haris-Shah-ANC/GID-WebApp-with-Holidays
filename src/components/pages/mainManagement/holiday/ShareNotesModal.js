@@ -16,37 +16,54 @@ export default function ShareNotesModal(props) {
 
     const { setShowModal, onSuccess, data } = props
     const { work_id } = getWorkspaceInfo();
-    let empData = data.employee_list
+    const empData = data.employee_list
     const navigate = useNavigate();
     const loginDetails = getLoginDetails();
     const user_id = loginDetails.user_id
     const dispatch = Actions.getDispatch(useContext);
     const [employeeList, setEmployeeList] = useState([]);
     const [formData, setFormData] = useState({ workspace: work_id, share_to: [], access: 'read', note_id: data.id })
-    const [sharedEmployeeList, setSharedEmployeeList] = useState(empData)
+    const [sharedEmployeeList, setSharedEmployeeList] = useState(data.employee_list)
 
     const roleList = [
         { access: "read", title: "Read Only" },
         { access: "edit", title: "Editor" },
         { access: "edit", title: "Owner" }
     ]
+
+    const getRoleList = (isOwner) => {
+        if (isOwner) {
+            return [
+                { access: "read", title: "Read Only" },
+                { access: "edit", title: "Editor" },
+                { access: "edit", title: "Owner" }
+            ]
+        } else {
+            return [
+                { access: "read", title: "Read Only" },
+                { access: "edit", title: "Editor" },
+            ]
+        }
+    }
     useEffect(() => {
         getEmployeeList()
-
+        console.log(data)
     }, [])
-    // console.log("IS DATA SAME", JSON.stringify(data.employee_list) === JSON.stringify(sharedEmployeeList))
     const isEditDisable = data && data.permission === "read"
+    const loginUserAccess = data && data.permission
 
     const handleSubmit = () => {
         shareNote()
         setShowModal(false);
     };
 
-    const shareNote = async () => {
-        let res = await apiAction({ url: getShareNoteUrl(), method: 'post', navigate: navigate, dispatch: dispatch, data: formData })
+    const shareNote = async (postData) => {
+        let res = await apiAction({ url: getShareNoteUrl(), method: 'post', navigate: navigate, dispatch: dispatch, data: postData ? postData : formData })
             .then((response) => {
                 if (response) {
-                    onSuccess()
+                    if (!postData) {
+                        onSuccess()
+                    }
                 }
             })
             .catch((error) => {
@@ -65,6 +82,11 @@ export default function ShareNotesModal(props) {
             .then((response) => {
                 if (response.success) {
                     let employeeData = response.results
+
+                    data.employee_list.map((empObj, index) => {
+                        let sharedUserIndex = employeeData.findIndex((item) => item.id === empObj.employee_id)
+                        employeeData.splice(sharedUserIndex, 1)
+                    })
                     setEmployeeList(employeeData.sort((a, b) => -b['employee_name'].localeCompare(a['employee_name'])))
                 }
             })
@@ -95,6 +117,13 @@ export default function ShareNotesModal(props) {
         })
     }
 
+    const isAccessEditableToLoginUser = (empId, permission) => {
+        return (empId === user_id && permission === 'read')
+    }
+    const onAccessChange = (item, access) => {
+        shareNote({ workspace: work_id, share_to: [item.employee_id], access: item.permission, note_id: data.id })
+    }
+
     return (
         <div className=''>
             <div>
@@ -114,7 +143,7 @@ export default function ShareNotesModal(props) {
                             <CustomLabel label={`Share with`} className={'font-quicksand font-semibold text-sm mb-1'} />
                             <MultiSelectAutoCompleteDropdown arrayList={employeeList} labelKey={"employee_name"} onChange={onSelectChange} />
                         </div>
-                        {sharedEmployeeList.length > 1 && formData.share_to.length <= 0 ?
+                        {sharedEmployeeList.length > 0 && formData.share_to.length <= 0 ?
                             < div className='mt-4'>
                                 <span className=' text-sm font-semibold font-quicksand'>Employees with access</span>
                                 <div className='h-[0.2px] bg-gray-600 mb-2 mt-1'></div>
@@ -127,12 +156,13 @@ export default function ShareNotesModal(props) {
                                                 </div>
                                                 <div className='w-1/4'>
                                                     <Dropdown className={`border-0 outline-none focus:outline-none border-transparent ${data.created_by_id === item.employee_id ? "cursor-not-allowed" : "cursor-pointer"}`} style={style1}
-                                                        disabled={data.created_by_id === item.employee_id} placeholder={true} options={roleList} optionLabel={'title'} value={data.created_by_id === item.employee_id ? roleList[2] : getEmployeeRoleData(item.permission)} setValue={(value) => {
+                                                        disabled={data.created_by_id === item.employee_id || isAccessEditableToLoginUser(item.employee_id, item.permission)} placeholder={true} options={getRoleList(data.created_by_id === item.employee_id)} optionLabel={'title'} value={data.created_by_id === item.employee_id ? roleList[2] : getEmployeeRoleData(item.permission)}
+                                                        setValue={(value) => {
                                                             sharedEmployeeList[itemIndex].permission = value.access
                                                             setSharedEmployeeList([...sharedEmployeeList])
+                                                            onAccessChange(item, value.access)
                                                         }} />
                                                 </div>
-
                                             </div>
                                             <Divider />
                                         </>
@@ -151,12 +181,13 @@ export default function ShareNotesModal(props) {
                         }
                     </div>
 
-                    <div className="p-6 border-solid border-slate-200 rounded-b">
+
+                    <div className={`p-6 border-solid border-slate-200 rounded-b `}>
                         <PlainButton
-                            title={formData.share_to.length > 0 ? "Share":"Save"}
-                            className={"w-full"}
+                            title={"Share"}
+                            className={`w-full ${formData.share_to.length ? "" : 'hidden'}`}
                             onButtonClick={handleSubmit}
-                            disable={formData.share_to.length <= 0}>
+                            disable={formData.share_to.length <= 0 || !(sharedEmployeeList.length > 0)}>
                         </PlainButton>
                     </div>
                 </form>

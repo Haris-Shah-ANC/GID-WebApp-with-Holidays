@@ -66,6 +66,14 @@ function UserNotes(props) {
                 setNetworkCallStatus(false)
                 if (response) {
                     setNotesListUnderFolder(response.result)
+                    
+                    if(selectedChildNote){
+                        let findUpdatedNote = response.result.find((item) => item.id == selectedChildNote.id)
+                        console.log("FINDED",findUpdatedNote)
+                        if(findUpdatedNote){
+                            selectChildNote(findUpdatedNote)
+                        }
+                    }
                 }
             })
             .catch((error) => {
@@ -131,7 +139,7 @@ function UserNotes(props) {
 
                 }
                 setFormData(res.result)
-                selectChildNote(res.result)
+                // selectChildNote(res.result)
 
 
                 // notifySuccessMessage(res.status);
@@ -295,6 +303,7 @@ function UserNotes(props) {
     }
 
     const onFolderClick = (folder, event) => {
+        setSharedFolderSelection(false)
         setNotesListUnderFolder([])
         if (JSON.stringify(folder) == JSON.stringify(selectedFolder)) {
             selectFolder(null)
@@ -323,6 +332,11 @@ function UserNotes(props) {
         console.log("ON SUCCESS")
         setModalData(null)
         fetchFolderList()
+        if (isSharedFolderSelected) {
+            fetchSharedNotesList()
+        } else {
+            fetchNotesList(selectedFolder.id)
+        }
     }
     const onAddNewNoteClick = (folder, event) => {
         setNoteTitleEditable(true)
@@ -344,7 +358,12 @@ function UserNotes(props) {
 
     }
 
-    const onClickNote = (note) => {
+    const onClickNote = (note, type) => {
+        if (type == "shared") {
+            setSharedFolderSelection(true)
+        } else {
+            setSharedFolderSelection(false)
+        }
         setNoteTitleEditable(false)
         selectChildNote(note)
         fetchSingleNote(note.id)
@@ -511,7 +530,7 @@ function UserNotes(props) {
                                             <div className='w-[1px] bg-gray-300 mr-2 my-[5px]'>
 
                                             </div>
-                                            
+
                                             <div className='flex flex-col w-full'>
                                                 {notesListUnderFolder.map((childItem, index) => (
                                                     <div className=''>
@@ -580,47 +599,54 @@ function UserNotes(props) {
                             </div>
                         </div>
                         {isSharedFolderSelected &&
-                            <div className='pb-4 '>
+                            <div className=''>
+                                <div className='pb-4 flex flex-row pl-7'>
+                                    <div className='w-[1px] bg-gray-300 mr-2 my-[5px]'>
 
-                                {sharedNotesList.map((sharedNoteItem, index) => (
-                                    <>
-                                        <div key={index} className='flex flex-col'>
-                                            <div className={`hover:bg-blue-100 p-2 mt-1 flex rounded-lg items-center cursor-pointer flex-row justify-between flex ${JSON.stringify(selectedChildNote) == JSON.stringify(sharedNoteItem) ? 'bg-blue-100' : ''}`}
-                                                onMouseOverCapture={() => setHoverChildElement(sharedNoteItem)}
-                                                onMouseOut={() => setHoverChildElement(null)}
-                                                onClick={(event) => {
-                                                    onClickNote(sharedNoteItem)
-                                                    event.stopPropagation()
-                                                }}
-                                            >
-                                                <div className='flex flex-row justify-between'>
-                                                    <span className='text-sm break-all font-quicksand font-medium pl-4'>{sharedNoteItem.title}</span>
+                                    </div>
+                                    <div className='flex flex-col w-full'>
+                                        {sharedNotesList.map((sharedNoteItem, index) => (
+                                            <>
+                                                <div key={index} className='flex flex-col'>
+                                                    <div className={`hover:bg-blue-100 p-2 mt-1 flex rounded-lg items-center cursor-pointer flex-row justify-between flex ${JSON.stringify(selectedChildNote) == JSON.stringify(sharedNoteItem) ? 'bg-blue-100' : ''}`}
+                                                        onMouseOverCapture={() => setHoverChildElement(sharedNoteItem)}
+                                                        onMouseOut={() => setHoverChildElement(null)}
+                                                        onClick={(event) => {
+                                                            onClickNote(sharedNoteItem, 'shared')
+                                                            event.stopPropagation()
+                                                        }}
+                                                    >
+                                                        <div className='flex flex-row justify-between'>
+                                                            <span className='text-sm break-all font-quicksand font-medium pl-2'>{sharedNoteItem.title}</span>
+                                                        </div>
+
+                                                        <div className='showme flex flex-row items-center'>
+                                                            <i class="fa-solid fa-ellipsis" onClick={(e) => {
+                                                                if (isMenuVisible) {
+                                                                    setMenuVisible(false)
+                                                                } else {
+                                                                    setMenuVisible(sharedNoteItem)
+                                                                }
+                                                                e.stopPropagation()
+
+                                                            }} style={{ color: '#4a4c4f', cursor: 'pointer', display: isNotesSelected(sharedNoteItem) || JSON.stringify(isMenuVisible) == JSON.stringify(sharedNoteItem) ? "flex" : 'none', padding: 3 }} ></i>
+
+                                                        </div>
+
+
+                                                    </div>
+
+
                                                 </div>
-
-                                                <div className='showme flex flex-row items-center'>
-                                                    <i class="fa-solid fa-ellipsis" onClick={(e) => {
-                                                        if (isMenuVisible) {
-                                                            setMenuVisible(false)
-                                                        } else {
-                                                            setMenuVisible(sharedNoteItem)
-                                                        }
-                                                        e.stopPropagation()
-
-                                                    }} style={{ color: '#4a4c4f', cursor: 'pointer', display: isNotesSelected(sharedNoteItem) || JSON.stringify(isMenuVisible) == JSON.stringify(sharedNoteItem) ? "flex" : 'none', padding: 3 }} ></i>
-
-                                                </div>
-
-
-                                            </div>
-
-
-                                        </div>
-                                        {JSON.stringify(isMenuVisible) == JSON.stringify(sharedNoteItem) &&
-                                            <PopupMenu menuOptions={notesMenuOptions} item={sharedNoteItem} onMenuItemClick={onClickChildNoteMenuItem} isClicked={isMenuVisible} onClose={() => setMenuVisible(false)} />
+                                                {JSON.stringify(isMenuVisible) == JSON.stringify(sharedNoteItem) &&
+                                                    <PopupMenu menuOptions={notesMenuOptions} item={sharedNoteItem} onMenuItemClick={onClickChildNoteMenuItem} isClicked={isMenuVisible} onClose={() => setMenuVisible(false)} />
+                                                }
+                                            </>
+                                        ))
                                         }
-                                    </>
-                                ))
-                                }
+                                    </div>
+
+                                </div>
                                 {sharedNotesList.length == 0 && !isNetworkCallRunning ?
                                     <div className='flex justify-center mt-4'>
                                         <span className='text-gray-500'>No data found.</span>
@@ -655,11 +681,13 @@ function UserNotes(props) {
                                         {" "} {selectedChildNote && selectedChildNote.title}
 
                                     </span>
-                                    <Tooltip title="Edit" placement="top">
-                                        <div>
-                                            <i onClick={() => setNoteTitleEditable(true)} class="fa-solid fa-pencil" style={{ paddingLeft: 5, color: 'blue', cursor: 'pointer' }}></i>
-                                        </div>
-                                    </Tooltip>
+                                    {mode === "edit" &&
+                                        <Tooltip title="Edit" placement="top">
+                                            <div>
+                                                <i onClick={() => setNoteTitleEditable(true)} class="fa-solid fa-pencil" style={{ paddingLeft: 5, color: 'blue', cursor: 'pointer' }}></i>
+                                            </div>
+                                        </Tooltip>
+                                    }
                                 </div>}
 
                             <div className='pr-3 flex flex-row items-center'>
@@ -699,7 +727,7 @@ function UserNotes(props) {
 
 
                         <Divider className='pt-3' />
-                        <div >
+                        <div onClick={() => { setMenuVisible(false); setActionsMenuVisible(false) }}>
                             <Editor
                                 onClick={() => { setMenuVisible(false); setActionsMenuVisible(false) }}
                                 apiKey='maqnmurf1rsii0z9aug8zbh2mcwd2mb5k3725m8npujc9yjl'
@@ -720,17 +748,16 @@ function UserNotes(props) {
                                         "undo redo | formatselect | bold italic underline strikethrough | forecolor backcolor blockquote | link image media |codesample| alignleft aligncenter alignright alignjustify | numlist bullist outdent indent | removeformat",
                                     content_style: 'div { margin: 10px; border: 5px solid red; padding: 3px;}',
                                 }}
-
-
                             />
                             <div className="flex justify-end pr-4 mt-3">
-                                <PlainButton title={isNoteEditAction() ? "Save" : "Create"} className={""} onButtonClick={onCreateNote} disable={false}></PlainButton>
+                                <PlainButton title={isNoteEditAction() ? "Save" : "Create"} className={""} onButtonClick={onCreateNote} disable={mode == "read"}></PlainButton>
                             </div>
                         </div>
                     </div>
                     :
-                    <div className='flex' style={{ height: 'calc(100vh - 200px)' }}>
-                        <span className='text-center font-bold font-quicksand text-2xl pt-4 px-4'>Welcome to Notes.</span>
+                    <div className='flex justify-center items-center flex-col' style={{ height: 'calc(100vh - 200px)' }}>
+                        <span className='text-center font-medium font-quicksand text-medium pt-4 px-4'>{"Data not found."}</span>
+                        <span className='text-center font-medium font-quicksand text-medium  px-4'>{"Please select a note to view or edit."}</span>
                     </div>
                 }
             </div>
@@ -762,7 +789,6 @@ function GroupButtons(props) {
                 className={`text-sm cursor-pointer font-bold font-quicksand ml-0.5 px-3 py-0.5 mr-0.5 ${!isEditSelected ? "bg-white rounded text-blue-700" : "text-gray-600"}`}>
                 {!isEditSelected ? "Reading" : "Read"}
             </span>
-
         </div>
     )
 }
