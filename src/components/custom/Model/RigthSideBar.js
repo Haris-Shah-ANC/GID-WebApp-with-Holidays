@@ -320,7 +320,8 @@ export default function CommentsSideBar(props) {
 
         return (
             <>
-                {/* <div className="center p-5" style={{ width: 400, zIndex: 5 }} onClose={onClose} ref={wrapperRef}>
+                <>
+                    {/* <div className="center p-5" style={{ width: 400, zIndex: 5 }} onClose={onClose} ref={wrapperRef}>
                     <div className="bg-gray-100 rounded shadow">
                         <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
                             <h3 className="text-lg font-quicksand font-bold text-center w-full">
@@ -368,7 +369,7 @@ export default function CommentsSideBar(props) {
 
                     </div>
                 </div> */}
-
+                </>
                 <ModalForCommentsOperations currentCommentData={currentCommentData} url={url} data={data} onSuccess={onSuccess} openModal={openEditModal} setOpenModal={setOpenEditModal} ModalType={"Edit"} />
             </>
         );
@@ -636,7 +637,7 @@ export default function CommentsSideBar(props) {
                                             paddingRight: 10, color: "#949699", cursor: 'pointer',
                                         }}
                                     ></i>
-                                
+
                                 </div>
                             </div>
 

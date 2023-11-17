@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import moment, { duration } from 'moment/moment'
-import { formatDate, getDateRange, isFormValid, notifyErrorMessage, notifySuccessMessage } from '../../../utils/Utils'
+import { formatDate, formatTime, getDateRange, isFormValid, notifyErrorMessage, notifySuccessMessage } from '../../../utils/Utils'
 import {
     getLoginDetails,
     getWorkspaceInfo,
@@ -12,6 +12,8 @@ import sync from '../../../assets/image/sync.svg';
 import razerpayx from '../../../assets/image/razerpayx.png';
 import { WEEKS } from '../../../utils/Constant';
 import IconInput from '../../custom/Elements/inputs/IconInput';
+import Cookies from 'js-cookie';
+import { func } from 'prop-types';
 
 const timePeriods = [
     { name: "Current Month", fromDate: getDateRange("Current Month".toLowerCase(), "YYYY-MM-DD", "start"), toDate: getDateRange("Current Month".toLowerCase(), "YYYY-MM-DD", "end") },
@@ -54,6 +56,7 @@ export default function AttendanceReport(props) {
             if (res.success) {
                 let attendanceHeaders = []
                 const responseResult = res.result
+                console.log("responseResult==>", responseResult)
                 if (responseResult.length > 0) {
                     for (var item of responseResult[0].attendance) {
                         attendanceHeaders.push(item.date)
@@ -129,8 +132,6 @@ export default function AttendanceReport(props) {
         } else {
             return true
         }
-
-
     }
 
     const onEmployeeClick = (item, index) => {
@@ -156,10 +157,138 @@ export default function AttendanceReport(props) {
             return isDelicateColor ? "bg-yellow-50" : "text-yellow-600"
         }
     }
+
+    let currentLoginDetails = getLoginDetails()
+    let workSpaceInfo = getWorkspaceInfo()
+
+    console.log('===>currentLoginDetails', currentLoginDetails)
+
+    const TableRowData = (props) => {
+        const { index, item } = props
+
+        return (
+            < tr key={index} className={`${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'} hover:bg-blue-100`} onClick={() => { onEmployeeClick(item, index) }}>
+                {/* <td><i class="w-auto fa-solid fa-angle-down mr-2"></i></td> */}
+                <td className="px-2 py-4">
+                    <div className='flex items-center w-full '>
+                        <span className="font-quicksand font-medium text-sm"></span>
+                        <i class="w-auto fa-solid fa-angle-down mr-3"></i>
+                        {index + 1}
+                    </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="font-quicksand font-medium text-sm align-top">{item.total_count[0].employee__employee_name}</div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="font-quicksand text-sm font-bold text-green-600">{item.total_count[0].present_count}</div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="font-quicksand font-bold text-green-600 text-sm">{item.total_count[0].half_day_present}</div>
+                </td>
+                <td className="px-6 py-4 ">
+                    <div className={`font-quicksand text-sm font-bold text-red-600`}>
+                        {item.total_count[0].absent_count}
+                    </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="font-quicksand font-bold text-purple-600 text-sm">
+                        {item.total_count[0].week_off}
+                    </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="font-quicksand font-bold text-green-600 text-sm">
+                        {item.total_count[0].week_off_present}
+                    </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="font-quicksand font-bold text-green-600 text-sm">{item.total_count[0].half_day_present_on_week_off}</div>
+                </td>
+                <td className="px-6 py-4 ">
+                    <div className={`font-quicksand font-bold text-sm text-orange-600`}>
+                        {item.total_count[0].leave_count}
+                    </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="font-quicksand font-bold text-sm text-orange-600">
+                        {item.total_count[0].unpaid_leave_count}
+                    </div>
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="font-quicksand font-medium text-sm">
+                        {item.total_count[0].unpaid_half_day_count}
+                    </div>
+                </td>
+            </tr >
+        )
+    }
+
+    const TableExpandableData = (props) => {
+        const { item } = props;
+
+        return (
+            <tr>
+                <td colSpan={11}>
+                    <div class="grid grid-cols-7 gap-4 mx-10 my-2">
+                        {
+                            WEEKS.map((weekItem, wIndex) => {
+                                return <div className='font-quicksand font-bold text-center text-gray-500 text-sm'>
+                                    {weekItem}
+                                </div>
+                            })
+                        }
+                        {
+                            item.attendance.map((attendanceItem, index) => {
+                                return (
+                                    <td className="px-3 whitespace-nowrap">
+                                        <div class={`${attendanceItem.isDummyObj ? "bg-white" : getAttendanceColor(attendanceItem.attendance, true)} rounded-md space-x-2`}>
+                                            <div className='flex '>
+                                                <div className='flex justify-center items-center space-x-2 font-quicksand font-bold text-gray-500 text-sm px-2 py-[2px] w-1/2'>
+                                                    <div className='text-2xl flex flex-col'>{formatDate(attendanceItem.date, "DD")}
+
+                                                        <div className='text-xs pt-1 text-gray-500'>
+                                                            {(attendanceItem.clock_in_time.substring(0, 5) !== "00:00") ? attendanceItem.clock_in_time.substring(0, 5) : "NA"}
+                                                        </div>
+
+                                                    </div>
+
+                                                    {/* <div className='flex flex-col'>
+                                        <div className='text-sm'>{formatDate(attendanceItem.date, "MMM")}</div>
+                                        <div className='text-sm'>{formatDate(attendanceItem.date, "YYYY")}</div>
+                                    </div> */}
+                                                </div>
+
+                                                <div className='font-quicksand font-bold text-sm flex w-1/2 justify-center items-center'>
+                                                    <div className={`p-2 ${getAttendanceColor(attendanceItem.attendance)} text-lg flex flex-col`}>
+                                                        {attendanceItem.attendance}
+
+                                                        <div className='text-xs pt-1 text-gray-500'>
+                                                            {(attendanceItem.clock_out_time.substring(0, 5) !== "00:00") ? attendanceItem.clock_out_time.substring(0, 5) : "NA"}
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {/* <div className='text-sm font-quicksand font-bold text-purple-500 flex justify-center items-center'>
+                                                <p>{attendanceItem.clock_in_time.substring(0, 5)}</p>
+                                                -{' '}
+                                                <p>{attendanceItem.clock_out_time.substring(0, 5)}</p>
+                                            </div> */}
+                                        </div>
+
+                                    </td>
+                                );
+                            })
+                        }
+                    </div>
+                </td>
+            </tr>
+        )
+    }
+
     return (
         <div className=' h-full overflow-hidden w-auto pb-32' style={{}}>
             <div className="bg-white rounded-xl flex shadow p-3 flex-wrap justify-between md:space-x-0 ">
-                <div className='flex flex-wrap md:space-x-2 md:space-y-0'>
+                <div className='flex flex-wrap md:space-x-2 md:space-y-0 '>
                     <select
                         disabled={false}
                         onChange={(event) => {
@@ -170,7 +299,6 @@ export default function AttendanceReport(props) {
                                 setPostData({ ...postData, from_date: "", to_date: "" })
                             }
                             selectTimePeriod(selectedItem)
-
                         }}
                         // value={JSON.stringify(item.role)}
                         className={`${false ? 'bg-gray-100 ' : ''} cursor-pointer border-blueGray-300 text-blueGray-700 rounded font-quicksand font-semibold text-sm`}
@@ -197,6 +325,7 @@ export default function AttendanceReport(props) {
                     {/* <div className='space-x-2 md:ml-2'> */}
                     {
                         selectedTimePeriod.name != "Custom" &&
+
                         <div className='flex space-x-2 self-center justify-center items-center pl-2 font-quicksand font-medium text-sm'>
                             <svg xmlns="http://www.w3.org/2000/svg" height="1em" viewBox="0 0 448 512" fill='#858796'>
                                 <path d="M152 24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H64C28.7 64 0 92.7 0 128v16 48V448c0 35.3 28.7 64 64 64H384c35.3 0 64-28.7 64-64V192 144 128c0-35.3-28.7-64-64-64H344V24c0-13.3-10.7-24-24-24s-24 10.7-24 24V64H152V24zM48 192h80v56H48V192zm0 104h80v64H48V296zm128 0h96v64H176V296zm144 0h80v64H320V296zm80-48H320V192h80v56zm0 160v40c0 8.8-7.2 16-16 16H320V408h80zm-128 0v56H176V408h96zm-144 0v56H64c-8.8 0-16-7.2-16-16V408h80zM272 248H176V192h96v56z" /></svg>
@@ -206,6 +335,7 @@ export default function AttendanceReport(props) {
                             <span className='self-center'>{formatDate(selectedTimePeriod.toDate, "DD/MM/YYYY")}</span>
                         </div>
                     }
+
                     {
                         selectedTimePeriod.name === "Custom" &&
                         <div className='flex flex-wrap mt-2 space-x-0 space-y-2 md:mt-0 md:space-x-2 md:space-y-0'>
@@ -258,8 +388,8 @@ export default function AttendanceReport(props) {
                     <img src={razerpayx} alt='' className='w-5 h-5 mr-2'></img>
                 </button>
 
-
             </div>
+
             {attendanceData.length > 0 &&
                 <div className="px-0 py-4 block h-full overflow-auto">
                     <table className="items-center w-full bg-transparent border-collapse rounded-xl shadow-lg ">
@@ -281,98 +411,34 @@ export default function AttendanceReport(props) {
                                 })}
                             </tr>
                         </thead>
+
                         <tbody className="bg-white divide-y divide-gray-200 ">
                             {attendanceData.map((item, index) => {
+
                                 return (
                                     <>
-                                        <tr key={index} className={`${index % 2 === 0 ? 'bg-gray-100' : 'bg-white'} hover:bg-blue-100`} onClick={() => { onEmployeeClick(item, index) }}>
-                                            {/* <td><i class="w-auto fa-solid fa-angle-down mr-2"></i></td> */}
-                                            <td className="px-2 py-4 ">
-                                                <div className='flex items-center w-full '>
-                                                    <span className="font-quicksand font-medium text-sm"></span>
-                                                    <i class="w-auto fa-solid fa-angle-down mr-3"></i>
-                                                    {index + 1}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="font-quicksand font-medium text-sm align-top">{item.total_count[0].employee__employee_name}</div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="font-quicksand text-sm font-bold text-green-600">{item.total_count[0].present_count}</div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="font-quicksand font-bold text-green-600 text-sm">{item.total_count[0].half_day_present}</div>
-                                            </td>
-                                            <td className="px-6 py-4 ">
-                                                <div className={`font-quicksand text-sm font-bold text-red-600`}>
-                                                    {item.total_count[0].absent_count}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="font-quicksand font-bold text-purple-600 text-sm">
-                                                    {item.total_count[0].week_off}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="font-quicksand font-bold text-green-600 text-sm">
-                                                    {item.total_count[0].week_off_present}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="font-quicksand font-bold text-green-600 text-sm">{item.total_count[0].half_day_present_on_week_off}</div>
-                                            </td>
-                                            <td className="px-6 py-4 ">
-                                                <div className={`font-quicksand font-bold text-sm text-orange-600`}>
-                                                    {item.total_count[0].leave_count}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="font-quicksand font-bold text-sm text-orange-600">
-                                                    {item.total_count[0].unpaid_leave_count}
-                                                </div>
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap">
-                                                <div className="font-quicksand font-medium text-sm">
-                                                    {item.total_count[0].unpaid_half_day_count}
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        {!item.isOpen &&
-                                            <tr>
-                                                <td colSpan={11}>
-                                                    <div class="grid grid-cols-7 gap-4 mx-10 my-2">
-                                                        {
-                                                            WEEKS.map((weekItem, wIndex) => {
-                                                                return <div className='font-quicksand font-bold text-center text-gray-500 text-sm'>
-                                                                    {weekItem}
-                                                                </div>
-                                                            })
-                                                        }
-                                                        {
-                                                            item.attendance.map((attendanceItem, index) => {
-                                                                return (
-                                                                    <td className="px-3 whitespace-nowrap">
-                                                                        <div class={`flex ${attendanceItem.isDummyObj ? "bg-white" : getAttendanceColor(attendanceItem.attendance, true)} rounded-md py-3 space-x-2`}>
-                                                                            <div className='flex justify-center items-center space-x-2 font-quicksand font-bold text-gray-500 text-sm px-2 py-[2px] w-1/2'>
-                                                                                <div className='text-2xl flex'>{formatDate(attendanceItem.date, "DD")}
-                                                                                </div>
-                                                                                {/* <div className='flex flex-col'>
-                                                                            <div className='text-sm'>{formatDate(attendanceItem.date, "MMM")}</div>
-                                                                            <div className='text-sm'>{formatDate(attendanceItem.date, "YYYY")}</div>
-                                                                        </div> */}
-                                                                            </div>
-                                                                            <div className='font-quicksand font-bold text-sm flex w-1/2 justify-center items-center'>
-                                                                                <span className={`p-2 ${getAttendanceColor(attendanceItem.attendance)} text-lg`}>{attendanceItem.attendance}</span>
-                                                                            </div>
-                                                                        </div>
-                                                                    </td>
-                                                                );
-                                                            })
-                                                        }
-                                                    </div>
-                                                </td>
+                                        <>
+                                            {
+                                                workSpaceInfo.role === "Admin" ?
+                                                    <TableRowData
+                                                        item={item}
+                                                        index={index}
+                                                    />
+                                                    :
+                                                    (currentLoginDetails.user_id === item.employee_id) &&
+                                                    <TableRowData
+                                                        item={item}
+                                                        index={index}
+                                                    />
+                                            }
+                                        </>
 
-                                            </tr>
+                                        {
+                                            (!item.isOpen && (workSpaceInfo.role === "Admin")) ?
+                                                <TableExpandableData item={item} />
+                                                :
+                                                (!item.isOpen && (currentLoginDetails.user_id === item.employee_id)) &&
+                                                <TableExpandableData item={item} />
                                         }
                                     </>
                                 );
@@ -384,11 +450,14 @@ export default function AttendanceReport(props) {
                 </div>
             }
 
-            {attendanceData.length === 0 && <div className='flex w-full h-full mt-2 justify-center'>
-                <div>
-                    <img src={no_data_found} alt="" className='h-96 w-96'></img>
+            {
+                attendanceData.length === 0 && <div className='flex w-full h-full mt-2 justify-center'>
+                    <div>
+                        <img src={no_data_found} alt="" className='h-96 w-96'></img>
+                    </div>
                 </div>
-            </div>}
-        </div>
+            }
+        </div >
     )
 }
+

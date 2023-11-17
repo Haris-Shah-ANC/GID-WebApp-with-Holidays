@@ -186,7 +186,6 @@ export const sidebarMenu = (isAdminMenu) => {
 
         },
 
-
         {
             name: routesName.inviteToWorkspace.name,
             path: routesName.inviteToWorkspace.path,
@@ -224,8 +223,6 @@ export const sidebarMenu = (isAdminMenu) => {
             childItem: 'meeting',
         },
 
-
-
     ] :
         [
 
@@ -244,7 +241,6 @@ export const sidebarMenu = (isAdminMenu) => {
                 active: routesName.dashboard.activeRoute,
 
             },
-
             {
                 name: routesName.calendar.name,
                 path: routesName.calendar.path,
@@ -278,6 +274,7 @@ export const sidebarMenu = (isAdminMenu) => {
                 icon: "fa-solid fa-paste",
                 active: routesName.newModule.activeRoute,
             },
+
             {
                 name: routesName.notes.name,
                 path: routesName.notes.path,
@@ -285,6 +282,15 @@ export const sidebarMenu = (isAdminMenu) => {
                 active: routesName.notes.activeRoute,
 
             },
+            ////////////////////////////////////////
+            {
+                name: routesName.reports.name,
+                path: routesName.reports.path,
+                icon: "fa-solid fa-file-invoice",
+                active: routesName.reports.activeRoute,
+                childItem: 'hrms',
+            },
+            ////////////////////////////////////////
             {
                 name: routesName.holidays.name,
                 path: routesName.holidays.path,

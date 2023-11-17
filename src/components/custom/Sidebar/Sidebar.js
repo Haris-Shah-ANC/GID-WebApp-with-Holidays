@@ -190,6 +190,8 @@ const ChildItemComponent = (props) => {
     dispatch(Actions.stateChange("workspace", workspace))
   }
 
+  let workSpaceInfo = getWorkspaceInfo();
+
   return (
 
     <React.Fragment>
@@ -221,9 +223,11 @@ const ChildItemComponent = (props) => {
                 <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm' onClick={() => { navigate(item.path) }}>
                   Reports
                 </li>
-                <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm' onClick={() => { setShowModal(file_upload) }}>
-                  <a class="collapse-item" target="_blank">Upload</a>
-                </li>
+                {workSpaceInfo.role === "Admin" &&
+                  <li className='p-2 cursor-pointer hover:bg-gray-200 rounded-md font-quicksand font-semibold text-sm' onClick={() => { setShowModal(file_upload) }}>
+                    <a class="collapse-item" target="_blank">Upload</a>
+                  </li>
+                }
               </React.Fragment>
             }
 
