@@ -7,7 +7,6 @@ import Dropdown from '../../custom/Dropdown/Dropdown';
 import { routesName } from '../../../config/routesName';
 import CustomLabel from '../../custom/Elements/CustomLabel';
 
-
 import {
     isFormValid,
     formattedDeadline,
@@ -45,6 +44,7 @@ import { DateFormatCard } from '../../../utils/Constant';
 import { Divider } from '@mui/material';
 
 const CreateNewTask = (props) => {
+
     const { setShowModal, data, from } = props;
     const { work_id } = getWorkspaceInfo();
     const navigate = useNavigate();
@@ -75,6 +75,7 @@ const CreateNewTask = (props) => {
     const [listOfEfforts, setListOfEfforts] = useState([])
     const [totalEfforts, setTotalEfforts] = useState(null)
     const [isNetworkCallRunning, setNetworkCallStatus] = useState(false)
+
     const getProjectsResultsApi = async (id) => {
         let res = await apiAction({
             method: 'get',
@@ -191,6 +192,7 @@ const CreateNewTask = (props) => {
             notifyErrorMessage(message)
         }
     };
+
     const getEmployeeTaskEfforts = async () => {
         setNetworkCallStatus(true)
         let res = await apiAction({ url: getTheListOfTaskEffortsUrl(work_id, data.task_id ? data.task_id : data.id), method: 'get', data: {}, navigate: navigate, dispatch: dispatch })
@@ -205,8 +207,8 @@ const CreateNewTask = (props) => {
             .catch((error) => {
                 console.log(error)
             })
-
     }
+
     const onSaveChangesBtnClick = (e) => {
         e.preventDefault();
         if (formData.task_id && isEffortsTableVisible) {
@@ -215,6 +217,7 @@ const CreateNewTask = (props) => {
             updateOrAddTask()
         }
     }
+
     const onEffortsAddedSuccess = () => {
         setUpdateEffortsStatus(false)
         updateOrAddTask()
@@ -261,7 +264,7 @@ const CreateNewTask = (props) => {
                 </div>
             </div>
 
-            <form id={"last_div"} className='overflow-auto relative     ' style={{ height: 'calc(100vh - 180px)', }} >
+            <form id={"last_div"} className='overflow-auto relative' style={{ height: 'calc(100vh - 180px)', }} >
 
                 {/* READ ONLY VIEW */}
 
@@ -280,7 +283,6 @@ const CreateNewTask = (props) => {
                         <LabelText label={"Project"} className={"w-1/4"} />
                         <span className="text-xs  font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-full border border-black">
                             {selectedProject && selectedProject.project_name}</span>
-
                     </div>
 
 
@@ -306,6 +308,17 @@ const CreateNewTask = (props) => {
                     <div className={` flex flex-row items-center w-full mt-6 `} >
                         <LabelText label={"Status"} className={"w-1/4"} />
                         <span className="text-xs font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-full border border-black">{formData.status}</span>
+                        {/* //////////////////////////// */}
+                        {formData.status === "In-Progress" &&
+                            <h3 className='mx-3 text-blue-400 font-semibold text-xs hover:underline cursor-pointer'
+                                onClick={(e) => {
+                                    //  setFormData((previous) => ({ ...previous, status: "Completed"}));
+                                    formData.status = "Completed"
+                                    setFormData({ ...formData })
+                                    onSaveChangesBtnClick(e);
+                                }}
+                            >Mark as Completed</h3>
+                        }
                     </div>
 
                     {formData.on_hold_reason &&
@@ -535,7 +548,8 @@ const CreateNewTask = (props) => {
                 </div>
 
                 <div className={`m-4 ${isEditAction ? "" : "hidden"}`}>
-                    <PlainButton title={"Save Changes"} className={"w-full  "} onButtonClick={onSaveChangesBtnClick} disable={formData.task_id ? user_id == formData.employee ? false : true : false}></PlainButton>
+                    <PlainButton title={"Save Changes"} className={"w-full"} onButtonClick={onSaveChangesBtnClick} disable={formData.task_id ? user_id == formData.employee ? false : true : false}>
+                    </PlainButton>
                 </div>
             </form>
         </>

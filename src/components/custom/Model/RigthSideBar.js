@@ -320,7 +320,8 @@ export default function CommentsSideBar(props) {
 
         return (
             <>
-                {/* <div className="center p-5" style={{ width: 400, zIndex: 5 }} onClose={onClose} ref={wrapperRef}>
+                <>
+                    {/* <div className="center p-5" style={{ width: 400, zIndex: 5 }} onClose={onClose} ref={wrapperRef}>
                     <div className="bg-gray-100 rounded shadow">
                         <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
                             <h3 className="text-lg font-quicksand font-bold text-center w-full">
@@ -368,19 +369,19 @@ export default function CommentsSideBar(props) {
 
                     </div>
                 </div> */}
-
+                </>
                 <ModalForCommentsOperations currentCommentData={currentCommentData} url={url} data={data} onSuccess={onSuccess} openModal={openEditModal} setOpenModal={setOpenEditModal} ModalType={"Edit"} />
             </>
         );
     }
 
     function ReplyModal(props) {
-        const { onClose } = props;
-        const wrapperRef = useRef(null);
-        const replyInputRef = useRef(null)
-        const [initialTextareaText, setInitialTextareaText] = useState('');
+        // const { onClose } = props;
+        // const wrapperRef = useRef(null);
+        // const replyInputRef = useRef(null)
+        // const [initialTextareaText, setInitialTextareaText] = useState('');
         // useOutsideClickTracker(wrapperRef);
-        let textareaHeight = 70;
+        // let textareaHeight = 70;
 
 
         // let commentReplyingTo = currentCommentData.comment.replaceAll("<br>", "\n")
@@ -434,37 +435,37 @@ export default function CommentsSideBar(props) {
         //     }, [ref]);
         // }
 
-        useLayoutEffect(() => {
-            const end = replyInputRef.current.value.length;
-            replyInputRef.current.focus()
-            replyInputRef.current.setSelectionRange(end, end)
-            if (initialTextareaText.length !== 0) {
-                // Reset height - important to shrink on delete
-                replyInputRef.current.style.height = "50px";
-                //Set height
-                replyInputRef.current.style.height = `${Math.max(
-                    replyInputRef.current.scrollHeight,
-                    textareaHeight
-                )}px`;
-            }
-        }, [replyInputRef, textareaHeight, initialTextareaText]);
+        // useLayoutEffect(() => {
+        //     const end = replyInputRef.current.value.length;
+        //     replyInputRef.current.focus()
+        //     replyInputRef.current.setSelectionRange(end, end)
+        //     if (initialTextareaText.length !== 0) {
+        //         // Reset height - important to shrink on delete
+        //         replyInputRef.current.style.height = "50px";
+        //         //Set height
+        //         replyInputRef.current.style.height = `${Math.max(
+        //             replyInputRef.current.scrollHeight,
+        //             textareaHeight
+        //         )}px`;
+        //     }
+        // }, [replyInputRef, textareaHeight, initialTextareaText]);
 
-        function useOutsideClickTracker(ref) {
-            useEffect(() => {
-                // close modal if clicked outside 
-                function handleClickOutside(event) {
-                    if (ref.current && !ref.current.contains(event.target)) {
-                        setOpenReplyModal(false)
-                    }
-                }
-                // Bind the event listener
-                document.addEventListener("mousedown", handleClickOutside);
-                return () => {
-                    // Unbind the event listener on clean up
-                    document.removeEventListener("mousedown", handleClickOutside);
-                };
-            }, [ref]);
-        }
+        // function useOutsideClickTracker(ref) {
+        //     useEffect(() => {
+        //         // close modal if clicked outside 
+        //         function handleClickOutside(event) {
+        //             if (ref.current && !ref.current.contains(event.target)) {
+        //                 setOpenReplyModal(false)
+        //             }
+        //         }
+        //         // Bind the event listener
+        //         document.addEventListener("mousedown", handleClickOutside);
+        //         return () => {
+        //             // Unbind the event listener on clean up
+        //             document.removeEventListener("mousedown", handleClickOutside);
+        //         };
+        //     }, [ref]);
+        // }
 
 
         // const replyToComment = async () => {
@@ -566,6 +567,7 @@ export default function CommentsSideBar(props) {
                         </div>
                     </div>
                 </div> */}
+
                 <ModalForCommentsOperations currentCommentData={currentCommentData} url={url} data={data} onSuccess={onSuccess}
                     Linkify={Linkify} openModal={openReplyModal} setOpenModal={setOpenReplyModal}
                     ModalType={"Reply"} />
@@ -635,7 +637,7 @@ export default function CommentsSideBar(props) {
                                             paddingRight: 10, color: "#949699", cursor: 'pointer',
                                         }}
                                     ></i>
-                                
+
                                 </div>
                             </div>
 
@@ -708,7 +710,7 @@ export default function CommentsSideBar(props) {
                             {/* Show Replied Comments */}
                             {chatData.is_reply &&
                                 <div className="bg-blue-200 py-1 mx-1 mb-1 rounded flex flex-row">
-                                    <div className="w-1 bg-blue-500 rounded-tl-lg rounded-bl-lg "></div>
+                                    <div className="w-1 bg-blue-500 rounded-tl-lg rounded-bl-lg"></div>
                                     <div>
 
                                         {/* <p className="px-2 text-sm font-semibold text-blue-400 overflow-hidden break-words">
@@ -719,7 +721,7 @@ export default function CommentsSideBar(props) {
                                         <p className="px-2 text-sm font-semibold text-blue-400 overflow-hidden break-all">
                                             {chatData.reply_to_user}
                                         </p>
-                                        <p className="px-2 text-sm overflow-hidden break-all">
+                                        <p className="px-0 text-sm overflow-hidden break-all">
 
                                             <Linkify>
                                                 {chatData.reply_to_comment}
@@ -806,12 +808,13 @@ export default function CommentsSideBar(props) {
     }, []);
 
     return (
-        <div className="container">
-            <div className={`custom-modal-dialog resizable ${showModal ? 'show' : ''}`} role="document"
+        <div className="container ">
+            <div className={`custom-modal-dialog ${showModal ? 'show' : ''}`} role="document"
                 onClick={(e) => setOpenOptionsIndex(false)} // for closing dropdown Options
                 ref={mainRef}
             >
-                <div className="resizer resizer-l" ref={refLeft}> </div>
+                {/* select-none prevents users from selecting anything while resizing the modal */}
+                <div className="resizer resizer-l select-none" ref={refLeft}> </div>
 
                 {/* <div className="relative"> */}
                 {/* <div className="center h-12 bg-green-400" style={{}}></div> */}
@@ -826,7 +829,7 @@ export default function CommentsSideBar(props) {
                     {/* <div className="relative">
                 </div> */}
                     <div className="flex flex-row justify-between">
-                        <span className="text-xl ml-3">#Comments</span>
+                        <span className="text-xl ml-3 z-10">#Comments</span>
                         <svg fill="none" viewBox="0 0 24 24" className="cursor-pointer" height="1.5em" width="1.5em" onClick={() => {
                             setShowModal(false)
                         }}

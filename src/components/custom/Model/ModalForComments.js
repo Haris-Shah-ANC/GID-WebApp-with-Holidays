@@ -148,7 +148,7 @@ const ModalForCommentsOperations = (props) => {
                             <PlainButton title={"Cancel"} onButtonClick={() => setOpenModal(false)} className={"bg-white hover:bg-blue-100 text-blue-500 px-2.5 py-1.5"} disable={false} />
                             <PlainButton title={ModalType === "Reply" ? "Send" : "Save"}
                                 onButtonClick={ModalType === "Reply" ? replyToComment : editComment}
-                                className={" px-2.5 py-1.5"} disable={false} />
+                                className={"px-2.5 py-1.5"} disable={false} />
                         </div>
 
                     </div>

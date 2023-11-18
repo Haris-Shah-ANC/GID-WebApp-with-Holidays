@@ -73,7 +73,6 @@ const Holidays = () => {
     const onDeleteHoliday = (id, type) => {
         deleteHoliday(id)
         console.log("ON DELETE", id)
-
     }
 
 
@@ -92,6 +91,7 @@ const Holidays = () => {
                         }} className={""} disable={false} />}
                     </div>
                 }
+                
             </div>
             {isFormVisible && <AddHolidayForm onClose={() => {
                 setFormVisible(false)

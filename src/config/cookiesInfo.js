@@ -19,7 +19,6 @@ export const getLoginDetails = () => {
     } else {
         window.location.reload()
         // navigate("/auth" + routesName.login.path)
-
     }
 }
 //////////////////////////////gid-loginStatus////////////////////////////////

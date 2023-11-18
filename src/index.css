@@ -58,6 +58,7 @@
     }
 
     .custom-modal-dialog {
+        /* user-select: none; */
         padding: 8px;
         background-color: rgb(223, 220, 220);
         position: fixed;
@@ -65,8 +66,8 @@
         top: 10vh;
         right: -416px;
         height: 85vh;
+        width: 500px;
         min-width: 500px;
-        
         /*  */
         max-width: 1000px;
         border-radius: 4px;
@@ -292,9 +293,9 @@ th {
 }
 
 .resizer-l {
-    cursor: col-resize;
+    cursor: w-resize;
     height: 100%;
     left: 0;
     top: 0;
-    width: 15px;
+    width: 25px;
 }

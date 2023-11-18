@@ -74,7 +74,6 @@ const ModelComponent = (props) => {
                     }
                     {showModal === create_new_work_space &&
                         <CreateNewWorkspace setShowModal={setShowModal} data={data} />
-
                     }
                     {showModal === filter_and_sort &&
                         <FilterAndSort setShowModal={setShowModal} data={data} onFilterApply={onFilterApply} onFilterClear={onFilterClear} />
