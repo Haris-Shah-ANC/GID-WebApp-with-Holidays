@@ -66,11 +66,11 @@ function UserNotes(props) {
                 setNetworkCallStatus(false)
                 if (response) {
                     setNotesListUnderFolder(response.result)
-                    
-                    if(selectedChildNote){
+
+                    if (selectedChildNote) {
                         let findUpdatedNote = response.result.find((item) => item.id == selectedChildNote.id)
-                        console.log("FINDED",findUpdatedNote)
-                        if(findUpdatedNote){
+                        console.log("FINDED", findUpdatedNote)
+                        if (findUpdatedNote) {
                             selectChildNote(findUpdatedNote)
                         }
                     }
@@ -113,8 +113,6 @@ function UserNotes(props) {
 
     const createNote = async () => {
 
-
-
         let validation_data = [
             { key: "title", message: 'title field left empty!' },
             { key: "note", message: 'note field left empty!' },
@@ -129,23 +127,26 @@ function UserNotes(props) {
                 url: isNoteEditAction() ? getUpdateNoteUrl() : getAddNoteUrl(),
                 data: formData,
             })
-            if (res) {
-                setNoteTitleEditable(false)
-                if (!isNoteEditAction()) {
-                    notesListUnderFolder.push(res.result)
-                    setNotesListUnderFolder(notesListUnderFolder)
-                } else {
-                    fetchNotesList(formData.folder)
+                .then((response) => {
+                    if (response.success) {
+                        setNoteTitleEditable(false)
+                        if (!isNoteEditAction()) {
+                            notesListUnderFolder.push(res.result)
+                            setNotesListUnderFolder(notesListUnderFolder)
+                        } else {
+                            fetchNotesList(formData.folder)
 
-                }
-                setFormData(res.result)
-                // selectChildNote(res.result)
+                        }
+                        setFormData(res.result)
+                        // notifySuccessMessage(res.status);
+                    } else {
+                        notifyInfoMessage(response.status)
+                    }
+                })
+                .catch((error) => {
+                    console.log("Something went wrong")
+                })
 
-
-                // notifySuccessMessage(res.status);
-            } else {
-                // notifyInfoMessage(res.detail)
-            }
         } else {
             notifyErrorMessage(message)
         }
@@ -240,6 +241,7 @@ function UserNotes(props) {
         formData.note = noteData
         if (isNoteEditAction()) {
             formData['note_id'] = formData.id
+            formData['folder_id'] = formData.folder
             delete formData['employee_id_list']
             delete formData['permission']
             delete formData['updated_at']
@@ -339,6 +341,7 @@ function UserNotes(props) {
         }
     }
     const onAddNewNoteClick = (folder, event) => {
+        selectChildNote(null)
         setNoteTitleEditable(true)
         if (folder) {
             setAddNoteFolderData(folder)
@@ -734,7 +737,7 @@ function UserNotes(props) {
                                 onInit={(evt, editor) => {
                                     editorRef.current = editor
                                 }}
-                                initialValue={formData.note}
+                                initialValue={formData?.note}
                                 disabled={mode === "read"}
                                 init={{
                                     selector: 'textarea#premiumskinsandicons-borderless',
