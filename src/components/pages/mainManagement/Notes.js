@@ -241,13 +241,14 @@ function UserNotes(props) {
         formData.note = noteData
         if (isNoteEditAction()) {
             formData['note_id'] = formData.id
-            formData['folder_id'] = formData.folder
+            // formData['folder_id'] = formData.folder
             delete formData['employee_id_list']
             delete formData['permission']
             delete formData['updated_at']
             delete formData['created_at']
             delete formData['created_by']
             delete formData['updated_by']
+            delete formData['folder']
 
         }
         setFormData({ ...formData })
