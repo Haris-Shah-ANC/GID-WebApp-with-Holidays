@@ -13,7 +13,6 @@ import { ModeComment } from "@mui/icons-material";
 import ModelComponent from "../../../custom/Model/ModelComponent";
 
 
-
 const Holidays = () => {
     const { work_id, role } = getWorkspaceInfo();
     const navigate = useNavigate();
@@ -39,6 +38,7 @@ const Holidays = () => {
         setHolidays(holidays)
         setHolidayToEdit(null)
     }
+
     const fetchHolidays = async () => {
         setNetworkCallStatus(true)
         let res = await apiAction({ url: getHolidaysUrl(work_id), method: 'get', navigate: navigate, dispatch: dispatch })

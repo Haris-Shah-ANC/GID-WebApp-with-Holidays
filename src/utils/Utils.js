@@ -399,10 +399,9 @@ export const isDateBetweenDates = (period, date) => {
   catch {
     console.log("ERROR IN COMPARING DATES")
 
-
   }
-
 }
+
 export const timePeriods = [
   { name: "Daily", value: "daily" },
   { name: "Weekly", value: "weekly" },

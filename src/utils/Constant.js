@@ -4,6 +4,9 @@ export const imagesList = {
     profile: { src: require('../assets/image/undraw_profile.png'), alt: 'undraw_profile.png' },
     employee_default_img: { src: require('../assets/image/profile.png') },
 
+    pdfPreview: { src: require('../assets/image/pdfPreview.jpg') },
+    xlPreview: { src: require('../assets/image/xlPreview.png') },
+    noPreview : {src : require ('../assets/image/noPreviewImage.jpg')}
 }
 
 ///////////////////////////////////////////////////////////////active colors/////////////////////////////////////////////////////////////////////////////
@@ -68,7 +71,6 @@ export const notesMenuOptions = [
 
 export const actionsMenuOptions = [
     { title: "Manage", action: "Manage" }
-
 ]
 
 export const WEEKS = [
@@ -778,4 +780,11 @@ export const currencyData = [
         "currency_code": "ZWD",
         "symbol": "Z$"
     }
+]
+
+//array for showing the preview image of the files based on the type of file
+export const fileTypePreviews = [
+    { type: 'pdf', url: imagesList.pdfPreview.src },
+    { type: 'xlsx', url: imagesList.xlPreview.src },
+    { type: 'undefined',url : imagesList.noPreview.src},
 ]

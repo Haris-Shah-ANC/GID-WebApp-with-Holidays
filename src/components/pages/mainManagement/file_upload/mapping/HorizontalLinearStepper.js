@@ -36,10 +36,9 @@ export default function HorizontalLinearStepper() {
             } else {
                 dispatch(Actions.stateChange("activeStep", index))
             }
-
         }
-
     }
+    
     const theme = createTheme({
         components: {
             // Name of the component ⚛️

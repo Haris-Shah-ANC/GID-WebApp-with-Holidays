@@ -5,7 +5,7 @@ import { isAPISuccess, isBusinessUnauthorized, isUnAuthorized, isUrlNotFound, is
 
 export async function apiAction({ url, method = 'get', data = null, onError = () => { }, dispatch }) {
   // if(dispatch){
-    // dispatch(Actions.stateChange("loader", true))
+  // dispatch(Actions.stateChange("loader", true))
   // }
   // console.log("ACCESS TOKEN",getAccessToken())
   let options = {
@@ -21,15 +21,15 @@ export async function apiAction({ url, method = 'get', data = null, onError = ()
   }
   try {
     let response = await fetch(url, options)
-    if(!response){
-      return {success: false, status: "Something went wrong."}
+    if (!response) {
+      return { success: false, status: "Something went wrong." }
     }
     let status = response.status
     if (isAPISuccess(status)) {
       // if(dispatch){
       //   dispatch(Actions.stateChange("loader", false))
       // }
-      
+
       let data = await response.json()
 
       if (isBusinessUnauthorized(data.status)) {
@@ -54,7 +54,7 @@ export async function apiAction({ url, method = 'get', data = null, onError = ()
       return { success: false };
     }
   } catch (error) {
-    
+
     onError(error)
   }
 }
@@ -157,27 +157,35 @@ export async function apiActionFormData({ url, method = 'post', data }) {
       return { success: false };
     }
   } catch (error) {
-    console.log("error response",  error.message);
+    console.log("error response", error.message);
 
   }
 }
 
 export async function apiFormData({ url, method = 'post', data, file_key = "attachment", file_name = 'signature' }) {
   var formData = new FormData();
-  if (data[file_key]) {
+  let attachment_ids = [] //array to store the id of the uploaded files
+  if (Array.isArray(data[file_key])) {
+    console.log('=====>data[file_key]', data[file_key])
+    data[file_key].map((data) => {
+      if (data.hasOwnProperty('id')) {
+        attachment_ids.push(data.id)
+      } else {
+        formData.append(file_key, data)
+      }
+    })
+  } else {
+
     if (data[file_key] && typeof (data[file_key]) !== "string") {
       formData.append(file_key, data[file_key])
     }
   }
-  if (data[file_name]) {
-    if (data[file_name] && typeof (data[file_name]) !== "string") {
-      formData.append(file_name, data[file_name])
-    }
-  }
-  data[file_key] = (typeof (data[file_key]) === "string" && data[file_key]) ? data[file_key] : null
+  formData.append('work_id', data?.work_id)
+  // formData.append('attachment', data[file_key])
+  data[file_key] = (typeof (data[file_key]) === "string" && data[file_key]) ? data[file_key] : attachment_ids.length ? attachment_ids : []
   data[file_name] = (typeof (data[file_name]) === "string" && data[file_name]) ? data[file_name] : null
+
   formData.append("data", JSON.stringify(data))
-  formData.append("business_id", data['business_id'])
 
 
   let options = {
@@ -268,22 +276,22 @@ export async function apiHandleDownload({ url, method = 'POST', data, filename, 
   if (method.toLowerCase() === "get") {
     delete options["body"]
   }
-  try{
+  try {
     fetch(url, options)
-    .then((response) => response.blob())
-    .then((res) => {
+      .then((response) => response.blob())
+      .then((res) => {
 
-      const file = res
-      fileDownload(file, `${filename}` + formate)
-      onSuccess()
+        const file = res
+        fileDownload(file, `${filename}` + formate)
+        onSuccess()
 
-    })
-    .catch((err) => {
-      console.log(err.message);
-    });
-  }catch(error){
+      })
+      .catch((err) => {
+        console.log(err.message);
+      });
+  } catch (error) {
     console.log(error.message);
   }
 
- 
+
 }

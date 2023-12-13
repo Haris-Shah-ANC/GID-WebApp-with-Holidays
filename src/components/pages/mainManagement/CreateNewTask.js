@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { apiAction } from '../../../api/api';
+import React, { useCallback, useState } from 'react';
+import { apiAction, apiFormData, apiActionFormData } from '../../../api/api';
 import { useNavigate } from 'react-router-dom';
 import * as Actions from '../../../state/Actions';
 import Checkbox from '../../custom/Elements/buttons/Checkbox';
@@ -40,8 +40,14 @@ import dayjs from 'dayjs';
 import { LinkedText } from '../../custom/Elements/buttons/LinkedText';
 import ToggleSlider from '../../custom/Elements/ToggleSlider';
 import { twMerge } from 'tailwind-merge';
-import { DateFormatCard } from '../../../utils/Constant';
+import { DateFormatCard, fileTypePreviews } from '../../../utils/Constant';
 import { Divider } from '@mui/material';
+
+//
+import { useDropzone } from 'react-dropzone';
+import { Document } from 'react-pdf'
+import { func } from 'prop-types';
+//
 
 const CreateNewTask = (props) => {
 
@@ -63,7 +69,8 @@ const CreateNewTask = (props) => {
         detailed_description: data ? data.detailed_description : null,
         description_link: data ? data.description_link : null,
         assign_to_id: data ? data.assignee_id : null,
-        employee: data ? data.employee : null
+        employee: data ? data.employee : null,
+        attachment: data ? data.attachment : [],
     }
     const [formData, setFormData] = React.useState({ ...initial_data })
     const [projectsResults, setProjectsResults] = React.useState([{ project_name: 'Select project' }]);
@@ -75,6 +82,8 @@ const CreateNewTask = (props) => {
     const [listOfEfforts, setListOfEfforts] = useState([])
     const [totalEfforts, setTotalEfforts] = useState(null)
     const [isNetworkCallRunning, setNetworkCallStatus] = useState(false)
+    const [uploadedFiles, setUploadedFiles] = useState([]);
+
 
     const getProjectsResultsApi = async (id) => {
         let res = await apiAction({
@@ -107,8 +116,8 @@ const CreateNewTask = (props) => {
             .catch((error) => {
                 console.log("ERROR", error)
             })
-
     }
+
     const getEmployeeList = async () => {
         let res = await apiAction({
             method: 'get',
@@ -130,8 +139,8 @@ const CreateNewTask = (props) => {
             .then((error) => {
                 console.log("ERROR", error)
             })
-
     }
+
     React.useEffect(() => {
         if (formData.project_id) {
             getModuleResultsApi(work_id, formData.project_id)
@@ -146,7 +155,6 @@ const CreateNewTask = (props) => {
         if (!isEditAction) {
             getEmployeeTaskEfforts()
         }
-
     }, [work_id])
 
     let selectedProject = projectsResults.find((item) => item.project_id === formData.project_id);
@@ -170,7 +178,7 @@ const CreateNewTask = (props) => {
             if (!postData.assign_to_id) {
                 delete postData['assign_to_id']
             }
-            let res = await apiAction({
+            let res = await apiFormData({
                 method: 'post',
                 navigate: navigate,
                 dispatch: dispatch,
@@ -235,6 +243,7 @@ const CreateNewTask = (props) => {
             setFormData((previous) => ({ ...previous, dead_line: tomorrowDate }))
         }
     }
+
     const Linkify = ({ children }) => {
         const isUrl = word => {
             const urlPattern = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/gm;
@@ -251,6 +260,137 @@ const CreateNewTask = (props) => {
         const html = formatedWords.join(' ')
         return (
             <p className="flex w-[88%] font-bold text-md overflow-hidden break-all font-quicksand" dangerouslySetInnerHTML={{ __html: html }}></p>
+        )
+    }
+
+    //
+    // const MAX_COUNT = 4;
+    // const [fileLimit, setFileLimit] = useState(false);
+    // const [paths, setPaths] = useState([]);
+    // const [images, setImages] = useState([]);
+
+    // const onDrop = useCallback((acceptedFiles) => {
+    //     acceptedFiles.map((file, index) => {
+    //         const reader = new FileReader();
+    //         reader.onload = function (e) {
+    //             setImages((prevState) => [
+    //                 ...prevState,
+    //                 { id: index, src: e.target.result },
+    //             ]);
+    //         };
+    //         reader.readAsDataURL(file);
+    //         return file;
+    //     });
+    // }, []);
+
+    const { getRootProps, getInputProps } = useDropzone({
+        onDrop: (acceptedFiles) => {
+            // checking for duplicate file names
+            const isDuplicate = acceptedFiles.some(file => formData?.attachment?.some(existingFile => existingFile.name === file.name));
+            if (isDuplicate) {
+                alert("Duplicate files are not allowed.");
+                return;
+            }
+
+            // checking for maximum file limit (4 files)
+            if (formData?.attachment?.length + acceptedFiles.length > 4) {
+                alert("You can only upload up to 4 files.");
+                return;
+            }
+
+            const filesWithPreview = acceptedFiles.map(file => Object.assign(file, {
+                preview: URL.createObjectURL(file),
+                date: 'date',
+            }));
+            setFormData((previous) => ({ ...previous, attachment: [...previous.attachment, ...filesWithPreview] }))
+
+            // setUploadedFiles([...uploadedFiles, ...filesWithPreview]);
+            // console.log("acceptedFiles====>",[{...acceptedFiles[0],date:'date'}])
+        },
+        multiple: true,
+    });
+
+    //
+    // console.log('====>uploadedFiles', uploadedFiles)
+
+    const handleDeleteFiles = (index) => {
+        // console.log(`File at index ${index} has been clicked for delete`)
+        const newUploadedFiles = formData?.attachment;
+        newUploadedFiles.splice(index, 1);
+        console.log("newUploadedFiles after deletion ===>", newUploadedFiles)
+        setFormData({ ...formData, attachment: newUploadedFiles });
+        console.log("formData===>", formData)
+    }
+
+    const getPreviewUrl = (type, preview) => {
+        let files = ['png', 'jpg', 'gif', 'svg']
+        // console.log('fileType==>', files.includes(type))
+        if (files.includes(type)) {
+            // console.log("preview==>", preview)
+            return preview
+        } else {
+            let previewUrl = fileTypePreviews.find(i => i.type === type)?.url;
+            // if preview image is not available show the default image stored at the last index of the array
+            if (previewUrl === undefined) {
+                // console.log("fileTypePreviews.undefined==>", fileTypePreviews[fileTypePreviews.length - 1].url);
+                return fileTypePreviews[fileTypePreviews.length - 1].url;
+            }
+            // else show the preview image
+            return previewUrl;
+        }
+    }
+
+    const PreviewSection = () => {
+
+        return (
+            <>
+                {formData?.attachment?.length > 0 && (
+                    <div className="grid grid-cols-3 gap-4 ">
+                        {formData?.attachment?.map((file, index) => {
+                            //splitting file extension and fileName and storing them separately
+
+                            // console.log('====>file',file)
+                            const extension = file?.name?.split(".")[file?.name?.split(".").length - 1]
+                            const fileName = file?.name?.replace(`.${extension}`, '')
+                            // console.log("fileName++>", fileName)
+                            // console.log("extension++>", extension)
+                            // console.log("getPreviewUrl++>", fileName, getPreviewUrl(extension, file?.preview))
+                            return (
+                                <div key={file.name} className="border border-gray-300 rounded-md p-2 flex flex-col justify-between h-44 ">
+                                    <div className='container h-40'>
+                                        <img
+                                            alt={file.name}
+                                            src={getPreviewUrl(extension, file?.preview)}
+                                            className='image'
+                                            style={{ maxHeight: "120px", minHeight: "120px" }}
+                                        />
+                                    
+                                        {isEditAction &&
+                                            <div class="middle ">
+                                                <div class="p-1 pl-2 pr-2 cursor-pointer bg-white rounded-sm text-gray-600">
+                                                    <i class="fa-solid fa-trash"
+                                                        onClick={(e) => { handleDeleteFiles(index) }}>
+                                                    </i>
+                                                </div>
+                                            </div>
+                                        }
+                                        
+                                    </div>
+                                    <div className="border-t bg-white font-quicksand text-xs text-black p-2 flex hover:underline hover:text-blue-600 hover:cursor-pointer"
+                                        title={`${file.name}`}
+                                    >
+                                        <a href={file?.preview} target='_blank' rel="noreferrer" className='flex w-36 whitespace-nowrap font-semibold'>
+                                            <p className='overflow-ellipsis overflow-hidden'>{fileName}</p>
+                                            <p className='ml-1 '>.{extension}</p>
+                                        </a>
+                                        {/* {console.log("CurrentData===>", moment.format())} */}
+                                    </div>
+                                </div>
+                            )
+                        })}
+                    </div>
+                )}
+            </>
         )
     }
 
@@ -336,6 +476,45 @@ const CreateNewTask = (props) => {
                         <ValueText value={moment(formData.dead_line).format(DateFormatCard)} />
                     </div>
 
+                    {formData?.attachment?.length > 0 && (
+                        <>
+                            <LabelText label={"Uploaded Files"} className={"mb-6 mt-6"} />
+                            <div className='mt-6 flex flex-row max-h-48 overflow-y-auto'>
+
+                                {/* <div className="grid grid-cols-2 gap-4 ">
+                                        {formData?.attachment?.map((file, index) => {
+                                            //splitting file extension and fileName and storing them separately
+                                            // console.log('====>file', file)
+                                            const extension = file?.name?.split(".")[file?.name?.split(".").length - 1]
+                                            const fileName = file?.name?.replace(`.${extension}`, '')
+                                            return (
+                                                <div key={file.name} className="border border-gray-900 rounded-md p-2 flex flex-col justify-between h-44 ">
+                                                    <div className='container h-40'>
+                                                        <img
+                                                            alt={file.name}
+                                                            src={getPreviewUrl(extension, file?.preview)}
+                                                            className='image'
+                                                            style={{ maxHeight: "120px", minHeight: "120px" }}
+                                                        />
+                                                      
+                                                    </div>
+                                                    <div className="border-t bg-white font-quicksand text-xs text-black p-2 flex hover:underline hover:text-blue-600 hover:cursor-pointer"
+                                                        title={`${file.name}`}
+                                                    >
+                                                        <a href={file?.preview} target='_blank' rel="noreferrer" className='flex w-36 whitespace-nowrap font-semibold'>
+                                                            <p className='overflow-ellipsis overflow-hidden '>{fileName}</p>
+                                                            <p className='ml-1 '>.{extension}</p>
+                                                        </a>
+                                                      
+                                                    </div>
+                                                </div>
+                                            )
+                                        })}
+                                    </div> */}
+                                <PreviewSection />
+                            </div>
+                        </>
+                    )}
 
                     <Divider className='py-4' />
                     <div className=''>
@@ -451,7 +630,73 @@ const CreateNewTask = (props) => {
                             onBlurEvent={() => { }}
                             onTextChange={(e) => {
                                 setFormData((previous) => ({ ...previous, description_link: e.target.value }))
-                            }}></GidInput>
+                            }}>
+                        </GidInput>
+
+                        <div className='mt-4 flex flex-col'>
+                            <CustomLabel label={'Attachment'} className={`font-quicksand font-semibold text-sm mb-1`} />
+                            <div
+                                className={`border-[#c3c3c3] border-dashed border-[1px] h-[50px] flex justify-center items-center rounded-lg cursor-pointer`}
+                                id="drop_zone"
+                                {...getRootProps()}
+                            >
+                                <input {...getInputProps()} />
+                                <div className='text-center'>
+                                    <i class="fa-solid fa-cloud-arrow-up fa-xl">
+                                        <span className='pl-1 text-sm font-quicksand font-semibold'>
+                                            Drop files to attach or click to browse
+                                        </span>
+                                    </i>
+                                </div>
+                            </div>
+
+                            <div style={{}} className={`mt-2 pt-2 overflow-y-auto max-h-48`}>
+
+                                {/* {formData?.attachment?.length > 0 && (
+                                    <div className="grid grid-cols-3 gap-4 ">
+                                        {formData?.attachment?.map((file, index) => {
+                                            //splitting file extension and fileName and storing them separately
+
+                                            // console.log('====>file',file)
+                                            const extension = file?.name?.split(".")[file?.name?.split(".").length - 1]
+                                            const fileName = file?.name?.replace(`.${extension}`, '')
+                                            // console.log("fileName++>", fileName)
+                                            // console.log("extension++>", extension)
+                                            // console.log("getPreviewUrl++>", fileName, getPreviewUrl(extension, file?.preview))
+                                            return (
+                                                <div key={file.name} className="border border-gray-300 rounded-md p-2 flex flex-col justify-between h-44 ">
+                                                    <div className='container h-40'>
+                                                        <img
+                                                            alt={file.name}
+                                                            src={getPreviewUrl(extension, file?.preview)}
+                                                            className='image'
+                                                            style={{ maxHeight: "120px", minHeight: "120px" }}
+                                                        />
+                                                        <div class="middle ">
+                                                            <div class="p-1 pl-2 pr-2 cursor-pointer bg-white rounded-sm text-gray-600">
+                                                                <i class="fa-solid fa-trash"
+                                                                    onClick={(e) => { handleDeleteFiles(index) }}>
+                                                                </i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div className="border-t bg-white font-quicksand text-xs text-black p-2 flex hover:underline hover:text-blue-600 hover:cursor-pointer"
+                                                        title={`${file.name}`}
+                                                    >
+                                                        <a href={file?.preview} target='_blank' rel="noreferrer" className='flex w-36 whitespace-nowrap font-semibold'>
+                                                            <p className='overflow-ellipsis overflow-hidden'>{fileName}</p>
+                                                            <p className='ml-1 '>.{extension}</p>
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            )
+                                        })}
+                                    </div>
+                                )} */}
+                                <PreviewSection />
+                            </div>
+
+                        </div>
                     </div>
 
                     <CustomLabel label={`Status`} className={'font-quicksand text-sm flex mt-2 mb-1'} />

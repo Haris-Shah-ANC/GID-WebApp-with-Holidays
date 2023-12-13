@@ -36,6 +36,7 @@ export default function FileUpload(props) {
       notifyErrorMessage("File field left empty!")
     }
   }
+  
   const uploadTimeSheet = async () => {
     let response = await apiActionFormData({ url: getTheTimeSheetUploadUrl(), method: 'post', data: { "file": file, workspace_id: work_id } }, onError)
     if (response) {
@@ -70,9 +71,7 @@ export default function FileUpload(props) {
       } else {
         setFile(file)
         setFileData({ ...fileUploadData, fileupload: { ...fileUploadData.fileupload, file: file } })
-
       }
-
     }
   }
 

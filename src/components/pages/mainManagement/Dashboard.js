@@ -1,6 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import moment from 'moment';
 import Card from '../../custom/Cards/Card';
+import { HOST } from '../../../config/config';
 import { apiAction } from '../../../api/api';
 import { json, useLocation, useNavigate } from 'react-router-dom';
 import * as Actions from '../../../state/Actions';
@@ -61,7 +62,7 @@ const Dashboard = () => {
         { index: 3, title: "All", count: 0 },
     ])
     const [showModal, setShowModal] = useState(false)
-    const [postBody, setPostBody] = useState({ "workspace_id": work_id, projects: [], "tasks": ["In-Progress", "On Hold"], "employees": [user_id]})
+    const [postBody, setPostBody] = useState({ "workspace_id": work_id, projects: [], "tasks": ["In-Progress", "On Hold"], "employees": [user_id] })
 
     const [showCommentSideBar, setCommentSideBarVisibility] = useState(false);
     const [formData, setFormData] = useState({});
@@ -100,14 +101,13 @@ const Dashboard = () => {
         getTaskCount(taskCountUrl)
     }, [postBody, searchText, state.workspace])
 
-
     useEffect(() => {
         getEmployeeResultsApi()
     }, [])
 
     const getTaskList = async (URL) => {
 
-        let res = await apiAction({ url: URL, method: 'get',navigate: navigate, dispatch: dispatch })
+        let res = await apiAction({ url: URL, method: 'get', navigate: navigate, dispatch: dispatch })
         if (res) {
             // console.log("Inside getTaskList (Res)==>", res)
             setPaginationData(res.total_pages)
@@ -176,6 +176,10 @@ const Dashboard = () => {
 
     const onTaskEditClick = (item) => {
         console.log("ITEM", item)
+        // console.log('=====>', item?.attachment_list.map((item) =>
+        //     // item ? `${HOST}/media/${item.attachment}` : ''
+        //     console.log("item inside attachment_list===>", item)
+        // ))
         setFormData({
             task: item.task_description,
             module_id: item.project_module,
@@ -189,7 +193,16 @@ const Dashboard = () => {
             description_link: item.description_link,
             assignee_id: item.assignee_id,
             employee: item.employee,
-            created_at: item.created_at
+            created_at: item.created_at,
+            attachment: item?.attachment_list.map((item) => {
+                // extracting file name from the array and storing it separately
+                // let fileName = item?.attachment?.replace('task attachments/ANC/','');
+                // console.log("fileName before formatting ==>", fileName);
+                return {
+                    ...item,
+                    preview: `${HOST}/${item.attachment}`
+                }
+            })
         });
         setShowModal(add_task)
     }
@@ -342,7 +355,7 @@ const Dashboard = () => {
                             <div className={`max-h-14 align-top font-quicksand font-medium flex w-full  `} >
                                 <a href={description_link === null || description_link == "" ? null : description_link}
                                     target='_blank' rel={'external'}
-                                    className={`text-5  ${description_link === null || description_link=="" ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 "} font-quicksand font-bold text-lg line-clamp-2 text-ellipsis overflow-x-hidden`}
+                                    className={`text-5  ${description_link === null || description_link == "" ? "text-blueGray-800" : "text-blue-600 hover:text-blue-700 "} font-quicksand font-bold text-lg line-clamp-2 text-ellipsis overflow-x-hidden`}
                                 >
                                     {task_description}
                                 </a>

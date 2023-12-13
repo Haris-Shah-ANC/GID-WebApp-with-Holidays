@@ -76,7 +76,6 @@ export const employee = (work_id, projectId) => {
     } else {
         return HOST + APP_NAME + `/employee/?work_id=${work_id}`
     }
-
 }
 
 export const get_all_project = (work_id) => {
