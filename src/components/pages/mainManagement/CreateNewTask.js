@@ -51,6 +51,7 @@ import PreviewPage from './PreviewPage';
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
+import LinearProgress from '@mui/material/LinearProgress';
 import Modal from '@mui/material/Modal';
 //
 
@@ -272,22 +273,6 @@ const CreateNewTask = (props) => {
     //
     // const MAX_COUNT = 4;
     // const [fileLimit, setFileLimit] = useState(false);
-    // const [paths, setPaths] = useState([]);
-    // const [images, setImages] = useState([]);
-
-    // const onDrop = useCallback((acceptedFiles) => {
-    //     acceptedFiles.map((file, index) => {
-    //         const reader = new FileReader();
-    //         reader.onload = function (e) {
-    //             setImages((prevState) => [
-    //                 ...prevState,
-    //                 { id: index, src: e.target.result },
-    //             ]);
-    //         };
-    //         reader.readAsDataURL(file);
-    //         return file;
-    //     });
-    // }, []);
 
     const { getRootProps, getInputProps } = useDropzone({
         onDrop: (acceptedFiles) => {
@@ -315,9 +300,6 @@ const CreateNewTask = (props) => {
         },
         multiple: true,
     });
-
-    //
-    // console.log('====>uploadedFiles', uploadedFiles)
 
     const handleDeleteFiles = (index) => {
         // console.log(`File at index ${index} has been clicked for delete`)
@@ -364,194 +346,38 @@ const CreateNewTask = (props) => {
     const ConfirmDeleteModal = () => {
 
         const style = {
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
             transform: 'translate(-50%, -50%)',
-            width: 400,
+            width: 370,
             bgcolor: 'background.paper',
             border: '1px solid #000',
             boxShadow: 24,
-            p: 4,
         };
 
         return (
             <div>
                 <Modal
                     open={openDeleteModal}
-                    onClose={() => {setOpenDeleteModal(false)}}
+                    onClose={() => { setOpenDeleteModal(false) }}
                 >
-                    <Box sx={style} className='rounded-lg'>
-                        {/* <div className="center p-5" style={{ width: 400, zIndex: 5 }}> */}
-                            <div 
-                            // className="bg-white rounded shadow p-2"
-                            >
-                                <h3 className="text-black font-quicksand text-lg font-semibold">
-                                    {'Delete File ?'}
-                                </h3>
+                    <Box sx={style} className='rounded-lg p-7 top-[50%] left-[50%] absolute'>
+                        <div >
+                            <h3 className="text-black font-quicksand text-lg font-semibold">
+                                {'Delete File ?'}
+                            </h3>
 
-                                <div className="flex justify-end gap-4">
-                                    <PlainButton title={"Cancel"} onButtonClick={() => setOpenDeleteModal(false)} className={"bg-blue-400 hover:bg-blue-500 text-white px-2.5 py-1.5"} disable={false} />
-                                    <PlainButton title={"Delete"} onButtonClick={() => { handleDeleteFiles(indexToDelete); setOpenDeleteModal(false); }} className={"bg-red-400 hover:bg-red-500 text-white px-2.5 py-1.5"} disable={false} />
-                                </div>
-
+                            <div className="flex justify-end gap-4">
+                                <PlainButton title={"Cancel"} onButtonClick={() => setOpenDeleteModal(false)} className={"bg-blue-400 hover:bg-blue-500 text-white px-2.5 py-1.5"} disable={false} />
+                                <PlainButton title={"Delete"} onButtonClick={() => { handleDeleteFiles(indexToDelete); setOpenDeleteModal(false); }} className={"bg-red-400 hover:bg-red-500 text-white px-2.5 py-1.5"} disable={false} />
                             </div>
-                        {/* </div> */}
+
+                        </div>
                     </Box>
                 </Modal>
             </div>
         )
-        // return (
-        //     <div>
-        //       {/* <Button onClick={() => setOpenDeleteModal(true)}>Open modal</Button> */}
-        //       <Modal
-        //         open={openDeleteModal}
-        //         onClose={setOpenDeleteModal(false)}
-        //         aria-labelledby="modal-modal-title"
-        //         aria-describedby="modal-modal-description"
-        //       >
-        //         <Box sx={style}>
-        //           <Typography id="modal-modal-title" variant="h6" component="h2">
-        //             Text in a modal
-        //           </Typography>
-        //           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-        //             Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
-        //           </Typography>
-        //         </Box>
-        //       </Modal>
-        //     </div>
-        //   );
     }
 
     const PreviewSection = () => {
-        // const openFileInNewTab = () => {
-        //     const newTab = window.open('', '_blank');
-
-        //     if (newTab) {
-        //         newTab.document.open();
-        //         newTab.document.write(`
-        //         <html>
-        //           <head>
-        //             <title>Your File</title>
-        //           </head>
-        //           <body>
-        //             <div id="preview"></div>
-        //             <script>
-        //               window.onload = function() {
-        //                 document.getElementById('root').innerHTML = '<h1>Loading...</h1>';
-        //               }
-        //             </script>
-        //           </body>
-        //         </html>
-        //       `);
-        //         newTab.document.close();
-
-        //         const FilePageComponent = (
-        //             <React.StrictMode>
-        //                 <PreviewPage />
-        //             </React.StrictMode>
-        //         );
-
-        //         // Render the FilePage component after a short delay to ensure the HTML is fully loaded
-        //         setTimeout(() => {
-        //             ReactDOM.render(FilePageComponent, newTab.document.getElementById('preview'));
-        //         }, 100);
-        //     }
-        // };
-
-        // const openFileInNewTab = async (fileUrl) => {
-        //     // const { fileUrl } = props;
-
-        //     console.log("fileUrl<<>>",fileUrl)
-        //     try {
-        //       // Fetch the file content using the file URL
-        //       const response = await fetch(props.fileUrl);
-        //       const fileContent = await response.text();
-
-        //       // Specify your custom window features
-        //       const windowFeatures = 'width=800,height=600,scrollbars=yes';
-
-        //       // Open a new window
-        //       const newWindow = window.open('', 'CustomViewer', windowFeatures);
-
-        //       // Write custom content to the new window, including the file preview
-        //       newWindow.document.write(`
-        //         <!DOCTYPE html>
-        //         <html lang="en">
-        //         <head>
-        //             <meta charset="UTF-8">
-        //             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        //             <title>Custom Viewer</title>
-
-        //             <style>
-        //                 /* Your additional custom styling for the new window goes here */
-        //                 body {
-        //                     font-family: Arial, sans-serif;
-        //                 }
-
-        //                 #customViewer {
-        //                     width: 100%;
-        //                     height: 100%;
-        //                     padding: 20px;
-        //                 }
-        //             </style>
-        //         </head>
-        //         <body>
-        //             <div id="customViewer">
-        //                 <h1>Custom Viewer</h1>
-        //                 <p>This is a customized file viewer for ${fileUrl}.</p>
-
-        //                 <!-- Display the file content -->
-        //                 <pre>${fileContent}</pre>
-        //                 <img 
-        //                 src= {${fileUrl}}
-        //                 alt = {${fileUrl}}
-        //                 />
-        //             </div>
-        //         </body>
-        //         </html>
-        //       `);
-
-        //       // You can perform additional customization as needed
-        //     } catch (error) {
-        //       console.error('Error fetching file content:', error);
-        //     }
-        //   };
-
-        // const openFileInNewTab = () => {
-        //     const newTab = window.open('', '_blank');
-
-        //     if (newTab) {
-        //       newTab.document.open();
-        //       newTab.document.write(`
-        //         <html>
-        //           <head>
-        //             <title>Your File</title>
-        //           </head>
-        //           <body>
-        //             <div id="root"></div>
-        //             <script>
-        //               window.onload = function() {
-        //                 document.getElementById('root').innerHTML = '<h1>Loading...</h1>';
-        //               }
-        //             </script>
-        //           </body>
-        //         </html>
-        //       `);
-        //       newTab.document.close();
-
-        //       const FilePageComponent = (
-        //         <React.StrictMode>
-        //           <PreviewPage />
-        //         </React.StrictMode>
-        //       );
-
-        //       // Render the FilePage component after a short delay to ensure the HTML is fully loaded
-        //       setTimeout(() => {
-        //         ReactDOM.render(FilePageComponent, newTab.document.getElementById('root'));
-        //       }, 100);
-        //     }
-        //   };
 
         return (
             <>
@@ -566,6 +392,14 @@ const CreateNewTask = (props) => {
                             // console.log("fileName++>", fileName)
                             // console.log("extension++>", extension)
                             // console.log("getPreviewUrl++>", fileName, getPreviewUrl(extension, file?.preview))
+
+                            // Converting the uploaded_at string to a Date object
+                            const uploadDate = moment(file?.uploaded_at);
+
+                            // Format the date and  time using moment format function
+                            const formattedDate = uploadDate.format('DD MMM YYYY');
+                            const formattedTime = uploadDate.format('hh:mm A');
+
                             return (
                                 <div key={file.name} className="border border-gray-300 rounded-md p-2 flex flex-col justify-between h-44 ">
                                     <div className='container h-40'>
@@ -577,6 +411,7 @@ const CreateNewTask = (props) => {
                                         />
 
                                         {isEditAction &&
+                                            // show this section only in edit mode
                                             <div class="middle flex ">
                                                 <div class="p-1 pl-2 pr-2 mr-1 cursor-pointer bg-white rounded-sm text-gray-600">
                                                     <i class="fa-solid fa-cloud-arrow-down"
@@ -594,16 +429,20 @@ const CreateNewTask = (props) => {
                                         }
 
                                     </div>
-                                    <div className="border-t bg-white font-quicksand text-xs text-black p-2 flex hover:underline hover:text-blue-600 hover:cursor-pointer"
+                                    <div className="border-t bg-white font-quicksand text-xs text-black pt-2 flex hover:underline hover:text-blue-600 hover:cursor-pointer"
                                         title={`${file.name}`}
                                     >
-                                        {/* <span onClick={() => openFileInNewTab(file?.name)}>{fileName}</span> */}
                                         <a href={file?.preview} target='_blank' rel="noreferrer" className='flex w-36 whitespace-nowrap font-semibold'>
                                             <p className='overflow-ellipsis overflow-hidden'>{fileName}</p>
                                             <p className='ml-1 '>.{extension}</p>
                                         </a>
-                                        {/* {console.log("CurrentData===>", moment.format())} */}
                                     </div>
+                                    {/* <Box sx={{ width: '100%' }}>
+                                        <LinearProgress variant="determinate" value={progress} />
+                                    </Box> */}
+                                    <p className='text-left text-xs font-quicksand font-medium'>
+                                        {formattedDate}, {formattedTime}
+                                    </p>
                                 </div>
                             )
                         })}
@@ -669,7 +508,6 @@ const CreateNewTask = (props) => {
                     <div className={` flex flex-row items-center w-full mt-6 `} >
                         <LabelText label={"Status"} className={"w-1/4"} />
                         <span className="text-xs font-semibold font-quicksand inline-block py-1 align-middle px-2 rounded-full border border-black">{formData.status}</span>
-                        {/* //////////////////////////// */}
                         {formData.status === "In-Progress" &&
                             <h3 className='mx-3 text-blue-400 font-semibold text-xs hover:underline cursor-pointer'
                                 onClick={(e) => {

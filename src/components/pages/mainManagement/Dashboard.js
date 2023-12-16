@@ -200,7 +200,8 @@ const Dashboard = () => {
                 // console.log("fileName before formatting ==>", fileName);
                 return {
                     ...item,
-                    preview: `${HOST}/${item.attachment}`
+                    preview: `${HOST}/${item.attachment}`,
+                    uploaded_at : item.created_at
                 }
             })
         });
