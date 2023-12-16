@@ -1,8 +1,8 @@
-import React, {  useContext } from 'react'
+import React, { useContext } from 'react'
 import { apiAction } from '../../../api/api'
 import { getWorkspaceInfo } from '../../../config/cookiesInfo'
-import {notifyErrorMessage, notifySuccessMessage } from '../../../utils/Utils'
-import {  getTheDeletePeriodicNotificationUrl } from '../../../api/urls'
+import { notifyErrorMessage, notifySuccessMessage } from '../../../utils/Utils'
+import { getTheDeletePeriodicNotificationUrl } from '../../../api/urls'
 import PlainButton from '../../custom/Elements/buttons/PlainButton'
 import * as Actions from '../../../state/Actions';
 import { useNavigate } from 'react-router-dom';
@@ -16,7 +16,7 @@ export default function DeleteNotificationModal(props) {
     const navigate = useNavigate();
 
     const onNotificationDelete = () => {
-        deletePeriodicNotification({ "periodic_task_id": data.periodic_task_id, "workspace_id": work_id})
+        deletePeriodicNotification({ "periodic_task_id": data.periodic_task_id, "workspace_id": work_id })
     }
 
     const deletePeriodicNotification = async (pBody) => {
@@ -45,23 +45,23 @@ export default function DeleteNotificationModal(props) {
         //     <div className="relative my-6 max-w-sm w-full">
         //         <div className="w-full border-0 rounded-lg shadow-lg relative flex flex-col bg-white outline-none focus:outline-none">
         <>
-                    {/* header */}
-                    <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
-                        <h3 className="text-lg font-quicksand font-bold text-center w-full">{'Are you sure to delete'}</h3>
+            {/* header */}
+            <div className="flex items-center justify-between px-5 pt-5 border-solid border-slate-200 rounded-t text-black">
+                <h3 className="text-lg font-quicksand font-bold text-center w-full">{'Are you sure to delete'}</h3>
 
-                        <button
-                            className="text-lg w-10 h-10 ml-auto rounded-full focus:outline-none hover:bg-gray-200 flex justify-center items-center"
-                            onClick={() => setShowModal(false)}
-                        >
-                            <i className="fa-solid fa-times"></i>
-                        </button>
-                    </div>
+                <button
+                    className="text-lg w-10 h-10 ml-auto rounded-full focus:outline-none hover:bg-gray-200 flex justify-center items-center"
+                    onClick={() => setShowModal(false)}
+                >
+                    <i className="fa-solid fa-times"></i>
+                </button>
+            </div>
 
-                    <div className='px-3 py-5 w-full flex flex-col'>
-                        <h3 className="text-lg font-quicksand font-bold text-center w-full">{data.task_type}</h3>
+            <div className='px-3 py-5 w-full flex flex-col'>
+                <h3 className="text-lg font-quicksand font-bold text-center w-full">{data.task_type}</h3>
 
-                        <PlainButton title={"Delete"} className={"mt-10"} onButtonClick={onNotificationDelete} disable={false}></PlainButton>
-                    </div>
+                <PlainButton title={"Delete"} className={"mt-10"} onButtonClick={onNotificationDelete} disable={false}></PlainButton>
+            </div>
         </>
         //         </div>
         //     </div>

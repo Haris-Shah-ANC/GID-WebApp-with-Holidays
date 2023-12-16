@@ -121,6 +121,11 @@ export const routesName = {
         name: 'Notes',
         activeRoute: 'Notes',
     },
+    previewPage : {
+        path : '/previewPage',
+        name : 'PreviewPage',
+        activeRoute : 'PreviewPage',
+    }
 
 }
 

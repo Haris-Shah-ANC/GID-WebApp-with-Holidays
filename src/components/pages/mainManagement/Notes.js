@@ -7,11 +7,11 @@ import { apiAction } from '../../../api/api';
 import { Divider, Fade, Menu, MenuItem, Tooltip } from '@mui/material';
 import ModelComponent from '../../custom/Model/ModelComponent';
 import { actionsMenuOptions, add_folder, add_note, delete_modal, filter_and_sort, folderMenuOptions, manage_action, notesMenuOptions, sampleFolders, share_note } from '../../../utils/Constant';
-import { employee, getAddNoteUrl, getDeleteFolderUrl, getFetchNoteUrl, getFolderListUrl, getNotesUrl, getUpdateNoteUrl } from '../../../api/urls';
+import { employee, getAddNoteUrl, getDeleteFolderUrl, getDeleteNoteUrl, getFetchNoteUrl, getFolderListUrl, getNotesUrl, getUpdateNoteUrl } from '../../../api/urls';
 import CustomLabel from '../../custom/Elements/CustomLabel';
 import PopupMenu from '../../custom/PopupMenu';
 import GidInput from '../../custom/Elements/inputs/GidInput';
-import { isFormValid, notifyErrorMessage, notifyInfoMessage } from '../../../utils/Utils';
+import { isFormValid, notifyErrorMessage, notifyInfoMessage, notifySuccessMessage } from '../../../utils/Utils';
 import { LinkedText } from '../../custom/Elements/buttons/LinkedText';
 import PlainButton from '../../custom/Elements/buttons/PlainButton';
 import AutocompleteDropdown from '../../custom/Dropdown/AutocompleteDropdown';
@@ -181,7 +181,7 @@ function UserNotes(props) {
 
     }
     const deleteNote = async (noteID) => {
-        let res = await apiAction({ url: getFetchNoteUrl(work_id, noteID), method: 'delete', navigate: navigate, dispatch: dispatch })
+        let res = await apiAction({ url: getDeleteNoteUrl(), method: 'delete', navigate: navigate, dispatch: dispatch,data:{workspace_id:work_id,note_id:noteID} })
             .then((response) => {
                 if (selectedChildNote && selectedChildNote.id == noteID) {
                     selectChildNote(null)
@@ -192,12 +192,13 @@ function UserNotes(props) {
                 let noteIndex = notesListUnderFolder.findIndex((item) => item.id == Number(noteID))
                 notesListUnderFolder.splice(noteIndex, 1)
                 setNotesListUnderFolder(notesListUnderFolder)
+                notifySuccessMessage("Note deleted ")
             })
             .catch((error) => {
                 console.log("ERROR", error)
             })
-
     }
+    
     const deleteFolder = async (folderId) => {
         let res = await apiAction({ url: getDeleteFolderUrl(work_id, folderId), method: 'delete', navigate: navigate, dispatch: dispatch })
             .then((response) => {
@@ -338,9 +339,12 @@ function UserNotes(props) {
         if (isSharedFolderSelected) {
             fetchSharedNotesList()
         } else {
-            fetchNotesList(selectedFolder.id)
+            if (selectedFolder) {
+                fetchNotesList(selectedFolder.id)
+            }
         }
     }
+
     const onAddNewNoteClick = (folder, event) => {
         selectChildNote(null)
         setNoteTitleEditable(true)
@@ -377,6 +381,7 @@ function UserNotes(props) {
         setShowModal(delete_modal)
 
     }
+    
     const onDeleteItem = (id, type) => {
         if (type == "note") {
             deleteNote(id)

@@ -47,6 +47,11 @@ import { Divider } from '@mui/material';
 import { useDropzone } from 'react-dropzone';
 import { Document } from 'react-pdf'
 import { func } from 'prop-types';
+import PreviewPage from './PreviewPage';
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Modal from '@mui/material/Modal';
 //
 
 const CreateNewTask = (props) => {
@@ -83,7 +88,8 @@ const CreateNewTask = (props) => {
     const [totalEfforts, setTotalEfforts] = useState(null)
     const [isNetworkCallRunning, setNetworkCallStatus] = useState(false)
     const [uploadedFiles, setUploadedFiles] = useState([]);
-
+    const [indexToDelete, setIndextoDelete] = useState(null);
+    const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
     const getProjectsResultsApi = async (id) => {
         let res = await apiAction({
@@ -322,6 +328,21 @@ const CreateNewTask = (props) => {
         console.log("formData===>", formData)
     }
 
+    const handleDownloadFiles = async (index, fileName) => {
+        // console.log("formData inside download files handler===>",formData)
+        // console.log("formData inside download files handler===>",formData.attachment[index].preview)
+        let fileUrl = formData.attachment[index].preview
+        const response = await fetch(fileUrl);
+        const blob = await response.blob();
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = fileName;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
+
     const getPreviewUrl = (type, preview) => {
         let files = ['png', 'jpg', 'gif', 'svg']
         // console.log('fileType==>', files.includes(type))
@@ -340,7 +361,197 @@ const CreateNewTask = (props) => {
         }
     }
 
+    const ConfirmDeleteModal = () => {
+
+        const style = {
+            position: 'absolute',
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: 'background.paper',
+            border: '1px solid #000',
+            boxShadow: 24,
+            p: 4,
+        };
+
+        return (
+            <div>
+                <Modal
+                    open={openDeleteModal}
+                    onClose={() => {setOpenDeleteModal(false)}}
+                >
+                    <Box sx={style} className='rounded-lg'>
+                        {/* <div className="center p-5" style={{ width: 400, zIndex: 5 }}> */}
+                            <div 
+                            // className="bg-white rounded shadow p-2"
+                            >
+                                <h3 className="text-black font-quicksand text-lg font-semibold">
+                                    {'Delete File ?'}
+                                </h3>
+
+                                <div className="flex justify-end gap-4">
+                                    <PlainButton title={"Cancel"} onButtonClick={() => setOpenDeleteModal(false)} className={"bg-blue-400 hover:bg-blue-500 text-white px-2.5 py-1.5"} disable={false} />
+                                    <PlainButton title={"Delete"} onButtonClick={() => { handleDeleteFiles(indexToDelete); setOpenDeleteModal(false); }} className={"bg-red-400 hover:bg-red-500 text-white px-2.5 py-1.5"} disable={false} />
+                                </div>
+
+                            </div>
+                        {/* </div> */}
+                    </Box>
+                </Modal>
+            </div>
+        )
+        // return (
+        //     <div>
+        //       {/* <Button onClick={() => setOpenDeleteModal(true)}>Open modal</Button> */}
+        //       <Modal
+        //         open={openDeleteModal}
+        //         onClose={setOpenDeleteModal(false)}
+        //         aria-labelledby="modal-modal-title"
+        //         aria-describedby="modal-modal-description"
+        //       >
+        //         <Box sx={style}>
+        //           <Typography id="modal-modal-title" variant="h6" component="h2">
+        //             Text in a modal
+        //           </Typography>
+        //           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+        //             Duis mollis, est non commodo luctus, nisi erat porttitor ligula.
+        //           </Typography>
+        //         </Box>
+        //       </Modal>
+        //     </div>
+        //   );
+    }
+
     const PreviewSection = () => {
+        // const openFileInNewTab = () => {
+        //     const newTab = window.open('', '_blank');
+
+        //     if (newTab) {
+        //         newTab.document.open();
+        //         newTab.document.write(`
+        //         <html>
+        //           <head>
+        //             <title>Your File</title>
+        //           </head>
+        //           <body>
+        //             <div id="preview"></div>
+        //             <script>
+        //               window.onload = function() {
+        //                 document.getElementById('root').innerHTML = '<h1>Loading...</h1>';
+        //               }
+        //             </script>
+        //           </body>
+        //         </html>
+        //       `);
+        //         newTab.document.close();
+
+        //         const FilePageComponent = (
+        //             <React.StrictMode>
+        //                 <PreviewPage />
+        //             </React.StrictMode>
+        //         );
+
+        //         // Render the FilePage component after a short delay to ensure the HTML is fully loaded
+        //         setTimeout(() => {
+        //             ReactDOM.render(FilePageComponent, newTab.document.getElementById('preview'));
+        //         }, 100);
+        //     }
+        // };
+
+        // const openFileInNewTab = async (fileUrl) => {
+        //     // const { fileUrl } = props;
+
+        //     console.log("fileUrl<<>>",fileUrl)
+        //     try {
+        //       // Fetch the file content using the file URL
+        //       const response = await fetch(props.fileUrl);
+        //       const fileContent = await response.text();
+
+        //       // Specify your custom window features
+        //       const windowFeatures = 'width=800,height=600,scrollbars=yes';
+
+        //       // Open a new window
+        //       const newWindow = window.open('', 'CustomViewer', windowFeatures);
+
+        //       // Write custom content to the new window, including the file preview
+        //       newWindow.document.write(`
+        //         <!DOCTYPE html>
+        //         <html lang="en">
+        //         <head>
+        //             <meta charset="UTF-8">
+        //             <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        //             <title>Custom Viewer</title>
+
+        //             <style>
+        //                 /* Your additional custom styling for the new window goes here */
+        //                 body {
+        //                     font-family: Arial, sans-serif;
+        //                 }
+
+        //                 #customViewer {
+        //                     width: 100%;
+        //                     height: 100%;
+        //                     padding: 20px;
+        //                 }
+        //             </style>
+        //         </head>
+        //         <body>
+        //             <div id="customViewer">
+        //                 <h1>Custom Viewer</h1>
+        //                 <p>This is a customized file viewer for ${fileUrl}.</p>
+
+        //                 <!-- Display the file content -->
+        //                 <pre>${fileContent}</pre>
+        //                 <img 
+        //                 src= {${fileUrl}}
+        //                 alt = {${fileUrl}}
+        //                 />
+        //             </div>
+        //         </body>
+        //         </html>
+        //       `);
+
+        //       // You can perform additional customization as needed
+        //     } catch (error) {
+        //       console.error('Error fetching file content:', error);
+        //     }
+        //   };
+
+        // const openFileInNewTab = () => {
+        //     const newTab = window.open('', '_blank');
+
+        //     if (newTab) {
+        //       newTab.document.open();
+        //       newTab.document.write(`
+        //         <html>
+        //           <head>
+        //             <title>Your File</title>
+        //           </head>
+        //           <body>
+        //             <div id="root"></div>
+        //             <script>
+        //               window.onload = function() {
+        //                 document.getElementById('root').innerHTML = '<h1>Loading...</h1>';
+        //               }
+        //             </script>
+        //           </body>
+        //         </html>
+        //       `);
+        //       newTab.document.close();
+
+        //       const FilePageComponent = (
+        //         <React.StrictMode>
+        //           <PreviewPage />
+        //         </React.StrictMode>
+        //       );
+
+        //       // Render the FilePage component after a short delay to ensure the HTML is fully loaded
+        //       setTimeout(() => {
+        //         ReactDOM.render(FilePageComponent, newTab.document.getElementById('root'));
+        //       }, 100);
+        //     }
+        //   };
 
         return (
             <>
@@ -364,21 +575,29 @@ const CreateNewTask = (props) => {
                                             className='image'
                                             style={{ maxHeight: "120px", minHeight: "120px" }}
                                         />
-                                    
+
                                         {isEditAction &&
-                                            <div class="middle ">
+                                            <div class="middle flex ">
+                                                <div class="p-1 pl-2 pr-2 mr-1 cursor-pointer bg-white rounded-sm text-gray-600">
+                                                    <i class="fa-solid fa-cloud-arrow-down"
+                                                        onClick={(e) => { handleDownloadFiles(index, fileName); e.stopPropagation() }}
+                                                    >
+                                                    </i>
+                                                </div>
                                                 <div class="p-1 pl-2 pr-2 cursor-pointer bg-white rounded-sm text-gray-600">
                                                     <i class="fa-solid fa-trash"
-                                                        onClick={(e) => { handleDeleteFiles(index) }}>
+                                                        onClick={(e) => { setOpenDeleteModal(true); setIndextoDelete(index); e.stopPropagation(); }}
+                                                    >
                                                     </i>
                                                 </div>
                                             </div>
                                         }
-                                        
+
                                     </div>
                                     <div className="border-t bg-white font-quicksand text-xs text-black p-2 flex hover:underline hover:text-blue-600 hover:cursor-pointer"
                                         title={`${file.name}`}
                                     >
+                                        {/* <span onClick={() => openFileInNewTab(file?.name)}>{fileName}</span> */}
                                         <a href={file?.preview} target='_blank' rel="noreferrer" className='flex w-36 whitespace-nowrap font-semibold'>
                                             <p className='overflow-ellipsis overflow-hidden'>{fileName}</p>
                                             <p className='ml-1 '>.{extension}</p>
@@ -396,6 +615,8 @@ const CreateNewTask = (props) => {
 
     return (
         <>
+            {openDeleteModal && <ConfirmDeleteModal />}
+
             <div className="flex items-center flex-row h-14  justify-between  border-solid border-slate-200 rounded-t text-black">
                 <h3 className={`text-lg font-quicksand font-bold text-center w-full`}>{!isEditAction ? "Task Details" : formData.task_id ? 'Update Task' : 'Add Task'}</h3>
 

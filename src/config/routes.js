@@ -21,6 +21,7 @@ import Alerts from "../components/pages/mainManagement/Alerts";
 import { UploadTimesheet } from "../components/pages/mainManagement/file_upload/UploadTimesheet";
 import UserNotes from "../components/pages/mainManagement/Notes";
 import Holidays from "../components/pages/mainManagement/holiday/Holidays";
+import PreviewPage from "../components/pages/mainManagement/PreviewPage";
 
 export const authRoutes = [
     {
@@ -128,7 +129,13 @@ export const mainRoutes = [
         component: <Holidays />,
     },
 ];
-export const landingRoutes = [];
+export const landingRoutes = [
+    {
+        path : routesName.previewPage.path,
+        name : routesName.previewPage.name,
+        component : <PreviewPage />
+    }
+];
 
 export const sidebarMenu = (isAdminMenu) => {
     return isAdminMenu === "Admin" ? [

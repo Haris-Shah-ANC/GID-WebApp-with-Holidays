@@ -289,6 +289,10 @@ export const getFetchNoteUrl = (workspaceId, noteID) => {
     return HOST + APP_NAME + `/get_note/?workspace=${workspaceId}&note_id=${noteID}`
 }
 
+export const getDeleteNoteUrl = () => {
+    return HOST + APP_NAME + `/delete_note/`
+}
+
 export const getDeleteFolderUrl = (workspaceId, folderId) => {
     return HOST + APP_NAME + ROUTER + `/folder/${folderId}/?workspace=${workspaceId}`
 }
